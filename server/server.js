@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const users = require('./routes/api/users');
-const cars = require('./routes/api/cars'); 
+//const testAPI = require('./routes/api/testAPI'); 
 const mailto = require('./routes/mailto');  
 const passport = require('passport'); 
 const cors = require('cors');
@@ -37,7 +37,7 @@ app.get('/', (req, res) => res.send("Hello World"));
 
 // USE routes
 app.use('/api/users', users);
-app.use('/api/cars', cars);
+//app.use('/api/testAPI', testAPI);
 app.use('/api/mailto', mailto);
 
 

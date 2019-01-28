@@ -23,12 +23,12 @@ $( document ).ready(function() {
 
 		if ($(window).scrollTop() > 0) { 
 			$("#header").addClass("headerAnimate");
-			$("#logo").addClass("logoAnimate");
+			//$("#logo").addClass("logoAnimate");
 			$(".navBarA").addClass("navBarAnimate");
 			$(".hmbSpanA").addClass("nav-iconAnimate");
 		} else {
 			$("#header").removeClass("headerAnimate");
-			$("#logo").removeClass("logoAnimate");
+			//$("#logo").removeClass("logoAnimate");
 			$(".navBarA").removeClass("navBarAnimate")
 			$(".hmbSpanA").removeClass("nav-iconAnimate")
 		}

@@ -30,24 +30,23 @@
     height: 100px;
     width: 200px; 
     transition:0.3s;
-    background-image: url('../../../public/images/dellLogoMiniWhite.png');
-    background-repeat: no-repeat;
-    background-size: 140px;
-    border-right: 1px solid #2e2e2e;
     cursor: pointer;
-    float: left;    
+    float: left; 
+/*  background-image: url('../../../public/images/navImg.png');
+    background-repeat: no-repeat;
+    background-size: 140px;    
     background-position-y: 10px;
-    background-position-x: 30px;
+    background-position-x: 30px; */
 }
-.logoAnimate {
+/* .logoAnimate {
     height: 60px !important;
     width: 110px !important; 
     border-right: 1px solid #e2e2e2 !important;
-    background-image: url('../../../public/images/dellLogoW.png') !important;
+    background-image: url('../../../public/images/navImg.png') !important;
     background-position-y: 4px !important;
     background-position-x: 13px !important;
     background-size: 80px !important; 
-}
+} */
 
 #navBar {
     float: right;

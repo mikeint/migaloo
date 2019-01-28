@@ -3,7 +3,7 @@ import './NavBar.css';
 import { Redirect} from "react-router-dom";
 import AuthFunctions from '../../AuthFunctions';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+//import axios from 'axios';
 
 class NavBar extends React.Component{
 
@@ -18,7 +18,8 @@ class NavBar extends React.Component{
 
     /* ...NAV BAR functions... */
     addTempCar = () => {
-        var config = {
+        console.log("newpage")
+        /* var config = {
             headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
         }; 
         
@@ -28,9 +29,8 @@ class NavBar extends React.Component{
                     localStorage.setItem('car_id', res.data._id);
             });
         } else {
-            console.log("car_id already set");
-            //localStorage.removeItem("car_id");
-        }
+            console.log("car_id already set"); 
+        } */
     }
 
     handleLogout = () => {
@@ -55,7 +55,7 @@ class NavBar extends React.Component{
                         <li><div className="admNavBtn" onClick={this.handleLogout}><a target="_blank">Log Out</a></div></li>
                         {this.props.deleteButton ? <li><div className="removeFullCarButton" onClick={this.props.deleteFullCar}>REMOVE CAR</div></li>: ""}
                         {!this.props.deleteButton ? 
-                            <li><Link to="/addCar"><div onClick={this.addTempCar} className="admNavBtn">Add Car</div></Link></li>
+                            <li><Link to="/newPage"><div className="admNavBtn">new Page</div></Link></li>
                             : 
                         ""}
                     </ul>

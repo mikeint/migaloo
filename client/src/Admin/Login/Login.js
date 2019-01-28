@@ -4,16 +4,14 @@ import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 import AuthFunctions from '../../AuthFunctions';
 
-// images
-import bannerAlpha from '../../../public/images/dellLogoMiniWhite.png'
-
 class Login extends Component {
     constructor() {
         super();
 		this.state = {
             user: '',
 			email: '',
-			password: '',
+            password: '',
+            tabState: "2",
             errors: {},
 		};
         this.Auth = new AuthFunctions();
@@ -48,12 +46,16 @@ class Login extends Component {
                 })
             });
 
-/*             console.log("email---------", this.state.email);
+/*          console.log("email---------", this.state.email);
             console.log("password------", this.state.password);
             console.log("token---------", res.data.token)
             console.log("user----------", res.data.user); */
         })
     };
+
+    changeTab = (tab) => {
+        this.setState({ tabState: tab });
+    }
 
   
     render() {
@@ -65,25 +67,36 @@ class Login extends Component {
 
         const { email, password } = this.state
  
-        return (
-            <React.Fragment> 
+        return ( 
                 <div className="loginContainer">
                     <div className="loginMiddle">
                         <div className="loginContent">
-                            <h2><img src={bannerAlpha} alt="dellLogo" /></h2>
-                            <div className="formItem">
-                                <label>Username</label>
-                                <input className="formControl" name='email' type='text' onChange={this.handleChange} value={email} />
-                            </div>
-                            <div className="formItem">
-                                <label>Password</label>
-                                <input className="formControl" name='password' type='password' onChange={this.handleChange} value={password} />
-                            </div> 
-                            <button className='loginBtn' onClick={this.login}>Login</button> 
-                        </div> 
+                            {/* <h2><img src={bannerAlpha} alt="dellLogo" /></h2> */}
+
+                            {
+                                this.state.tabState === "1" ?
+                                    <div>
+                                        <div className="formItem">
+                                            <label>Username</label>
+                                            <input className="formControl" name='email' type='text' onChange={this.handleChange} value={email} />
+                                        </div>
+                                        <div className="formItem">
+                                            <label>Password</label>
+                                            <input className="formControl" name='password' type='password' onChange={this.handleChange} value={password} />
+                                        </div> 
+                                        <button className='loginBtn' onClick={this.login}>Login</button>
+                                    </div>
+                                :
+                                <div>helo</div>
+                            }
+
+                        </div>
+                        <div id="tabContainer" className="tabContainer"> 
+                            <div className={this.state.tabState==="1" ? "tab-item active" : "tab-item"} onClick={() => this.changeTab("1")}>Login</div>
+                            <div className={this.state.tabState==="2" ? "tab-item active" : "tab-item"} onClick={() => this.changeTab("2")}>Register</div>
+                        </div>
                     </div>  
-                </div> 
-            </React.Fragment>
+                </div>  
         );
     }
 }

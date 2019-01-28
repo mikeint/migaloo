@@ -16,8 +16,7 @@
 }
 
 .loginContent {
-	width: 400px;
-	border-radius: 8px;
+	width: 400px; 
 	padding: 20px;
 	background-color: rgba(255, 255, 255, 0.45);
 }
@@ -37,8 +36,7 @@
 	height: 28px;
 	float: left;
 	padding: 0px;
-	border: 0px;
-    border-radius: 5px;
+	border: 0px; 
     font-size: 21px;
 }
 
@@ -47,12 +45,44 @@
     background-color: #6d7787;
     color: white;
     height: 40px;
-    border: 0px;
-    border-radius: 5px;
+    border: 0px; 
     font-size: 20px;
 	font-weight: bold;
 	cursor: pointer;
 }
+
+.tabContainer {
+    width: 400px;
+	height: 100px;
+	font-size: 22px;
+}
+.tab-item {
+    width: 50%;
+    height: 100%;
+    float: left;
+    cursor: pointer;
+    text-align: center;
+    line-height: 100px;
+	color: #505254;
+	background: #6d7787;  
+    font-weight: bold;
+	transition: 0.3s;  
+    border-top: 2px solid white;
+	box-shadow: inset 0px 3px 0px 3px;
+	opacity: 0.7;
+}
+.tab-item.active { 
+	background-color: rgba(255, 255, 255, 0.45);
+    text-align: center; 
+    color: #fff;
+    font-weight: bold;
+	letter-spacing: 5px;  
+	border-top: none;
+	box-shadow: none; 
+	opacity: 1;
+}
+
+
 
 @media only screen and (max-width: 677px) {
 	.loginContent {
@@ -64,5 +94,8 @@
 	}
 	.formItem input {
 		width: 67%;
+	}
+	.tabContainer {
+		width: 100%;
 	}
 }

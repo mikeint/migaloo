@@ -1,13 +1,12 @@
 import React, { Component } from 'react'; 
 import { Route, NavLink, BrowserRouter } from 'react-router-dom';
 
-import './Landing.css';
-import Footer from '../Footer/Footer'; 
+import './Landing.css'; 
 
-import CarSaleSlider from '../CarSaleSlider/CarSaleSlider';
+/* import CarSaleSlider from '../CarSaleSlider/CarSaleSlider';
 import CarSoldSlider from '../CarSoldSlider/CarSoldSlider';
 import About from '../About/About'; 
-import Contact from '../ContactPage/ContactPage'; 
+import Contact from '../ContactPage/ContactPage';  */
 
 
 class Landing extends Component {
@@ -49,15 +48,14 @@ class Landing extends Component {
 							</div>
 
 							<div className="mainContent">  
-								<Route exact path="/" component={CarSaleSlider} />
+							{/* 	<Route exact path="/" component={CarSaleSlider} />
 								<Route exact path="/carSoldSlider" component={CarSoldSlider} />
 								<Route exact path="/about" component={About} />  
-								<Route exact path="/contact" component={Contact} />  
+								<Route exact path="/contact" component={Contact} />   */}
 							</div>
 						</div>
 					</BrowserRouter>
-				</div> 
-				<Footer />
+				</div>  
 				
 			</React.Fragment>
 		);
