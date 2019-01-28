@@ -1,0 +1,176 @@
+.contactPageContainer {
+    width: 100%;
+    height: 1500px;
+    background: #2e2e2e;
+}
+
+
+
+
+.signUpContainer {
+    background: #646464;
+    padding: 30px;
+    font-weight: bold; 
+ 
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
+} 
+
+.signUpContainer h3 {
+    color: #ffffff; 
+    height: 50px;
+    line-height: 50px; 
+    margin-top: 0px;
+    text-align: center;
+    font-size: 30px; 
+    border-radius: 10px; 
+} 
+.signUpContainer input {
+    width: 100%;
+    height: 40px;
+    border-radius: 5px;
+    padding: 10px 0px 10px 10px;
+    border: 1px solid transparent;
+    border-top: none;
+    border-bottom: 1px solid #DDD;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.39), 0 -1px 1px #FFF, 0 1px 0 #FFF;
+    margin-bottom: 10px;
+    transition: 0.3s;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 1);
+    background: #ffffff;
+}
+
+.signUpContainer label {
+    color: #ffffff;
+}
+
+.signUpContainer select {
+    width: 100%;
+    height: 40px; 
+    margin-bottom: 10px;
+    padding-left: 2%;
+    background: #ffffff;
+    border-radius: 5px;
+}
+ 
+.formSection {
+    padding: 20px;  
+    background: #2e2e2e;
+    margin: auto auto 25px auto;
+    max-width: 1000px;
+    position: relative;
+    border-radius: 5px;
+    transition: 0.3s;
+} 
+input[type="date"] {
+    height: 40px;
+}
+
+.input-2 {
+    width:100%;
+    display: inline-block; 
+}
+.i-2 {
+    width: 49%;
+    float: left;
+}
+.i-4 {
+    width: 50%;
+    float: left;
+}
+.il {
+    margin-right: 2%;
+}
+.i-small {
+    width: 95% !important;
+}
+ 
+input[type=text]:focus, 
+input[type=email]:focus,
+input[type=number]:focus,
+input[type=date]:focus,
+.signUpContainer select:focus {
+    box-shadow: 0 0 5px rgba(81, 203, 238, 1);  
+    border-radius: 5px;
+    outline: none;
+}
+
+.submitContainer {
+    width: 100%;
+    margin: auto;
+    max-width: 1000px;
+    text-align: center;
+    transition: 0.3s; 
+    z-index: 99;
+}
+.btn-secondary {
+    width: 100%;
+    padding: 10px; 
+    cursor: pointer;
+    font-size: 30px; 
+    letter-spacing: 3px;
+    font-weight: bold;
+    color: #ffffff;
+    background: #2e2e2e;
+    border: none; 
+    border-radius: 5px; 
+    transition: 0.3s;
+    overflow: hidden; 
+}
+
+.btn-secondary:hover {
+    background:#ffffff;
+    color: #2e2e2e;
+    box-shadow: 0px 0px 5px 3px #2e2e2e;
+}
+
+#formSubmitText {
+    padding-bottom: 50px;
+    font-size: 22px;
+    color: #ffffff;
+    font-weight: bold;
+    transition: 0.3s;
+}
+  
+.thankYouText {
+    width: 100%;
+    padding: 50px;
+    color: white;
+    font-size: 35px;
+    text-align: center;
+}
+
+textarea {
+    width: 100%;
+    height: 240px;
+    font: 400 13.3333px Arial;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+
+@media only screen and (max-width: 1000px) {
+    .i-2,
+    .i-4,
+    .i-small,
+    .signUpContainer select {
+        min-width: 100% !important;
+    }
+    .btn-secondary {
+        border-radius: 0px;
+    } 
+}
+
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : portrait) { 
+    .formSection {
+        width: 690px;
+    }
+}
+
+@media only screen and (min-device-width : 768px) and (max-device-width : 1024px) and (orientation : landscape) {
+    .formSection {
+        width: 890px;
+    }
+}

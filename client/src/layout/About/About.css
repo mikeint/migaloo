@@ -1,0 +1,58 @@
+.aboutContainer {
+    width: 100%;
+    float: left;
+    padding: 50px;
+    position: relative;
+    background: #646464;
+    color:white;
+}
+.aboutHeader {
+    font-size: 25px;
+    width: 80%;
+    border-bottom: 1px solid grey; 
+}
+.carImage {
+    background-image: url(../../../public/images/aboutFerrari.png);
+    background-repeat: no-repeat;
+    background-position: 15px;
+    background-size: 70px;
+    height: 100px; 
+}
+.aboutText {
+    font-size: 22px;
+    max-width: 1100px;
+    margin: auto;
+}
+.linkButton {
+    text-align: center;
+    bottom: 0px;
+    width: 160px;
+    margin: auto;
+    background: #b97f01;
+    margin-top: 50px;
+    font-size: 29px;
+    height: 40px;
+    line-height: 40px;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    float: right;
+}
+
+.linkButton a {
+    text-decoration: none;
+    color: white;
+}
+
+
+
+@media only screen and (max-width: 1159px) {
+    .aboutContainer {
+		padding:20px;
+	} 
+}
+@media only screen and (max-width: 669px) {
+    .aboutContainer {
+		padding:15px;
+	} 
+}
