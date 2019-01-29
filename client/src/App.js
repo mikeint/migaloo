@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, HashRouter } from "react-router-dom";
+import { Route, BrowserRouter } from "react-router-dom";
 import Landing from './layout/Landing/Landing';
 import Login from './Admin/Login/Login'; 
 
@@ -29,7 +29,7 @@ class App extends Component {
     render() {
 
         return ( 
-            <HashRouter>
+            <BrowserRouter>
                 <React.Fragment>
                     <PrivateRoute exact path="/hub" component={Hub} user={this.state.user} token={this.state.token}/>
                     {/* <PrivateRoute exact path="/newPage" component={newPage} user={this.state.user} token={this.state.token}/> */}
@@ -41,7 +41,7 @@ class App extends Component {
                     <Route exact path="/about" component={Landing} /> 
                     <Route exact path="/contact" component={Landing} /> */}
                 </React.Fragment>
-            </HashRouter> 
+            </BrowserRouter> 
         );
     }
 }

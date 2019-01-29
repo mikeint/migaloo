@@ -1,0 +1,29 @@
+.formItem {
+	height: 50px;
+	width: 100%;
+    float: left;
+}
+.formItem label{
+	width: 110px;
+	float: left;
+}
+.formItem input{
+	width: 100%;
+	height: 40px;
+	float: left;
+	padding: 10px;
+	border: 0px; 
+    font-size: 21px;
+}
+
+
+
+@media only screen and (max-width: 677px) {
+	.loginContent {
+		width: 100%;
+		border-radius: 0px;
+	} 
+	.tabContainer {
+		width: 100%;
+	}
+}

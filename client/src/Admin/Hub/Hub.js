@@ -10,10 +10,8 @@ class Hub extends React.Component{
     constructor(props){
         super(props);
         this.state={ 
-            logout: false,
-            user: '', 
-            searchTerm: '',
-            tabState: '1',
+            logout: false, 
+            searchTerm: '', 
         }
         this.Auth = new AuthFunctions();
     }
@@ -37,7 +35,7 @@ class Hub extends React.Component{
             return <Redirect to='/login'/>
         } 
 
-        var listItem = {};
+        var listItem = "empty";
 
         return (
             <React.Fragment>
@@ -58,7 +56,7 @@ class Hub extends React.Component{
                         />
                     </form>
                      
-                    {listItem ? "" : <div className="loadingContainer"><div className="loadContainer"><div className="load-shadow"></div><div className="load-box"></div></div></div>}
+                    {listItem === "notEmpty" ? "" : <div className="loadingContainer"><div className="loadContainer"><div className="load-shadow"></div><div className="load-box"></div></div></div>}
                 </div>
 
             </React.Fragment>

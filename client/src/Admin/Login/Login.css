@@ -17,28 +17,14 @@
 
 .loginContent {
 	width: 400px; 
-	padding: 20px;
+	min-height: 550px;
+	padding: 80px 30px;
 	background-color: rgba(255, 255, 255, 0.45);
 }
 .loginContent img {
 	width: 200px;
 }
-.formItem {
-	height: 40px;
-    float: left;
-}
-.formItem label{
-	width: 110px;
-	float: left;
-}
-.formItem input{
-	width: 240px;
-	height: 28px;
-	float: left;
-	padding: 0px;
-	border: 0px; 
-    font-size: 21px;
-}
+
 
 .loginBtn {
 	width: 100%;
@@ -78,23 +64,12 @@
     font-weight: bold;
 	letter-spacing: 5px;  
 	border-top: none;
-	box-shadow: none; 
+	box-shadow: 0px 5px 0px 0px white;
 	opacity: 1;
 }
 
 
-
-@media only screen and (max-width: 677px) {
-	.loginContent {
-		width: 100%;
-		border-radius: 0px;
-	}
-	.formItem {
-		width: 100%;
-	}
-	.formItem input {
-		width: 67%;
-	}
+@media only screen and (max-width: 677px) { 
 	.tabContainer {
 		width: 100%;
 	}
