@@ -29,18 +29,6 @@ export default class AuthService {
         localStorage.clear();
     }
 
-
-    /* CAR auth */
-    setCarId = (id) => {
-        console.log(id);
-        localStorage.setItem("car_id", id);
-    } 
-    getCarId() {
-        return localStorage.getItem("car_id");
-    }
-    /* CAR auth */
-
-
     logout() {
         // Clear user token and profile data from localStorage
         localStorage.removeItem('token');
