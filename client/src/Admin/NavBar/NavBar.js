@@ -48,18 +48,13 @@ class NavBar extends React.Component{
             return <Redirect to='/login'/>
         }
         return (
-            <React.Fragment>
-                <header className="navbar">
-                    <Link to="/hub"><div className="topTitle" onClick={this.resetCarId}>Hub</div></Link>
-                    <ul>
-                        <li><div className="admNavBtn" onClick={this.handleLogout}><a target="_blank">Log Out</a></div></li>
-                        {this.props.deleteButton ? <li><div className="removeFullCarButton" onClick={this.props.deleteFullCar}>REMOVE CAR</div></li>: ""}
-                        {!this.props.deleteButton ? 
-                            <li><Link to="/newPage"><div className="admNavBtn">new Page</div></Link></li>
-                            : 
-                        ""}
-                    </ul>
-                </header>
+            <React.Fragment> 
+                <div id="navBar_admin">
+                    <li><Link to="/newPage1"><div className="admNavBtn">Page1</div></Link></li>
+                    <li><Link to="/newPage2"><div className="admNavBtn">Page2</div></Link></li>
+                    <li><Link to="/newPage3"><div className="admNavBtn">Page3</div></Link></li> 
+                    <li><div className="admNavBtn" onClick={this.handleLogout}><a target="_blank">Log Out</a></div></li>
+                </div>  
             </React.Fragment>
         );
     }

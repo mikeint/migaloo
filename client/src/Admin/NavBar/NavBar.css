@@ -1,40 +1,18 @@
-.navbar {    
-    width: 100%;
-    height: 60px;
+#navBar_admin {
+    width: 100%;    
     float: left;
-    background-color: #FAFAFA;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    transition: all 0.3s; 
-    align-items: center;
 }
-.navbar ul {
-    width: 90%;
+
+#navBar_admin li {
+    width: 25%;
+    height: 50px;
+    line-height: 50px;
+    color: #fff;
     float: left;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    color: #34495e;
-    text-align: right;
-    font-size: 18px;
-    text-transform: uppercase;
-    font-weight: bold;
-    transition: 0.3s;
-}
-.navbar ul li {
-    height: 60px;
-    padding: 0px 20px;
-    float: right;
-    cursor: pointer;
-    line-height: 60px;
-}
-.topTitle {
-    width: 10%;
-    height: 100%;
-    line-height: 60px;
-    float: left;
-    color: #2e2e2e;
-    padding: 0px 10px;
-    font-size: 27px;
-    font-weight: bold;
-    font-family: "Lucida Console", Monaco, monospace;
+    list-style-type: none;
+    text-align: center;
+} 
+
+.admNavBtn {
+    color: #fff;
 }

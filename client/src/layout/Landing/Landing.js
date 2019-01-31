@@ -3,10 +3,9 @@ import { /* Route ,*/ NavLink, BrowserRouter } from 'react-router-dom';
 
 import './Landing.css'; 
 
-/* import CarSaleSlider from '../CarSaleSlider/CarSaleSlider';
-import CarSoldSlider from '../CarSoldSlider/CarSoldSlider';
-import About from '../About/About'; 
-import Contact from '../ContactPage/ContactPage';  */
+/* import About from '../About/About'; 
+import Contact from '../ContactPage/ContactPage';  
+*/
 
 
 class Landing extends Component {
@@ -27,7 +26,6 @@ class Landing extends Component {
 								<NavLink to="/"><div id="logo"></div></NavLink>
 								<div id="navBar">
 									<li className="navBarA"><NavLink exact to="/">Home</NavLink></li>
-									<li className="navBarA"><NavLink exact to="/carSoldSlider">Sold</NavLink></li>
 									<li className="navBarA"><NavLink exact to="/about">About</NavLink></li>
 									<li className="navBarA"><NavLink exact to="/contact">Contact</NavLink></li>
 								</div>
@@ -40,7 +38,6 @@ class Landing extends Component {
 									</div>
 									<div className="side-menu" id="side-menu">
 										<li><NavLink exact to="/" onClick={this.toggleMobileMenu}>Home</NavLink></li> 
-										<li><NavLink exact to="/carSoldSlider" onClick={this.toggleMobileMenu}>Sold</NavLink></li>
 										<li><NavLink exact to="/about" onClick={this.toggleMobileMenu}>About</NavLink></li>
 										<li><NavLink exact to="/contact" onClick={this.toggleMobileMenu}>Contact</NavLink></li>
 									</div>
@@ -48,10 +45,8 @@ class Landing extends Component {
 							</div>
 
 							<div className="mainContent">  
-							{/* 	<Route exact path="/" component={CarSaleSlider} />
-								<Route exact path="/carSoldSlider" component={CarSoldSlider} />
-								<Route exact path="/about" component={About} />  
-								<Route exact path="/contact" component={Contact} />   */}
+							{/* <Route exact path="/about" component={About} />  
+								<Route exact path="/contact" component={Contact} /> */}
 							</div>
 						</div>
 					</BrowserRouter>

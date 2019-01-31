@@ -57,9 +57,8 @@ a {
     -webkit-transform: translate(-50%,-50%);
         -ms-transform: translate(-50%,-50%);
             transform: translate(-50%,-50%);
-    margin-top: 65px; 
+    margin-top: 165px; 
 }
-@media only screen and (max-width: 1050px) { .loadContainer { margin-top: 60px;  }} /* for stupid mobile center div */
 @-webkit-keyframes loader {
     0% { left: -100px }
     100% { left: 110%; }

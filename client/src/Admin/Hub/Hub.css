@@ -1,19 +1,19 @@
-.hub {
-    width: 48%;
-    margin: 1%;
-    float: left;
-    height: 100px;
-    background: #ffffff;
-    color: black; 
-    cursor: pointer;    
-    border-radius: 3px;
+
+.mainContainer {
+    width: 100%; 
+    float: left; 
+    height: 2000px;
+
 } 
- 
+.userInfo {
+    width: 100%;
+    float: left;
+    background: #98b2da;
+}
 
 .searcher {
-    width: 90%;
-    max-width: 900px;  
-    margin: 20px auto;
+    width: 100%; 
+    float: left;
 }
 .searcher input {
     width: 100%;

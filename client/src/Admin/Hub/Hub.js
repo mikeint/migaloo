@@ -14,17 +14,13 @@ class Hub extends React.Component{
             searchTerm: '', 
         }
         this.Auth = new AuthFunctions();
-    }
- 
-
-    componentDidMount = () => { 
-        
     } 
+ 
     isSearched = searchTerm => item =>
         item.make.toLowerCase().includes(searchTerm.toLowerCase());
     
     onSearchChange = (event) => {
-        //console.log(event.target.value)
+        console.log(event.target.value)
         this.setState({ searchTerm: event.target.value });
     } 
  
@@ -39,13 +35,12 @@ class Hub extends React.Component{
 
         return (
             <React.Fragment>
-                <NavBar deleteButton={false} />  
-                <div className="userInfo">
-                    <div className="userInfo_name">Name: {this.props.user.name}</div>
-                    <div className="userInfo_email">Email:{this.props.user.email}</div>
-                </div> 
-  
-                <div className='adminCarContainer'> 
+                <NavBar />
+                <div className='mainContainer'>
+                    <div className="userInfo">
+                        <div className="userInfo_name">Name: {this.Auth.getUser().name}</div>
+                        <div className="userInfo_email">Email:{this.Auth.getUser().email}</div>
+                    </div> 
                     <form className='searcher'>
                         <input
                             name={name} 
