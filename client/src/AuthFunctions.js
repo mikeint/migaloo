@@ -25,6 +25,10 @@ export default class AuthService {
         return JSON.parse(localStorage.getItem('user'));
     }
 
+    clearToken() {
+        localStorage.clear();
+    }
+
 
     /* CAR auth */
     setCarId = (id) => {

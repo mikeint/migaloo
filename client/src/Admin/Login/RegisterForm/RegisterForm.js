@@ -43,6 +43,7 @@ class RegisterForm extends Component {
             email: res.data.email,
             password: this.state.password
         }).then((res)=>{
+			this.Auth.clearToken();
             let token = res.data.token.replace(/Bearer/g, '').trim();
 
             this.Auth.setToken(token, ()=>{
@@ -82,7 +83,7 @@ class RegisterForm extends Component {
 
 	if(this.Auth.loggedIn()){
         if (this.state.user)
-            return <Redirect to='/Hub' user={this.state.user}/>
+            return <Redirect to='/Hub' user={this.Auth.getUser()}/>
 	} 
 	
     return (

@@ -7,8 +7,8 @@ import NavBar from '../NavBar/NavBar';
 
 class Hub extends React.Component{
 
-    constructor(props){
-        super(props);
+    constructor(){
+        super();
         this.state={ 
             logout: false, 
             searchTerm: '', 
@@ -31,7 +31,7 @@ class Hub extends React.Component{
  
     render(){
         //console.log("HUBS PROPS: ", this.props)
-        if(this.state.logout){
+        if(this.state.logout){ 
             return <Redirect to='/login'/>
         } 
 
