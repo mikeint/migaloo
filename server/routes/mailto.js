@@ -21,13 +21,13 @@ router.post("/", (req, res) => {
         let transporter = nodemailer.createTransport({ 
             service: 'gmail',
             auth: {
-                user: 'dellFineCarsEmail@gmail.com',
-                pass: 'Dell123!'
+                user: 'loginTestmailer@gmail.com',
+                pass: 'Login123!'
             }
         });
 
         let mailOptions = {
-            from: '"dellFineCarsEmail@gmail.com', // sender address
+            from: '"loginTestmailer@gmail.com', // sender address
             to: 'michael.sansone@hotmail.com', // list of receivers
             replyTo: 'michael.sansone@hotmail.com',
             subject: 'Hello ✔', // Subject line
