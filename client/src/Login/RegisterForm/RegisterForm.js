@@ -1,6 +1,6 @@
 import React, { Component } from 'react';  
 import axios from 'axios';
-import AuthFunctions from '../../../AuthFunctions';
+import AuthFunctions from '../../AuthFunctions';
 import { Redirect } from 'react-router-dom';
 
 import './RegisterForm.css';
@@ -83,7 +83,7 @@ class RegisterForm extends Component {
 
 	if(this.Auth.loggedIn()){
         if (this.state.user)
-            return <Redirect to='/Hub' />
+            return <Redirect to='/Choose' />
 	} 
 	
     return (

@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { Route, BrowserRouter } from "react-router-dom";
 import Landing from './layout/Landing/Landing';
-import Login from './Admin/Login/Login'; 
+import Login from './Login/Login'; 
+import Choose from './components/Choose/Choose'; 
 
-import Hub from './Admin/Hub/Hub';
+import Hub from './Hub/Hub';
 import PrivateRoute from './PrivateRoute';
 import AuthFunctions from './AuthFunctions'; 
 
@@ -32,6 +33,7 @@ class App extends Component {
             <BrowserRouter>
                 <React.Fragment>
                     <PrivateRoute exact path="/hub" component={Hub} user={this.state.user} token={this.state.token}/>
+                    <PrivateRoute exact path="/choose" component={Choose} user={this.state.user} token={this.state.token}/>
                     {/* <PrivateRoute exact path="/newPage" component={newPage} user={this.state.user} token={this.state.token}/> */}
                     <Route exact path="/" component={Landing} />
                     <Route exact path='/login' render={ () => (<Login />) } />{/* 

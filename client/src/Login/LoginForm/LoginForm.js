@@ -1,6 +1,6 @@
 import React, { Component } from 'react';  
 import axios from 'axios';
-import AuthFunctions from '../../../AuthFunctions';
+import AuthFunctions from '../../AuthFunctions';
 import { Redirect } from 'react-router-dom';
 
 import './LoginForm.css';

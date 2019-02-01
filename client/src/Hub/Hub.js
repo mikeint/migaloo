@@ -1,6 +1,6 @@
 import React from 'react';
 import './Hub.css';  
-import AuthFunctions from '../../AuthFunctions';
+import AuthFunctions from '../AuthFunctions';
 import { Redirect } from 'react-router-dom';
 //import axios from 'axios';
 import NavBar from '../NavBar/NavBar';
@@ -32,6 +32,7 @@ class Hub extends React.Component{
         } 
 
         var listItem = "empty";
+        console.log(this.props.choosen)
 
         return (
             <React.Fragment>

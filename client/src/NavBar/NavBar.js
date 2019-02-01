@@ -1,7 +1,7 @@
 import React from 'react';
 import './NavBar.css'; 
 import { Redirect} from "react-router-dom";
-import AuthFunctions from '../../AuthFunctions';
+import AuthFunctions from '../AuthFunctions';
 import { Link } from 'react-router-dom';
 //import axios from 'axios';
 
@@ -50,9 +50,8 @@ class NavBar extends React.Component{
         return (
             <React.Fragment> 
                 <div id="navBar_admin">
-                    <li><Link to="/newPage1"><div className="admNavBtn">Page1</div></Link></li>
-                    <li><Link to="/newPage2"><div className="admNavBtn">Page2</div></Link></li>
-                    <li><Link to="/newPage3"><div className="admNavBtn">Page3</div></Link></li> 
+                    <li><Link to="/newPage1"><div className="admNavBtn">Active Jobs</div></Link></li>
+                    <li><Link to="/newPage2"><div className="admNavBtn">Post a Job</div></Link></li> 
                     <li><div className="admNavBtn" onClick={this.handleLogout}><a target="_blank">Log Out</a></div></li>
                 </div>  
             </React.Fragment>
