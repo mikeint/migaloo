@@ -26,7 +26,7 @@ router.post('/saveType', passport.authenticate('jwt', { session: false }),  (req
     }
  
     const newProfile = new Profile({
-        id: req.body.user.id,
+        user_id: req.body.user._id,
         type: req.body.type
     }); 
     newProfile.save().then(profile => res.json(profile));
@@ -39,7 +39,7 @@ router.post('/saveType', passport.authenticate('jwt', { session: false }),  (req
 // @desc        get profile by ID
 // @access      Private
 router.get('/:id', /* passport.authenticate('jwt', { session: false }), */ (req, res) => {
-    Profile.findOne({ _id: req.params.id }).then(profile => { 
+    Profile.findOne({ user_id: req.params.id }).then(profile => { 
         return res.json(profile)
     }); 
 });

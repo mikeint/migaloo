@@ -31,7 +31,6 @@ class Choose extends React.Component{
 
  
     render(){
-        //console.log("ChooseS PROPS: ", this.props)
         if(this.state.chosen){ 
             return <Redirect to='/activeJobs'/>
         } 

@@ -7,6 +7,9 @@ const ProfileSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'users'
     },
+    user_id: {
+        type: String, 
+    },
     type: {
         type: String, 
     },
