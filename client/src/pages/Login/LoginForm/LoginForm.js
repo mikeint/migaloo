@@ -1,6 +1,6 @@
 import React, { Component } from 'react';  
 import axios from 'axios';
-import AuthFunctions from '../../AuthFunctions';
+import AuthFunctions from '../../../AuthFunctions';
 import { Redirect } from 'react-router-dom';
 
 import './LoginForm.css';
@@ -35,14 +35,11 @@ class LoginForm extends Component {
             let token = res.data.token.replace(/Bearer/g, '').trim();
 
             this.Auth.setToken(token, ()=>{
-                this.setState({
-                    token: token
-                })
+                this.setState({ token: token })
             });
-            
             this.Auth.setUser(res.data.user, () => {
                 this.setState({ user: res.data.user })
-            })
+            }) 
         })
     };
 
@@ -51,7 +48,7 @@ class LoginForm extends Component {
  
     if (this.state.user) {
         if(this.Auth.loggedIn())
-            return <Redirect to='/Hub' user={this.Auth.getUser()}/>
+            return <Redirect to='/activeJobs' user={this.Auth.getUser()}/>
     }
     
     return (

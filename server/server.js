@@ -2,8 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const users = require('./routes/api/users');
-//const testAPI = require('./routes/api/testAPI'); 
+const profile = require('./routes/api/profile');
 const mailto = require('./routes/mailto');  
+//const testAPI = require('./routes/api/testAPI'); 
 const passport = require('passport'); 
 const cors = require('cors');
 const methodOverride = require('method-override');
@@ -37,8 +38,9 @@ app.get('/', (req, res) => res.send("Hello World"));
 
 // USE routes
 app.use('/api/users', users);
-//app.use('/api/testAPI', testAPI);
+app.use('/api/profile', profile);
 app.use('/api/mailto', mailto);
+//app.use('/api/testAPI', testAPI);
 
 
  

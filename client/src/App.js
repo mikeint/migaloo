@@ -1,10 +1,12 @@
 import React, { Component } from "react";
 import { Route, BrowserRouter } from "react-router-dom";
 import Landing from './layout/Landing/Landing';
-import Login from './Login/Login'; 
+import Login from './pages/Login/Login'; 
 import Choose from './components/Choose/Choose'; 
 
-import Hub from './Hub/Hub';
+import ActiveJobs from './pages/ActiveJobs/ActiveJobs';
+import PostAJob from './pages/PostAJob/PostAJob';
+import Profile from './pages/Profile/Profile';
 import PrivateRoute from './PrivateRoute';
 import AuthFunctions from './AuthFunctions'; 
 
@@ -32,14 +34,14 @@ class App extends Component {
         return ( 
             <BrowserRouter>
                 <React.Fragment>
-                    <PrivateRoute exact path="/hub" component={Hub} user={this.state.user} token={this.state.token}/>
-                    <PrivateRoute exact path="/choose" component={Choose} user={this.state.user} token={this.state.token}/>
-                    {/* <PrivateRoute exact path="/newPage" component={newPage} user={this.state.user} token={this.state.token}/> */}
+                    <PrivateRoute exact path="/activeJobs" component={ActiveJobs} />
+                    <PrivateRoute exact path="/choose" component={Choose} />
+                    <PrivateRoute exact path="/postAJob" component={PostAJob} />
+                    <PrivateRoute exact path="/profile" component={Profile} />
+
                     <Route exact path="/" component={Landing} />
-                    <Route exact path='/login' render={ () => (<Login />) } />{/* 
+                    <Route exact path='/login' render={ () => (<Login />) } />
  
-                    <Route exact path="/about" component={Landing} /> 
-                    <Route exact path="/contact" component={Landing} /> */}
                 </React.Fragment>
             </BrowserRouter> 
         );

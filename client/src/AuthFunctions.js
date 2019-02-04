@@ -19,10 +19,18 @@ export default class AuthService {
     setUser(user, callback) {
         localStorage.setItem('user', JSON.stringify(user));
         callback && callback();
-    }
-
+    } 
     getUser() {
         return JSON.parse(localStorage.getItem('user'));
+    }
+    
+    setProfile(profileData, callback) {
+        localStorage.setItem('profile', JSON.stringify(profileData));
+        callback && callback();
+    }
+
+    getProfile(profileData, callback) {
+        return JSON.parse(localStorage.getItem('profile'));
     }
 
     clearToken() {

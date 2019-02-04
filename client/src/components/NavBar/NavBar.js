@@ -1,9 +1,14 @@
 import React from 'react';
 import './NavBar.css'; 
 import { Redirect} from "react-router-dom";
-import AuthFunctions from '../AuthFunctions';
+import AuthFunctions from '../../AuthFunctions';
 import { Link } from 'react-router-dom';
 //import axios from 'axios';
+
+import active_icon from '../../files/images/active_icon.svg';
+import post_icon from '../../files/images/post_icon.svg';
+import profile_icon from '../../files/images/profile_icon.svg';
+
 
 class NavBar extends React.Component{
 
@@ -36,10 +41,7 @@ class NavBar extends React.Component{
     handleLogout = () => {
         this.Auth.logout();
         this.setState({logout: true})
-    }
-    resetCarId = () => {
-        localStorage.removeItem('car_id');
-    }
+    } 
     /* ...NAV BAR functions... */
 
 
@@ -50,9 +52,10 @@ class NavBar extends React.Component{
         return (
             <React.Fragment> 
                 <div id="navBar_admin">
-                    <li><Link to="/newPage1"><div className="admNavBtn">Active Jobs</div></Link></li>
-                    <li><Link to="/newPage2"><div className="admNavBtn">Post a Job</div></Link></li> 
-                    <li><div className="admNavBtn" onClick={this.handleLogout}><a target="_blank">Log Out</a></div></li>
+                    <li><Link to="/activeJobs"><div className="navBtn"><img src={active_icon} alt="" /><div className="navText">Active Jobs</div></div></Link></li>
+                    <li><Link to="/postAJob"><div className="navBtn"><img src={post_icon} alt="" /><div className="navText">Post a Job</div></div></Link></li> 
+                    <li><Link to="/profile"><div className="navBtn"><img src={profile_icon} alt="" /><div className="navText">Profile</div></div></Link></li> 
+                    <li><div className="navBtn" onClick={this.handleLogout}><a target="_blank"><img src={profile_icon} alt="" /><div className="navText">Log Out</div></a></div></li>
                 </div>  
             </React.Fragment>
         );

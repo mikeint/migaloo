@@ -1,0 +1,42 @@
+#navBar_admin {
+    width: 100%;    
+    float: left;
+    background: #fff;
+}
+
+#navBar_admin li {
+    width: 25%;
+    height: 60px;
+    line-height: 50px;
+    color: #98b2da;
+    float: left;
+    list-style-type: none;
+    text-align: center; 
+    transition: 0.3s;
+}  
+.navBtn {
+    width: 100%;
+    float: left;
+    color: #98b2da;
+    font-weight: bold;
+    cursor: pointer;
+}
+.navBtn img {
+    text-align: center;
+    width: 20px;
+}
+
+.navText {
+    margin-top: -30px;
+}
+
+@media only screen and (max-width: 1024px) {  
+    #navBar_admin {
+        bottom: 0px;
+        position: fixed;
+    }  
+    .navText {
+        font-size: 10px;    
+        margin-top: -35px;
+    }
+}
