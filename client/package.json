@@ -4,11 +4,10 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
-    "jquery": "^3.3.1",
     "jwt-decode": "2.2.0",
     "react": "^16.4.2",
+    "react-animate-on-scroll": "^2.1.5",
     "react-dom": "^16.4.2",
-    "react-parallax": "^1.8.0",
     "react-router-dom": "^4.3.1",
     "react-scripts": "0.9.5",
     "react-share": "^2.2.0",

@@ -1,57 +1,57 @@
 import React, { Component } from 'react'; 
-import { /* Route ,*/ NavLink, BrowserRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import './Landing.css';
+import heroHome from '../../files/images/hero_2.jpg'; 
+import ScrollAnimation from 'react-animate-on-scroll';
 
-import './Landing.css'; 
-
-/* import About from '../About/About'; 
-import Contact from '../ContactPage/ContactPage';  
-*/
-
+import SocialSide from "../SocialSide/SocialSide"; 
+import ContactSection from "../ContactSection/ContactSection"; 
 
 class Landing extends Component {
 
-	toggleMobileMenu = () => { 
-		document.getElementById("nav-icon1").classList.remove("open");
-		document.getElementById("side-menu").classList.remove("active-side-menu");
-		window.scrollTo(0,0);
-	}
-
 	render() {
 		return (
-			<React.Fragment> 
-				<div className="navbarContainer">
-					<BrowserRouter>
-						<div> 
-							<div id="header">
-								<NavLink to="/"><div id="logo"></div></NavLink>
-								<div id="navBar">
-									<li className="navBarA"><NavLink exact to="/">Home</NavLink></li>
-									<li className="navBarA"><NavLink exact to="/about">About</NavLink></li>
-									<li className="navBarA"><NavLink exact to="/contact">Contact</NavLink></li>
-								</div>
+			<React.Fragment>
+				<SocialSide />
+				<div id="header">
+					<div id="logoContainer"><div className="logo">HR</div></div>
+					<div id="navBar">
+						<li className="navBarA noselect">Home</li>
+						<li className="navBarA noselect">Overview</li>
+						<li className="navBarA noselect">How it Works</li> 
+						<li className="navBarA noselect">Contact</li> 
+						<li className="navBarA noselect"><Link to="/login">Login</Link></li>
+					</div>
 
-								<div id="navBarMobile">
-									<div id="nav-icon1">
-										<span className="hmbSpanA"></span>
-										<span className="hmbSpanA"></span>
-										<span className="hmbSpanA"></span> 
-									</div>
-									<div className="side-menu" id="side-menu">
-										<li><NavLink exact to="/" onClick={this.toggleMobileMenu}>Home</NavLink></li> 
-										<li><NavLink exact to="/about" onClick={this.toggleMobileMenu}>About</NavLink></li>
-										<li><NavLink exact to="/contact" onClick={this.toggleMobileMenu}>Contact</NavLink></li>
-									</div>
-								</div>
-							</div>
-
-							<div className="mainContent">  
-							{/* <Route exact path="/about" component={About} />  
-								<Route exact path="/contact" component={Contact} /> */}
-							</div>
+					<div id="navBarMobile">
+						<div id="nav-icon1">
+							<span className="hmbSpanA"></span>
+							<span className="hmbSpanA"></span>
+							<span className="hmbSpanA"></span> 
 						</div>
-					</BrowserRouter>
-				</div>  
-				
+						<div className="side-menu" id="side-menu">
+							<li className="noselect">Home</li> 
+							<li className="noselect">Overview</li>
+							<li className="noselect">How it Works</li>
+							<li className="noselect">Contact Us</li>
+							<li className="noselect"><Link to="/login">Login</Link></li>
+						</div>
+					</div>
+				</div>
+
+				<div className="heroContainer">
+					<img src={heroHome} alt="" />
+					<div className="heroText"> 
+					<ScrollAnimation animateIn='bounceInLeft' initiallyVisible={true} animateOnce={true}>
+						A platform where EMPLOYERS<br/>post jobs to RECRUITERS.
+					</ScrollAnimation>
+					</div>
+				</div> 
+
+				<ContactSection />
+                
+ 
+
 			</React.Fragment>
 		);
   	}

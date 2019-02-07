@@ -9,10 +9,8 @@ router.post("/", (req, res) => {
         const htmlEmail = `
             <h3>CONTACT INFO</h3>
             <ul>
-                <li>First name: ${req.body.firstname}</li>
-                <li>Last name: ${req.body.lastname}</li>
-                <li>Email: ${req.body.email}</li>  
-                <li>Phone number: ${req.body.pnumber}</li>
+                <li>First name: ${req.body.firstname}</li> 
+                <li>Email: ${req.body.email}</li>   
             </ul>
             <br>
             <p>${req.body.message}</p>
@@ -39,8 +37,9 @@ router.post("/", (req, res) => {
             if (err) {
                 return console.log(err);
             }
-            console.log('Message sent: %s', info.messageId);
+            console.log('Message sent: %s', info.messageId); 
             //console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+            return res.json(info.messageId);
         });
 
     })
