@@ -57,9 +57,9 @@ class ContactSection extends Component {
 
         return (
             <div className="formBackground"> 
- 
                 <Form onSubmit={this.handleSubmit} id="theForm">
                     <div className="signUpContainer"> 
+                        <h1>CONTACT US</h1>
                         <div className="layerBackground"></div>
                         <div className="formSection">  
                             <div className="input-2">
@@ -98,7 +98,11 @@ class ContactSection extends Component {
                         </div> 
                         <div className="submitContainer">
                             {this.state.sending ?
-                                <div className="sendingContainer"><div className="sending"></div></div>
+                                <div className="sendingContainer">
+                                    <div className="loadingContainer">
+                                        <div className="loadContainer"><div className="load-shadow"></div><div className="load-box"></div></div>
+                                    </div>
+                                </div>
                             :
                             buttonSpot
                             }

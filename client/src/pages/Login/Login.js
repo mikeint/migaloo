@@ -28,8 +28,8 @@ class Login extends Component {
                                 <div><LoginForm /></div>
                                 :
                                 <div><RegisterForm/></div>
-                            }
-
+                            } 
+ 
                         </div>
                         <div id="tabContainer" className="tabContainer"> 
                             <div className={this.state.tabState==="1" ? "tab-item active" : "tab-item"} onClick={() => this.changeTab("1")}>Login</div>

@@ -80,7 +80,7 @@ class RegisterForm extends Component {
 
 	if(this.Auth.loggedIn()){
         if (this.state.user)
-            return <Redirect to='/Choose' />
+            return <Redirect to='/choose' />
 	} 
 	
     return (
@@ -114,7 +114,7 @@ class RegisterForm extends Component {
 					}
 				</div>
  
-				<input onClick={this.register} type="submit" className="loginBtn" />
+				<input onClick={this.register} type="submit" value="register" className="loginBtn" />
 			{/* </form> */}
 		</div> 
     );

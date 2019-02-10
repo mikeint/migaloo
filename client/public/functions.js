@@ -10,10 +10,11 @@ window.onload = function () {
 		}
 	}
 
-	window.onscroll = function () {
-		animateHeader()
-	};
 	var header = document.getElementById("header"); 
+	window.onscroll = function () {
+		if (header)
+			animateHeader()
+	};
 
 	function animateHeader() {
 		if (window.pageYOffset <= 0) {

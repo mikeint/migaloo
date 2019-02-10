@@ -11,10 +11,9 @@
 .icon-bar a {
 	display: block;
 	text-align: center;
-	padding: 15px;
+	padding: 10px;
 	transition: all 0.3s ease;
 	color: white;
-	font-size: 17px;
 	transition: 0.3s;
 } 
 .icon-bar a:hover {

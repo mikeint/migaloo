@@ -7,6 +7,10 @@ import ScrollAnimation from 'react-animate-on-scroll';
 import SocialSide from "../SocialSide/SocialSide"; 
 import ContactSection from "../ContactSection/ContactSection"; 
 
+import LandingSection1 from "../LandingSection1/LandingSection1"; 
+import LandingSection2 from "../LandingSection2/LandingSection2"; 
+import LandingSection3 from "../LandingSection3/LandingSection3"; 
+
 class Landing extends Component {
 
 	render() {
@@ -48,6 +52,9 @@ class Landing extends Component {
 					</div>
 				</div> 
 
+				<LandingSection1 />
+				<LandingSection2 />
+				<LandingSection3 />
 				<ContactSection />
                 
  

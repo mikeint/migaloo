@@ -11,7 +11,8 @@ class LoginForm extends Component {
 		this.state = {
             user: '',
 			email: '',
-            password: '', 
+            password: '',
+            errorList: '',
 		};
         this.Auth = new AuthFunctions();
     } 
@@ -40,8 +41,22 @@ class LoginForm extends Component {
             this.Auth.setUser(res.data.user, () => {
                 this.setState({ user: res.data.user })
             }) 
-        })
-    };
+        }).catch(errors => 
+            this.showErrors(errors)
+            )
+        };
+
+        showErrors = (errors) => {
+            
+            var tmpErrList = [];
+            var errArr = errors.response.data;
+            for (var key in errArr) {
+                if (errArr.hasOwnProperty(key)) {  
+                    tmpErrList.push(errArr[key]);
+                }
+            } 
+            this.setState({ errorList: tmpErrList }); 
+        };
 
   render() {
     const { email, password } = this.state;
@@ -62,6 +77,20 @@ class LoginForm extends Component {
                     <div className="formItem"> 
                         <input className="formControl" placeholder="password" name='password' type='password' onChange={this.handleChange} value={password} required />
                     </div>  
+
+                    <div className="errorsList">
+                        {
+                            this.state.errorList ?
+                                <ul>
+                                    {this.state.errorList.map((item, i) => {
+                                        return (<li key={i} className="errorItem">{item}</li>);
+                                    })}
+                                </ul>
+                            :
+                            "" 
+                        }
+                    </div> 
+                    
                     <input onClick={this.login} type="submit" value="Login" className="loginBtn" />
                 {/* </form> */}
 		</React.Fragment> 

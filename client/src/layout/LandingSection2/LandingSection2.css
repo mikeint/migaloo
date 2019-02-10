@@ -1,0 +1,50 @@
+.landingSection2 {
+    width: 100%;
+    float: left;
+    background:#1a2b6d;
+    margin: auto;
+    padding: 50px;
+    transition:0.3s;
+}
+.section2Container {
+    width: 80%; 
+    margin: auto;
+    text-align: left; 
+    color: #fff; 
+}
+
+.infoDivContainer {
+    width: 33.333%;
+    float: left;
+    padding: 20px;
+    color: #1a2b6d;
+    position: relative;
+}
+
+.infoDiv {
+    background: #fff;
+    width: 100%;
+    padding: 30px;
+} 
+
+
+
+@media only screen and (max-width: 1024px) {
+    .landingSection2 {
+        padding: 10px; 
+    } 
+    .infoDivContainer {
+        padding: 5px;
+    }
+    .infoDiv {
+        padding: 5px;
+    }
+}
+@media only screen and (max-width: 768px) { 
+    .infoDivContainer {
+        width: 100%;
+    }
+    .section2Container {
+        width: 90%;
+    }
+}

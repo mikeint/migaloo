@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const mongoose = require('mongoose');
 
 //load input validation
 const validateProfileInput = require('../../validation/profile');  
 // Load Profile Model
 const Profile = require('../../models/Profile'); 
+
+// Load Profile Model
+const User = require('../../models/User'); 
+
+
 
 // @route       GET api/profile/test
 // @desc        Tests profile route
@@ -24,12 +30,42 @@ router.post('/saveType', passport.authenticate('jwt', { session: false }),  (req
     if(!isValid) {
         return res.status(400).json(errors);
     }
- 
+    
+/* 
     const newProfile = new Profile({
         user_id: req.body.user._id,
         type: req.body.type
     }); 
     newProfile.save().then(profile => res.json(profile));
+ */
+
+
+ /*   User.findOne({ _id: req.body.user_id }).then(user => { 
+        if (!user) {
+            errors.user = 'User not defined';
+            console.log('User not defined');
+            return res.status(400).json(errors);
+        } else {
+            const newProfile = new Profile({
+                user_id: req.body.user._id,
+                type: req.body.type
+            }); 
+            newProfile.save().then(profile => res.json(profile));
+        }   */
+
+ 
+
+        User.findOneAndUpdate(
+            { _id: mongoose.Types.ObjectId(req.body.user._id) }, 
+            { $set: { "profileData.type": req.body.type }  }
+        ).then(user => res.json(user))
+        .catch(errors => {
+            console.log(errors)
+        })
+
+
+
+
   
 });
 

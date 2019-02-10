@@ -23,9 +23,9 @@ class Choose extends React.Component{
             type: type
         }
         axios.post('/api/profile/saveType', data, config).then((res)=>{
-            console.log(res.data)
+            console.log("returned user after choosing: ", res.data)
             this.Auth.setProfile(res.data);
-            this.setState({ chosen: true });
+            this.setState({ chosen: false });
         }); 
     }
 

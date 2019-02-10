@@ -1,5 +1,5 @@
 .formItem {
-	height: 50px;
+	height: 70px;
 	width: 100%;
     float: left;
 }
@@ -13,16 +13,29 @@
 	float: left;
 	padding: 10px;
 	border: 0px; 
-    font-size: 21px;
+	font-size: 18px;
+	background: none;
+	border-bottom: 1px solid #fff;
+	color: #fff; 
+}
+
+.formItem input::placeholder {
+	color: #fff; 
 }
 
 
 
 @media only screen and (max-width: 677px) {
 	.loginContent {
+		min-height:unset;
 		width: 100%;
-		border-radius: 0px;
+		border-radius: 0px; 
+		height: calc(100% - 110px);
 	} 
+	.loginMiddle { 
+		height: calc(100% - 130px);
+		position: fixed;
+	}  
 	.tabContainer {
 		width: 100%;
 	}
