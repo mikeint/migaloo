@@ -20,11 +20,11 @@ class Landing extends Component {
 				<div id="header">
 					<div id="logoContainer"><div className="logo">HR</div></div>
 					<div id="navBar">
-						<li className="navBarA noselect">Home</li>
-						<li className="navBarA noselect">Overview</li>
-						<li className="navBarA noselect">How it Works</li> 
-						<li className="navBarA noselect">Contact</li> 
-						<li className="navBarA noselect"><Link to="/login">Login</Link></li>
+						<li className="navBarA">Home</li>
+						<li className="navBarA">Overview</li>
+						<li className="navBarA">How it Works</li> 
+						<li className="navBarA">Contact</li> 
+						<li className="navBarA"><Link to="/login">Login</Link></li>
 					</div>
 
 					<div id="navBarMobile">
@@ -34,11 +34,11 @@ class Landing extends Component {
 							<span className="hmbSpanA"></span> 
 						</div>
 						<div className="side-menu" id="side-menu">
-							<li className="noselect">Home</li> 
-							<li className="noselect">Overview</li>
-							<li className="noselect">How it Works</li>
-							<li className="noselect">Contact Us</li>
-							<li className="noselect"><Link to="/login">Login</Link></li>
+							<li>Home</li> 
+							<li>Overview</li>
+							<li>How it Works</li>
+							<li>Contact Us</li>
+							<li><Link to="/login">Login</Link></li>
 						</div>
 					</div>
 				</div>

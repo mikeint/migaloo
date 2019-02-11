@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Button, Form } from 'reactstrap';
 import axios from 'axios';
 
+import Loader from '../../components/Loader/Loader';
+
 import './ContactSection.css'; 
 
 class ContactSection extends Component {
@@ -52,7 +54,7 @@ class ContactSection extends Component {
         const buttonSpot = this.state.buttonState ?
             (<div id='formSubmitText'> Thank you for filling out the form.< br />  Your information has been successfully sent!</div>)
             :
-            (<Button id='formSubmit' className="noselect">Submit</Button>)
+            (<Button id='formSubmit'>Submit</Button>)
 
 
         return (
@@ -98,11 +100,7 @@ class ContactSection extends Component {
                         </div> 
                         <div className="submitContainer">
                             {this.state.sending ?
-                                <div className="sendingContainer">
-                                    <div className="loadingContainer">
-                                        <div className="loadContainer"><div className="load-shadow"></div><div className="load-box"></div></div>
-                                    </div>
-                                </div>
+                               <Loader />
                             :
                             buttonSpot
                             }

@@ -35,9 +35,10 @@ class App extends Component {
             <BrowserRouter>
                 <React.Fragment>
                     <PrivateRoute exact path="/activeJobs" component={ActiveJobs} />
-                    <PrivateRoute exact path="/choose" component={Choose} />
                     <PrivateRoute exact path="/postAJob" component={PostAJob} />
-                    <PrivateRoute exact path="/profile" component={Profile} />
+                    <PrivateRoute exact path="/profile" component={Profile} /> 
+                    
+                    <PrivateRoute exact path="/choose" component={Choose} />
 
                     <Route exact path="/" component={Landing} />
                     <Route exact path='/login' render={ () => (<Login />) } />
