@@ -5,7 +5,7 @@ module.exports = function validateProfileInput(data) {
     let errors = {};
 
     if (Validator.isEmpty(data.type)) {
-        errors.skills = "Type is required"
+        errors.type = "Type is required"
     }
   
     return {

@@ -10,11 +10,12 @@ class Choose extends React.Component{
         super();
         this.state={
             chosen: false, 
+            user:''
         }
         this.Auth = new AuthFunctions();
     }
 
-    saveChoose = (type) => { 
+    saveChoose = (type) => {
         var config = {
             headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
         }
@@ -23,16 +24,15 @@ class Choose extends React.Component{
             type: type
         }
         axios.post('/api/profile/saveType', data, config).then((res)=>{
-            console.log("returned user after choosing: ", res.data)
-            this.Auth.setProfile(res.data);
-            this.setState({ chosen: false });
+            this.Auth.setUser(res.data); 
+            this.setState({ user: res.data }); 
         }); 
     }
 
  
     render(){
-        if(this.state.chosen){ 
-            return <Redirect to='/activeJobs'/>
+        if(this.state.user){  
+            return <Redirect to='/activeJobs' />
         } 
  
         return (

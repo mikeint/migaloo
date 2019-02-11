@@ -60,7 +60,7 @@ class LoginForm extends Component {
 
   render() {
     const { email, password } = this.state;
- 
+
     if (this.state.user) {
         if(this.Auth.loggedIn())
             return <Redirect to='/activeJobs' user={this.Auth.getUser()}/>

@@ -1,5 +1,5 @@
 .formItem {
-	height: 70px;
+	height: 60px;
 	width: 100%;
     float: left;
 }
@@ -28,15 +28,20 @@
 @media only screen and (max-width: 677px) {
 	.loginContent {
 		min-height:unset;
+		position: fixed;
 		width: 100%;
+		padding: 0px 30px;
 		border-radius: 0px; 
-		height: calc(100% - 110px);
+		height: 100%;
+		top: 0px;
 	} 
 	.loginMiddle { 
-		height: calc(100% - 130px);
-		position: fixed;
+		height: 100%;
+		position: relative;
 	}  
 	.tabContainer {
+		position: fixed;
+		bottom: 0px;
 		width: 100%;
 	}
 }

@@ -22,6 +22,7 @@ window.onload = function () {
 		} else {
 			header.classList.add("smallHeader");
 		}
-	}
+	} 
 
+	
 }
