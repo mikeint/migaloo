@@ -3,6 +3,8 @@
     height: 60px;
     float: left;
     text-align: center;
+    background: #fff;
+    border-bottom: 1px solid #e2e2e2;
 }
 
 .topBarLogo{

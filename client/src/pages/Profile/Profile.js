@@ -43,6 +43,10 @@ class Profile extends React.Component{
                     </div>
                     <div className='profileBottom'>
                         
+                    <div className="profileItem"><a target="_blank"><div className="">Preferences</div></a></div>
+                        <div className="profileItem"><a target="_blank"><div className="">Account Settings</div></a></div>
+                        <div className="profileItem"><a target="_blank"><div className="">Preferences</div></a></div>
+                        <div className="profileItem"><a target="_blank"><div className="">Account Settings</div></a></div>
                         <div className="profileItem"><a target="_blank"><div className="">Preferences</div></a></div>
                         <div className="profileItem"><a target="_blank"><div className="">Account Settings</div></a></div>
                         <div className="profileItem" onClick={this.handleLogout}><a target="_blank"><div className="">Log Out</div></a></div>
