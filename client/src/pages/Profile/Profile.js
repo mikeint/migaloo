@@ -4,6 +4,8 @@ import AuthFunctions from '../../AuthFunctions';
 import NavBar from '../../components/NavBar/NavBar';
 import TopBar from '../../components/TopBar/TopBar';
 
+import profileImg from '../../files/images/profileImg.png'
+
 class Profile extends React.Component{
 
     constructor(){
@@ -26,17 +28,26 @@ class Profile extends React.Component{
         this.setState({logout: true})
     }
   
-    render(){  
-        var listItem = "empty";  
+    render(){   
 
         return (
             <React.Fragment>
                 <NavBar /> 
                 <TopBar /> 
-                <div className='mainContainer'>
-                   Profile
-                    {listItem === "notEmpty" ? "" : <div className="loadingContainer"><div className="loadContainer"><div className="load-shadow"></div><div className="load-box"></div></div></div>}
-                    <div className="button" onClick={this.handleLogout}><a target="_blank"><div className="">Log Out</div></a></div>
+                <div className='mainContainer'>  
+
+                    <div className='profileImage'>
+                        <img src={profileImg} alt="" />
+                        <div className="profileName">{this.state.user.name}</div>
+                        <div className="profileEmail">{this.state.user.email}</div>
+                    </div>
+                    <div className='profileBottom'>
+                        
+                        <div className="profileItem"><a target="_blank"><div className="">Preferences</div></a></div>
+                        <div className="profileItem"><a target="_blank"><div className="">Account Settings</div></a></div>
+                        <div className="profileItem" onClick={this.handleLogout}><a target="_blank"><div className="">Log Out</div></a></div>
+                    </div>
+
                 </div> 
             </React.Fragment>
         );

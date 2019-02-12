@@ -4,6 +4,7 @@
     float: left;
     background: #fff;
     border-top: 1px solid #cccccc;
+    z-index: 99;
 }
 
 #navBar_admin a {
@@ -14,18 +15,21 @@
     text-align: center;
     transition: 0.3s;
 }
-#navBar_admin .active {
-    background: #5a6592;
-    color: #fff;
+ 
+
+#navBar_admin .active .navBtn {
+    background: #5a659226;
+    color: #5a6592;
 }
 
 .navBtn {
-    width: 100%;
-    height: 100%;
-    float: left;
-    color: #98b2da;
+    width: 100px;
+    height: 50px;
     font-weight: bold;
     cursor: pointer;
+    margin: auto;
+    margin-top: 5px;
+    border-radius: 8px;
 }
 .navBtn img {
     text-align: center;

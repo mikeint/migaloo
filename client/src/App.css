@@ -52,24 +52,26 @@ a {
 
 .mainContainer {
     width: 100%; 
-    float: left; 
-    background:#5a6592;
-}  
+    float: left;  
+}
+.pageHeading {
+    width: 90%;
+    margin: auto;
+    font-weight: bold;
+    font-size: 24px;
+    padding: 10px;
+    border-bottom: 1px solid #e2e2e2;
+}
+
+
+
 @media only screen and (max-width: 1024px) {
     .mainContainer { 
         margin-bottom: 60px;
         margin-top: 60px;
     } 
 }
-
-.button {
-    width: 200px;
-    padding: 20px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 16px;
-    background: #b1b9db;
-}
+ 
 
 
 .mc_1 {

@@ -7,7 +7,7 @@ class TopBar extends React.Component{
         return (
             <React.Fragment>
                 <div className="topBar">
-                    image
+                    <div className="topBarLogo">HR</div>
                 </div> 
             </React.Fragment>
         );

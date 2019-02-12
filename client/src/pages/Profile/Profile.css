@@ -1,0 +1,30 @@
+.profileImage {
+    text-align: center;
+}
+.profileName {
+    font-size: 20px;
+    font-weight: bold;
+}
+.profileEmail {
+    padding-bottom: 20px;
+    font-size: 12px;
+}
+
+.profileBottom {
+    width: 100%; 
+    background: #1a2b6d;
+    padding: 20px;
+}
+.profileBottom .profileItem:last-child {
+    border-bottom: 0px;
+}
+
+.profileItem {  
+    width: 100%;
+    padding: 20px; 
+    font-weight: bold;
+    font-size: 14px; 
+    color: #fff;
+    border-bottom: 1px solid #5a6592;
+} 
+ 

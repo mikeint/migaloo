@@ -2,12 +2,12 @@ import React from 'react';
 import './ActiveJobs.css';    
 import NavBar from '../../components/NavBar/NavBar';
 import TopBar from '../../components/TopBar/TopBar';
-import Loader from '../../components/Loader/Loader';
+//import Loader from '../../components/Loader/Loader';
 
 class ActiveJobs extends React.Component{
  
     render(){  
-        var listItem = "empty";  
+        /* var listItem = "empty";  */ 
 
         return (
             <React.Fragment>
@@ -15,8 +15,12 @@ class ActiveJobs extends React.Component{
                 <TopBar />
                
                 <div className='mainContainer'>
-                    Active Jobs
-                    {listItem === "notEmpty" ? "" : <Loader />}
+                    <div className="pageHeading">Active Jobs</div>
+                    <div className="addJobButton">+</div>
+                    <div className="noJobsText">No jobs listed</div>
+                    
+
+                    {/* listItem === "notEmpty" ? "" : <Loader /> */}
                 </div> 
             </React.Fragment>
         );

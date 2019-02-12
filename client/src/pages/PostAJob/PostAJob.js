@@ -13,7 +13,7 @@ class PostAJob extends React.Component{
                  <TopBar />
 
                 <div className='mainContainer'>
-                    post a job
+                    <div className="pageHeading">Post a job</div>
                 </div> 
             </React.Fragment>
         );
