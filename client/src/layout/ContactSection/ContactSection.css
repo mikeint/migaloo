@@ -92,8 +92,7 @@ textarea:focus,
 }
 .btn-secondary {
     width: 180px; 
-    padding: 10px; 
-    cursor: pointer;
+    padding: 10px;  
     font-size: 30px; 
     letter-spacing: 3px;
     font-weight: bold;

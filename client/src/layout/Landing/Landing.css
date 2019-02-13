@@ -89,8 +89,7 @@
     font-weight: bold; 
     font-size: 21px;
     list-style-type: none;
-    float: left;
-    cursor: pointer;
+    float: left; 
     padding: 0px 10px;
 } 
 
@@ -169,8 +168,7 @@
     -webkit-transition: 0.3s;
     -o-transition: 0.3s;
     transition: 0.3s;
-    text-decoration: none; 
-    cursor: pointer;
+    text-decoration: none;  
 } 
 #nav-icon1 {
     width: 60px;
@@ -183,8 +181,7 @@
     -webkit-transition: .5s ease-in-out;
     -moz-transition: .5s ease-in-out;
     -o-transition: .5s ease-in-out;
-    transition: .5s ease-in-out;
-    cursor: pointer;
+    transition: .5s ease-in-out; 
     float: right;	
     z-index: 10;
 }

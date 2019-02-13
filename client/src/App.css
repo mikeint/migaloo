@@ -115,3 +115,35 @@ a {
 		background-position: 0% 50%
 	}
 }
+
+
+
+
+
+/* HR Overlay */
+
+.HROverlay {  
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background: #1a2b6d;
+    z-index: 99999;   
+}
+.middleOverlay {
+    width: 100px;
+    height: 100px;
+    background-color: #fff; 
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0; 
+    margin: auto;
+    font-size: 40px;
+    text-align: center;
+    line-height: 90px;
+    color: #fff;
+    background: #1a2b6d;
+    border: 5px solid #fff;
+    font-weight: bold;
+}

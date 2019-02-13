@@ -40,6 +40,6 @@ export default class AuthService {
     logout() {
         // Clear user token and profile data from localStorage
         localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        localStorage.removeItem('user'); 
     }
 }

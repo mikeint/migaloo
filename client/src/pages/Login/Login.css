@@ -46,8 +46,7 @@
 .tab-item {
     width: 50%;
     height: 100%;
-    float: left;
-    cursor: pointer;
+    float: left; 
     text-align: center;
     line-height: 100px;
     color: #ffffff;

@@ -63,7 +63,8 @@ class LoginForm extends Component {
 
     if (this.state.user) {
         if(this.Auth.loggedIn())
-            return <Redirect to='/activeJobs' user={this.Auth.getUser()}/>
+            sessionStorage.setItem("showOverlay", true);
+            return <Redirect to='/activeJobs'/>
     }
     
     return (

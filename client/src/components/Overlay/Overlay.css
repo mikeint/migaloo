@@ -1,0 +1,83 @@
+.addButton{
+    width: 50px;
+    height: 50px;
+    background: #83c1d5;
+    color: white;
+    margin: auto;
+    font-size: 90px;
+    padding: 0px;
+    line-height: 53px;
+    cursor: pointer;
+    border-radius: 10px; 
+} 
+.back {
+    width: 30px;
+    height: 50px;
+    background: #a7a7a7;
+    color: white;
+    font-size: 30px;
+    line-height: 45px;
+    cursor: pointer;
+    text-align: center;
+}
+
+
+
+
+.menu {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 150;
+}
+.menu--visible {
+    pointer-events: auto;
+}
+.app-menu {
+    background-color: #fff; 
+    position: relative; 
+    width: 95%;
+    margin-left: 5%;
+    height: 100%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    -webkit-transform: translateX(103%);
+            transform: translateX(103%); 
+
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+    z-index: 160;
+    pointer-events: auto;            
+}
+.menu--visible .app-menu {
+    -webkit-transform: none;
+            transform: none;
+}
+.menu--animatable .app-menu {
+    transition: all 130ms ease-in;
+}
+.menu--visible.menu--animatable  .app-menu {
+    transition: all 330ms ease-out;
+}
+.menu:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    will-change: opacity;
+    pointer-events: none;
+    transition: opacity 0.3s cubic-bezier(0,0,0.3,1);
+}
+.menu--visible.menu:after {
+    opacity: 1;
+    pointer-events: auto;
+}

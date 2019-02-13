@@ -8,10 +8,25 @@
     color: #fff;
     background: #e6e8ef;
     margin: auto;
+    margin-top: 30px; 
 }
 
 .noJobsText {
     text-align: center;
     font-size: 10px;
     padding: 10px;
+}
+
+
+.jobListContainer {
+    width: 100%;
+    float: left;
+} 
+.jobListContainer .jobListItem:nth-child(odd) { 
+    background: #e6e8ef3d;
+} 
+.jobListItem{ 
+    padding: 10px;
+    font-size: 15px;
+    font-weight: bold;
 }

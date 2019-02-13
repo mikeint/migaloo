@@ -4,10 +4,19 @@
 .profileName {
     font-size: 20px;
     font-weight: bold;
+    border-bottom: 1px solid #e2e2e2;
+    width: 340px;
+    margin: auto;
+}
+.profileType {
+    font-size: 32px;
+    color: #1a2b6d;
+    font-weight: bold;
+    padding-top: 10px;
 }
 .profileEmail {
-    padding-bottom: 20px;
     font-size: 12px;
+    padding-bottom: 20px; 
 }
 
 .profileBottom {
@@ -27,4 +36,3 @@
     color: #fff;
     border-bottom: 1px solid #5a6592;
 } 
- 
