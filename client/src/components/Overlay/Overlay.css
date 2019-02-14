@@ -1,26 +1,38 @@
-.addButton{
-    width: 50px;
-    height: 50px;
-    background: #83c1d5;
-    color: white;
-    margin: auto;
-    font-size: 90px;
-    padding: 0px;
-    line-height: 53px;
-    cursor: pointer;
-    border-radius: 10px; 
-} 
-.back {
+ .back {
     width: 30px;
-    height: 50px;
-    background: #a7a7a7;
-    color: white;
+    height: 50px;    
+    color: #fff;
+    background: #1a2b6d;
     font-size: 30px;
     line-height: 45px;
     cursor: pointer;
     text-align: center;
+} 
+.back_t-r {
+    right: 0px;
+    position: absolute;
 }
+.back_t-l {
+    left: 0px;
+    position: absolute;
+}
+.back_t-m {
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px; 
 
+} 
+.back_b-m {
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    bottom: 0px;
+    position: absolute;
+}
 
 
 
@@ -53,6 +65,32 @@
     z-index: 160;
     pointer-events: auto;            
 }
+.app-menu_l-r {
+    -webkit-transform: translateX(-103%);
+    transform: translateX(-103%); 
+    margin-left: -5%;
+}
+.app-menu_b-t {
+    -webkit-transform: translateY(103%);
+    transform: translateY(103%); 
+    width: 95%;
+    margin-left: 2.5%; 
+    margin-top: 2.5%;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+.app-menu_t-b {
+    -webkit-transform: translateY(-103%);
+    transform: translateY(-103%); 
+    width: 95%;
+    height: 98.5%;
+    margin-left: 2.5%; 
+    margin-bottom: 2.5%;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+
 .menu--visible .app-menu {
     -webkit-transform: none;
             transform: none;

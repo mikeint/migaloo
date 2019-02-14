@@ -63,7 +63,7 @@ class LoginForm extends Component {
 
     if (this.state.user) {
         if(this.Auth.loggedIn())
-            sessionStorage.setItem("showOverlay", true);
+            sessionStorage.setItem("HROverlay", true);
             return <Redirect to='/activeJobs'/>
     }
     

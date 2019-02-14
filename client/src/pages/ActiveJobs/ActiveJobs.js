@@ -7,24 +7,45 @@ import Overlay from '../../components/Overlay/Overlay';
 //import Loader from '../../components/Loader/Loader';
 
 import '../../constants/AnimateOverlay';
+ 
+const obj = [
+    {
+        "title": "Front end web Developer",
+        "paragraph": "Our client located in Mississauga is looking for a Full stack .NET Developer with at least 2 years of work experience.",
+        "location": "Guelph, ON"
+    },
+    {
+        "title": "Huge scalable app",
+        "paragraph": "VIZIYA, a software company that provides Global 1000 customers in manufacturing and energy with ERP software solutions, has engaged my company to manage their recruitment. VIZIYA has been establishing its brand over the last ten years; with a global expansion and a new cloud strategy in place they are adding to their teams. To that end, as part of the internal recruitment team, I am looking for a creative, innovative and disciplined Front End Developer to join a new team. It’s an opportunity to work on new applications, leverage CI/CD processes, and set the standards for the team to follow and maintain. If you have deep hands-on experience in a range of front end and cloud technologies including Javascript, Angular and React, this is the opportunity to step up to the challenge of building something new for enterprise clients around the world.",
+        "location": "Mississauga, ON"
+    }, 
+    {
+        "title": "Sr Front-End Developer",
+        "paragraph": "We are looking for a Front-End Web Developer who is motivated to combine the art of design with the art of programming. Responsibilities will include translation and creation of the UI/UX design wireframes to actual code that will produce visual elements of the application. You will work with Business Analysts and UI/UX designers to bridge the gap between graphical design and technical implementation, taking an active role on both sides and defining how the ",
+        "location": "Toronto, ON"
+    },
+]
+
 
 class ActiveJobs extends React.Component{
 
     constructor(props) {
         super(props);
 		this.state = {
-            showOverlay: false,
+            HROverlay: false,
             jobList: false,
+            showOverlay: false,
+            overlayConfig: {direction: "app-menu_r-l", backButtonLocation: "back_t-l"}
         };
     }
 
     componentWillMount = () => {
-        this.setState({ showOverlay: sessionStorage.getItem("showOverlay") });
-        sessionStorage.removeItem('showOverlay');
+        this.setState({ HROverlay: sessionStorage.getItem("HROverlay") });
+        sessionStorage.removeItem('HROverlay');
     }
 
     componentDidMount = () => {
-        if(this.state.showOverlay) {
+        if(this.state.HROverlay) {
             window.FX.fadeOut(document.getElementById('fadeOutOverlay'), {
                 duration: 1500, complete: function() {  
                     document.getElementById("fadeOutOverlay").style.display = "none";
@@ -32,15 +53,23 @@ class ActiveJobs extends React.Component{
             })
         }
     } 
+    callOverlay = () => {
+        this.setState({ showOverlay : !this.state.showOverlay })
+    }
 
     render(){
         /* var listItem = "empty";  */ 
+        let html = `<div className='jobTitle'>${obj[0].title}</div>
+                    <div className='jobParagraph'>${obj[0].paragraph}</div>
+                    <div className='jobLocation'>${obj[0].location}</div> 
+                    `
+        
 
         return (
             <React.Fragment> 
 
 
-                { this.state.showOverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
+                { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                 <NavBar />
                 <TopBar />
                
@@ -50,29 +79,14 @@ class ActiveJobs extends React.Component{
                     {
                         !this.state.jobList ?
                             <div className="jobListContainer">
-                                <Overlay class=".jobListItem" />
-                                <div className="jobListItem" onClick={this.showJobInfo}>Front end web dev</div>
-                                <div className="jobListItem">Back end web dev</div>
-                                <div className="jobListItem">C#.net dev</div>
-                                <div className="jobListItem">Unity developer with 3+ years</div> 
-                                <div className="jobListItem">Back end web dev</div>
-                                <div className="jobListItem">C#.net dev</div>
-                                <div className="jobListItem">Unity developer with 3+ years</div>  
-                                <div className="jobListItem">Back end web dev</div>
-                                <div className="jobListItem">C#.net dev</div>
-                                <div className="jobListItem">Unity developer with 3+ years</div>  
-                                <div className="jobListItem">Back end web dev</div>
-                                <div className="jobListItem">C#.net dev</div>
-                                <div className="jobListItem">Unity developer with 3+ years</div>
-                                <div className="jobListItem">Back end web dev</div>
-                                <div className="jobListItem">C#.net dev</div>
-                                <div className="jobListItem">Unity developer with 3+ years</div>
-                                <div className="jobListItem">Back end web dev</div>
-                                <div className="jobListItem">C#.net dev</div>
-                                <div className="jobListItem">Unity developer with 3+ years</div>
-                                <div className="jobListItem">Back end web dev</div>
-                                <div className="jobListItem">C#.net dev</div>
-                                <div className="jobListItem">Unity developer with 3+ years</div>
+                                  {obj.map((item, i) => {
+                                    return <div className="addButton jobListItem" key={i}  onClick={this.callOverlay}>{item.title}</div>
+                                })}
+                                {this.state.showOverlay && <Overlay 
+                                                                html={html} 
+                                                                callOverlay={this.callOverlay} 
+                                                                config={this.state.overlayConfig}
+                                                            />}
                             </div>
                         :
                             <React.Fragment>
