@@ -49,7 +49,6 @@ CREATE TABLE employer (
     contact_given_name varchar(128) NOT NULL,
     contact_family_name varchar(128) NOT NULL,
     contact_phone_number  varchar(32) NULL,
-    contact_email  varchar(128) NULL,
     company_name  varchar(128) NULL,
     image_id bigint,
     PRIMARY KEY(employer_id)
