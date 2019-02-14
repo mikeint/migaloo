@@ -114,7 +114,7 @@ router.post('/register', (req, res) => {
 // @route       GET api/user/current
 // @desc        return current user
 // @access      Private3
-router.get('/current', passport.authenticate, (req, res) => {
+router.get('/current', passport.authentication, (req, res) => {
     const avatar = gravatar.url(req.body.jwtPayload.user_id, {
         s: '200', // Size
         r: 'pg', // Rating
