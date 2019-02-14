@@ -45,21 +45,23 @@ CREATE TABLE address (
 );
 CREATE TABLE employer (
     employer_id bigint REFERENCES login(user_id),
+    address_id bigint REFERENCES address(address_id),
     contact_given_name varchar(128) NOT NULL,
     contact_family_name varchar(128) NOT NULL,
     contact_phone_number  varchar(32) NULL,
-    contact_email  varchar(32) NULL,
+    contact_email  varchar(128) NULL,
     company_name  varchar(128) NULL,
-    address_id bigint REFERENCES address(address_id),
+    image_id bigint,
     PRIMARY KEY(employer_id)
 );
 CREATE TABLE recruiter (
     recruiter_id bigint REFERENCES login(user_id),
+    address_id bigint REFERENCES address(address_id),
     given_name varchar(128) NOT NULL,
     family_name varchar(128) NOT NULL,
     phone_number  varchar(32) NULL,
-    address_id bigint REFERENCES address(address_id),
-    coins int NOT NULL,
+    coins int DEFAULT 0 NOT NULL,
+    image_id bigint,
     PRIMARY KEY(recruiter_id)
 );
 CREATE TABLE job_posting (
@@ -74,7 +76,7 @@ CREATE TABLE candidate (
     candidate_id bigserial,
     given_name varchar(128) NOT NULL,
     family_name varchar(128) NOT NULL,
-    email varchar(355) UNIQUE NOT NULL,
+    email varchar(128) NOT NULL,
     created_on timestamp NOT NULL,
     PRIMARY KEY(candidate_id)
 );
@@ -121,11 +123,11 @@ INSERT INTO tags (tag_name) VALUES
     ('Leadership'),
     ('Agile');
 INSERT INTO login (email, passwordhash, created_on, user_type_id) VALUES 
-    ('r1@test.com', '9F86D081884C7D659A2FEAA0C55AD015A3BF4F1B2B0B822CD15D6C15B0F00A08', TIMESTAMP '2015-04-28 10:23:54', 1), -- Add Recruiter, pass: test
-    ('r2@test.com', '9F86D081884C7D659A2FEAA0C55AD015A3BF4F1B2B0B822CD15D6C15B0F00A08', TIMESTAMP '2018-03-25 10:23:54', 1), -- Add Recruiter, pass: test
-    ('r3@test.com', '9F86D081884C7D659A2FEAA0C55AD015A3BF4F1B2B0B822CD15D6C15B0F00A08', TIMESTAMP '2018-03-25 10:23:54', 1), -- Add Recruiter, pass: test
-    ('e1@test.com', '9F86D081884C7D659A2FEAA0C55AD015A3BF4F1B2B0B822CD15D6C15B0F00A08', TIMESTAMP '2006-07-21 10:23:54', 2), -- Add Employer, pass: test
-    ('e2@test.com', '9F86D081884C7D659A2FEAA0C55AD015A3BF4F1B2B0B822CD15D6C15B0F00A08', TIMESTAMP '2008-02-28 10:23:54', 2); -- Add Employer, pass: test
+    ('r1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2015-04-28 10:23:54', 1), -- Add Recruiter, pass: test
+    ('r2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-03-25 10:23:54', 1), -- Add Recruiter, pass: test
+    ('r3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-03-25 10:23:54', 1), -- Add Recruiter, pass: test
+    ('e1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2006-07-21 10:23:54', 2), -- Add Employer, pass: test
+    ('e2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2008-02-28 10:23:54', 2); -- Add Employer, pass: test
 INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('123 Main St.', 'Toronto', 'ON', 'CA', point(43.6531, -79.3831));
 INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('4312 Dundas Rd.', 'Toronto', 'ON', 'CA', point(43.6533, -79.3833));
 INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('21 Backersfield Rd.', 'North York', 'ON', 'CA', point(43.65335, -79.38325));
