@@ -2,18 +2,27 @@ const express = require('express');
 const router = express.Router();
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const keys = require('../../config/keys');
-const passport = require('passport');
+const passport = require('../../config/passport');
 
-//load User model
-const User = require('../../models/User')
+const postgresdb = require('../../config/db').postgresdb;
 
 //load input validation
 const validateRegisterInput = require('../../validation/register'); 
 const validateLoginInput = require('../../validation/login');
 
-
+function getHash(password){
+    return new Promise((resolve, reject)=>{
+        bcrypt.genSalt(10, (err, salt) => {
+            if(err)
+                return reject(err)
+            bcrypt.hash(password, salt, (err, hash) => {
+                if(err)
+                    return reject(err)
+                resolve(hash)
+            });
+        });
+    })
+}
 // @route       GET api/user/login
 // @desc        Login user route
 // @access      Public
@@ -27,33 +36,31 @@ router.post('/login', (req, res) => {
 
     const email = req.body.email;
     const password = req.body.password;
-
-    User.findOne({
-        email: req.body.email
-    }).then(user => {
+    postgresdb.one('SELECT user_id, passwordhash, user_type_id FROM login WHERE email = $1', email).then(user => {
+        console.log(user)
         if (!user) {
             errors.email = 'Email not registered';
             console.log('Email not registered');
             return res.status(400).json(errors);
         } else {
-
-            bcrypt.compare(password, user.password).then(isMatch => {
+            bcrypt.compare(password, user.passwordhash).then(isMatch => {
                 if(isMatch) {
                     //create jwt payload
                     const payload = {
-                        id: user.id,
+                        id: user.user_id,
                         name: user.name,
-                        avatar: user.avatar
+                        userType: user.user_type_id,
+                        email: email
                     }
-                    
                     //make JWT token (sign token) (payload obj, secretKey, expires obj) 
-                    jwt.sign(payload, keys.secretOrKey, { expiresIn: 3600 }, (err, token) => {
+                    passport.signToken(payload).then((token)=>{
                         res.json({
                             success: true, 
-                            token: 'Bearer ' + token,
-                            user: user
+                            token: 'Bearer ' + token
                         })
-                    });
+                    }, (err)=>{
+                        res.status(400).json(err)
+                    })
 
                 } else {
                     errors.password = "Password Incorrect";
@@ -65,6 +72,16 @@ router.post('/login', (req, res) => {
     });
 });
 
+function checkEmailExists(email){
+    return new Promise((resolve, reject)=>{
+        postgresdb.one('SELECT user_id FROM login WHERE email = $1', email).then(user => {
+            if(user && user.user_id)
+                resolve(user)
+            else
+                resolve()
+        });
+    })
+}
 
 // @route       GET api/user/register
 // @desc        Register user route
@@ -75,36 +92,20 @@ router.post('/register', (req, res) => {
     if (!isValid) {
         return res.status(400).json(errors);
     }
-
-    User.findOne({ email: req.body.email }).then(user => {
+    checkEmailExists(req.body.email).then(user => {
         if (user) {  
             console.log('Email already exists');
             errors.email = 'Email already exists';
             return res.status(400).json(errors);
         } else {
-            const avatar = gravatar.url(req.body.email, {
-                s: '200', // Size
-                r: 'pg', // Rating
-                d: 'mm' // Default
-            });
-            const newUser = new User({
-                name: req.body.name,
-                email: req.body.email,
-                avatar,
-                password: req.body.password
-            });
-            
-            bcrypt.genSalt(10, (err, salt) => {
-                bcrypt.hash(newUser.password, salt, (err, hash) => {
-                    if (err) throw err;
-                    newUser.password = hash;
-                    newUser
-                    .save()
-                    .then(user => res.json(user))
-                    .catch(err => console.log(err));
+            getHash(newUser.password).then((hash)=>{
+                postgresdb.none('INSERT INTO login (email, passwordhash) VALUES ($1, $2)', [req.body.email, hash]).then(()=>{
                     console.log("**********USER ADDED")
-                });
-            });
+                    return res.status(200).json({success:true});
+                })
+            }, (err)=>{
+                return res.status(500).json(err)
+            })
         }
     });
 });
@@ -113,11 +114,17 @@ router.post('/register', (req, res) => {
 // @route       GET api/user/current
 // @desc        return current user
 // @access      Private3
-router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
+router.get('/current', passport.authenticate, (req, res) => {
+    const avatar = gravatar.url(req.body.jwtPayload.user_id, {
+        s: '200', // Size
+        r: 'pg', // Rating
+        d: 'mm' // Default
+    });
     res.json({ 
-        id: req.user.id,
-        name: req.user.name,
-        email: req.user.email 
+        id: req.body.jwtPayload.id,
+        name: req.body.jwtPayload.name,
+        email: req.body.jwtPayload.email,
+        avatar: avatar
     })
 });
 

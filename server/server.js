@@ -1,11 +1,10 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
 const mailto = require('./routes/mailto');  
 //const testAPI = require('./routes/api/testAPI'); 
-const passport = require('passport'); 
+const passport = require('./config/passport'); 
 const cors = require('cors');
 const methodOverride = require('method-override');
  
@@ -19,19 +18,8 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json())
 app.use(methodOverride('_method')); 
 
-
-const db = require('./config/keys').mongoURI;
-
-// connect to mongoDB through mongoose
-mongoose
-    .connect(db)
-    .then(() => console.log(`connected to ${db}`))
-    .catch(err => console.log(err));
-
 // Passport middleware
-app.use(passport.initialize());
-// Passport Config
-require('./config/passport')(passport);
+passport.init(app);
 
 
 app.get('/', (req, res) => res.send("Hello World"));
