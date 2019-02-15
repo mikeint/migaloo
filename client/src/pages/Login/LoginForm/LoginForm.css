@@ -18,12 +18,18 @@
 	border-bottom: 1px solid #fff;
 	color: #fff; 
 }
-
 .formItem input::placeholder {
 	color: #fff; 
 }
+.forgot-password{
+	text-align: left;
+	cursor: pointer;
+	font-size: 12px;
+}
 
-
+.forgot-password:hover{
+	color: #99999988;
+}
 
 @media only screen and (max-width: 677px) {
 	.loginContent {

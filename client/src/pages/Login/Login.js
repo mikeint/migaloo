@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import './Login.css'; 
 
-import RegisterForm from './RegisterForm/RegisterForm';
+import RegisterChooseForm from './RegisterChooseForm/RegisterChooseForm';
 import LoginForm from './LoginForm/LoginForm';
 
 class Login extends Component {
@@ -27,8 +27,8 @@ class Login extends Component {
                                 this.state.tabState === "1" ?
                                 <div><LoginForm /></div>
                                 :
-                                <div><RegisterForm/></div>
-                            } 
+                                <div><RegisterChooseForm /></div>
+                            }
  
                         </div>
                         <div id="tabContainer" className="tabContainer"> 

@@ -3,18 +3,20 @@ import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions';
 import { Redirect } from 'react-router-dom';
 
-import './RegisterForm.css';
+import './RegisterEmployerForm.css';
 
-class RegisterForm extends Component {
+class RegisterEmployerForm extends Component {
   constructor() {
     super();
     this.state = {
-      name: '',
+			firstName: '',
+			lastName: '',
       email: '',
+      phoneNumber: '',
+      companyName: '',
       password: '',
-	  password2: '', 
-	  errorList: '',
-	  user: '',
+			password2: '', 
+			errorList: ''
 	};
 	this.Auth = new AuthFunctions();
     this.onChange = this.onChange.bind(this);
@@ -29,18 +31,22 @@ class RegisterForm extends Component {
     e.preventDefault();
 
     const newUser = {
-		name: this.state.name,
-		email: this.state.email,
-		password: this.state.password,
-		password2: this.state.password2
-	}; 
+			firstName: this.state.firstName,
+			lastName: this.state.lastName,
+			email: this.state.email,
+			type: 2, // Employer
+			phoneNumber: this.state.phoneNumber,
+			companyName: this.state.companyName,
+			password: this.state.password,
+			password2: this.state.password2
+		}; 
 	
 	 axios.post('/api/users/register', newUser).then((res)=>{
 		axios.post('/api/users/login', {
             email: res.data.email,
             password: this.state.password
         }).then((res)=>{
-			this.Auth.clearToken();
+						this.Auth.clearToken();
             let token = res.data.token.replace(/Bearer/g, '').trim();
 
             this.Auth.setToken(token, ()=>{
@@ -76,7 +82,7 @@ class RegisterForm extends Component {
 }
 
   render() {
-    const { name, email, password, password2 } = this.state;
+    const { firstName, lastName, email, phoneNumber, companyName, password, password2 } = this.state;
 
 	if(this.Auth.loggedIn()){
         if (this.state.user)
@@ -90,16 +96,25 @@ class RegisterForm extends Component {
 			{/* <form onSubmit={this.register}> */}
 
 				<div className="formItem"> 
-					<input type="text" className="formControl" placeholder="username" name="name" value={name} onChange={this.onChange} required />
+					<input type="text" className="formControl" placeholder="First Name" name="firstName" value={firstName} onChange={this.onChange} required />
 				</div>
 				<div className="formItem"> 
-					<input type="email" className="formControl" placeholder="email" name="email" value={email} onChange={this.onChange} required />
+					<input type="text" className="formControl" placeholder="Last Name" name="lastName" value={lastName} onChange={this.onChange} required />
+				</div>
+				<div className="formItem"> 
+					<input type="email" className="formControl" placeholder="Email" name="email" value={email} onChange={this.onChange} required />
+				</div>
+				<div className="formItem"> 
+					<input type="text" className="formControl" placeholder="Phone Number" name="phoneNumber" value={phoneNumber} onChange={this.onChange} required />
+				</div>
+				<div className="formItem"> 
+					<input type="text" className="formControl" placeholder="Company Name" name="companyName" value={companyName} onChange={this.onChange} required />
 				</div>
 				<div className="formItem">
-					<input type="password" placeholder="password" name="password" value={password} onChange={this.onChange} required />
+					<input type="password" placeholder="Password" name="password" value={password} onChange={this.onChange} required />
 				</div>
 				<div className="formItem">
-					<input type="password" placeholder="confirm password" name="password2" value={password2} onChange={this.onChange} required />
+					<input type="password" placeholder="Confirm Password" name="password2" value={password2} onChange={this.onChange} required />
 				</div>
 				<div className="errorsList">
 					{
@@ -121,4 +136,4 @@ class RegisterForm extends Component {
   }
 }
 
-export default RegisterForm;
+export default RegisterEmployerForm;

@@ -4,19 +4,35 @@ const isEmpty = require('./isEmpty');
 module.exports = function validateRegisterInput(data) {
 	let errors = {};
 
-	data.name = !isEmpty(data.name) ? data.name : '';
+	data.firstName = !isEmpty(data.firstName) ? data.firstName : '';
+	data.lastName = !isEmpty(data.lastName) ? data.lastName : '';
 	data.email = !isEmpty(data.email) ? data.email : '';
 	data.password = !isEmpty(data.password) ? data.password : '';
 	data.password2 = !isEmpty(data.password2) ? data.password2 : '';
 
-	if (Validator.isEmpty(data.name)) {
-		errors.name = 'Name field is required';
+    if (data.type == null) {
+        errors.type = "Type is required"
+    }
+    else if (!data.type instanceof Number) {
+        errors.type = "Type is should be number"
+    }
+    else if (data.type < 1 || data.type > 2) {
+        errors.type = "Type must be between 1 and 2"
+    }
+	if (Validator.isEmpty(data.firstName)) {
+		errors.firstName = 'First Name field is required';
+	}
+	if (Validator.isEmpty(data.lastName)) {
+		errors.lastName = 'Last Name field is required';
 	}
 	//validator function isLength(string, {}) .
-	if (!Validator.isLength(data.name, {min: 2, max: 30})) {
-		errors.name = 'Name must be minimun 2 characters';
+	if (!Validator.isLength(data.firstName, {min: 2, max: 30})) {
+		errors.firstName = 'First Name must be minimun 2 characters';
 	}
-
+	//validator function isLength(string, {}) .
+	if (!Validator.isLength(data.lastName, {min: 2, max: 30})) {
+		errors.lastName = 'First Name must be minimun 2 characters';
+	}
 
 	if (Validator.isEmpty(data.email)) {
 		errors.email = 'Email field is required';
@@ -25,6 +41,19 @@ module.exports = function validateRegisterInput(data) {
 	if (!Validator.isEmail(data.email)) {
 		errors.email = 'Email is invalid';
 	}
+
+	if(data.type == 1){ // Recruiter
+		
+    }else if(data.type == 2){ // Employer
+		if (Validator.isEmpty(data.phoneNumber)) {
+			errors.phoneNumber = 'Phone Number field is required';
+		}
+        if (Validator.isEmpty(data.companyName)) {
+            errors.companyName = 'Comapany Name field is required';
+        }
+	}
+	
+
 
 
 	if (Validator.isEmpty(data.password)) {

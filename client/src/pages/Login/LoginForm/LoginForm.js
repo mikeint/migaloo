@@ -73,10 +73,10 @@ class LoginForm extends Component {
 			 {/* <form onSubmit={this.login}> */}
                 <h1 className="">Sign In</h1>
                     <div className="formItem"> 
-                        <input className="formControl" placeholder="email" name='email' type='text' onChange={this.handleChange} value={email} required />
+                        <input className="formControl" placeholder="Email" name='email' type='text' onChange={this.handleChange} value={email} required />
                     </div>
                     <div className="formItem"> 
-                        <input className="formControl" placeholder="password" name='password' type='password' onChange={this.handleChange} value={password} required />
+                        <input className="formControl" placeholder="Password" name='password' type='password' onChange={this.handleChange} value={password} required />
                     </div>  
 
                     <div className="errorsList">
@@ -91,8 +91,10 @@ class LoginForm extends Component {
                             "" 
                         }
                     </div> 
-                    
                     <input onClick={this.login} type="submit" value="Login" className="loginBtn" />
+                    <div className="forgot-password"> 
+                        Forgot Password
+                    </div>  
                 {/* </form> */}
 		</React.Fragment> 
     );
