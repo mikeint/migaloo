@@ -214,6 +214,9 @@
     margin-top: 7px !important;
 }
 
+.hmbSpanA {
+    cursor: pointer;
+}
 #nav-icon1 span:nth-child(1) {
     top: 0px;
 }
@@ -270,6 +273,12 @@
     } 
     .heroText { 
         font-size: 21px;  
+    }
+
+}
+@media only screen and (max-width: 500px) {
+    .heroText { 
+        font-size: 18px;  
     }
 
 }
