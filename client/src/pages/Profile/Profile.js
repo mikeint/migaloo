@@ -34,6 +34,7 @@ class Profile extends React.Component{
         if (this.state.logout) {
             return <Redirect to='/login' />
         }
+        console.log(this.state.user)
 
         return (
             <React.Fragment>
@@ -44,7 +45,7 @@ class Profile extends React.Component{
                     <div className='profileImage'>
                         <img src={profileImg} alt="" />
                         <div className="profileName">{this.state.user.name}</div>
-                        <div className="profileType">{this.state.user.profileData.type}</div>
+                        <div className="profileType">{this.state.user.userType}</div>
                         <div className="profileEmail">{this.state.user.email}</div>
                     </div>
                     <div className='profileBottom'>

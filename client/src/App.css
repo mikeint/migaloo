@@ -147,3 +147,14 @@ a {
     border: 5px solid #fff;
     font-weight: bold;
 }
+
+
+
+
+@media only screen and (max-width: 677px) {
+    .loginContainer {
+        background-image: none; 
+        animation: none;
+    }
+    
+}
