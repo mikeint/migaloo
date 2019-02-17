@@ -41,7 +41,7 @@
 
 .tabContainer {
     width: 400px;
-	height: 100px;
+	height: 50px;
 	font-size: 22px;
 }
 .tab-item {
@@ -49,7 +49,7 @@
     height: 100%;
     float: left;
     text-align: center;
-    line-height: 100px;    
+    line-height: 50px;    
     background: #1a2b6d42;
     color: #94949473;
 }
@@ -73,6 +73,8 @@
 
 .loginHR div {
     padding: 20px;
+    font-weight: bold;
+    font-size: 20px;
     display:inline-block;
     border: 4px solid #fff;
 }
@@ -88,11 +90,17 @@
 		min-height: 100%;
 	}
 	.tab-item.active { 
-		background-color: #ffffff00;
+		background-color: #fff;
     }
     .loginHR div { 
         border: 4px solid #1a2b6d; 
     }
+    
+	.tabContainer {
+		position: fixed;
+		bottom: 0px;
+		width: 100%;
+	}
     .tab-item {    
         background: #eaeaea;
         color: #bdbdbd;

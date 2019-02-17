@@ -1,6 +1,6 @@
-.formItem {
-	height: 45px;
+.formItem { 
 	width: 100%;
+    padding: 1% 30px;
     float: left;
 }
 .formItem label{
@@ -28,7 +28,8 @@
 .forgot-password{
 	text-align: left;
 	cursor: pointer;
-	font-size: 12px;
+    font-size: 12px;
+    padding-left: 30px;
 }
 
 .forgot-password:hover{
@@ -57,9 +58,4 @@
 		height: 100%;
 		position: relative;
 	}  
-	.tabContainer {
-		position: fixed;
-		bottom: 0px;
-		width: 100%;
-	}
 }

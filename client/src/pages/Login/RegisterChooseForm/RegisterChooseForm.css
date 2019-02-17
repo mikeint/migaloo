@@ -7,9 +7,9 @@
 }
 
 .registerContent {
-    height: 100%;
-    position: absolute;
+    height: 100%; 
     width: 100%;
+    position: absolute;
 }
 .tab-button{
     width: 100%; 
@@ -17,18 +17,23 @@
     background-color: #ffffff;
     color: #1a2b6d;
     cursor: pointer;
-    display: grid;
+    display: table; 
+    font-size: 40px;
+    font-weight: bold;
+    padding: 70px 0px;
 }
 .tab-button-top {
     background-color: #1a2b6d;
     color: #fff;
 } 
 
+.chooseIcon {
+    height: 50px;
+}
 
 
 @media only screen and (max-width: 677px) {
-    .tab-button { 
+    .tab-button {   
         height: calc(50% - 50px); 
-        height:  -webkit-calc(50% - 50px); 
     } 
 }

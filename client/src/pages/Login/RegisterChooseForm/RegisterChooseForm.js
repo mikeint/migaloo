@@ -32,11 +32,11 @@ class RegisterChooseForm extends Component {
                             <React.Fragment>
                                 <div className='tab-button tab-button-top' onClick={() => this.changeTab(1)}>
                                     <div className="">Employer</div>
-                                    <div className=""><img src={employer_pick} alt="" /></div>
+                                    <div className="chooseIcon"><img src={employer_pick} alt="" /></div>
                                 </div>
                                 <div className='tab-button' onClick={() => this.changeTab(2)}>
                                     <div className="">Recruiter</div> 
-                                    <div className=""><img src={recruiter_icon} alt="" /></div>
+                                    <div className="chooseIcon"><img src={recruiter_icon} alt="" /></div>
                                 </div>
                             </React.Fragment>
                         )

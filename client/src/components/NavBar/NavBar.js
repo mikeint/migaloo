@@ -16,19 +16,19 @@ class NavBar extends React.Component{
                      
                     <NavLink to="/activeJobs">
                         <div className="navBtn">
-                            <img src={active_icon} alt="" />
+                            {/* <img src={active_icon} alt="" /> */}
                             <div className="navText">Active Jobs</div>
                         </div>
                     </NavLink>  
                     <NavLink to="/postAJob">
                         <div className="navBtn">
-                            <img src={post_icon} alt="" />
+                            {/* <img src={post_icon} alt="" /> */}
                             <div className="navText">Post a Job</div>
                         </div>
                     </NavLink>  
                     <NavLink to="/profile">
                         <div className="navBtn">
-                            <img src={profile_icon} alt="" />
+                            {/* <img src={profile_icon} alt="" /> */}
                             <div className="navText">Profile</div>
                         </div>
                     </NavLink>  
