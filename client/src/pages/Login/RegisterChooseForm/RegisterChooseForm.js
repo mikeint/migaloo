@@ -1,7 +1,4 @@
-import React, { Component } from 'react';  
-import axios from 'axios';
-import AuthFunctions from '../../../AuthFunctions';
-import { Redirect } from 'react-router-dom';
+import React, { Component } from 'react';   
 import RegisterEmployerForm from '../RegisterEmployerForm/RegisterEmployerForm';
 import RegisterRecruiterForm from '../RegisterRecruiterForm/RegisterRecruiterForm';
 

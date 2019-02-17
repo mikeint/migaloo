@@ -1,5 +1,5 @@
 .formItem {
-	height: 60px;
+	height: 50px;
 	width: 100%;
     float: left;
 }
@@ -18,6 +18,10 @@
 	border-bottom: 1px solid #fff;
 	color: #fff; 
 }
+.formItem .error { 
+    border-bottom: 1px solid #E50000; 
+} 
+
 .formItem input::placeholder {
 	color: #fff; 
 }
