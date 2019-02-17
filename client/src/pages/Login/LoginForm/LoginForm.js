@@ -61,20 +61,18 @@ class LoginForm extends Component {
     
     return (
        
-        <React.Fragment> 
-			 {/* <form onSubmit={this.login}> */} 
-                    <div className="loginHR"><div>HR</div></div>
-                    <div className="formItem"> 
-                        <input className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name='email' type='text' onChange={this.handleChange} value={email} required />
-                    </div>
-                    <div className="formItem"> 
-                        <input className={this.state.errorList.password ? "formControl error" : "formControl"} placeholder="Password" name='password' type='password' onChange={this.handleChange} value={password} required />
-                    </div>   
-                    <input onClick={this.login} type="submit" value="Login" className="loginBtn" />
-                    <div className="forgot-password"> 
-                        Forgot Password
-                    </div>  
-                {/* </form> */}
+        <React.Fragment>   
+            <div className="loginHR"><div>HR</div></div>
+            <div className="formItem"> 
+                <input className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name='email' type='text' onChange={this.handleChange} value={email} required />
+            </div>
+            <div className="formItem"> 
+                <input className={this.state.errorList.password ? "formControl error" : "formControl"} placeholder="Password" name='password' type='password' onChange={this.handleChange} value={password} required />
+            </div>   
+            <input onClick={this.login} type="submit" value="Login" className="loginBtn" />
+            <div className="forgot-password"> 
+                Forgot Password
+            </div>   
 		</React.Fragment> 
     );
   }

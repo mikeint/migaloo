@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './Landing.css';
 import heroHome from '../../files/images/hero_2.jpg'; 
 import ScrollAnimation from 'react-animate-on-scroll';
-
+import ScrollableAnchor from 'react-scrollable-anchor'
 import SocialSide from "../SocialSide/SocialSide"; 
 import ContactSection from "../ContactSection/ContactSection"; 
 
@@ -19,11 +19,10 @@ class Landing extends Component {
 				<SocialSide />
 				<div id="header">
 					<div id="logoContainer"><div className="logo">HR</div></div>
-					<div id="navBar">
-						<li className="navBarA">Home</li>
-						<li className="navBarA">Overview</li>
-						<li className="navBarA">How it Works</li> 
-						<li className="navBarA">Contact</li> 
+					<div id="navBar"> 
+						<a href="#landingSection2"><li className="navBarA">Overview</li></a>
+						<a href="#landingSection3"><li className="navBarA">How it Works</li></a>
+						<a href="#contactSection"><li className="navBarA">Contact</li></a>
 						<Link to="/login"><li className="navBarA">Login</li></Link>
 					</div>
 
@@ -33,11 +32,10 @@ class Landing extends Component {
 							<span className="hmbSpanA"></span>
 							<span className="hmbSpanA"></span> 
 						</div>
-						<div className="side-menu" id="side-menu">
-							<li>Home</li> 
-							<li>Overview</li>
-							<li>How it Works</li>
-							<li>Contact Us</li>
+						<div className="side-menu" id="side-menu"> 
+							<a href="#landingSection2"><li>Overview</li></a>
+							<a href="#landingSection3"><li>How it Works</li></a>
+							<a href="#contactSection"><li>Contact Us</li></a>
 							<Link to="/login"><li>Login</li></Link>
 						</div>
 					</div>
@@ -53,9 +51,9 @@ class Landing extends Component {
 				</div> 
 
 				<LandingSection1 />
-				<LandingSection2 />
-				<LandingSection3 />
-				<ContactSection />
+				<ScrollableAnchor id={'landingSection2'}><LandingSection2 /></ScrollableAnchor>
+				<ScrollableAnchor id={'landingSection3'}><LandingSection3 /></ScrollableAnchor>
+				<ScrollableAnchor id={'contactSection'}><ContactSection /></ScrollableAnchor>
                 
  
 

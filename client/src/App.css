@@ -52,7 +52,7 @@ a {
 
 .mainContainer {
     width: 100%;  
-    position: relative;
+    position: absolute;
     display: inline-block;
 }
 .pageHeading {
@@ -62,6 +62,7 @@ a {
     font-size: 24px;
     padding: 10px;
     border-bottom: 1px solid #e2e2e2;
+    position: relative;
 }
 
 

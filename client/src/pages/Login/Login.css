@@ -52,6 +52,7 @@
     line-height: 50px;    
     background: #1a2b6d42;
     color: #94949473;
+    font-size: 12px;
 }
 .tab-item.active { 
 	background-color: #ffffff00;
@@ -63,12 +64,13 @@
 	box-shadow: 0px 5px 0px 0px white;
     opacity: 1;
     transition: 0.3s;
+    font-size: 20px;
 }
 
 .loginHR {
     width: 100%;
     text-align: center;
-    padding: 10px;
+    padding: 50px 10px;
 }
 
 .loginHR div {
@@ -84,7 +86,9 @@
 @media only screen and (max-width: 677px) {
     .loginContent {
         background: #fff;
-        color: #1a2b6d;
+        color: #1a2b6d; 
+        height: calc(100% - 50px); 
+        position: absolute;
     }
 	.loginContainer {
 		min-height: 100%;

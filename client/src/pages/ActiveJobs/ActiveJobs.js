@@ -71,7 +71,7 @@ class ActiveJobs extends React.Component{
                 <TopBar />
                
                 <div className='mainContainer'>
-                    <div className="pageHeading">Active Jobs</div> 
+                    <div className="pageHeading">Active Jobs<NavLink to="/postAJob"><div className="postJobButton"></div></NavLink></div> 
                     {
                         !this.state.jobList ?
                             <div className="jobListContainer">

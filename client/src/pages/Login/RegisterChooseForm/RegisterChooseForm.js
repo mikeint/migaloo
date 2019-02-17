@@ -22,7 +22,7 @@ class RegisterChooseForm extends Component {
 	render() {
 			 return ( 
                 <div className="registerContent">
-                    { this.state.tabState!==0 ? <div className='back-button'  onClick={() => this.changeTab(0)}>Back</div>:''}
+                    { this.state.tabState !== 0 ? <div className='back-button'  onClick={() => this.changeTab(0)}>Back</div>:''}
                     { this.state.tabState === 1 ?
                             <div><RegisterEmployerForm /></div>
                         :
@@ -31,12 +31,16 @@ class RegisterChooseForm extends Component {
                             :
                             <React.Fragment>
                                 <div className='tab-button tab-button-top' onClick={() => this.changeTab(1)}>
-                                    <div className="">Employer</div>
-                                    <div className="chooseIcon"><img src={employer_pick} alt="" /></div>
+                                    <div className="centerChooseHome">
+                                        <div className="">Employer</div>
+                                        <div className="chooseIcon"><img src={employer_pick} alt="" /></div>
+                                    </div>
                                 </div>
                                 <div className='tab-button' onClick={() => this.changeTab(2)}>
-                                    <div className="">Recruiter</div> 
-                                    <div className="chooseIcon"><img src={recruiter_icon} alt="" /></div>
+                                    <div className="centerChooseHome">
+                                        <div className="">Recruiter</div> 
+                                        <div className="chooseIcon"><img src={recruiter_icon} alt="" /></div>
+                                    </div>
                                 </div>
                             </React.Fragment>
                         )

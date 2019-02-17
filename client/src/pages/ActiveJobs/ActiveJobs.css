@@ -22,15 +22,23 @@
     width: 100%;
     float: left;
 } 
-.jobListContainer .jobListItem:nth-child(odd) { 
-    background: #e6e8ef3d;
-} 
+ 
 .jobListItem{ 
-    padding: 10px;
-    font-size: 15px;
-    font-weight: bold;
+    padding: 15px 10px;
+    font-size: 15px; 
+    background: #1a2b6d;
+    color: #fff;
 }
 
+.postJobButton { 
+    position: absolute; 
+    height: 40px; 
+    width: 40px;
+    right: 0px;
+    top: 0px;
+    background-image: url('../../files/images/addJobBtn.png');
+    background-repeat: no-repeat;
+}
 .jobTitle {
 
 }

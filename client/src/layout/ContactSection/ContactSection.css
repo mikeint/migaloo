@@ -9,7 +9,11 @@
     overflow: hidden;
     float: left;
     width: 100%;
-} 
+}
+.formBackground {
+    width: 100%;
+    float: left;
+}
 
 .signUpContainer h1 {
     color: #fff;
