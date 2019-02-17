@@ -4,6 +4,7 @@ const users = require('./routes/api/users');
 const profile = require('./routes/api/profile');
 const mailto = require('./routes/mailto');  
 const jobs = require('./routes/api/jobs');  
+const postings = require('./routes/api/postings');  
 //const testAPI = require('./routes/api/testAPI'); 
 const passport = require('./config/passport'); 
 const cors = require('cors');
@@ -30,6 +31,7 @@ app.use('/api/users', users);
 app.use('/api/profile', profile);
 app.use('/api/mailto', mailto);
 app.use('/api/jobs', jobs);
+app.use('/api/postings', postings);
 //app.use('/api/testAPI', testAPI);
 
 
