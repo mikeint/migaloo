@@ -6,6 +6,9 @@ import TopBar from '../../components/TopBar/TopBar';
 import Overlay from '../../components/Overlay/Overlay';
 //import Loader from '../../components/Loader/Loader';
 
+import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
+
+
 import '../../constants/AnimateOverlay';
  
 const obj = [
@@ -25,8 +28,7 @@ const obj = [
         "location": "Toronto, ON"
     },
 ]
-
-
+ 
 class ActiveJobs extends React.Component{
 
     constructor(props) {
@@ -35,6 +37,7 @@ class ActiveJobs extends React.Component{
             HROverlay: false,
             jobList: false,
             showOverlay: false,
+            jobId: '',
             overlayConfig: {direction: "app-menu_r-l", backButtonLocation: "back_t-l"}
         };
     }
@@ -53,37 +56,30 @@ class ActiveJobs extends React.Component{
             })
         }
     } 
-    callOverlay = () => {
+    callOverlay = (jobId) => {
         this.setState({ showOverlay : !this.state.showOverlay })
+        this.setState({ jobId : jobId })
     }
 
-    render(){
-        /* var listItem = "empty";  */ 
-        let html = `<div className='jobTitle'>${obj[0].title}</div>
-                    <div className='jobParagraph'>${obj[0].paragraph}</div>
-                    <div className='jobLocation'>${obj[0].location}</div> 
-                    `
-        
+    render(){ 
+        const html = <BuildActiveJobs obj={obj[this.state.jobId]} />
 
         return (
-            <React.Fragment> 
-
-
+            <React.Fragment>  
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                 <NavBar />
                 <TopBar />
                
                 <div className='mainContainer'>
-                    <div className="pageHeading">Active Jobs</div>
-
+                    <div className="pageHeading">Active Jobs</div> 
                     {
                         !this.state.jobList ?
                             <div className="jobListContainer">
                                   {obj.map((item, i) => {
-                                    return <div className="addButton jobListItem" key={i}  onClick={this.callOverlay}>{item.title}</div>
+                                    return <div className="addButton jobListItem" key={i} onClick={() => this.callOverlay(i)}>{item.title}</div>
                                 })}
-                                {this.state.showOverlay && <Overlay 
-                                                                html={html} 
+                                {this.state.showOverlay && <Overlay
+                                                                html={html}  
                                                                 callOverlay={this.callOverlay} 
                                                                 config={this.state.overlayConfig}
                                                             />}
@@ -96,7 +92,7 @@ class ActiveJobs extends React.Component{
                     }
                     
 
-                    {/* listItem === "notEmpty" ? "" : <Loader /> */}
+                    {/* listfromsql ? "" : <Loader /> */}
                 </div> 
             </React.Fragment>
         );
