@@ -52,8 +52,7 @@ a {
 
 .mainContainer {
     width: 100%;  
-    position: absolute;
-    display: inline-block;
+    position: absolute; 
 }
 .pageHeading {
     width: 90%;
