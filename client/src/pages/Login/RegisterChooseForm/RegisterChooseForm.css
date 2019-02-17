@@ -7,22 +7,28 @@
 }
 
 .registerContent {
-    height: 100%;;
-    position: relative;
+    height: 100%;
+    position: absolute;
+    width: 100%;
 }
 .tab-button{
     width: 100%; 
-	background-color: #ffffff1a;
-    cursor: pointer;
     height: 50%;
+    background-color: #ffffff;
+    color: #1a2b6d;
+    cursor: pointer;
+    display: grid;
 }
-.tab-button:hover{
-	background-color: #ffffff88;
-}
+.tab-button-top {
+    background-color: #1a2b6d;
+    color: #fff;
+} 
 
 
 
 @media only screen and (max-width: 677px) {
-
-
+    .tab-button { 
+        height: calc(50% - 50px); 
+        height:  -webkit-calc(50% - 50px); 
+    } 
 }

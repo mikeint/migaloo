@@ -4,36 +4,44 @@ import RegisterRecruiterForm from '../RegisterRecruiterForm/RegisterRecruiterFor
 
 import './RegisterChooseForm.css';
 
+import employer_pick from '../../../files/images/employer_pick.svg';
+import recruiter_icon from '../../../files/images/recruiter_pick.svg';
+
 class RegisterChooseForm extends Component {
 	constructor() {
 		super();
 		this.state = {  
-						tabState: 0, 
+            tabState: 0, 
 		}; 
 	}    
 
 	changeTab = (tab) => {
-			this.setState({ tabState: tab });
+        this.setState({ tabState: tab });
 	}
 
 	render() {
 			 return ( 
-					<div className="registerContent">
-							{ this.state.tabState!==0 ? <div className='back-button'  onClick={() => this.changeTab(0)}>Back</div>:''}
-							{
-									this.state.tabState === 1 ?
-										<div><RegisterEmployerForm /></div>
-									:
-									(this.state.tabState === 2 ?
-										<div><RegisterRecruiterForm /></div>
-										:
-										<React.Fragment>
-											<div className='tab-button' onClick={() => this.changeTab(1)}>Employer</div>
-											<div className='tab-button' onClick={() => this.changeTab(2)}>Recruiter</div>
-                                        </React.Fragment>
-									)
-							}
-					</div>
+                <div className="registerContent">
+                    { this.state.tabState!==0 ? <div className='back-button'  onClick={() => this.changeTab(0)}>Back</div>:''}
+                    { this.state.tabState === 1 ?
+                            <div><RegisterEmployerForm /></div>
+                        :
+                        (this.state.tabState === 2 ?
+                            <div><RegisterRecruiterForm /></div>
+                            :
+                            <React.Fragment>
+                                <div className='tab-button tab-button-top' onClick={() => this.changeTab(1)}>
+                                    <div className="">Employer</div>
+                                    <div className=""><img src={employer_pick} alt="" /></div>
+                                </div>
+                                <div className='tab-button' onClick={() => this.changeTab(2)}>
+                                    <div className="">Recruiter</div> 
+                                    <div className=""><img src={recruiter_icon} alt="" /></div>
+                                </div>
+                            </React.Fragment>
+                        )
+                    }
+                </div>
 			)
 	}
 }

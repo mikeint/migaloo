@@ -17,10 +17,11 @@
 
 .loginContent {
 	width: 400px; 
-	min-height: 550px; 
+    min-height: 550px; 
+    position: relative;
 }
 .loginContent img {
-	width: 200px;
+	width: 50px;
 }
 
 .loginBtn {
@@ -67,7 +68,7 @@
 .loginHR {
     width: 100%;
     text-align: center;
-    padding: 100px;
+    padding: 10px;
 }
 
 .loginHR div {

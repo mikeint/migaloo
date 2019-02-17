@@ -84,7 +84,7 @@ class RegisterEmployerForm extends Component {
     return (
        
         <div className="container">
-			<h1>Sign Up</h1> 
+			 <div className="loginHR"><div>HR</div></div>
 			{/* <form onSubmit={this.register}> */}
 
 				<div className="formItem"> 

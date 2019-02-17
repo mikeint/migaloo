@@ -1,5 +1,5 @@
 .formItem {
-	height: 50px;
+	height: 45px;
 	width: 100%;
     float: left;
 }
@@ -48,6 +48,7 @@
     } 
     .formItem input{
         border-bottom: 1px solid #eaeaea;
+        color: #1a2b6d; 
     }
     .formItem input::placeholder {
         color: #1a2b6d; 
