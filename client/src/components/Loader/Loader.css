@@ -1,5 +1,6 @@
 /* Loader - SPIN CUBE */
 .loadContainer {
+    margin-top:100px;
     position: absolute; 
     left: 50%;
     -webkit-transform: translate(-50%,-50%);

@@ -1,17 +1,19 @@
 import React from 'react';
 import './ActiveJobs.css';    
+import axios from 'axios';
+import AuthFunctions from '../../AuthFunctions'; 
 import { NavLink } from 'react-router-dom';
 import NavBar from '../../components/NavBar/NavBar';
 import TopBar from '../../components/TopBar/TopBar';
 import Overlay from '../../components/Overlay/Overlay';
-//import Loader from '../../components/Loader/Loader';
+import Loader from '../../components/Loader/Loader';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 
 
 import '../../constants/AnimateOverlay';
  
-const obj = [
+/* const obj = [
     {
         "title": "Front end web Developer",
         "paragraph": "Our client located in Mississauga is looking for a Full stack .NET Developer with at least 2 years of work experience.",
@@ -27,24 +29,26 @@ const obj = [
         "paragraph": "We are looking for a Front-End Web Developer who is motivated to combine the art of design with the art of programming. Responsibilities will include translation and creation of the UI/UX design wireframes to actual code that will produce visual elements of the application. You will work with Business Analysts and UI/UX designers to bridge the gap between graphical design and technical implementation, taking an active role on both sides and defining how the ",
         "location": "Toronto, ON"
     },
-]
+] */
  
 class ActiveJobs extends React.Component{
 
     constructor(props) {
         super(props);
 		this.state = {
-            HROverlay: false,
-            jobList: false,
+            HROverlay: false, 
             showOverlay: false,
             jobId: '',
-            overlayConfig: {direction: "app-menu_r-l", backButtonLocation: "back_t-l"}
+            overlayConfig: {direction: "app-menu_r-l", backButtonLocation: "back_t-l"},
+            jobList: '', 
         };
+        this.Auth = new AuthFunctions();
     }
 
     componentWillMount = () => {
         this.setState({ HROverlay: sessionStorage.getItem("HROverlay") });
         sessionStorage.removeItem('HROverlay');
+        this.getJobList();
     }
 
     componentDidMount = () => {
@@ -61,8 +65,25 @@ class ActiveJobs extends React.Component{
         this.setState({ jobId : jobId })
     }
 
+    getJobList = () => {
+        var config = {
+            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
+        } 
+        var data = {
+            user: this.Auth.getUser()
+        }
+
+        axios.get('/api/jobs/listJobs', data, config)
+        .then((res)=>{    
+            this.setState({ jobList: res.data }) 
+        }).catch(errors => 
+            console.log(errors.response.data)
+        )
+    }
+
+
     render(){ 
-        const html = <BuildActiveJobs obj={obj[this.state.jobId]} />
+        const html = <BuildActiveJobs obj={this.state.jobList[this.state.jobId]} />
 
         return (
             <React.Fragment>  
@@ -73,9 +94,9 @@ class ActiveJobs extends React.Component{
                 <div className='mainContainer'>
                     <div className="pageHeading">Active Jobs<NavLink to="/postAJob"><div className="postJobButton"></div></NavLink></div> 
                     {
-                        !this.state.jobList ?
+                        this.state.jobList ?
                             <div className="jobListContainer">
-                                  {obj.map((item, i) => {
+                                  {this.state.jobList.map((item, i) => {
                                     return <div className="addButton jobListItem" key={i} onClick={() => this.callOverlay(i)}>{item.title}</div>
                                 })}
                                 {this.state.showOverlay && <Overlay
@@ -85,10 +106,7 @@ class ActiveJobs extends React.Component{
                                                             />}
                             </div>
                         :
-                            <React.Fragment>
-                                <NavLink to="/postAJob"><div className="addJobButton">+</div></NavLink>
-                                <div className="noJobsText">No jobs listed</div>
-                            </React.Fragment>
+                        <Loader />
                     }
                     
 

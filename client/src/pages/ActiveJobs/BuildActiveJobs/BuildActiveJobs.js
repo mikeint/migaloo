@@ -10,9 +10,22 @@ class BuildActiveJobs extends React.Component{
 
         return ( 
             <div className="jobPostingContainer">
-                <div className="jobPostTitle">{jobObj.title}</div>
-                <div className="jobPostParagraph">{jobObj.paragraph}</div>
-                <div className="jobPostLocation">{jobObj.location}</div> 
+                <h2>{jobObj.title}</h2>
+                <p>{jobObj.caption}</p>
+                <h3>{jobObj.experience_type_name}</h3> 
+                <p>{jobObj.company_name}</p> 
+                <p>{jobObj.image_id}</p> 
+                <p>{jobObj.street_address_1}</p> 
+                <p>{jobObj.street_address_2}</p> 
+                <p>{jobObj.city+", "+jobObj.state+", "+jobObj.country}</p>
+
+                <div className="applicantsAppliedContainer">
+                <div className="apllicantApplied">Applicant 1</div>
+                <div className="apllicantApplied">Applicant 2</div>
+                <div className="apllicantApplied">Applicant 3</div>
+                <div className="apllicantApplied">Applicant 4</div>
+                <div className="apllicantApplied">Applicant 5</div>
+                </div>
             </div> 
         )
     }

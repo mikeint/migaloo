@@ -10,26 +10,21 @@
     margin: auto;
     margin-top: 30px; 
 }
-
 .noJobsText {
     text-align: center;
     font-size: 10px;
     padding: 10px;
 }
-
-
 .jobListContainer {
     width: 100%;
     float: left;
-} 
- 
+}
 .jobListItem{ 
     padding: 15px 10px;
     font-size: 15px; 
     background: #1a2b6d;
     color: #fff;
 }
-
 .postJobButton { 
     position: absolute; 
     height: 40px; 
@@ -38,13 +33,4 @@
     top: 0px;
     background-image: url('../../files/images/addJobBtn.png');
     background-repeat: no-repeat;
-}
-.jobTitle {
-
-}
-.jobParagraph{
-
-}
-.jobLocation{
-    
 }

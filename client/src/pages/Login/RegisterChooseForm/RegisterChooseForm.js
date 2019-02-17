@@ -7,6 +7,8 @@ import './RegisterChooseForm.css';
 import employer_pick from '../../../files/images/employer_pick.svg';
 import recruiter_icon from '../../../files/images/recruiter_pick.svg';
 
+import backButton from '../../../files/images/backBtn.png';
+
 class RegisterChooseForm extends Component {
 	constructor() {
 		super();
@@ -22,7 +24,7 @@ class RegisterChooseForm extends Component {
 	render() {
 			 return ( 
                 <div className="registerContent">
-                    { this.state.tabState !== 0 ? <div className='back-button'  onClick={() => this.changeTab(0)}>Back</div>:''}
+                    { this.state.tabState !== 0 ? <div className='back-button'  onClick={() => this.changeTab(0)}><img src={backButton} alt="" /></div>:''}
                     { this.state.tabState === 1 ?
                             <div><RegisterEmployerForm /></div>
                         :

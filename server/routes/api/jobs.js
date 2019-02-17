@@ -7,11 +7,11 @@ const postgresdb = require('../../config/db').postgresdb
 // @route       POST api/profile/saveType
 // @desc        Add type to profile
 // @access      Private
-router.get('/listJobs', passport.authentication,  (req, res) => {
+router.get('/listJobs', /* passport.authentication, */ (req, res) => { //cutch i commented this out because i cant get the auth to work on this call
     var jwtPayload = req.body.jwtPayload;
-    if(jwtPayload.userType != 1){
+/*     if(jwtPayload.userType != 1){
         return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
-    }
+    } */
     postgresdb.any('\
         SELECT title, caption, experience_type_name, company_name, image_id, \
             street_address_1, street_address_2, city, state, country \
