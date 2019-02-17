@@ -23,13 +23,14 @@ router.get('/listPostings', passport.authentication,  (req, res) => {
     });
 });
 
-router.get('/listPostingCandidates', passport.authentication,  (req, res) => {
+router.get('/listPostingCandidates/:postId', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
+    var postId = req.params.postId
     if(jwtPayload.userType != 2){
         return res.status(400).json({success:false, error:"Must be an employer to look at postings"})
     }
-    if(req.body.post_id == null){
-        return res.status(400).json({success:false, error:"Missing post_id"})
+    if(postId == null){
+        return res.status(400).json({success:false, error:"Missing postId"})
     }
 
     postgresdb.any(' \
@@ -40,7 +41,7 @@ router.get('/listPostingCandidates', passport.authentication,  (req, res) => {
         INNER JOIN recruiter r ON r.recruiter_id = cp.recruiter_id \
         INNER JOIN login rl ON r.recruiter_id = rl.user_id \
         WHERE j.post_id = $1 AND j.employer_id = $2 \
-        ORDER BY cp.coins DESC', [req.body.post_id, jwtPayload.id])
+        ORDER BY cp.coins DESC', [postId, jwtPayload.id])
     .then((data) => {
         res.json(data)
     })
