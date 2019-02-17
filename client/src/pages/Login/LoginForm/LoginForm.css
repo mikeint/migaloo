@@ -1,5 +1,5 @@
 .formItem {
-	height: 60px;
+	height: 50px;
 	width: 100%;
     float: left;
 }
@@ -18,23 +18,40 @@
 	border-bottom: 1px solid #fff;
 	color: #fff; 
 }
+.formItem .error { 
+    border-bottom: 1px solid #E50000; 
+} 
 
 .formItem input::placeholder {
 	color: #fff; 
 }
+.forgot-password{
+	text-align: left;
+	cursor: pointer;
+	font-size: 12px;
+}
 
-
+.forgot-password:hover{
+	color: #99999988;
+}
 
 @media only screen and (max-width: 677px) {
 	.loginContent {
-		min-height:unset;
-		position: fixed;
-		width: 100%;
-		padding: 0px 30px;
-		border-radius: 0px; 
-		height: 100%;
+        min-height:unset; 
+        height: 100%;
+		width: 100%; 
+		border-radius: 0px;  
 		top: 0px;
-	} 
+    } 
+    .tab-item.active {
+        color: #1a2b6d;
+    } 
+    .formItem input{
+        border-bottom: 1px solid #eaeaea;
+    }
+    .formItem input::placeholder {
+        color: #1a2b6d; 
+    }
 	.loginMiddle { 
 		height: 100%;
 		position: relative;

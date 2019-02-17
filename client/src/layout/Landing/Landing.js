@@ -24,7 +24,7 @@ class Landing extends Component {
 						<li className="navBarA">Overview</li>
 						<li className="navBarA">How it Works</li> 
 						<li className="navBarA">Contact</li> 
-						<li className="navBarA"><Link to="/login">Login</Link></li>
+						<Link to="/login"><li className="navBarA">Login</li></Link>
 					</div>
 
 					<div id="navBarMobile">
@@ -38,7 +38,7 @@ class Landing extends Component {
 							<li>Overview</li>
 							<li>How it Works</li>
 							<li>Contact Us</li>
-							<li><Link to="/login">Login</Link></li>
+							<Link to="/login"><li>Login</li></Link>
 						</div>
 					</div>
 				</div>

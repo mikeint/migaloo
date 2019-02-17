@@ -27,7 +27,7 @@ CREATE TABLE login (
     user_id bigserial,
     email varchar(128) UNIQUE NOT NULL,
     passwordhash varchar(128) NOT NULL,
-    created_on timestamp NOT NULL,
+    created_on timestamp,
     last_login timestamp,
     user_type_id int REFERENCES user_type(user_type_id),
     PRIMARY KEY(user_id)
@@ -46,10 +46,9 @@ CREATE TABLE address (
 CREATE TABLE employer (
     employer_id bigint REFERENCES login(user_id),
     address_id bigint REFERENCES address(address_id),
-    contact_given_name varchar(128) NOT NULL,
-    contact_family_name varchar(128) NOT NULL,
+    contact_first_name varchar(128) NOT NULL,
+    contact_last_name varchar(128) NOT NULL,
     contact_phone_number  varchar(32) NULL,
-    contact_email  varchar(128) NULL,
     company_name  varchar(128) NULL,
     image_id bigint,
     PRIMARY KEY(employer_id)
@@ -57,8 +56,8 @@ CREATE TABLE employer (
 CREATE TABLE recruiter (
     recruiter_id bigint REFERENCES login(user_id),
     address_id bigint REFERENCES address(address_id),
-    given_name varchar(128) NOT NULL,
-    family_name varchar(128) NOT NULL,
+    first_name varchar(128) NOT NULL,
+    last_name varchar(128) NOT NULL,
     phone_number  varchar(32) NULL,
     coins int DEFAULT 0 NOT NULL,
     image_id bigint,
@@ -74,8 +73,8 @@ CREATE TABLE job_posting (
 );
 CREATE TABLE candidate (
     candidate_id bigserial,
-    given_name varchar(128) NOT NULL,
-    family_name varchar(128) NOT NULL,
+    first_name varchar(128) NOT NULL,
+    last_name varchar(128) NOT NULL,
     email varchar(128) NOT NULL,
     created_on timestamp NOT NULL,
     PRIMARY KEY(candidate_id)
@@ -133,14 +132,14 @@ INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('4
 INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('21 Backersfield Rd.', 'North York', 'ON', 'CA', point(43.65335, -79.38325));
 INSERT INTO address (street_address_1, street_address_2, city, state, country, lat_lon) VALUES ('654 York Rd.', 'Suite 203', 'Toronto', 'ON', 'CA', point(43.65325, -79.38312));
 INSERT INTO address (street_address_1, street_address_2, city, state, country, lat_lon) VALUES ('1325 York Rd.', 'Building 3', 'Toronto', 'ON', 'CA', point(43.65324, -79.38328));
-INSERT INTO employer (employer_id, contact_given_name, contact_family_name, contact_phone_number, company_name, address_id) VALUES
+INSERT INTO employer (employer_id, contact_first_name, contact_last_name, contact_phone_number, company_name, address_id) VALUES
     (4, 'Steve', 'Smith', '905-555-8942', 'Google Inc.', 1), 
     (5, 'Jerry', 'McGuire', '905-555-0425', 'Microsoft Inc.', 2);
-INSERT INTO recruiter (recruiter_id, given_name, family_name, phone_number, coins, address_id) VALUES
+INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, coins, address_id) VALUES
     (1, 'John', 'Macabee', '443-555-8234', 25, 3),
     (2, 'Milton', 'Walker', '443-555-6456', 50, 4),
     (3, 'Jill', 'Stein', '443-555-3453', 32, 5);
-INSERT INTO candidate (given_name, family_name, email, created_on) VALUES
+INSERT INTO candidate (first_name, last_name, email, created_on) VALUES
     ('Sarah', 'Williams', 'sarah.w@gmail.com', TIMESTAMP '2009-10-06 10:23:54'),
     ('Amanda', 'Taylor', 'amanda34@gmail.com', TIMESTAMP '2006-10-21 10:23:54'),
     ('Elizabeth ', 'Blaese ', 'beth.blaese@hotmail.com', TIMESTAMP '2005-04-21 10:23:54'),

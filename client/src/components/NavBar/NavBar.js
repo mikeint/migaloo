@@ -1,9 +1,9 @@
 import React from 'react';
 import './NavBar.css';  
 import { NavLink } from 'react-router-dom';  
-import active_icon from '../../files/images/active_icon.png';
-import post_icon from '../../files/images/post_icon.png';
-import profile_icon from '../../files/images/profile_icon.png'; 
+import active_icon from '../../files/images/active_icon.svg';
+import post_icon from '../../files/images/post_icon.svg';
+import profile_icon from '../../files/images/profile_icon.svg'; 
 
 
 class NavBar extends React.Component{

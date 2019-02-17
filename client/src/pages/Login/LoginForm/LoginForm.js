@@ -46,16 +46,8 @@ class LoginForm extends Component {
             )
         };
 
-        showErrors = (errors) => {
-            
-            var tmpErrList = [];
-            var errArr = errors.response.data;
-            for (var key in errArr) {
-                if (errArr.hasOwnProperty(key)) {  
-                    tmpErrList.push(errArr[key]);
-                }
-            } 
-            this.setState({ errorList: tmpErrList }); 
+        showErrors = (errors) => { 
+            this.setState({ errorList: errors.response.data }); 
         };
 
   render() {
@@ -70,29 +62,18 @@ class LoginForm extends Component {
     return (
        
         <React.Fragment> 
-			 {/* <form onSubmit={this.login}> */}
-                <h1 className="">Sign In</h1>
+			 {/* <form onSubmit={this.login}> */} 
+                    <div className="loginHR"><div>HR</div></div>
                     <div className="formItem"> 
-                        <input className="formControl" placeholder="email" name='email' type='text' onChange={this.handleChange} value={email} required />
+                        <input className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name='email' type='text' onChange={this.handleChange} value={email} required />
                     </div>
                     <div className="formItem"> 
-                        <input className="formControl" placeholder="password" name='password' type='password' onChange={this.handleChange} value={password} required />
-                    </div>  
-
-                    <div className="errorsList">
-                        {
-                            this.state.errorList ?
-                                <ul>
-                                    {this.state.errorList.map((item, i) => {
-                                        return (<li key={i} className="errorItem">{item}</li>);
-                                    })}
-                                </ul>
-                            :
-                            "" 
-                        }
-                    </div> 
-                    
+                        <input className={this.state.errorList.password ? "formControl error" : "formControl"} placeholder="Password" name='password' type='password' onChange={this.handleChange} value={password} required />
+                    </div>   
                     <input onClick={this.login} type="submit" value="Login" className="loginBtn" />
+                    <div className="forgot-password"> 
+                        Forgot Password
+                    </div>  
                 {/* </form> */}
 		</React.Fragment> 
     );
