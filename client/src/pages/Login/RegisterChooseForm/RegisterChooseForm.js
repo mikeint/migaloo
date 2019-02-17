@@ -27,10 +27,10 @@ class RegisterChooseForm extends Component {
 									(this.state.tabState === 2 ?
 										<div><RegisterRecruiterForm /></div>
 										:
-										<div>
+										<React.Fragment>
 											<div className='tab-button' onClick={() => this.changeTab(1)}>Employer</div>
 											<div className='tab-button' onClick={() => this.changeTab(2)}>Recruiter</div>
-										</div>
+                                        </React.Fragment>
 									)
 							}
 					</div>

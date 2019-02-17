@@ -25,9 +25,9 @@ class Login extends Component {
 
                             {
                                 this.state.tabState === "1" ?
-                                <div><LoginForm /></div>
+                                <React.Fragment><LoginForm /></React.Fragment>
                                 :
-                                <div><RegisterChooseForm /></div>
+                                <React.Fragment><RegisterChooseForm /></React.Fragment>
                             }
  
                         </div>

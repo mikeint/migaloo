@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Route, BrowserRouter } from "react-router-dom";
 import Landing from './layout/Landing/Landing';
 import Login from './pages/Login/Login'; 
-import Choose from './components/Choose/Choose'; 
 
 import ActiveJobs from './pages/ActiveJobs/ActiveJobs';
 import PostAJob from './pages/PostAJob/PostAJob';
@@ -36,9 +35,7 @@ class App extends Component {
                 <React.Fragment>
                     <PrivateRoute exact path="/activeJobs" component={ActiveJobs} />
                     <PrivateRoute exact path="/postAJob" component={PostAJob} />
-                    <PrivateRoute exact path="/profile" component={Profile} /> 
-                    
-                    <PrivateRoute exact path="/choose" component={Choose} />
+                    <PrivateRoute exact path="/profile" component={Profile} />  
 
                     <Route exact path="/" component={Landing} />
                     <Route exact path='/login' render={ () => (<Login />) } />

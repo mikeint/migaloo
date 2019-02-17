@@ -37,14 +37,21 @@
 
 @media only screen and (max-width: 677px) {
 	.loginContent {
-		min-height:unset;
-		position: fixed;
-		width: 100%;
-		padding: 0px 30px;
-		border-radius: 0px; 
-		height: 100%;
+        min-height:unset; 
+        height: 100%;
+		width: 100%; 
+		border-radius: 0px;  
 		top: 0px;
-	} 
+    } 
+    .tab-item.active {
+        color: #1a2b6d;
+    } 
+    .formItem input{
+        border-bottom: 1px solid #eaeaea;
+    }
+    .formItem input::placeholder {
+        color: #1a2b6d; 
+    }
 	.loginMiddle { 
 		height: 100%;
 		position: relative;
