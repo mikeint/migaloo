@@ -21,7 +21,8 @@ function createJWT(userId, email, type){
         passport.signToken(payload).then((token)=>{
             resolve({
                 success: true, 
-                token: 'Bearer ' + token
+                token: 'Bearer ' + token,
+                user:payload
             })
         }, (err)=>{
             reject(err)
