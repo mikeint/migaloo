@@ -4,6 +4,9 @@ const passport = require('../../config/passport');
 
 const postgresdb = require('../../config/db').postgresdb
 
+// @route       GET api/postings/listPostings
+// @desc        List all job postings from an employer
+// @access      Private
 router.get('/listPostings', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
@@ -11,7 +14,7 @@ router.get('/listPostings', passport.authentication,  (req, res) => {
     }
 
     postgresdb.any('\
-        SELECT title, caption, experience_type_name, j.post_id, tag_names, tag_ids \
+        SELECT title, caption, experience_type_name, j.post_id, tag_names, tag_ids, new_posts_cnt, posts_cnt \
         FROM job_posting j \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         LEFT JOIN ( \
@@ -20,6 +23,11 @@ router.get('/listPostings', passport.authentication,  (req, res) => {
             INNER JOIN tags t ON t.tag_id = pt.tag_id \
             GROUP BY post_id \
         ) tg ON tg.post_id = j.post_id \
+        LEFT JOIN ( \
+            SELECT post_id, SUM(CASE has_seen WHEN false THEN 1 ELSE 0 END) as new_posts_cnt, count(1) as posts_cnt \
+            FROM candidate_posting cp \
+            GROUP BY post_id \
+        ) cd ON cd.post_id = j.post_id \
         WHERE j.employer_id = $1', [jwtPayload.id])
     .then((data) => {
         res.json(data)

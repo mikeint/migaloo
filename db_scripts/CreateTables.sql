@@ -1,7 +1,5 @@
 DROP TABLE posting_tags;
-DROP INDEX posting_tags_idx;
 DROP TABLE candidate_tags;
-DROP INDEX candidate_tags_idx;
 DROP TABLE recruiter_candidate;
 DROP TABLE candidate_posting;
 DROP TABLE job_posting;
@@ -9,7 +7,6 @@ DROP TABLE recruiter;
 DROP TABLE candidate;
 DROP TABLE employer;
 DROP TABLE address;
-DROP INDEX login_lower_idx;
 DROP TABLE login;
 DROP TABLE user_type;
 DROP TABLE experience_type;
@@ -91,6 +88,7 @@ CREATE TABLE candidate_posting (
     candidate_id bigint REFERENCES candidate(candidate_id),
     post_id bigint REFERENCES job_posting(post_id),
     recruiter_id bigint REFERENCES recruiter(recruiter_id),
+    has_seen boolean default false,
     coins int NOT NULL,
     PRIMARY KEY(candidate_id, post_id, recruiter_id)
 );
