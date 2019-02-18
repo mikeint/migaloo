@@ -42,7 +42,10 @@ router.post('/login', (req, res) => {
 
     const email = req.body.email;
     const password = req.body.password;
-    postgresdb.one('SELECT user_id, passwordhash, user_type_id FROM login WHERE email = $1', email).then(user => {
+    postgresdb.one('SELECT user_id, passwordhash, user_type_id, user_type\
+            FROM login l \
+            INNER JOIN user_type ut ON l.user_type_id = ut.user_type_id \
+            WHERE email = $1', email).then(user => {
         console.log(user)
         if (!user) {
             errors.email = 'Email not registered';
