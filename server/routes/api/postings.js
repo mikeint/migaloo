@@ -38,6 +38,51 @@ router.get('/listPostings', passport.authentication,  (req, res) => {
     });
 });
 
+// @route       GET api/postings/setPostRead/:postId/:candidateId
+// @desc        Set posting to be read
+// @access      Private
+router.post('/setPostRead/:postId/:candidateId', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    var postId = req.params.postId
+    var candidateId = req.params.candidateId
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an employer to look at postings"})
+    }
+    if(postId == null){
+        return res.status(400).json({success:false, error:"Missing Post Id"})
+    }
+    if(candidateId == null){
+        return res.status(400).json({success:false, error:"Missing Candidate Id"})
+    }
+    postgresdb.any('\
+        SELECT 1 \
+        FROM job_posting jp \
+        INNER JOIN candidate_posting cp ON jp.post_id = cp.post_id \
+        WHERE jp.employer_id = $1 \
+        LIMIT 1', [jwtPayload.id])
+    .then(d=>{
+        if(d.length > 0){
+            postgresdb.none('UPDATE candidate_posting SET has_seen=true  WHERE candidate_id = $1 AND post_id = $2', [candidateId, postId])
+            .then((data) => {
+                res.json({success:true})
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).json(err)
+            });
+        }else{
+            res.status(400).json({success:false, error:"Mismatched posting"})
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
+
+// @route       GET api/postings/listPostingCandidates/:postId
+// @desc        List candidates for a job posting
+// @access      Private
 router.get('/listPostingCandidates/:postId', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     var postId = req.params.postId
@@ -49,7 +94,7 @@ router.get('/listPostingCandidates/:postId', passport.authentication,  (req, res
     }
 
     postgresdb.any(' \
-        SELECT cp.coins, r.first_name, r.last_name, r.phone_number, rl.email, c.first_name as candidate_first_name \
+        SELECT c.candidate_id, cp.coins, r.first_name, r.last_name, r.phone_number, rl.email, c.first_name as candidate_first_name \
         FROM job_posting j \
         INNER JOIN candidate_posting cp ON cp.post_id = j.post_id \
         INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
