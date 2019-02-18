@@ -27,7 +27,7 @@ CREATE TABLE login (
     user_id bigserial,
     email varchar(128) UNIQUE NOT NULL,
     passwordhash varchar(128) NOT NULL,
-    created_on timestamp,
+    created_on timestamp default NOW(),
     last_login timestamp,
     user_type_id int REFERENCES user_type(user_type_id),
     PRIMARY KEY(user_id)
@@ -68,6 +68,7 @@ CREATE TABLE job_posting (
     employer_id bigint REFERENCES employer(employer_id),
     title varchar(255) NOT NULL,
     caption varchar(2000) NOT NULL,
+	created_on timestamp default NOW(),
     experience_type_id int REFERENCES experience_type(experience_type_id),
     PRIMARY KEY(post_id)
 );
@@ -76,7 +77,7 @@ CREATE TABLE candidate (
     first_name varchar(128) NOT NULL,
     last_name varchar(128) NOT NULL,
     email varchar(128) NOT NULL,
-    created_on timestamp NOT NULL,
+    created_on timestamp default NOW(),
     PRIMARY KEY(candidate_id)
 );
 CREATE TABLE recruiter_candidate (
@@ -161,7 +162,7 @@ INSERT INTO job_posting (employer_id, title, caption, experience_type_id) VALUES
     (4, 'Senior Software Developer - Working on exciting projects', 'We are a small company that develops solutions to protect national security and everyday folks. That includes OS integration; programming in C, C++, Java, Scala, Python, JS, or whatever the job calls for; writing security policies, and everything in between.', 2),
     (5, 'Software Developer', 'As a software developer, you will be a key individual contributor on a sprint team building the future software at the core of the business. The role is for a full stack developer with the ability to develop solutions for the user interface, business logic, persistence layer and data store. Developers are responsible for implementing well-defined requirements as part of the sprint team including unit tests.', null),
     (4, 'Director of Technical Support', 'As Director of Technical Support for Tenable, you will provide strategic direction, leadership, development and management with our Americas Technical Support team. The Director of Technical Support is an experienced, enthusiastic, hands-on leader focused on building a world class Technical Support organization that is focused on delivering customer success. You will be the conduit between the Technical Support team, Customer Success Management team, Product and Development teams, and other internal stakeholders developing a trusted advisor relationship that enables rapid, focused, resolution for our customers. To be successful in this role, the Director of Technical Support must have the right combination of strategy, leadership and operational skills to manage a growing team of dedicated Technical Support Engineers.', 3),
-    (5, 'IT Director', 'The primary directive of the IT Director is to ensure that the technology and computing needs of the company are met. The candidate will work with executive leadership to help develop and maintain an IT roadmap keeping the company’s future objectives in mind. This position requires significant hands-on technical knowledge and expertise coupled with solid business knowledge. The IT Director must be able to collaborate with internal customers to identify and prioritize business requirements and deliver business and technology solutions with a focus on process transformation from planning through implementation. They will support the organizational initiative of process re-engineering by involving client departments in process flow analysis and work re-design. ', 3);
+    (5, 'IT Director', 'The primary directive of the IT Director is to ensure that the technology and computing needs of the company are met. The candidate will work with executive leadership to help develop and maintain an IT roadmap keeping the companyï¿½s future objectives in mind. This position requires significant hands-on technical knowledge and expertise coupled with solid business knowledge. The IT Director must be able to collaborate with internal customers to identify and prioritize business requirements and deliver business and technology solutions with a focus on process transformation from planning through implementation. They will support the organizational initiative of process re-engineering by involving client departments in process flow analysis and work re-design. ', 3);
 INSERT INTO candidate_posting (post_id, candidate_id, recruiter_id, coins) VALUES
     (1, 1, 1, 10),
     (1, 2, 2, 5),
