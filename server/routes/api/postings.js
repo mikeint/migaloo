@@ -1,8 +1,64 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('../../config/passport');
+const validatePostingsInput = require('../../validation/postings');  
 
-const postgresdb = require('../../config/db').postgresdb
+const db = require('../../config/db')
+const postgresdb = db.postgresdb
+const pgp = db.pgp
+const postingTagsInsertHelper = new pgp.helpers.ColumnSet(['post_id', 'tag_id'], {table: 'posting_tags'});
+
+
+// @route       GET api/postings/create
+// @desc        Create a new job posting for the employer
+// @access      Private
+router.post('/create', passport.authentication,  (req, res) => {
+    var body = req.body
+    const { errors, isValid } = validatePostingsInput(body);
+    //check Validation
+    if(!isValid) {
+        return res.status(400).json(errors);
+    }
+    var jwtPayload = body.jwtPayload;
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an employer to add a posting"})
+    }
+
+    postgresdb.tx(t => {
+        // creating a sequence of transaction queries:
+        const q1 = t.one('INSERT INTO job_posting (employer_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $4) RETURNING post_id',
+                            [jwtPayload.id, body.title, body.caption, body.experienceTypeId, body.salaryTypeId])
+        return q1.then((post_ret)=>{
+            if(body.tagIds != null && body.tagIds.length > 0){
+                const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper);
+                const q2 = t.none(query);
+                return q2
+                    .then(() => {
+                        res.status(200).json({success: true})
+                        return []
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.status(400).json({success: false, error:err})
+                    });
+            }else{
+                res.status(200).json({success: true})
+                return []
+            }
+        })
+        .catch(err => {
+            
+            console.log(err)
+            res.status(400).json({success: false, error:err})
+        });
+    })
+    .then(() => {
+        console.log("Done TX")
+    }).catch((err)=>{
+        console.log(err)
+        return res.status(500).json({success: false, error:err})
+    });
+});
 
 // @route       GET api/postings/listPostings
 // @desc        List all job postings from an employer
@@ -14,9 +70,10 @@ router.get('/list', passport.authentication,  (req, res) => {
     }
 
     postgresdb.any('\
-        SELECT title, caption, experience_type_name, j.post_id, tag_names, tag_ids, new_posts_cnt, posts_cnt \
+        SELECT title, caption, experience_type_name, salary_type_name, j.post_id, tag_names, tag_ids, new_posts_cnt, posts_cnt \
         FROM job_posting j \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
+        LEFT JOIN salary_type et ON j.salary_type_id = et.salary_type_id \
         LEFT JOIN ( \
             SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
             FROM posting_tags pt \
