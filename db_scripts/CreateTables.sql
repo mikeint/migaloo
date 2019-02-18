@@ -1,5 +1,7 @@
 DROP TABLE posting_tags;
+DROP INDEX posting_tags_idx;
 DROP TABLE candidate_tags;
+DROP INDEX candidate_tags_idx;
 DROP TABLE recruiter_candidate;
 DROP TABLE candidate_posting;
 DROP TABLE job_posting;
@@ -102,11 +104,15 @@ CREATE TABLE posting_tags (
     tag_id bigint REFERENCES tags(tag_id),
     PRIMARY KEY(post_id, tag_id)
 );
+CREATE INDEX posting_tags_idx ON posting_tags(tag_id);
+
 CREATE TABLE candidate_tags (
     candidate_id bigint REFERENCES candidate(candidate_id),
     tag_id bigint REFERENCES tags(tag_id),
     PRIMARY KEY(candidate_id, tag_id)
 );
+CREATE INDEX candidate_tags_idx ON candidate_tags(tag_id);
+
 -- DATA START
 INSERT INTO user_type (user_type_id, user_type_name) VALUES
     (1, 'Recruiter'),
