@@ -1,7 +1,7 @@
 import React from 'react';
 import './PostAJob.css';   
-import NavBar from '../../components/NavBar/NavBar';
-import TopBar from '../../components/TopBar/TopBar';
+import NavBar from '../../../components/NavBar/NavBar';
+import TopBar from '../../../components/TopBar/TopBar';
 
 class PostAJob extends React.Component{ 
  

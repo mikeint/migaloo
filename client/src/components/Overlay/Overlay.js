@@ -1,7 +1,6 @@
 import React, { Component } from "react"; 
 import "./Overlay.css";    
 
-
 class Overlay extends Component {
 
     componentDidMount = () => { 
@@ -28,15 +27,14 @@ class Overlay extends Component {
     render() {
  
         const { config } = this.props;
- 
-  
+
         return (
             <React.Fragment>
                 <div className="menu">
                     <div className={"app-menu "  + config.direction}>
                         <div className={"back " + config.backButtonLocation} onClick={this.toggleClassMenu.bind(this)}>x</div>  
                         {this.props.html} 
-                    </div>
+                    </div> 
                 </div>
             </React.Fragment>
         );

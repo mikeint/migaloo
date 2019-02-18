@@ -3,8 +3,8 @@ import { Route, BrowserRouter } from "react-router-dom";
 import Landing from './layout/Landing/Landing';
 import Login from './pages/Login/Login'; 
 
-import ActiveJobs from './pages/ActiveJobs/ActiveJobs';
-import PostAJob from './pages/PostAJob/PostAJob';
+import ActiveJobs from './pages/employer/ActiveJobs/ActiveJobs';
+import PostAJob from './pages/employer/PostAJob/PostAJob';
 import Profile from './pages/Profile/Profile';
 import PrivateRoute from './PrivateRoute';
 import AuthFunctions from './AuthFunctions'; 

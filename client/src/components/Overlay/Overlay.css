@@ -68,7 +68,7 @@
 .app-menu_l-r {
     -webkit-transform: translateX(-103%);
     transform: translateX(-103%); 
-    margin-left: -5%;
+    margin-left: 0%;
 }
 .app-menu_b-t {
     -webkit-transform: translateY(103%);

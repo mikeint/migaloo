@@ -12,12 +12,37 @@ import LandingSection2 from "../LandingSection2/LandingSection2";
 import LandingSection3 from "../LandingSection3/LandingSection3"; 
 
 class Landing extends Component {
+   
+    constructor(props) {
+        super(props);
+		this.state = {
+            smallHeader: false,
+            menuOpen: false,
+        }; 
+    }
+
+    componentDidMount() {
+        window.addEventListener('scroll', this.handleScroll);
+    } 
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll);
+    }
+    handleScroll = () => {  
+        this.setState({ smallHeader: window.pageYOffset > 0 });
+    }
+    toggleMobileMenu = () => {
+        this.setState({ menuOpen: !this.state.menuOpen }); 
+        window.scrollTo(0,0);
+    }
+    toggleLandingMenu = () => { 
+        this.setState({ menuOpen: !this.state.menuOpen }); 
+    }
 
 	render() {
 		return (
 			<React.Fragment>
 				<SocialSide />
-				<div id="header">
+				<div id="header" className={this.state.smallHeader ? "smallHeader" : ""}>
 					<div id="logoContainer"><div className="logo">HR</div></div>
 					<div id="navBar"> 
 						<a href="#landingSection2"><li className="navBarA">Overview</li></a>
@@ -27,15 +52,15 @@ class Landing extends Component {
 					</div>
 
 					<div id="navBarMobile">
-						<div id="nav-icon1">
+						<div id="nav-icon1" onClick={this.toggleLandingMenu} className={this.state.menuOpen ? "open" : ""}>
 							<span className="hmbSpanA"></span>
 							<span className="hmbSpanA"></span>
 							<span className="hmbSpanA"></span> 
 						</div>
-						<div className="side-menu" id="side-menu"> 
-							<a href="#landingSection2"><li>Overview</li></a>
-							<a href="#landingSection3"><li>How it Works</li></a>
-							<a href="#contactSection"><li>Contact Us</li></a>
+						<div id="side-menu" className={this.state.menuOpen ? "side-menu active-side-menu" : "side-menu"}> 
+							<a href="#landingSection2" onClick={this.toggleMobileMenu}><li>Overview</li></a>
+							<a href="#landingSection3" onClick={this.toggleMobileMenu}><li>How it Works</li></a>
+							<a href="#contactSection" onClick={this.toggleMobileMenu}><li>Contact Us</li></a>
 							<Link to="/login"><li>Login</li></Link>
 						</div>
 					</div>

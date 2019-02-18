@@ -71,6 +71,7 @@
     width: 100%;
     text-align: center;
     padding: 50px 10px;
+    color: #fff;
 }
 
 .loginHR div {
@@ -95,6 +96,9 @@
 	}
 	.tab-item.active { 
 		background-color: #fff;
+    }
+    .loginHR {
+        color: #1a2b6d;
     }
     .loginHR div { 
         border: 4px solid #1a2b6d; 

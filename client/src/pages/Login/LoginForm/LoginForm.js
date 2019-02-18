@@ -1,7 +1,7 @@
 import React, { Component } from 'react';  
 import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions';
-import { Redirect } from 'react-router-dom';
+import { Redirect, NavLink } from 'react-router-dom';
 
 import './LoginForm.css';
 
@@ -62,7 +62,7 @@ class LoginForm extends Component {
     return (
        
         <React.Fragment>   
-            <div className="loginHR"><div>HR</div></div>
+            <NavLink to='/'><div className="loginHR"><div>HR</div></div></NavLink>
             <div className="formItem"> 
                 <input className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name='email' type='text' onChange={this.handleChange} value={email} required />
             </div>

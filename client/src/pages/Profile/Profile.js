@@ -49,16 +49,10 @@ class Profile extends React.Component{
                         <div className="profileEmail">{this.state.user.email}</div>
                     </div>
                     <div className='profileBottom'>
-                        
-                        <div className="profileItem"><a target="_blank">Preferences</a></div>
-                        <div className="profileItem"><a target="_blank">Account Settings</a></div>
-                        <div className="profileItem"><a target="_blank">Preferences</a></div>
-                        <div className="profileItem"><a target="_blank">Account Settings</a></div>
-                        <div className="profileItem"><a target="_blank">Preferences</a></div>
-                        <div className="profileItem"><a target="_blank">Account Settings</a></div>
-                        <div className="profileItem" onClick={this.handleLogout}><a target="_blank">Log Out</a></div>
-                    </div>
-
+                        <div className="profileItem">Employer info</div>
+                        <div className="profileItem">Account info</div>
+                        <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
+                    </div> 
                 </div> 
             </React.Fragment>
         );

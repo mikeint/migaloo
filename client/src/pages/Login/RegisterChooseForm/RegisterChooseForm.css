@@ -41,6 +41,6 @@
 
 @media only screen and (max-width: 677px) {
     .tab-button {   
-        height: calc(50% - 25px); 
+        height: calc(50vh - 25px); 
     } 
 }

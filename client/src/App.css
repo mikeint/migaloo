@@ -52,7 +52,7 @@ a {
 
 .mainContainer {
     width: 100%;  
-    position: absolute; 
+    float: left; 
 }
 .pageHeading {
     width: 90%;
@@ -156,6 +156,8 @@ a {
     .loginContainer {
         background-image: none; 
         animation: none;
+    } 
+    .mainContainer {
+        position: absolute; 
     }
-    
 }
