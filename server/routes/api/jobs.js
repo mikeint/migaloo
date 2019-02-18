@@ -38,13 +38,13 @@ function getJobs(req, res){
 // @route       GET api/jobs/listJobs
 // @desc        List all available job postings
 // @access      Private
-router.get('/listJobs', passport.authentication, getJobs);
-router.get('/listJobs/:page', passport.authentication, getJobs);
+router.get('/list', passport.authentication, getJobs);
+router.get('/list/:page', passport.authentication, getJobs);
 
 // @route       GET api/jobs/listJobsForCandidate/:candidateId
 // @desc        List job postings that match candidates
 // @access      Private
-router.get('/listJobsForCandidate/:candidateId', passport.authentication,  (req, res) => {
+router.get('/listForCandidate/:candidateId', passport.authentication,  (req, res) => {
     var candidateId = req.params.candidateId
     if(candidateId == null)
         return res.status(400).json({success:false, error:"Missing Candidate Id"})

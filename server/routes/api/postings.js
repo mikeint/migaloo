@@ -7,7 +7,7 @@ const postgresdb = require('../../config/db').postgresdb
 // @route       GET api/postings/listPostings
 // @desc        List all job postings from an employer
 // @access      Private
-router.get('/listPostings', passport.authentication,  (req, res) => {
+router.get('/list', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
         return res.status(400).json({success:false, error:"Must be an employer to look at postings"})
@@ -41,7 +41,7 @@ router.get('/listPostings', passport.authentication,  (req, res) => {
 // @route       GET api/postings/setPostRead/:postId/:candidateId
 // @desc        Set posting to be read
 // @access      Private
-router.post('/setPostRead/:postId/:candidateId', passport.authentication,  (req, res) => {
+router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     var postId = req.params.postId
     var candidateId = req.params.candidateId
@@ -83,7 +83,7 @@ router.post('/setPostRead/:postId/:candidateId', passport.authentication,  (req,
 // @route       GET api/postings/listPostingCandidates/:postId
 // @desc        List candidates for a job posting
 // @access      Private
-router.get('/listPostingCandidates/:postId', passport.authentication,  (req, res) => {
+router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     var postId = req.params.postId
     if(jwtPayload.userType != 2){
