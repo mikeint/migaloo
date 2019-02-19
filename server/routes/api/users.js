@@ -42,7 +42,7 @@ router.post('/login', (req, res) => {
 
     const email = req.body.email;
     const password = req.body.password;
-    postgresdb.one('SELECT user_id, passwordhash, user_type_id, user_type\
+    postgresdb.one('SELECT user_id, passwordhash, l.user_type_id, ut.user_type_name\
             FROM login l \
             INNER JOIN user_type ut ON l.user_type_id = ut.user_type_id \
             WHERE email = $1', email).then(user => {
