@@ -1,5 +1,8 @@
 import React from 'react';
-import './PostAJob.css';   
+import './PostAJob.css'; 
+import { Redirect } from 'react-router-dom';
+
+import AuthFunctions from '../../../AuthFunctions'; 
 import NavBar from '../../../components/NavBar/NavBar';
 import TopBar from '../../../components/TopBar/TopBar';
 
@@ -14,10 +17,11 @@ class PostAJob extends React.Component{
             experience_type_name:'',
             compensation:'',
         }
+        this.Auth = new AuthFunctions();
     }
  
     componentDidMount() {
-        window.scrollTo(0, 0);
+        window.scrollTo(0, 0); 
     }
 
     handleChange = (e) => {
@@ -25,9 +29,12 @@ class PostAJob extends React.Component{
     }
 
     handleSubmit = () => {
-        axios.post('/savereg', this.state)
-        .then((res) => {
-            console.log("SUBMITTED: ", res); 
+        var config = {
+            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
+        }
+        axios.post('/api/postings/create', this.state, config)
+        .then((res) => { 
+            if(res.data.success) return <Redirect to='/activeJobs' />
         })
 
         .catch(error => {
@@ -105,6 +112,7 @@ class PostAJob extends React.Component{
                                     </div>
                                 </div>
                             </div>
+                            <div className="submitJobBtn" onClick={this.handleSubmit}>Post</div>
                         </div>
                     </div> 
                 </div>

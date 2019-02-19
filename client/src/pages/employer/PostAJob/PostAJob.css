@@ -152,7 +152,17 @@ select:-moz-focusring {
     background: #e6e8ef;
     outline: none;
 }
- 
+
+.submitJobBtn {
+    width: 100%;
+    float: left;
+    background: #1a2b6d;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+}
 
 @media only screen and (max-width: 1000px) {
     .postAJobContainer .i-2,
