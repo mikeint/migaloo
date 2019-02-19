@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('../../config/passport');
+const moment = require('moment');
 
 const postgresdb = require('../../config/db').postgresdb
 
@@ -15,7 +16,7 @@ function getJobs(req, res){
     }
     postgresdb.any('\
         SELECT title, caption, experience_type_name, company_name, image_id, \
-            street_address_1, street_address_2, city, state, country, tag_ids, tag_names \
+            street_address_1, street_address_2, city, state, country, tag_ids, tag_names, j.created_on as posted_on \
         FROM job_posting j \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         INNER JOIN employer e ON j.employer_id = e.employer_id \
@@ -28,6 +29,14 @@ function getJobs(req, res){
         ) tg ON tg.post_id = j.post_id \
         OFFSET $1 LIMIT 10', [(page-1)*10])
     .then((data) => {
+        // Marshal data
+        data = data.map(m=>{
+            var timestamp = moment(m.posted_on);
+            var ms = timestamp.diff(moment());
+            m.posted = moment.duration(ms).humanize() + " ago";
+            m.posted_on = timestamp.format("x");
+            return m
+        })
         res.json(data)
     })
     .catch(err => {
@@ -55,7 +64,7 @@ router.get('/listForCandidate/:candidateId', passport.authentication,  (req, res
     }
     postgresdb.any('\
         SELECT title, caption, experience_type_name, company_name, image_id, \
-            street_address_1, street_address_2, city, state, country, tag_ids, tag_names, tag_score \
+            street_address_1, street_address_2, city, state, country, tag_ids, tag_names, tag_score, j.created_on as posted_on \
         FROM job_posting j \
         LEFT JOIN ( \
             SELECT post_id, cast(COUNT(1) as decimal)/( \
@@ -84,6 +93,14 @@ router.get('/listForCandidate/:candidateId', passport.authentication,  (req, res
         ) tg ON tg.post_id = j.post_id \
         ORDER BY tag_score DESC', [candidateId, candidateId])
     .then((data) => {
+        // Marshal data
+        data = data.map(m=>{
+            var timestamp = moment(m.posted_on);
+            var ms = timestamp.diff(moment());
+            m.posted = moment.duration(ms).humanize() + " ago";
+            m.posted_on = timestamp.format("x");
+            return m
+        })
         res.json(data)
     })
     .catch(err => {
