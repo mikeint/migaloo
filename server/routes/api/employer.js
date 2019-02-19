@@ -8,9 +8,15 @@ const validateEmployerInput = require('../../validation/employer');
 const postgresdb = require('../../config/db').postgresdb
  
 
-// @route       POST api/employer/getProfile
-// @desc        Get employer profile
-// @access      Private
+/**
+ * Get employer profile information
+ * @route GET api/employer/getProfile
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.get('/getProfile', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
@@ -34,6 +40,15 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
     });
 });
 
+/**
+ * Get employer profile information
+ * @route GET api/employer/getProfile
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - An array of user info
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.post('/setProfile', passport.authentication,  (req, res) => {
     const { errors, isValid } = validateEmployerInput(req.body);
     //check Validation

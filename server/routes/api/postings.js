@@ -9,9 +9,15 @@ const pgp = db.pgp
 const postingTagsInsertHelper = new pgp.helpers.ColumnSet(['post_id', 'tag_id'], {table: 'posting_tags'});
 
 
-// @route       GET api/postings/create
-// @desc        Create a new job posting for the employer
-// @access      Private
+/**
+ * Create a new job posting for the employer
+ * @route POST api/postings/create
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.post('/create', passport.authentication,  (req, res) => {
     var body = req.body
     const { errors, isValid } = validatePostingsInput(body);
@@ -70,7 +76,7 @@ router.get('/list', passport.authentication,  (req, res) => {
     }
 
     postgresdb.any('\
-        SELECT title, caption, experience_type_name, salary_type_name, j.post_id, tag_names, tag_ids, new_posts_cnt, posts_cnt \
+        SELECT title, caption, experience_type_name, salary_type_name, j.post_id, tag_names, tag_ids, new_posts_cnt, posts_cnt, j.created_on \
         FROM job_posting j \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         LEFT JOIN salary_type et ON j.salary_type_id = et.salary_type_id \
