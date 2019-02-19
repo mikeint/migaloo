@@ -56,6 +56,7 @@ CREATE TABLE employer (
     contact_phone_number  varchar(32) NULL,
     company_name  varchar(128) NULL,
     image_id bigint,
+    active boolean default true,
     PRIMARY KEY(employer_id)
 );
 CREATE TABLE recruiter (
@@ -66,6 +67,7 @@ CREATE TABLE recruiter (
     phone_number  varchar(32) NULL,
     coins int DEFAULT 0 NOT NULL,
     image_id bigint,
+    active boolean default true,
     PRIMARY KEY(recruiter_id)
 );
 CREATE TABLE job_posting (
@@ -76,6 +78,7 @@ CREATE TABLE job_posting (
     caption varchar(2000) NOT NULL,
 	created_on timestamp default NOW(),
     experience_type_id int REFERENCES experience_type(experience_type_id),
+    active boolean default true,
     PRIMARY KEY(post_id)
 );
 CREATE TABLE candidate (
@@ -84,6 +87,7 @@ CREATE TABLE candidate (
     last_name varchar(128) NOT NULL,
     email varchar(128) NOT NULL,
     created_on timestamp default NOW(),
+    active boolean default true,
     PRIMARY KEY(candidate_id)
 );
 CREATE TABLE recruiter_candidate (
@@ -95,6 +99,7 @@ CREATE TABLE candidate_posting (
     candidate_id bigint REFERENCES candidate(candidate_id),
     post_id bigint REFERENCES job_posting(post_id),
     recruiter_id bigint REFERENCES recruiter(recruiter_id),
+    created_on timestamp default NOW(),
     has_seen boolean default false,
     coins int NOT NULL,
     PRIMARY KEY(candidate_id, post_id, recruiter_id)
@@ -230,4 +235,4 @@ INSERT INTO candidate_tags (candidate_id, tag_id) VALUES
     (1, 4),
     (2, 5),
     (3, 4);
-COMMIT;
+COMMIT;

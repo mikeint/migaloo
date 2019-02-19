@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('../../config/passport');
 const validatePostingsInput = require('../../validation/postings');  
+const moment = require('moment');
 
 const db = require('../../config/db')
 const postgresdb = db.postgresdb
@@ -93,6 +94,14 @@ router.get('/list', passport.authentication,  (req, res) => {
         ) cd ON cd.post_id = j.post_id \
         WHERE j.employer_id = $1', [jwtPayload.id])
     .then((data) => {
+        // Marshal data
+        data = data.map(m=>{
+            var timestamp = moment(m.created_on)
+            var ms = timestamp.diff(moment());
+            m.created = moment.duration(ms).humanize() + " ago";
+            m.created_on = timestamp.format("x");
+            return m
+        })
         res.json(data)
     })
     .catch(err => {
@@ -157,7 +166,7 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
     }
 
     postgresdb.any(' \
-        SELECT c.candidate_id, cp.coins, r.first_name, r.last_name, r.phone_number, rl.email, c.first_name as candidate_first_name \
+        SELECT c.candidate_id, cp.coins, r.first_name, r.last_name, r.phone_number, rl.email, c.first_name as candidate_first_name, j.created_on as posted_on \
         FROM job_posting j \
         INNER JOIN candidate_posting cp ON cp.post_id = j.post_id \
         INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
@@ -166,6 +175,14 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
         WHERE j.post_id = $1 AND j.employer_id = $2 \
         ORDER BY cp.coins DESC', [postId, jwtPayload.id])
     .then((data) => {
+        // Marshal data
+        data = data.map(m=>{
+            var timestamp = moment(m.posted_on);
+            var ms = timestamp.diff(moment());
+            m.posted = moment.duration(ms).humanize() + " ago";
+            m.posted_on = timestamp.format("x");
+            return m
+        })
         res.json(data)
     })
     .catch(err => {
