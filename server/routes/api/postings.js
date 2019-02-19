@@ -42,7 +42,7 @@ router.post('/create', passport.authentication,  (req, res) => {
 
     postgresdb.tx(t => {
         // creating a sequence of transaction queries:
-        const q1 = t.one('INSERT INTO job_posting (employer_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $4) RETURNING post_id',
+        const q1 = t.one('INSERT INTO job_posting (employer_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING post_id',
                             [jwtPayload.id, body.title, body.caption, body.experienceTypeId, body.salaryTypeId])
         return q1.then((post_ret)=>{
             if(body.tagIds != null && body.tagIds.length > 0){

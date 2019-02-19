@@ -101,6 +101,7 @@ CREATE TABLE candidate_posting (
     recruiter_id bigint REFERENCES recruiter(recruiter_id),
     created_on timestamp default NOW(),
     has_seen boolean default false,
+    accepted boolean default false,
     coins int NOT NULL,
     PRIMARY KEY(candidate_id, post_id, recruiter_id)
 );
