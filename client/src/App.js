@@ -9,10 +9,12 @@ import EmployerProfile from './pages/employer/Profile/Profile';
 import RecruiterProfile from './pages/recruiter/Profile/Profile';
 import JobList from './pages/recruiter/JobList/JobList';
 import CandidateList from './pages/recruiter/CandidateList/CandidateList';
+import AddCandidate from './pages/recruiter/AddCandidate/AddCandidate';
 import { PrivateRecruiterRoute, PrivateEmployerRoute } from './PrivateRoute';
 import AuthFunctions from './AuthFunctions'; 
 
 import './App.css';
+
 class App extends Component { 
     constructor() {
         super();
@@ -41,6 +43,7 @@ class App extends Component {
                     <PrivateEmployerRoute exact path="/employer" component={ActiveJobs} />
                     <PrivateRecruiterRoute exact path="/recruiter/profile" component={RecruiterProfile} />
                     <PrivateRecruiterRoute exact path="/recruiter/candidateList" component={CandidateList} />
+                    <PrivateRecruiterRoute exact path="/recruiter/addCandidate" component={AddCandidate} />
                     <PrivateRecruiterRoute exact path="/recruiter/jobList" component={JobList} />
                     <PrivateRecruiterRoute exact path="/recruiter" component={RecruiterProfile} />
 

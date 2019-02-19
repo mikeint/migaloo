@@ -31,15 +31,16 @@ class ExpandableRow extends React.Component{
                 <div className={"collapse" + (this.state.open ? ' in' : '')}>
                     <div className="flex">
                         <div className="flexColumn">
-                            <div>Email: {rowObj.email}</div>
-                            <div>Created: {rowObj.created}</div>
-                            <div>Posted to Job: {rowObj.posted_count} time(s)</div>
-                            {rowObj.resume_id != null ? <a href="/api/resume/{rowObj.resume_id}">Resume</a> : ''}
+                            <div className="rowMargin">Email: {rowObj.email}</div>
+                            <div className="rowMargin">Created: {rowObj.created}</div>
+                            <div className="rowMargin">Coins Spent on Candidate: {rowObj.coins_spent} coins(s)</div>
+                            <div className="rowMargin">Posted to Job: {rowObj.posted_count} time(s)</div>
                         </div>
                         <div className="flexColumn">
-                            <div>Accepted by Postings: {rowObj.accepted_count} time(s)</div>
-                            <div>Not Accepted by Postings: {rowObj.not_accepted_count} time(s)</div>
-                            <div>Coins Spent on Candidate: {rowObj.coins_spent} coins(s)</div>
+                            <div className="rowMargin">Accepted by Postings: {rowObj.accepted_count} time(s)</div>
+                            <div className="rowMargin">Not Accepted by Postings: {rowObj.not_accepted_count} time(s)</div>
+                            {rowObj.resume_id != null ? <a className="rowButton" href="/api/resume/{rowObj.resume_id}">View Resume</a> : ''}
+                            <div className="rowButton">Upload Resume</div>
                         </div>
                     </div>
                 </div> 

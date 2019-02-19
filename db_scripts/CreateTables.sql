@@ -89,6 +89,8 @@ CREATE TABLE candidate (
     email varchar(128) NOT NULL,
     resume_id bigint,
     created_on timestamp default NOW(),
+    salary_type_id int REFERENCES salary_type(salary_type_id),
+    experience_type_id int REFERENCES experience_type(experience_type_id),
     active boolean default true,
     PRIMARY KEY(candidate_id)
 );

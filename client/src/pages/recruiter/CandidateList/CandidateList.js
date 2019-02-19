@@ -59,7 +59,7 @@ class CandidateList extends React.Component{
                 <TopBar />
                
                 <div className='mainContainer'>
-                    <div className="pageHeading">Candidates<NavLink to="/recruiter/postAJob"><div className="addCandidateButton"></div></NavLink></div> 
+                    <div className="pageHeading">Candidates<NavLink to="/recruiter/addCandidate"><div className="addCandidateButton"></div></NavLink></div> 
                     {
                         this.state.candidateList ?
                             <div className="candidateListContainer">

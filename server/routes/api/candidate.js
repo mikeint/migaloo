@@ -2,16 +2,18 @@ const express = require('express');
 const router = express.Router();
 const passport = require('../../config/passport');
 const moment = require('moment');
+const validateCandidateInput = require('../../validation/candidate');  
 
 const db = require('../../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
+const candidateTagsInsertHelper = new pgp.helpers.ColumnSet(['candidate_id', 'tag_id'], {table: 'candidate_tags'});
 
 
 /**
- * Create a new canidate for the recruiter
- * @route POST api/canidate/create
- * @group canidate - Job postings for employers
+ * Create a new candidate for the recruiter
+ * @route POST api/candidate/create
+ * @group candidate - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
  * @returns {Error}  default - Unexpected error
@@ -19,63 +21,63 @@ const pgp = db.pgp
  */
 router.post('/create', passport.authentication,  (req, res) => {
 
-    // /**
-    //  * Inputs Body:
-    //  * title
-    //  * caption
-    //  * salaryTypeId (Optional)
-    //  * experienceTypeId (Optional)
-    //  * tagIds (Optional)
-    //  */
-    // var body = req.body
-    // const { errors, isValid } = validatePostingsInput(body);
-    // //check Validation
-    // if(!isValid) {
-    //     return res.status(400).json(errors);
-    // }
-    // var jwtPayload = body.jwtPayload;
-    // if(jwtPayload.userType != 2){
-    //     return res.status(400).json({success:false, error:"Must be an employer to add a posting"})
-    // }
+    /**
+     * Inputs Body:
+     * firstName
+     * lastName
+     * salaryTypeId (Optional)
+     * experienceTypeId (Optional)
+     * tagIds (Optional)
+     */
+    var body = req.body
+    const { errors, isValid } = validateCandidateInput(body);
+    //check Validation
+    if(!isValid) {
+        return res.status(400).json(errors);
+    }
+    var jwtPayload = body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        return res.status(400).json({success:false, error:"Must be an recruiter to add a candidate"})
+    }
 
-    // postgresdb.tx(t => {
-    //     // creating a sequence of transaction queries:
-    //     const q1 = t.one('INSERT INTO job_posting (employer_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING post_id',
-    //                         [jwtPayload.id, body.title, body.caption, body.experienceTypeId, body.salaryTypeId])
-    //     return q1.then((post_ret)=>{
-    //         if(body.tagIds != null && body.tagIds.length > 0){
-    //             const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper);
-    //             const q2 = t.none(query);
-    //             return q2
-    //                 .then(() => {
-    //                     res.status(200).json({success: true})
-    //                     return []
-    //                 })
-    //                 .catch(err => {
-    //                     console.log(err)
-    //                     res.status(400).json({success: false, error:err})
-    //                 });
-    //         }else{
-    //             res.status(200).json({success: true})
-    //             return []
-    //         }
-    //     })
-    //     .catch(err => {
+    postgresdb.tx(t => {
+        // creating a sequence of transaction queries:
+        const q1 = t.one('INSERT INTO candidate (first_name, last_name, email, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING candidate_id',
+                            [body.firstName, body.lastName, body.email, body.experienceTypeId, body.salaryTypeId])
+        return q1.then((candidate_ret)=>{
+            const q2 = t.none('INSERT INTO recruiter_candidate (candidate_id, recruiter_id) VALUES ($1, $2)',
+                                [candidate_ret.candidate_id, jwtPayload.id])
+            var queries = [q2];
+            if(body.tagIds != null && body.tagIds.length > 0){
+                const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidate_ret.candidate_id, tag_id: d}}), candidateTagsInsertHelper);
+                const q3 = t.none(query);
+                queries.push(q3)
+            }
+            return t.batch(queries).then(()=>{
+                res.json({success: true})
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).json({success: false, error:err})
+            });
             
-    //         console.log(err)
-    //         res.status(400).json({success: false, error:err})
-    //     });
-    // })
-    // .then(() => {
-    //     console.log("Done TX")
-    // }).catch((err)=>{
-    //     console.log(err)
-    //     return res.status(500).json({success: false, error:err})
-    // });
+        })
+        .catch(err => {
+            
+            console.log(err)
+            res.status(400).json({success: false, error:err})
+        });
+    })
+    .then(() => {
+        console.log("Done TX")
+    }).catch((err)=>{
+        console.log(err)
+        return res.status(500).json({success: false, error:err})
+    });
 });
 
-// @route       GET api/postings/listPostings
-// @desc        List all job postings from an employer
+// @route       GET api/candidate/lisy
+// @desc        List all candidates for a recruiter
 // @access      Private
 router.get('/list', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;

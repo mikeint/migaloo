@@ -34,7 +34,9 @@ class PostAJob extends React.Component{
         }
         axios.post('/api/postings/create', this.state, config)
         .then((res) => { 
-            if(res.data.success) return <Redirect to='/activeJobs' />
+            if(res.data.success) {
+                this.setState({ redirect: true })
+            }
         })
 
         .catch(error => {
@@ -49,8 +51,8 @@ class PostAJob extends React.Component{
         return (
             <React.Fragment>
                 <NavBar />
-                 <TopBar />
-
+                <TopBar />
+                {this.state.redirect ? <Redirect to='/employer/activeJobs' /> : ''}
                 <div className='mainContainer'>
                     <div className="pageHeading">Post a job</div>
                     <div className="postAJobContainer">
