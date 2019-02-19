@@ -79,7 +79,7 @@ router.get('/list', passport.authentication,  (req, res) => {
         SELECT title, caption, experience_type_name, salary_type_name, j.post_id, tag_names, tag_ids, new_posts_cnt, posts_cnt, j.created_on \
         FROM job_posting j \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
-        LEFT JOIN salary_type et ON j.salary_type_id = et.salary_type_id \
+        LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
         LEFT JOIN ( \
             SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
             FROM posting_tags pt \
