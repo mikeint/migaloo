@@ -1,3 +1,4 @@
+DROP TABLE transactions;
 DROP TABLE posting_tags;
 DROP TABLE candidate_tags;
 DROP TABLE recruiter_candidate;
@@ -102,15 +103,25 @@ CREATE TABLE candidate_posting (
     created_on timestamp default NOW(),
     has_seen boolean default false,
     accepted boolean default false,
+    has_seen_accepted boolean default false,
     coins int NOT NULL CHECK (coins > 0),
     PRIMARY KEY(candidate_id, post_id, recruiter_id)
 );
 CREATE INDEX candidate_posting_idx ON candidate_posting(post_id, recruiter_id);
+CREATE TABLE transactions (
+    transaction_id bigserial,
+    created_on timestamp default NOW(),
+    coins int NOT NULL,
+    recruiter_id bigint REFERENCES recruiter(recruiter_id),
+    PRIMARY KEY(recruiter_id)
+);
 CREATE TABLE tags (
     tag_id bigserial,
     tag_name varchar(64) NOT NULL,
     PRIMARY KEY(tag_id)
 );
+CREATE UNIQUE INDEX tag_name_lower_idx ON tags ((lower(tag_name)));
+
 CREATE TABLE posting_tags (
     post_id bigint REFERENCES job_posting(post_id),
     tag_id bigint REFERENCES tags(tag_id),
