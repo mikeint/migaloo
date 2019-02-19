@@ -3,15 +3,15 @@ const router = express.Router();
 const passport = require('../../config/passport');
 
 //load input validation
-const validateEmployerInput = require('../../validation/employer');  
+const validateEmployerInput = require('../../validation/recruiter');  
 
 const postgresdb = require('../../config/db').postgresdb
  
 
 /**
- * Get employer profile information
- * @route GET api/employer/getProfile
- * @group employer - Employer
+ * Get recruiter profile information
+ * @route GET api/recruiter/getProfile
+ * @group recruiter - Recruiter
  * @param {Object} body.optional
  * @returns {object} 200 - A map of profile information
  * @returns {Error}  default - Unexpected error
@@ -19,18 +19,18 @@ const postgresdb = require('../../config/db').postgresdb
  */
 router.get('/getProfile', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
-    if(jwtPayload.userType != 2){
-        return res.status(400).json({success:false, error:"Must be an employer for this"})
+    if(jwtPayload.userType != 1){
+        return res.status(400).json({success:false, error:"Must be an recruiter for this"})
     }
     
     postgresdb.one('\
-        SELECT email, contact_first_name, contact_last_name, \
-            contact_phone_number, company_name, image_id, \
+        SELECT email, first_name, last_name, \
+            phone_number, image_id, \
             street_address_1, street_address_2, city, state, country \
-        FROM employer e \
-        INNER JOIN login l ON l.user_id = e.employer_id \
-        LEFT JOIN address a ON a.address_id = e.address_id \
-        WHERE e.employer_id = $1', [jwtPayload.id])
+        FROM recruiter r \
+        INNER JOIN login l ON l.user_id = r.recruiter_id \
+        LEFT JOIN address a ON a.address_id = r.address_id \
+        WHERE r.recruiter_id = $1', [jwtPayload.id])
     .then((data) => {
         res.json(data)
     })
@@ -41,11 +41,11 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
 });
 
 /**
- * Get employer profile information
- * @route GET api/employer/getProfile
- * @group employer - Employer
+ * Set recruiter profile information
+ * @route POST api/recruiter/setProfile
+ * @group recruiter - Recruiter
  * @param {Object} body.optional
- * @returns {object} 200 - An array of user info
+ * @returns {object} 200
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
@@ -57,15 +57,15 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
     }
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
-    if(jwtPayload.userType != 2){
-        return res.status(400).json({success:false, error:"Must be an employer for this"})
+    if(jwtPayload.userType != 1){
+        return res.status(400).json({success:false, error:"Must be an recruiter for this"})
     }
-    var fields = ['contact_first_name', 'contact_last_name', 'contact_phone_number', 'company_name'];
+    var fields = ['first_name', 'last_name', 'phone_number'];
     var addressFields = ['street_address_1', 'street_address_2', 'city', 'state', 'country'];
-    postgresdb.one('SELECT contact_first_name, contact_last_name, contact_phone_number, company_name, e.address_id, street_address_1, street_address_2, city, state, country \
-                    FROM employer e \
-                    LEFT JOIN address a ON e.address_id = a.address_id\
-                    WHERE employer_id = $1', [jwtPayload.id]).then((data)=>{
+    postgresdb.one('SELECT first_name, last_name, phone_number, r.address_id, street_address_1, street_address_2, city, state, country \
+                    FROM recruiter r \
+                    LEFT JOIN address a ON r.address_id = a.address_id\
+                    WHERE recruiter_id = $1', [jwtPayload.id]).then((data)=>{
         var addressId = data.address_id;
         var addressIdExists = (data.address_id != null);
         var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:data[f]);
@@ -82,7 +82,7 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
             }
             return q1.then((addr_ret)=>{
                 addressId = addressIdExists ? addressId : addr_ret.address_id
-                const q2 = t.none('UPDATE employer SET contact_first_name=$1, contact_last_name=$2, contact_phone_number=$3, company_name=$4, address_id=$5 WHERE employer_id = $6',
+                const q2 = t.none('UPDATE recruiter SET first_name=$1, last_name=$2, phone_number=$3, company_name=$4, address_id=$5 WHERE recruiter_id = $6',
                                 [...fieldUpdates, addressId, jwtPayload.id]);
                 return q2
                     .then(() => {

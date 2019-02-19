@@ -8,5 +8,6 @@ const cn = {
 };
 var db = pgp(cn);
 module.exports = {
-    postgresdb: db
+    postgresdb: db,
+    pgp: pgp
 };

@@ -9,18 +9,24 @@ DROP TABLE employer;
 DROP TABLE address;
 DROP TABLE login;
 DROP TABLE user_type;
+DROP TABLE salary_type;
 DROP TABLE experience_type;
 DROP TABLE tags;
 
 CREATE TABLE user_type (
-    user_type_id int NOT NULL,
+    user_type_id serial,
     user_type_name varchar(128) NOT NULL,
     PRIMARY KEY(user_type_id)
 );
 CREATE TABLE experience_type (
-    experience_type_id int NOT NULL,
+    experience_type_id serial,
     experience_type_name varchar(128) NOT NULL,
     PRIMARY KEY(experience_type_id)
+);
+CREATE TABLE salary_type (
+    salary_type_id serial,
+    salary_type_name varchar(128) NOT NULL,
+    PRIMARY KEY(salary_type_id)
 );
 CREATE TABLE login (
     user_id bigserial,
@@ -50,6 +56,7 @@ CREATE TABLE employer (
     contact_phone_number  varchar(32) NULL,
     company_name  varchar(128) NULL,
     image_id bigint,
+    active boolean default true,
     PRIMARY KEY(employer_id)
 );
 CREATE TABLE recruiter (
@@ -60,15 +67,18 @@ CREATE TABLE recruiter (
     phone_number  varchar(32) NULL,
     coins int DEFAULT 0 NOT NULL,
     image_id bigint,
+    active boolean default true,
     PRIMARY KEY(recruiter_id)
 );
 CREATE TABLE job_posting (
     post_id bigserial,
     employer_id bigint REFERENCES employer(employer_id),
+    salary_type_id int REFERENCES salary_type(salary_type_id),
     title varchar(255) NOT NULL,
     caption varchar(2000) NOT NULL,
 	created_on timestamp default NOW(),
     experience_type_id int REFERENCES experience_type(experience_type_id),
+    active boolean default true,
     PRIMARY KEY(post_id)
 );
 CREATE TABLE candidate (
@@ -77,6 +87,7 @@ CREATE TABLE candidate (
     last_name varchar(128) NOT NULL,
     email varchar(128) NOT NULL,
     created_on timestamp default NOW(),
+    active boolean default true,
     PRIMARY KEY(candidate_id)
 );
 CREATE TABLE recruiter_candidate (
@@ -88,10 +99,12 @@ CREATE TABLE candidate_posting (
     candidate_id bigint REFERENCES candidate(candidate_id),
     post_id bigint REFERENCES job_posting(post_id),
     recruiter_id bigint REFERENCES recruiter(recruiter_id),
+    created_on timestamp default NOW(),
     has_seen boolean default false,
     coins int NOT NULL,
     PRIMARY KEY(candidate_id, post_id, recruiter_id)
 );
+CREATE INDEX candidate_posting_idx ON candidate_posting(post_id, recruiter_id);
 CREATE TABLE tags (
     tag_id bigserial,
     tag_name varchar(64) NOT NULL,
@@ -112,18 +125,34 @@ CREATE TABLE candidate_tags (
 CREATE INDEX candidate_tags_idx ON candidate_tags(tag_id);
 
 -- DATA START
-INSERT INTO user_type (user_type_id, user_type_name) VALUES
-    (1, 'Recruiter'),
-    (2, 'Employer');
-INSERT INTO experience_type (experience_type_id, experience_type_name) VALUES 
-    (1, 'Entry Level'),
-    (2, 'Mid Level'),
-    (3, 'Senior Level');
+INSERT INTO user_type (user_type_name) VALUES
+    ('Recruiter'),
+    ('Employer');
+INSERT INTO experience_type (experience_type_name) VALUES 
+    ('Entry Level'),
+    ('Mid Level'),
+    ('Senior Level');
+INSERT INTO salary_type (salary_type_name) VALUES 
+    ('0k - 15k'),
+    ('15k - 30k'),
+    ('30k - 45k'),
+    ('45k - 60k'),
+    ('60k - 75k'),
+    ('75k - 100k'),
+    ('100k - 125k'),
+    ('125k - 150k'),
+    ('150k - 175k'),
+    ('175k - 200k'),
+    ('200k - 250k'),
+    ('250k - 300k'),
+    ('300k - 350k'),
+    ('350k+');
 -- FAKE DATA START
 INSERT INTO tags (tag_name) VALUES
     ('SQL'),
     ('C++'),
     ('C#'),
+    ('C'),
     ('Leadership'),
     ('Agile');
 INSERT INTO login (email, passwordhash, created_on, user_type_id) VALUES 
