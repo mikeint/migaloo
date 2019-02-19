@@ -23,7 +23,7 @@
 }
 
 .navBtn {
-    width: 100px;
+    width: 130px;
     height: 50px;
     font-weight: bold;
     margin: auto;
@@ -34,7 +34,7 @@
     text-align: center;
     width: 30px;
     position: absolute;
-    left: 35px;
+    left: 50px;
 }
 
 .navText { 

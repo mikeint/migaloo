@@ -84,9 +84,24 @@ router.get('/list', passport.authentication,  (req, res) => {
     }
 
     postgresdb.any(' \
-        SELECT c.first_name, c.last_name, c.email, c.created_on, c.resume_id \
+        SELECT c.first_name, c.last_name, c.email, c.created_on, c.resume_id, \
+            coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
+            coalesce(cpd.not_accepted_count, 0) as not_accepted_count, coalesce(cpd.coins_spent, 0) as coins_spent, \
+            coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count \
         FROM recruiter_candidate rc \
         INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
+        LEFT JOIN ( \
+            SELECT cp.candidate_id, \
+                SUM(1) as posted_count, \
+                SUM(cast(accepted as int)) as accepted_count, \
+                SUM(cast(not_accepted as int)) as not_accepted_count, \
+                SUM(coins) as coins_spent, \
+                SUM(CASE WHEN NOT has_seen_response AND accepted THEN 1 ELSE 0 END) as new_accepted_count, \
+                SUM(CASE WHEN NOT has_seen_response AND accepted THEN 1 ELSE 0 END) as new_not_accepted_count \
+            FROM candidate_posting cp\
+            WHERE cp.recruiter_id = $1 \
+            GROUP BY cp.candidate_id \
+        ) cpd ON cpd.candidate_id = c.candidate_id\
         WHERE rc.recruiter_id = $1 AND c.active \
         ORDER BY c.last_name ASC', [jwtPayload.id])
     .then((data) => {

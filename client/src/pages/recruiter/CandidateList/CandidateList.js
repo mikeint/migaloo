@@ -6,6 +6,7 @@ import AuthFunctions from '../../../AuthFunctions';
 import NavBar from '../../../components/recruiter/NavBar/NavBar';
 import TopBar from '../../../components/TopBar/TopBar';
 import Loader from '../../../components/Loader/Loader';
+import ExpandableRow from './ExpandableRow/ExpandableRow';
 
 import '../../../constants/AnimateOverlay'; 
 
@@ -63,9 +64,7 @@ class CandidateList extends React.Component{
                         this.state.candidateList ?
                             <div className="candidateListContainer">
                                 {
-                                    this.state.candidateList.map((item, i) => {
-                                        return <div key={i} className="candidateListItem">{item.first_name} {item.last_name} - {item.email}</div>
-                                    })
+                                    this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} obj={item}></ExpandableRow>})
                                 }
                             </div>
                         :
