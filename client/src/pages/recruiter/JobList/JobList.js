@@ -1,9 +1,8 @@
 import React from 'react';
-import './ActiveJobs.css';    
-import { NavLink } from 'react-router-dom';
+import './JobList.css';    
 import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions'; 
-import NavBar from '../../../components/employer/NavBar/NavBar';
+import NavBar from '../../../components/recruiter/NavBar/NavBar';
 import TopBar from '../../../components/TopBar/TopBar';
 import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
@@ -11,7 +10,7 @@ import Loader from '../../../components/Loader/Loader';
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import '../../../constants/AnimateOverlay'; 
 
-class ActiveJobs extends React.Component{
+class JobList extends React.Component{
 
     constructor(props) {
         super(props);
@@ -50,7 +49,7 @@ class ActiveJobs extends React.Component{
         var config = {
             headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
         }
-        axios.get('/api/postings/list', config)
+        axios.get('/api/jobs/list', config)
         .then((res)=>{    
             this.setState({ jobList: res.data }) 
         }).catch(errors => 
@@ -69,7 +68,7 @@ class ActiveJobs extends React.Component{
                 <TopBar />
                
                 <div className='mainContainer'>
-                    <div className="pageHeading">Active Jobs<NavLink to="/employer/postAJob"><div className="postJobButton"></div></NavLink></div> 
+                    <div className="pageHeading">Active Jobs Postings</div> 
                     {
                         this.state.jobList ?
                             <div className="jobListContainer">
@@ -91,4 +90,4 @@ class ActiveJobs extends React.Component{
     }
 };
 
-export default ActiveJobs;
+export default JobList;

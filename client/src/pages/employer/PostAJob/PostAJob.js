@@ -3,7 +3,7 @@ import './PostAJob.css';
 import { Redirect } from 'react-router-dom';
 
 import AuthFunctions from '../../../AuthFunctions'; 
-import NavBar from '../../../components/NavBar/NavBar';
+import NavBar from '../../../components/employer/NavBar/NavBar';
 import TopBar from '../../../components/TopBar/TopBar';
 
 import axios from 'axios';

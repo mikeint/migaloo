@@ -39,6 +39,7 @@
 
 .navText { 
     margin-top: 5px;
+    white-space: nowrap;
 } 
 @media only screen and (max-width: 1024px) {  
     #navBar_admin {

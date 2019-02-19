@@ -87,6 +87,7 @@ CREATE TABLE candidate (
     first_name varchar(128) NOT NULL,
     last_name varchar(128) NOT NULL,
     email varchar(128) NOT NULL,
+    resume_id bigint,
     created_on timestamp default NOW(),
     active boolean default true,
     PRIMARY KEY(candidate_id)
