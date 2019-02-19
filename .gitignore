@@ -5,6 +5,7 @@
 /server/node_modules
 
 /node_modules
+/dbdata
 
 # testing
 /client/coverage
