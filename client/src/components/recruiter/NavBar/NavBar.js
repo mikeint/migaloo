@@ -1,9 +1,9 @@
 import React from 'react';
 import './NavBar.css';  
 import { NavLink } from 'react-router-dom';  
-import active_icon from '../../files/images/active_icon.png';
-import post_icon from '../../files/images/post_icon.png';
-import profile_icon from '../../files/images/profile_icon.png';
+import active_icon from '../../../files/images/active_icon.png';
+import post_icon from '../../../files/images/post_icon.png';
+import profile_icon from '../../../files/images/profile_icon.png';
 
 
 class NavBar extends React.Component{
@@ -14,19 +14,19 @@ class NavBar extends React.Component{
 
                 <div id="navBar_admin"> 
                      
-                    <NavLink to="/activeJobs">
+                    <NavLink to="/recruiter/jobList">
                         <div className="navBtn">
                             <img src={active_icon} alt="" />
-                            <div className="navText">Active Jobs</div>
+                            <div className="navText">Job Search</div>
                         </div>
                     </NavLink>  
-                    <NavLink to="/postAJob">
+                    <NavLink to="/recruiter/candidateList">
                         <div className="navBtn">
                             <img src={post_icon} alt="" />
-                            <div className="navText">Post a Job</div>
+                            <div className="navText">Candidate List</div>
                         </div>
                     </NavLink>  
-                    <NavLink to="/profile">
+                    <NavLink to="/recruiter/profile">
                         <div className="navBtn">
                             <img src={profile_icon} alt="" />
                             <div className="navText">Profile</div>

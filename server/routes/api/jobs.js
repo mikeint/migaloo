@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('../../config/passport');
 const moment = require('moment');
+const validateCandidatePosting = require('../../validation/jobs');  
 
 const postgresdb = require('../../config/db').postgresdb
 
@@ -44,15 +45,25 @@ function getJobs(req, res){
         res.status(400).json(err)
     });
 }
-// @route       GET api/jobs/listJobs
-// @desc        List all available job postings
-// @access      Private
+/**
+ * List all available job postings
+ * @route GET api/jobs/listJobs
+ * @group jobs - Jobs for Recruiters
+ * @returns {object} 200 - A list of maps containing jobs
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.get('/list', passport.authentication, getJobs);
 router.get('/list/:page', passport.authentication, getJobs);
 
-// @route       GET api/jobs/listJobsForCandidate/:candidateId
-// @desc        List job postings that match candidates
-// @access      Private
+/**
+ * List job postings that match candidates
+ * @route GET api/jobs/listJobsForCandidate/:candidateId
+ * @group jobs - Jobs for Recruiters
+ * @returns {object} 200 - A list of maps containing jobs
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.get('/listForCandidate/:candidateId', passport.authentication,  (req, res) => {
     var candidateId = req.params.candidateId
     if(candidateId == null)
@@ -106,6 +117,58 @@ router.get('/listForCandidate/:candidateId', passport.authentication,  (req, res
     .catch(err => {
         console.log(err)
         res.status(400).json(err)
+    });
+});
+
+/**
+ * Post candidate to job
+ * @route POST api/jobs/postCandidate
+ * @group jobs - Jobs for Recruiters
+ * @params {number} body.candidateId - Candidate Id
+ * @params {number} body.postId - Id of the job post
+ * @params {number} body.coins - Number of coins
+ * @returns {object} 200 - A success message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/postCandidate', passport.authentication,  (req, res) => {
+    var body = req.body
+    const { errors, isValid } = validateCandidatePosting(body);
+    //check Validation
+    if(!isValid) {
+        return res.status(400).json(errors);
+    }
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
+    }
+
+    postgresdb.tx(t => {
+        // Will fail if not their candidate
+        const q1 = t.one('SELECT 1 FROM recruiter_candidate WHERE candidate_id = $1 AND recruiter_id = $2',
+                            [body.candidateId, jwtPayload.id])
+
+        const q2 = t.none('INSERT INTO candidate_posting (candidate_id, post_id, recruiter_id, coins) VALUES ($1, $2, $3, $4)',
+                            [body.candidateId, body.postId, jwtPayload.id, body.coins])
+
+        const q3 = t.one('UPDATE recruiter SET coins = coins - $1 WHERE recruiter_id = $2 RETURNING coins',
+                            [body.coins, jwtPayload.id])
+        return t.batch([q1, q2, q3])
+        .then((d)=>{
+            console.log("Posted candidate for "+body.coins+" coins")
+            res.json({success: true, coinsLeft:d[2].coins})
+        })
+        .catch(err => {
+            
+            console.log(err)
+            res.status(400).json({success: false, error:err})
+        });
+    })
+    .then(() => {
+        console.log("Done TX")
+    }).catch((err)=>{
+        console.log(err)
+        return res.status(500).json({success: false, error:err})
     });
 });
 

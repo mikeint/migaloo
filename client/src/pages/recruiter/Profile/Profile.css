@@ -1,0 +1,57 @@
+.profileImage {
+    text-align: center;
+}
+.profileName {
+    font-size: 20px;
+    font-weight: bold;
+    border-bottom: 1px solid #e2e2e2;
+    width: 340px;
+    margin: auto;
+}
+.profileType {
+    font-size: 32px;
+    color: #1a2b6d;
+    font-weight: bold;
+    padding-top: 10px;
+}
+.profileEmail {
+    font-size: 12px;
+    padding-bottom: 20px; 
+}
+
+.profileBottom {
+    width: 100%; 
+    background: #1a2b6d;
+    padding: 20px;
+}
+.profileBottom .profileItem:last-child {
+    border-bottom: 0px;
+}
+
+.profileItem {  
+    width: 100%;
+    padding: 20px; 
+    font-weight: bold;
+    font-size: 14px; 
+    color: #fff;
+    border-bottom: 1px solid #5a6592;
+} 
+.numberCircle {
+    display: inline-block;
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    padding: 8px;
+    background: #f3f33f;
+    border: 2px solid #b2bb23;
+    color: #666;
+    text-align: center;
+    font: 24px Arial, sans-serif;
+    margin: 5px;
+}
+
+.number {
+    line-height: 44px;
+    vertical-align: middle;
+    font-weight: bold;
+}

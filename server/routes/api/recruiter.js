@@ -9,6 +9,33 @@ const postgresdb = require('../../config/db').postgresdb
  
 
 /**
+ * Get recruiter coins
+ * @route GET api/recruiter/getCoins
+ * @group recruiter - Recruiter
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/getCoins', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        return res.status(400).json({success:false, error:"Must be an recruiter for this"})
+    }
+    
+    postgresdb.one('\
+        SELECT coins \
+        FROM recruiter r \
+        WHERE r.recruiter_id = $1', [jwtPayload.id])
+    .then((data) => {
+        res.json(data)
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
+/**
  * Get recruiter profile information
  * @route GET api/recruiter/getProfile
  * @group recruiter - Recruiter
@@ -26,7 +53,7 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
     postgresdb.one('\
         SELECT email, first_name, last_name, \
             phone_number, image_id, \
-            street_address_1, street_address_2, city, state, country \
+            street_address_1, street_address_2, city, state, country, coins \
         FROM recruiter r \
         INNER JOIN login l ON l.user_id = r.recruiter_id \
         LEFT JOIN address a ON a.address_id = r.address_id \

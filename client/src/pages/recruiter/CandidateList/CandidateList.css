@@ -1,0 +1,36 @@
+.addJobButton {
+    width: 110px;
+    height: 110px;
+    border-radius: 10px;
+    line-height: 110px;
+    text-align: center;
+    font-size: 130px;
+    color: #fff;
+    background: #e6e8ef;
+    margin: auto;
+    margin-top: 30px; 
+}
+.noJobsText {
+    text-align: center;
+    font-size: 10px;
+    padding: 10px;
+}
+.candidateListContainer {
+    width: 100%;
+    float: left;
+}
+.candidateListItem{ 
+    padding: 15px 10px;
+    font-size: 15px; 
+    background: #1a2b6d;
+    color: #fff;
+}
+.addCandidateButton { 
+    position: absolute; 
+    height: 40px; 
+    width: 40px;
+    right: 0px;
+    top: 0px;
+    background-image: url('../../../files/images/addJobBtn.png');
+    background-repeat: no-repeat;
+}

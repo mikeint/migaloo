@@ -1,0 +1,71 @@
+.row {
+    padding: 15px 50px;
+    font-size: 15px; 
+    background: #1a2b6d;
+    color: #fff;
+    cursor: pointer;
+    font: 24px Arial, sans-serif;
+}
+.collapse {
+    display: none
+}
+.collapse.in {
+    display: block
+}
+.acceptedCount{
+    width: 48px;
+    height: 48px;
+    margin-left: 10px;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 38px;
+    display: inline-block;
+    border-radius: 50%;
+    padding: 5px;
+    background-color: rgb(32, 30, 131);
+    border: 2px solid rgb(97, 83, 83);
+}
+.notAcceptedCount{
+    width: 48px;
+    height: 48px;
+    margin-left: 10px;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 38px;
+    display: inline-block;
+    border-radius: 50%;
+    padding: 5px;
+    background-color: rgb(131, 30, 30);
+    border: 2px solid rgb(97, 83, 83);
+}
+.rowMargin{
+    margin: 5px 0px;
+}
+.rowButton{
+    cursor: pointer;
+    border-radius: 7px;
+    width: 250px;
+    background-color: #1a2b6d;
+    color: #fff;
+    text-align: center;
+    padding: 10px 5px;
+}
+.flex{
+    padding: 10px 50px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    font: 24px Arial, sans-serif;
+}
+.flexColumn{
+    flex: 1 0;
+}
+@media only screen and (max-width: 1000px) {
+    .flex {
+        border-radius: 0px;
+        flex-direction: column;
+    } 
+    .rowMargin{
+        margin: 10px 0px;
+    }
+} 
