@@ -1,14 +1,14 @@
-FROM node:8
+FROM node:11.9.0-stretch
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY . .
 
 RUN npm install 
 
-COPY . .
+RUN npm install -g nodemon
 
 EXPOSE 5000
 
-CMD [ "npm", "start" ]
+CMD [ "nodemon", "server.js" ]
 
