@@ -40,12 +40,12 @@ class Profile extends React.Component{
             <React.Fragment>
                 <NavBar /> 
                 <TopBar /> 
-                <div className='mainContainer'>  
+                <div className='mainContainer'>
 
                     <div className='profileImage'>
                         <img src={profileImg} alt="" />
                         <div className="profileName">{this.state.user.name}</div>
-                        <div className="profileType">{this.state.user.userType}</div>
+                        <div className="profileType">{this.state.user.userType === 2 ? "Employer" : "Recruiter"}</div>
                         <div className="profileEmail">{this.state.user.email}</div>
                     </div>
                     <div className='profileBottom'>

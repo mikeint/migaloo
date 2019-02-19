@@ -60,7 +60,7 @@ class ContactSection extends Component {
         return (
             <div className="formBackground"> 
                 <Form onSubmit={this.handleSubmit} id="theForm">
-                    <div className="signUpContainer"> 
+                    <div className="contactUsContainer"> 
                         <h1>CONTACT US</h1>
                         <div className="layerBackground"></div>
                         <div className="formSection">  

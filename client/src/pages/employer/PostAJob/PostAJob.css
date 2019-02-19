@@ -1,0 +1,167 @@
+.postAJobContainer {
+    width: 100%;
+    float: left;
+    background: #e6e8ef; 
+    position: relative;  
+    padding: 20px;  
+    color: #1a2b6d;
+}
+.postAJobContainer .formSection {
+    margin: auto auto 25px auto;
+    max-width: 1000px;
+    position: relative; 
+} 
+.postAJobContainer input {
+    width: 100%;
+    height: 40px; 
+    padding: 0px 10px 0px 10px;
+    transition: 0.3s; 
+    background: #e6e8ef;
+    color: #1a2b6d;
+    width: 100%; 
+    outline: none;
+    border: none; 
+    border-bottom: 1px solid #fff;
+    font-size: 20px; 
+}
+.postAJobContainer select {
+    width: 100%;
+    height: 40px;  
+    padding-left: 10px;
+    border: none;
+    outline: none; 
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 3px;  
+    font: inherit;  
+  
+    /* reset */   
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+select.minimal {
+    background-image:
+      linear-gradient(45deg, transparent 50%, gray 50%),
+      linear-gradient(135deg, gray 50%, transparent 50%),
+      linear-gradient(to right, #ccc, #ccc);
+    background-position:
+      calc(100% - 20px) calc(1em + 2px),
+      calc(100% - 15px) calc(1em + 2px),
+      calc(100% - 2.5em) 0.5em;
+    background-size:
+      5px 5px,
+      5px 5px,
+      1px 1.5em;
+    background-repeat: no-repeat;
+}
+select.minimal:focus {
+    background-image:
+      linear-gradient(45deg, #1a2b6d 50%, transparent 50%),
+      linear-gradient(135deg, transparent 50%, #1a2b6d 50%),
+      linear-gradient(to right, #ccc, #ccc);
+    background-position:
+      calc(100% - 15px) 1em,
+      calc(100% - 20px) 1em,
+      calc(100% - 2.5em) 0.5em;
+    background-size:
+      5px 5px,
+      5px 5px,
+      1px 1.5em;
+    background-repeat: no-repeat;
+    border-color: #1a2b6d;
+    outline: 0;
+}
+select:-moz-focusring {
+    color: transparent;
+    text-shadow: 0 0 0 #1a2b6d;
+} 
+
+
+ 
+
+.postAJobContainer .user-input-wrp {
+    position: relative; 
+    margin-bottom: 30px;
+}
+.postAJobContainer input:focus,
+.postAJobContainer select:focus,
+.postAJobContainer textarea:focus  {
+    border: 1px solid #1a2b6d;
+    border-color: #1a2b6d;
+    box-shadow: none;
+}
+.postAJobContainer .floating-label {
+	position: absolute;
+	pointer-events: none;
+	top: 12px;
+	left: 10px;
+	transition: 0.3s ease all;
+}
+
+.formSection select:focus ~ .floating-label,
+.formSection select:not(:focus):valid ~ .floating-label,
+.formSection input:focus ~ .floating-label,
+.formSection input:not(:focus):valid ~ .floating-label,
+.formSection textarea:focus ~ .floating-label,
+.formSection textarea:not(:focus):valid ~ .floating-label {
+	top: -18px;
+	left: 10px;
+    font-size: 13px;
+    color: #1a2b6d;
+    opacity: 0.6;
+    font-weight: bold; 
+}  
+
+.postAJobContainer .input-2 {
+    width:100%; 
+}
+.postAJobContainer .i-2 {
+    width: 47.5%;
+    float: left;
+} 
+.postAJobContainer .il {
+    margin-right: 5%;
+}
+ 
+.postAJobContainer .btn-secondary {
+    width: 100%;
+    padding: 10px; 
+    cursor: pointer;
+    font-size: 30px; 
+    letter-spacing: 3px;
+    font-weight: bold;
+    color: #ffffff;
+    background: #2e2e2e;
+    border: none; 
+    border-radius: 5px; 
+    transition: 0.3s;
+    overflow: hidden; 
+}
+
+.postAJobContainer textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    height: 240px;
+    font: 400 13.3333px Arial;
+    padding: 10px;   
+    color: #1a2b6d;
+    border:1px solid #fff;
+    overflow: auto;  
+    background: #e6e8ef;
+    outline: none;
+}
+ 
+
+@media only screen and (max-width: 1000px) {
+    .postAJobContainer .i-2,
+    .postAJobContainer .i-4,
+    .postAJobContainer .i-small,
+    .postAJobContainer select {
+        min-width: 100% !important;
+    }
+    .postAJobContainer .btn-secondary {
+        border-radius: 0px;
+    } 
+} 

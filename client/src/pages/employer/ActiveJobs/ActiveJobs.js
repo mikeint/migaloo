@@ -50,7 +50,7 @@ class ActiveJobs extends React.Component{
         var config = {
             headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
         }
-        axios.get('/api/jobs/listJobs', config)
+        axios.get('/api/postings/listPostings', config)
         .then((res)=>{    
             this.setState({ jobList: res.data }) 
         }).catch(errors => 
