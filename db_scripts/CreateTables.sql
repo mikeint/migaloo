@@ -65,7 +65,7 @@ CREATE TABLE recruiter (
     first_name varchar(128) NOT NULL,
     last_name varchar(128) NOT NULL,
     phone_number  varchar(32) NULL,
-    coins int DEFAULT 0 NOT NULL,
+    coins int DEFAULT 0 NOT NULL CHECK (coins >= 0),
     image_id bigint,
     active boolean default true,
     PRIMARY KEY(recruiter_id)
@@ -102,7 +102,7 @@ CREATE TABLE candidate_posting (
     created_on timestamp default NOW(),
     has_seen boolean default false,
     accepted boolean default false,
-    coins int NOT NULL,
+    coins int NOT NULL CHECK (coins > 0),
     PRIMARY KEY(candidate_id, post_id, recruiter_id)
 );
 CREATE INDEX candidate_posting_idx ON candidate_posting(post_id, recruiter_id);
