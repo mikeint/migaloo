@@ -20,6 +20,15 @@ const postingTagsInsertHelper = new pgp.helpers.ColumnSet(['post_id', 'tag_id'],
  * @access Private
  */
 router.post('/create', passport.authentication,  (req, res) => {
+
+    /**
+     * Inputs Body:
+     * title
+     * caption
+     * salaryTypeId (Optional)
+     * experienceTypeId (Optional)
+     * tagIds (Optional)
+     */
     var body = req.body
     const { errors, isValid } = validatePostingsInput(body);
     //check Validation
