@@ -4,10 +4,13 @@
   "private": true,
   "dependencies": {
     "axios": "^0.18.0",
+    "filepond": "^4.2.0",
+    "filepond-plugin-file-validate-type": "^1.2.2",
     "jwt-decode": "2.2.0",
     "react": "^16.4.2",
     "react-animate-on-scroll": "^2.1.5",
     "react-dom": "^16.4.2",
+    "react-filepond": "^7.0.1",
     "react-router-dom": "^4.3.1",
     "react-scripts": "0.9.5",
     "react-scrollable-anchor": "^0.6.1",

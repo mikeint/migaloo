@@ -7,10 +7,12 @@
     font: 24px Arial, sans-serif;
 }
 .collapse {
-    display: none
+    transition: max-height 0.5s;
+    overflow: hidden;
+    max-height: 0px;
 }
 .collapse.in {
-    display: block
+    max-height: 1000px;
 }
 .acceptedCount{
     width: 48px;
@@ -49,6 +51,10 @@
     color: #fff;
     text-align: center;
     padding: 10px 5px;
+    margin: 10px 10px;
+}
+.uploadFile{
+    width: 200px;
 }
 .flex{
     padding: 10px 50px;

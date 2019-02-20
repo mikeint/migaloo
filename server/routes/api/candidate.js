@@ -86,7 +86,7 @@ router.get('/list', passport.authentication,  (req, res) => {
     }
 
     postgresdb.any(' \
-        SELECT c.first_name, c.last_name, c.email, c.created_on, c.resume_id, \
+        SELECT c.candidate_id, c.first_name, c.last_name, c.email, c.created_on, c.resume_id, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
             coalesce(cpd.not_accepted_count, 0) as not_accepted_count, coalesce(cpd.coins_spent, 0) as coins_spent, \
             coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count \

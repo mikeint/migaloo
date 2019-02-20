@@ -56,7 +56,10 @@ class LoginForm extends Component {
     if (user) {
         if(this.Auth.loggedIn())
             sessionStorage.setItem("HROverlay", true);
-            return user.userType === 2 ? <Redirect to='/employer'/> : <Redirect to='/recruiter'/>
+        if(this.state.user.userType === 1)
+            return <Redirect to='/recruiter'/>
+        else
+            return <Redirect to='/employer'/>
     }
     
     return (
