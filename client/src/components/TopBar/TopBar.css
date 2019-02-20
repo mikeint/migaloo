@@ -22,10 +22,11 @@
 .alert{
     color: grey;
     cursor: pointer;
-    float: right;
-    position: absolute;
+    position: fixed;
     right: 0px;
     top: 0px;
+    margin-top: 5px;
+    margin-right: 5px;
 }
 .alert img{
     width: 48px;
