@@ -136,7 +136,65 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
     })
 });
 
+/**
+ * Get recruiter alerts
+ * @route GET api/recruiter/alerts
+ * @group recruiter - Recruiter
+ * @param {Object} body.optional
+ * @returns {object} 200 - A list of alert information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/alerts', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        return res.status(400).json({success:false, error:"Must be an recruiter for this"})
+    }
+    
+    postgresdb.any('\
+        SELECT candidate_id, post_id, accepted, not_accepted, responded_on, coins \
+        FROM candidate_posting cp \
+        WHERE NOT has_seen_response AND cp.recruiter_id = $1', [jwtPayload.id])
+    .then((data) => {
+        // Marshal data
+        data = data.map(m=>{
+            var timestamp = moment(m.responded_on);
+            var ms = timestamp.diff(moment());
+            m.responded = moment.duration(ms).humanize() + " ago";
+            m.responded_on = timestamp.format("x");
+            return m
+        })
+        res.json(data)
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
 
-
-
+// @route       GET api/postings/setPostRead/:postId/:candidateId
+// @desc        Set posting to be read
+// @access      Private
+router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    var postId = req.params.postId
+    var candidateId = req.params.candidateId
+    if(jwtPayload.userType != 1){
+        return res.status(400).json({success:false, error:"Must be an recruiter to look at postings"})
+    }
+    if(postId == null){
+        return res.status(400).json({success:false, error:"Missing Post Id"})
+    }
+    if(candidateId == null){
+        return res.status(400).json({success:false, error:"Missing Candidate Id"})
+    }
+    postgresdb.none('UPDATE candidate_posting SET has_seen_response=true WHERE cp.recruiter_id = $1 AND cp.candidate_id = $2 AND cp.post_id = $3', [jwtPayload.id, candidateId, postId])
+    .then((data) => {
+        res.json({success:true})
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
 module.exports = router;

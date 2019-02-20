@@ -99,7 +99,7 @@ router.get('/list', passport.authentication,  (req, res) => {
                 SUM(cast(not_accepted as int)) as not_accepted_count, \
                 SUM(coins) as coins_spent, \
                 SUM(CASE WHEN NOT has_seen_response AND accepted THEN 1 ELSE 0 END) as new_accepted_count, \
-                SUM(CASE WHEN NOT has_seen_response AND accepted THEN 1 ELSE 0 END) as new_not_accepted_count \
+                SUM(CASE WHEN NOT has_seen_response AND not_accepted THEN 1 ELSE 0 END) as new_not_accepted_count \
             FROM candidate_posting cp\
             WHERE cp.recruiter_id = $1 \
             GROUP BY cp.candidate_id \

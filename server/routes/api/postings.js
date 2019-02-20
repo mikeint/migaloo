@@ -97,7 +97,7 @@ router.get('/list', passport.authentication,  (req, res) => {
             GROUP BY post_id \
         ) tg ON tg.post_id = j.post_id \
         LEFT JOIN ( \
-            SELECT post_id, SUM(CASE has_seen WHEN false THEN 1 ELSE 0 END) as new_posts_cnt, count(1) as posts_cnt \
+            SELECT post_id, SUM(CASE has_seen_post WHEN false THEN 1 ELSE 0 END) as new_posts_cnt, count(1) as posts_cnt \
             FROM candidate_posting cp \
             GROUP BY post_id \
         ) cd ON cd.post_id = j.post_id \
@@ -143,7 +143,7 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
         LIMIT 1', [jwtPayload.id])
     .then(d=>{
         if(d.length > 0){
-            postgresdb.none('UPDATE candidate_posting SET has_seen=true  WHERE candidate_id = $1 AND post_id = $2', [candidateId, postId])
+            postgresdb.none('UPDATE candidate_posting SET has_seen_post=true  WHERE candidate_id = $1 AND post_id = $2', [candidateId, postId])
             .then((data) => {
                 res.json({success:true})
             })
