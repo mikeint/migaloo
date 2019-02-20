@@ -50,7 +50,7 @@ class TopBar extends React.Component{
                     <div className='alert'>
                         <span className="alertNumber" onClick={this.toggleAlerts}>{this.state.alertCount}</span>
                         <img src={bell} onClick={this.toggleAlerts}/>
-                        <div className={this.state.showAlerts ? 'alertListContainer' : 'alertListContainer on'}>
+                        <div className={this.state.showAlerts ? 'alertListContainer on' : 'alertListContainer'}>
                         <div className='alertList'>
                             {
                                 this.state.alertList.map((item, i) => {
