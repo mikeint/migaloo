@@ -1,0 +1,14 @@
+.alertItem{
+    border: 1px solid black;
+    text-align: left;
+    padding: 5px 5px;
+    overflow: hidden;
+}
+.alertTimeRow{
+    font-size: 12px;
+    padding-top: 5px;
+}
+.alertRow{
+    line-height: unset;
+    
+}

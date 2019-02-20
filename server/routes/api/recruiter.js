@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('../../config/passport');
+const moment = require('moment');
 
 //load input validation
 const validateEmployerInput = require('../../validation/recruiter');  
@@ -152,10 +153,19 @@ router.get('/alerts', passport.authentication,  (req, res) => {
     }
     
     postgresdb.any('\
-        SELECT candidate_id, post_id, accepted, not_accepted, responded_on, coins \
+        SELECT cp.candidate_id, post_id, accepted, not_accepted, responded_on, coins, alert_count, c.first_name, c.last_name \
         FROM candidate_posting cp \
-        WHERE NOT has_seen_response AND cp.recruiter_id = $1', [jwtPayload.id])
+        LEFT JOIN (SELECT recruiter_id, count(1) as alert_count \
+            FROM candidate_posting cpi \
+            WHERE responded_on IS NOT NULL AND NOT has_seen_response AND cpi.recruiter_id = $1 \
+            GROUP BY cpi.recruiter_id \
+        ) t ON t.recruiter_id = cp.recruiter_id \
+        INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
+        WHERE responded_on IS NOT NULL AND NOT has_seen_response AND cp.recruiter_id = $1 \
+        ORDER BY responded_on DESC \
+        LIMIT 10', [jwtPayload.id])
     .then((data) => {
+        console.log(data)
         // Marshal data
         data = data.map(m=>{
             var timestamp = moment(m.responded_on);
@@ -164,7 +174,7 @@ router.get('/alerts', passport.authentication,  (req, res) => {
             m.responded_on = timestamp.format("x");
             return m
         })
-        res.json(data)
+        res.json({success:true, alertList:data})
     })
     .catch(err => {
         console.log(err)
@@ -172,7 +182,7 @@ router.get('/alerts', passport.authentication,  (req, res) => {
     });
 });
 
-// @route       GET api/postings/setPostRead/:postId/:candidateId
+// @route       GET api/recruiter/setRead/:postId/:candidateId
 // @desc        Set posting to be read
 // @access      Private
 router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res) => {

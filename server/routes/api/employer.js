@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('../../config/passport');
+const moment = require('moment');
 
 //load input validation
 const validateEmployerInput = require('../../validation/employer');  
@@ -41,8 +42,8 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
 });
 
 /**
- * Get employer profile information
- * @route GET api/employer/getProfile
+ * Set employer profile information
+ * @route POST api/employer/setProfile
  * @group employer - Employer
  * @param {Object} body.optional
  * @returns {object} 200 - An array of user info
@@ -108,8 +109,52 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
         });
     })
 });
-
-
+/**
+ * Get employer alerts
+ * @route GET api/employer/alerts
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - A list of alert information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/alerts', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an employer for this"})
+    }
+    
+    postgresdb.any('\
+        SELECT c.candidate_id, jp.post_id, cp.created_on, c.first_name, coins, alert_count, jp.title \
+        FROM candidate_posting cp \
+        INNER JOIN job_posting jp ON cp.post_id = jp.post_id \
+        INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
+        LEFT JOIN (\
+            SELECT employer_id, count(1) as alert_count \
+            FROM candidate_posting cpi \
+            INNER JOIN job_posting jpi ON cpi.post_id = jpi.post_id \
+            WHERE NOT cpi.has_seen_post AND jpi.employer_id = $1 \
+            GROUP BY jpi.employer_id\
+        ) t ON t.employer_id = jp.employer_id\
+        WHERE NOT cp.has_seen_post AND jp.employer_id = $1 \
+        ORDER BY created_on DESC \
+        LIMIT 10', [jwtPayload.id])
+    .then((data) => {
+        // Marshal data
+        data = data.map(m=>{
+            var timestamp = moment(m.created_on);
+            var ms = timestamp.diff(moment());
+            m.created = moment.duration(ms).humanize() + " ago";
+            m.created_on = timestamp.format("x");
+            return m
+        })
+        res.json({success:true, alertList:data})
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
 
 
 module.exports = router;
