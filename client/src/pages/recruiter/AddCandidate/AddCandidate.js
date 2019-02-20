@@ -3,8 +3,8 @@ import './AddCandidate.css';
 import { Redirect } from 'react-router-dom';
 
 import AuthFunctions from '../../../AuthFunctions'; 
-import NavBar from '../../../components/employer/NavBar/NavBar';
-import TopBar from '../../../components/TopBar/TopBar';
+//import NavBar from '../../../components/employer/NavBar/NavBar';
+//import TopBar from '../../../components/TopBar/TopBar';
 
 import axios from 'axios';
 
@@ -23,9 +23,9 @@ class AddCandidate extends React.Component{
         this.Auth = new AuthFunctions();
     }
  
-    componentDidMount() {
+/*     componentDidMount() {
         window.scrollTo(0, 0); 
-    }
+    } */
 
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value })
@@ -37,8 +37,13 @@ class AddCandidate extends React.Component{
         }
         axios.post('/api/candidate/create', this.state, config)
         .then((res) => {
+
+            // THIS IS getting messy, its to shut the overlay after submitting a new candidate.
+            // TO-DO (not here) show the added candidate behind overlay
             if(res.data.success) {
-                this.setState({ redirect: true })
+                document.querySelector(".menu").classList.add("menu--animatable");	 
+                document.querySelector(".menu").classList.remove('menu--visible');
+                return <Redirect to='/candidateList' /> // why cant i do this...?
             }
         })
         .catch(error => {
@@ -51,9 +56,9 @@ class AddCandidate extends React.Component{
     render(){   
         return (
             <React.Fragment>
-                <NavBar />
-                <TopBar />
-                {this.state.redirect ? <Redirect to='/recruiter/candidateList' /> : ''}
+                {/* <NavBar />
+                <TopBar /> */}
+                {/* this.state.redirect ? <Redirect to='/recruiter/candidateList' /> : '' */}
                 <div className='mainContainer'>
                     <div className="pageHeading">Post a Candidate</div>
                     <div className="postACandidateContainer">

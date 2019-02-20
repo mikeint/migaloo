@@ -1,7 +1,6 @@
 .postACandidateContainer {
     width: 100%;
-    float: left;
-    background: #e6e8ef; 
+    float: left; 
     position: relative;  
     padding: 20px;  
     color: #1a2b6d;
@@ -15,13 +14,12 @@
     width: 100%;
     height: 40px; 
     padding: 0px 10px 0px 10px;
-    transition: 0.3s; 
-    background: #e6e8ef;
+    transition: 0.3s;  
     color: #1a2b6d;
     width: 100%; 
-    outline: none;
-    border: none; 
-    border-bottom: 1px solid #fff;
+    outline: none;    
+    border: none;
+    border-bottom: 1px solid #1a2b6d;
     font-size: 20px; 
 }
 .postACandidateContainer select {

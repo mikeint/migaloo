@@ -4,7 +4,7 @@
     top: 0;
     z-index: 10;
     opacity: 1;
-    border-bottom: 1px solid #2e2e2e;
+    border-bottom: 1px solid #fff;
     /* background: #fff; */
     transition: 0.3s;
     position: fixed;
@@ -16,6 +16,10 @@
 }
 .smallHeader li {
     line-height: 50px !important;
+}
+.smallHeader#header {
+    border-bottom: 1px solid #1a2b6d;
+    box-shadow: 0px 0px 5px 0px #1a2b6d;
 }
 .smallHeader .logo {
     padding: 3px 15px; 
@@ -308,6 +312,9 @@
     .half {
         width: 100%; 
     }
+    .hrLogoText { 
+        font-size: 35px;
+    }
 } 
 
 @media only screen and (max-width: 768px) {
@@ -321,6 +328,9 @@
     .heroText { 
         font-size: 21px; 
         line-height: 40px;
+    }
+    .hrLogoText { 
+        font-size: 25px;
     }
 
 }

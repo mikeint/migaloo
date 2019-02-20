@@ -6,7 +6,7 @@ import TopBar from '../../../components/TopBar/TopBar';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 
-import profileImg from '../../../files/images/profileImg.png'
+import profileImg from '../../../files/images/profileImg2.png'
 
 class Profile extends React.Component{
 

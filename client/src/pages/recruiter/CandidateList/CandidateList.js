@@ -1,6 +1,6 @@
 import React from 'react';
 import './CandidateList.css';    
-import { NavLink } from 'react-router-dom';
+//import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions'; 
 import NavBar from '../../../components/recruiter/NavBar/NavBar';
@@ -8,7 +8,9 @@ import TopBar from '../../../components/TopBar/TopBar';
 import Loader from '../../../components/Loader/Loader';
 import ExpandableRow from './ExpandableRow/ExpandableRow';
 
+import Overlay from '../../../components/Overlay/Overlay';
 import '../../../constants/AnimateOverlay'; 
+import AddCandidate from '../AddCandidate/AddCandidate';
 
 class CandidateList extends React.Component{
 
@@ -16,6 +18,8 @@ class CandidateList extends React.Component{
         super(props);
 		this.state = {
             HROverlay: false, 
+            showOverlay: false,
+            overlayConfig: {direction: "app-menu_b-t", backButtonLocation: "back_t-m"},
             candidateList: [], 
         };
         this.Auth = new AuthFunctions();
@@ -49,9 +53,13 @@ class CandidateList extends React.Component{
             console.log(errors.response.data)
         )
     }
+    callOverlay = () => {
+        this.setState({ showOverlay : !this.state.showOverlay })
+    }
 
+    render(){
+        const html = <AddCandidate />
 
-    render(){ 
         return (
             <React.Fragment>  
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
@@ -59,7 +67,7 @@ class CandidateList extends React.Component{
                 <TopBar />
                
                 <div className='mainContainer'>
-                    <div className="pageHeading">Candidates<NavLink to="/recruiter/addCandidate"><div className="addCandidateButton"></div></NavLink></div> 
+                    <div className="pageHeading">Candidates{/* <NavLink to="/recruiter/addCandidate"> */}<div className="addCandidateButton"  onClick={() => this.callOverlay()}></div>{/* </NavLink> */}</div> 
                     {
                         this.state.candidateList ?
                             <div className="candidateListContainer">
@@ -69,7 +77,13 @@ class CandidateList extends React.Component{
                             </div>
                         :
                         <Loader />
-                    } 
+                    }
+
+                    {this.state.showOverlay && <Overlay
+                                                html={html}  
+                                                callOverlay={this.callOverlay} 
+                                                config={this.state.overlayConfig}
+                                            />}
                 </div> 
             </React.Fragment>
         );
