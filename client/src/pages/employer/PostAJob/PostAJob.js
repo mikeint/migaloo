@@ -16,6 +16,7 @@ class PostAJob extends React.Component{
             caption:'',
             experience_type_name:'',
             compensation:'',
+            redirect: false
         }
         this.Auth = new AuthFunctions();
     }
