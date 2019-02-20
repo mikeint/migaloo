@@ -17,7 +17,7 @@ class JobList extends React.Component{
 		this.state = {
             HROverlay: false, 
             showOverlay: false,
-            jobId: '',
+            postId: '',
             overlayConfig: {direction: "app-menu_l-r", backButtonLocation: "back_t-r"},
             jobList: '', 
         };
@@ -39,9 +39,9 @@ class JobList extends React.Component{
             })
         }
     } 
-    callOverlay = (jobId) => {
+    callOverlay = (postId) => {
         this.setState({ showOverlay : !this.state.showOverlay })
-        this.setState({ jobId : jobId })
+        this.setState({ postId : postId })
     }
 
 
@@ -59,7 +59,7 @@ class JobList extends React.Component{
 
 
     render(){ 
-        const html = <BuildActiveJobs obj={this.state.jobList[this.state.jobId]} />
+        const html = <BuildActiveJobs obj={this.state.jobList[this.state.postId]} />
 
         return (
             <React.Fragment>  

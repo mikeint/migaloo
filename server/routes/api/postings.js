@@ -76,9 +76,15 @@ router.post('/create', passport.authentication,  (req, res) => {
     });
 });
 
-// @route       GET api/postings/listPostings
-// @desc        List all job postings from an employer
-// @access      Private
+/**
+ * List all job postings from an employer
+ * @route POST api/postings/list
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.get('/list', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
@@ -86,7 +92,7 @@ router.get('/list', passport.authentication,  (req, res) => {
     }
 
     postgresdb.any('\
-        SELECT title, caption, experience_type_name, salary_type_name, j.post_id, tag_names, tag_ids, new_posts_cnt, posts_cnt, j.created_on \
+        SELECT j.post_id, title, caption, experience_type_name, salary_type_name, tag_names, tag_ids, new_posts_cnt, posts_cnt, j.created_on \
         FROM job_posting j \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
@@ -101,7 +107,7 @@ router.get('/list', passport.authentication,  (req, res) => {
             FROM candidate_posting cp \
             GROUP BY post_id \
         ) cd ON cd.post_id = j.post_id \
-        WHERE j.employer_id = $1', [jwtPayload.id])
+        WHERE j.employer_id = $1 AND j.active', [jwtPayload.id])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
@@ -119,9 +125,15 @@ router.get('/list', passport.authentication,  (req, res) => {
     });
 });
 
-// @route       GET api/postings/setPostRead/:postId/:candidateId
-// @desc        Set posting to be read
-// @access      Private
+/**
+ * Set posting to be considered read
+ * @route POST api/postings/setRead/:postId/:candidateId
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     var postId = req.params.postId
@@ -160,10 +172,92 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
         res.status(400).json(err)
     });
 });
+/**
+ * Set posting to be considered accepted or not accepted
+ * @route POST api/postings/setAcceptedState/:postId/:candidateId
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/setAcceptedState/:postId/:candidateId', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    var postId = req.params.postId
+    var candidateId = req.params.candidateId
+    var accepted = req.body.accepted
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an employer to look at postings"})
+    }
+    if(postId == null){
+        return res.status(400).json({success:false, error:"Missing Post Id"})
+    }
+    if(candidateId == null){
+        return res.status(400).json({success:false, error:"Missing Candidate Id"})
+    }
+    postgresdb.any('\
+        SELECT 1 \
+        FROM job_posting jp \
+        INNER JOIN candidate_posting cp ON jp.post_id = cp.post_id \
+        WHERE jp.employer_id = $1 AND j.active \
+        LIMIT 1', [jwtPayload.id])
+    .then(d=>{
+        if(d.length > 0){
+            postgresdb.none('UPDATE candidate_posting SET accepted=$1, not_accepted=$2, has_seen_response=NULL, responded_on=NOW()\
+             WHERE candidate_id = $3 AND post_id = $4', [accepted, !accepted, candidateId, postId])
+            .then((data) => {
+                res.json({success:true})
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).json(err)
+            });
+        }else{
+            res.status(400).json({success:false, error:"Mismatched posting"})
+        }
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
+/**
+ * Set posting to be removed
+ * @route POST api/postings/remove
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/remove', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    var postId = req.body.postId
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an employer to look at postings"})
+    }
+    if(postId == null){
+        return res.status(400).json({success:false, error:"Missing Post Id"})
+    }
+    postgresdb.none('UPDATE job_posting SET active=false WHERE employer_id = $1 AND post_id = $2', [jwtPayload.id, postId])
+    .then((data) => {
+        res.json({success:true})
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
 
-// @route       GET api/postings/listPostingCandidates/:postId
-// @desc        List candidates for a job posting
-// @access      Private
+/**
+ * List candidates for a job posting
+ * @route POST api/postings/listCandidates/:postId
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     var postId = req.params.postId
@@ -175,13 +269,14 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
     }
 
     postgresdb.any(' \
-        SELECT c.candidate_id, cp.coins, r.first_name, r.last_name, r.phone_number, rl.email, c.first_name as candidate_first_name, j.created_on as posted_on \
+        SELECT c.candidate_id, cp.coins, r.first_name, r.last_name, r.phone_number, rl.email, cp.accepted, cp.not_accepted,\
+            cp.has_seen_post, c.first_name as candidate_first_name, j.created_on as posted_on, c.resume_id \
         FROM job_posting j \
         INNER JOIN candidate_posting cp ON cp.post_id = j.post_id \
         INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
         INNER JOIN recruiter r ON r.recruiter_id = cp.recruiter_id \
         INNER JOIN login rl ON r.recruiter_id = rl.user_id \
-        WHERE j.post_id = $1 AND j.employer_id = $2 \
+        WHERE j.post_id = $1 AND j.employer_id = $2 AND j.active \
         ORDER BY cp.coins DESC', [postId, jwtPayload.id])
     .then((data) => {
         // Marshal data
@@ -192,7 +287,7 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
             m.posted_on = timestamp.format("x");
             return m
         })
-        res.json(data)
+        res.json({success:true, candidateList:data})
     })
     .catch(err => {
         console.log(err)
