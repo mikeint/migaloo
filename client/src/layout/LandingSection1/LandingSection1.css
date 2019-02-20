@@ -1,7 +1,8 @@
-.LandingSection1 {
+.landingSection1 {
     width: 100%;
-    display: inline-block;
+    float: left;
     color: #000; 
+    overflow: hidden;
  }
 .csImg img {
     width: 100px;

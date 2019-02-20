@@ -1,8 +1,8 @@
 .landingSection3 {
     width: 100%;
-    display: inline-block;
+    float: left;
+    overflow: hidden;
 }
-
 .signUpBtnHome{
     width: 50%;
     margin: auto;
@@ -11,4 +11,14 @@
     color: #fff;
     background: #1a2b6d;
     cursor: pointer;
+}
+
+.moduleText h1 { 
+    width: 400px;
+    margin: auto;
+}
+
+.moduleText p {
+    width: 400px;
+    margin: auto;
 }

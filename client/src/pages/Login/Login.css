@@ -17,7 +17,7 @@
 
 .loginContent {
 	width: 400px; 
-    min-height: 550px; 
+    min-height: 600px; 
     position: relative;
 }
 .loginContent img {
@@ -25,7 +25,7 @@
 }
 
 .loginBtn {
-	width: 100%;
+	width: 90%;
     background-color: #ffffff; 
     height: 40px;
     border: 0px; 
@@ -34,9 +34,10 @@
 	cursor: pointer;
 	-webkit-appearance: none;
     margin-top: 20px;
+    margin-bottom: 20px;
+    
     outline: none;
     color: #1a2b6d;
-	margin-bottom: 20px;
 }
 
 .tabContainer {
@@ -70,7 +71,7 @@
 .loginHR {
     width: 100%;
     text-align: center;
-    padding: 50px 10px;
+    padding: 40px 10px;
     color: #fff;
 }
 

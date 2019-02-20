@@ -1,7 +1,7 @@
 .landingSection2{
-    width: 100%; 
     width: 100%;
-    display: inline-block;
+    float: left;
+    overflow: hidden;
 }
 
 .slideImg { 

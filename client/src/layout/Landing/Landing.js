@@ -1,7 +1,8 @@
 import React, { Component } from 'react'; 
 import { Link } from 'react-router-dom';
 import './Landing.css';
-import heroHome from '../../files/images/landingPage/hero_2.jpg'; 
+//import heroHome from '../../files/images/landingPage/hero_2.jpg'; 
+//import HRlogoblack from '../../files/images/landingPage/HR-logo-black.png'; 
 import ScrollAnimation from 'react-animate-on-scroll';
 import ScrollableAnchor from 'react-scrollable-anchor'
 import SocialSide from "../SocialSide/SocialSide"; 
@@ -43,7 +44,7 @@ class Landing extends Component {
 			<React.Fragment>
 				<SocialSide />
 				<div id="header" className={this.state.smallHeader ? "smallHeader" : ""}>
-					<div id="logoContainer"><div className="logo">HR</div></div>
+					<div id="logoContainer"><div className="logo">HR</div><div className="hrLogoText">HireRanked</div></div>
 					<div id="navBar"> 
 						<a href="#landingSection2"><li className="navBarA">Overview</li></a>
 						<a href="#landingSection3"><li className="navBarA">How it Works</li></a>
@@ -67,7 +68,8 @@ class Landing extends Component {
 				</div>
 
 				<div className="heroContainer">
-					<img src={heroHome} alt="" />
+                    {/* <img src={heroHome} alt="" /> */}
+                    <div className="heroHome"></div>
 					<div className="heroText"> 
 					<ScrollAnimation animateIn='bounceInLeft' initiallyVisible={true} animateOnce={true}>
 						A platform where EMPLOYERS<br/>post jobs to RECRUITERS.

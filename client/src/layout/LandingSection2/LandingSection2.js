@@ -1,39 +1,39 @@
 import React, { Component } from 'react';
-import './LandingSection2.css'; 
-import ScrollAnimation from 'react-animate-on-scroll'; 
-import Slider from 'react-slick';  
+import './LandingSection2.css';
+import ScrollAnimation from 'react-animate-on-scroll';
+import Slider from 'react-slick';
 
-import carouselImg1 from '../../files/images/landingPage/carousel-1.png'; 
-import carouselImg2 from '../../files/images/landingPage/carousel-2.png'; 
-import carouselImg3 from '../../files/images/landingPage/carousel-3.png'; 
-import carouselImg4 from '../../files/images/landingPage/carousel-4.png'; 
-import carouselImg5 from '../../files/images/landingPage/carousel-5.png'; 
-import carouselImg6 from '../../files/images/landingPage/carousel-6.png';   
+import carouselImg1 from '../../files/images/landingPage/carousel-1.png';
+import carouselImg2 from '../../files/images/landingPage/carousel-2.png';
+import carouselImg3 from '../../files/images/landingPage/carousel-3.png';
+import carouselImg4 from '../../files/images/landingPage/carousel-4.png';
+import carouselImg5 from '../../files/images/landingPage/carousel-5.png';
+import carouselImg6 from '../../files/images/landingPage/carousel-6.png';
 
 
 class LandingSection2 extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { width: 0, height: 0 };
-    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
-  }
+    constructor(props) {
+        super(props);
+        this.state = { width: 0, height: 0 };
+        this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+    }
 
-  componentDidMount() {
-      this.updateWindowDimensions();
-      window.addEventListener('resize', this.updateWindowDimensions);
-  } 
-  componentWillUnmount() {
-      window.removeEventListener('resize', this.updateWindowDimensions);
-  } 
-  updateWindowDimensions() {
-      this.setState({ width: window.innerWidth, height: window.innerHeight });
-  }
+    componentDidMount() {
+        this.updateWindowDimensions();
+        window.addEventListener('resize', this.updateWindowDimensions);
+    } 
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateWindowDimensions);
+    } 
+    updateWindowDimensions() {
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
+    }
 
     render() { 
 
       let slidesToShow = 3;
-      if (this.state.width < 738) slidesToShow=2;
-      if (this.state.width < 538) slidesToShow=1;
+      if (this.state.width < 1024) slidesToShow=2;
+      if (this.state.width < 738) slidesToShow=1;
 
         var settings = {
             dots: true,
@@ -47,21 +47,21 @@ class LandingSection2 extends Component {
         return (
         <div className="landingSection2">  
             <Slider {...settings}>
-				<ScrollAnimation animateIn='bounceInLeft' duration={2} >
+				<ScrollAnimation animateIn='bounceInLeft' duration={2} animateOnce={true}>
                     <div>
                         <img src={carouselImg1} alt="" />
                         <h1 className="mc_4_text">Real Recruitment Platform</h1>
                         <p>The first and only platform connecting employers directly to third-party recruiters.</p>
                     </div>
                 </ScrollAnimation>
-				<ScrollAnimation animateIn='flipInY' duration={2}>
+				<ScrollAnimation animateIn='flipInY' duration={2} animateOnce={true}>
                     <div>
                         <img src={carouselImg2} alt="" />
                         <h1 className="mc_4_text">Top Quality Candidates</h1>
                         <p>Recruiters have the opportunity to showcase their best candidates, and employers get a ranked list of top talent to choose from.</p>
                     </div>
                 </ScrollAnimation>
-				<ScrollAnimation animateIn='bounceInRight' duration={2}>
+				<ScrollAnimation animateIn='bounceInRight' duration={2} animateOnce={true}>
                     <div>
                         <img src={carouselImg3} alt="" />
                         <h1 className="mc_4_text">Effiecient</h1>
