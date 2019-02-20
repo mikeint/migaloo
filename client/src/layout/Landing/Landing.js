@@ -1,7 +1,7 @@
 import React, { Component } from 'react'; 
 import { Link } from 'react-router-dom';
 import './Landing.css';
-import heroHome from '../../files/images/hero_2.jpg'; 
+import heroHome from '../../files/images/landingPage/hero_2.jpg'; 
 import ScrollAnimation from 'react-animate-on-scroll';
 import ScrollableAnchor from 'react-scrollable-anchor'
 import SocialSide from "../SocialSide/SocialSide"; 

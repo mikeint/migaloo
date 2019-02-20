@@ -61,7 +61,7 @@ class ContactSection extends Component {
             <div className="formBackground"> 
                 <Form onSubmit={this.handleSubmit} id="theForm">
                     <div className="contactUsContainer"> 
-                        <h1>CONTACT US</h1>
+                        <h1>Contact Us</h1>
                         <div className="layerBackground"></div>
                         <div className="formSection">  
                             <div className="input-2">

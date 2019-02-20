@@ -1,4 +1,14 @@
 .landingSection3 {
     width: 100%;
-    float: left;
+    display: inline-block;
+}
+
+.signUpBtnHome{
+    width: 50%;
+    margin: auto;
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+    background: #1a2b6d;
+    cursor: pointer;
 }

@@ -45,7 +45,7 @@ class App extends Component {
                     <PrivateRecruiterRoute exact path="/recruiter/candidateList" component={CandidateList} />
                     <PrivateRecruiterRoute exact path="/recruiter/addCandidate" component={AddCandidate} />
                     <PrivateRecruiterRoute exact path="/recruiter/jobList" component={JobList} />
-                    <PrivateRecruiterRoute exact path="/recruiter" component={RecruiterProfile} />
+                    <PrivateRecruiterRoute exact path="/recruiter" component={JobList} />
 
                     <Route exact path="/" component={Landing} />
                     <Route exact path='/login' render={ () => (<Login />) } />

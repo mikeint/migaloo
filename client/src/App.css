@@ -49,6 +49,18 @@ a {
     width: 100%;
     height: 100%;
 }
+@-webkit-keyframes Gradient {
+	0% { background-position: 0% 50% }
+	50% { background-position: 100% 50% }
+	100% { background-position: 0% 50% }
+}
+@keyframes Gradient {
+	0% { background-position: 0% 50% }
+	50% { background-position: 100% 50% }
+	100% { background-position: 0% 50% }
+}
+
+
 
 .mainContainer {
     width: 100%;  
@@ -72,8 +84,6 @@ a {
         margin-top: 60px;
     } 
 }
- 
-
 
 .mc_1 {
     background-color: #b1b9db;
@@ -86,43 +96,34 @@ a {
 }
 .mc_4 {
     background-color: #1a2b6d;
+    color: #fff;
+} 
+.mc_1_text {
+    color: #b1b9db;
 }
-
-.full {
-    width: 100%;
-    float: left;
+.mc_2_text {
+    color: #8891b6;
 }
-
-
-@-webkit-keyframes Gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
-	}
-	@keyframes Gradient {
-	0% {
-		background-position: 0% 50%
-	}
-	50% {
-		background-position: 100% 50%
-	}
-	100% {
-		background-position: 0% 50%
-	}
+.mc_3_text {
+    color: #5a6592;
 }
+.mc_4_text {
+    color: #1a2b6d;
+}
+ 
 
-
-
+.whiteBG{
+    background: #fff;
+}
+.greyBG {
+    background: #f2f2f2;
+}
+.centerText {
+    text-align: center;
+}
 
 
 /* HR Overlay */
-
 .HROverlay {  
     width: 100%;
     height: 100%;
@@ -148,8 +149,7 @@ a {
     border: 5px solid #fff;
     font-weight: bold;
 }
-
-
+/* end HR Overlay */
 
 
 @media only screen and (max-width: 677px) {
@@ -159,5 +159,5 @@ a {
     } 
     .mainContainer {
         position: absolute; 
-    }
+    }  
 }

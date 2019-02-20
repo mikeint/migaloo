@@ -1,50 +1,69 @@
-.landingSection2 {
+.landingSection2{
+    width: 100%; 
     width: 100%;
-    float: left;
-    background:#1a2b6d;
-    margin: auto;
-    padding: 50px;
-    transition:0.3s;
-}
-.section2Container {
-    width: 80%; 
-    margin: auto;
-    text-align: left; 
-    color: #fff; 
+    display: inline-block;
 }
 
-.infoDivContainer {
-    width: 33.333%;
-    float: left;
-    padding: 20px;
+.slideImg { 
+    padding: 0px 50px 50px 50px; 
+}
+.slideHeader {
+    text-align: center;
+    padding-left: 50px;
+    padding-right: 50px; 
+}
+.slick-prev {
+    left: 0px;
+    z-index: 9;
+    width: 40px;
+    height: 40px; 
+}
+.slick-next {
+    right: 0px;
+    z-index: 9;
+    width: 40px;
+    height: 40px;
+}
+.slick-next:before,
+.slick-prev:before {
+    font-size: 40px;
     color: #1a2b6d;
-    position: relative;
 }
 
-.infoDiv {
-    background: #fff;
+.slick-dots li button:before {
+    font-size: 20px;
+    color: #fff; 
+    }
+.slick-dots li.slick-active button:before {
+    color: #ffffff;
+    opacity: 1; 
+}
+.slick-slide div {
+    text-align: center;
+    outline: none;
+}
+
+.slick-slide img {
     width: 100%;
-    padding: 30px;
+    padding: 10px;
+}
+
+.slick-slide.slick-current { 
+    opacity: 0.3;
+}
+.slick-active~.slick-active~.slick-active { 
+    opacity: 0.3;
 } 
 
 
 
-@media only screen and (max-width: 1024px) {
-    .landingSection2 {
-        padding: 10px; 
-    } 
-    .infoDivContainer {
-        padding: 5px;
+@media only screen and (max-width: 1024px) { 
+    .slick-slide.slick-current { 
+        opacity: 1;
     }
-    .infoDiv {
-        padding: 5px;
-    }
+    .slick-active~.slick-active~.slick-active { 
+        opacity: 1;
+    }  
 }
-@media only screen and (max-width: 768px) { 
-    .infoDivContainer {
-        width: 100%;
-    }
-    .section2Container {
-        width: 90%;
-    }
+@media only screen and (max-width: 768px) {  
 }

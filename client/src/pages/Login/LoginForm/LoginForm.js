@@ -51,12 +51,12 @@ class LoginForm extends Component {
         };
 
   render() {
-    const { email, password } = this.state;
+    const { user, email, password } = this.state;
 
-    if (this.state.user) {
+    if (user) {
         if(this.Auth.loggedIn())
             sessionStorage.setItem("HROverlay", true);
-            return <Redirect to='/activeJobs'/>
+            return user.userType === 2 ? <Redirect to='/employer'/> : <Redirect to='/recruiter'/>
     }
     
     return (

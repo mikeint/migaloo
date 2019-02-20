@@ -94,7 +94,7 @@
 } 
 
 #navBar li:hover { 
-    background: #b1b9db; 
+    background: #b1b9db86; 
 }
 #navBar li,
 .navBarA a,
@@ -250,6 +250,27 @@
 }
 
 
+ 
+
+.full {
+    width: 100%; 
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    position: relative;
+}
+.half {
+    width: 50%;
+    display: inline-grid;
+} 
+.half img {
+    width: 100%;
+} 
+
+
+
+
+
 @media only screen and (max-width: 1024px) {
     #navBar {
         display: none;
@@ -260,6 +281,13 @@
     .heroText {
         font-size: 40px;
     }
+    .half {
+        width: 100%;
+        float: left;
+    }
+    .full {
+        display: inline;
+    }  
 } 
 
 @media only screen and (max-width: 768px) {
