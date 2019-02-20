@@ -105,8 +105,11 @@ router.get('/view/:candidateId', passport.authentication,  recruiterCandidateVal
     .then((data) => {
         if(useAWS){
             var params = {Bucket: bucketName, Key: 'resumes/'+data.resume_id};
-            var url = s3.getSignedUrl('getObject', params);
-            res.json({success:true, url:url})
+            s3.getSignedUrl('getObject', params, function (err, url) {
+                if(err != null)
+                    return res.status(400).json(err)
+                res.json({success:true, url:url})
+            });
         }else{
             res.json({success:true, url:'http://localhost:5000/api/public/resumes/'+data.resume_id})
         }
