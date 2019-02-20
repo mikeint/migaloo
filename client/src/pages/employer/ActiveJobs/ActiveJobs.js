@@ -20,7 +20,8 @@ class ActiveJobs extends React.Component{
             showOverlay: false,
             jobId: '',
             overlayConfig: {direction: "app-menu_l-r", backButtonLocation: "back_t-r"},
-            jobList: '', 
+            jobList: '',
+            redirect: false
         };
         this.Auth = new AuthFunctions();
     }
