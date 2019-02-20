@@ -1,6 +1,5 @@
 import React from 'react';
 import './AlertItem.css';    
-import AuthFunctions from '../../AuthFunctions'; 
 
 class AlertItem extends React.Component{ 
 
@@ -14,16 +13,17 @@ class AlertItem extends React.Component{
     // cp.candidate_id, post_id, accepted, not_accepted, responded_on, coins, alert_count, c.first_name, c.last_name
     render(){
         const alert = this.props.alert;
+        var row1, row2, row3;
         if(alert.userType === 1){ // Recuiter
-            var row1 = `${alert.first_name} ${alert.last_name} has ${alert.accepted?'':'not '} been accepted`;
-            var row2 = `Your ${alert.coins} coins have been ${alert.accepted?'returned':'lost'}`;
-            var row3 = alert.responded;
+            row1 = `${alert.first_name} ${alert.last_name} has ${alert.accepted?'':'not '} been accepted`;
+            row2 = `Your ${alert.coins} coins have been ${alert.accepted?'returned':'lost'}`;
+            row3 = alert.responded;
         }else{ // Employer
             var title = alert.title;
-            title = title.length > 20 ? title.substring(0, 17)+'...': title; // Limit the title to 20 characters
-            var row1 = `${alert.first_name} has been posted to ${alert.title} for ${alert.coins}`;
-            var row2 = '';
-            var row3 = alert.created;
+            title = title.length > 30 ? title.substring(0, 27).replace(/(^[^A-Za-z0-9]+|[^A-Za-z0-9]+$)/g, '').trim()+'...': title; // Limit the title to 30 characters
+            row1 = `${alert.first_name} has been posted to`;
+            row2 = `${title} for ${alert.coins} coin`;
+            row3 = alert.created;
         }
         return (
             <React.Fragment>

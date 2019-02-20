@@ -26,7 +26,8 @@ class TopBar extends React.Component{
         axios.get(userType===1?'/api/recruiter/alerts':'/api/employer/alerts', config)
         .then((res) => {
             if(res.data.success) {
-                var count = res.data.alertList.length === 0 ? 0 : parseInt(res.data.alertList[0].alert_count)
+                var count = (res.data.alertList.length === 0 ? 0 : 
+                    parseInt(res.data.alertList[0].alert_count, 10))
                 count = count > 99 ? 99 : count;
                 this.setState({
                     alertList: res.data.alertList.map(a=>{a.userType = userType; return a}),
@@ -49,7 +50,7 @@ class TopBar extends React.Component{
                     <div className="topBarLogo">HR</div>
                     <div className='alert'>
                         <span className="alertNumber" onClick={this.toggleAlerts}>{this.state.alertCount}</span>
-                        <img src={bell} onClick={this.toggleAlerts}/>
+                        <img src={bell} onClick={this.toggleAlerts} alt="Alert"/>
                         <div className={this.state.showAlerts ? 'alertListContainer on' : 'alertListContainer'}>
                         <div className='alertList'>
                             {
