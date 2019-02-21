@@ -18,11 +18,14 @@ class ActiveJobs extends React.Component{
 		this.state = {
             HROverlay: false, 
             showOverlay: false,
-            jobId: '',
+            postId: '',
             overlayConfig: {direction: "app-menu_l-r", backButtonLocation: "back_t-r"},
             jobList: ''
         };
         this.Auth = new AuthFunctions();
+        this.axiosConfig = {
+            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
+        }
     }
 
     componentWillMount = () => {
@@ -40,27 +43,28 @@ class ActiveJobs extends React.Component{
             })
         }
     } 
-    callOverlay = (jobId) => {
+    callOverlay = (postId) => {
         this.setState({ showOverlay : !this.state.showOverlay })
-        this.setState({ jobId : jobId })
+        this.setState({ postId : postId })
     }
 
 
     getJobList = () => {
-        var config = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
-        axios.get('/api/postings/list', config)
+        axios.get('/api/postings/list', this.axiosConfig)
         .then((res)=>{    
             this.setState({ jobList: res.data }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )
     }
+    jobRemoved = () => {
+        this.setState({ showOverlay : false })
+        this.getJobList();
+    }
 
 
     render(){ 
-        const html = <BuildActiveJobs obj={this.state.jobList[this.state.jobId]} />
+        const html = <BuildActiveJobs obj={this.state.jobList[this.state.postId]} removedCallback={this.jobRemoved.bind(this)} />
 
         return (
             <React.Fragment>  
@@ -73,9 +77,15 @@ class ActiveJobs extends React.Component{
                     {
                         this.state.jobList ?
                             <div className="jobListContainer">
-                                  {this.state.jobList.map((item, i) => {
-                                    return <div className="addButton jobListItem" key={i} onClick={() => this.callOverlay(i)}>{item.title}</div>
-                                })}
+                                {
+                                    this.state.jobList.map((item, i) => {
+                                        return <div className="addButton jobListItem" key={i} onClick={() => this.callOverlay(i)}>
+                                            {item.title}
+                                            {item.new_posts_cnt > 0 ? <span className="newPostingCount" title={item.new_posts_cnt+" New Candidate Postings"}>{item.new_posts_cnt}</span> : ""}
+                                            <span className="createdTime">{item.created}</span>
+                                        </div>
+                                    })
+                                }
                                 {this.state.showOverlay && <Overlay
                                                                 html={html}  
                                                                 callOverlay={this.callOverlay} 

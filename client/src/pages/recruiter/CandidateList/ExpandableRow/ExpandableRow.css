@@ -1,4 +1,4 @@
-.row {
+.expandableRow .row {
     padding: 15px 50px;
     font-size: 15px; 
     background: #1a2b6d;
@@ -6,15 +6,15 @@
     cursor: pointer;
     font: 24px Arial, sans-serif;
 }
-.collapse {
+.expandableRow .collapse {
     transition: max-height 0.5s;
     overflow: hidden;
     max-height: 0px;
 }
-.collapse.in {
+.expandableRow .collapse.in {
     max-height: 1000px;
 }
-.acceptedCount{
+.expandableRow .acceptedCount{
     width: 48px;
     height: 48px;
     margin-left: 10px;
@@ -27,7 +27,7 @@
     background-color: rgb(32, 30, 131);
     border: 2px solid rgb(97, 83, 83);
 }
-.notAcceptedCount{
+.expandableRow .notAcceptedCount{
     width: 48px;
     height: 48px;
     margin-left: 10px;
@@ -40,10 +40,10 @@
     background-color: rgb(131, 30, 30);
     border: 2px solid rgb(97, 83, 83);
 }
-.rowMargin{
+.expandableRow .rowMargin{
     margin: 5px 0px;
 }
-.rowButton{
+.expandableRow .rowButton{
     cursor: pointer;
     border-radius: 7px;
     width: 250px;
@@ -53,25 +53,25 @@
     padding: 10px 5px;
     margin: 10px 10px;
 }
-.uploadFile{
+.expandableRow .uploadFile{
     width: 200px;
 }
-.flex{
+.expandableRow .flex{
     padding: 10px 50px;
     width: 100%;
     display: flex;
     flex-direction: row;
     font: 24px Arial, sans-serif;
 }
-.flexColumn{
+.expandableRow .flexColumn{
     flex: 1 0;
 }
 @media only screen and (max-width: 1000px) {
-    .flex {
+    .expandableRow .flex {
         border-radius: 0px;
         flex-direction: column;
     } 
-    .rowMargin{
+    .expandableRow .rowMargin{
         margin: 10px 0px;
     }
 } 

@@ -46,7 +46,7 @@ class ExpandableRow extends React.Component{
 
         const rowObj = this.props.obj;
         return (
-            <div>
+            <div className="expandableRow">
                 <div className="row" onClick={this.toggle.bind(this)}>
                     <div>
                         {rowObj.first_name} {rowObj.last_name}
