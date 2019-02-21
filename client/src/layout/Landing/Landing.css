@@ -278,22 +278,6 @@
 }
 
 
- 
-
-.full {
-    width: 100%;  
-    float: left;
-}
-.half {
-    width: 50%; 
-    float: left;
-} 
-.half img {
-    width: 100%;
-} 
-
-
-
 
 
 @media only screen and (max-width: 1024px) {
@@ -308,10 +292,7 @@
     }
     .heroText {
         font-size: 40px;
-    }
-    .half {
-        width: 100%; 
-    }
+    } 
     .hrLogoText { 
         font-size: 35px;
     }

@@ -39,7 +39,22 @@ class CandidateList extends React.Component{
                 }
             })
         }
+
+        var bubblyButtons = document.getElementsByClassName("addCandidateBtn");
+        for (var i = 0; i < bubblyButtons.length; i++) {
+            bubblyButtons[i].addEventListener('click', this.animateButton, false);
+        }
     }
+    animateButton = (e) => {
+        e.preventDefault; 
+        e.target.classList.remove('animate');
+        e.target.classList.add('animate');
+        setTimeout(function(){
+          e.target.classList.remove('animate');
+        },700);
+    };
+      
+
 
 
     getCandidateList = () => {
@@ -67,7 +82,7 @@ class CandidateList extends React.Component{
                 <TopBar />
                
                 <div className='mainContainer'>
-                    <div className="pageHeading">Candidates{/* <NavLink to="/recruiter/addCandidate"> */}<div className="addCandidateButton"  onClick={() => this.callOverlay()}></div>{/* </NavLink> */}</div> 
+                    <div className="pageHeading">Candidates<button className="addCandidateBtn" onClick={() => this.callOverlay()}>+</button>{/* <div className="addCandidateButton" onClick={() => this.callOverlay()}></div> */}</div> 
                     {
                         this.state.candidateList ?
                             <div className="candidateListContainer">

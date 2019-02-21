@@ -1,6 +1,6 @@
 import React from 'react';
 import './TopBar.css';    
-import bell from '../../files/images/bell.svg';
+import bell from '../../files/images/bell.png';
 import axios from 'axios';
 import AuthFunctions from '../../AuthFunctions';
 import AlertItem from '../AlertItem/AlertItem'; 

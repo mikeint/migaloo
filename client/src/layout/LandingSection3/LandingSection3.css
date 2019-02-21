@@ -22,3 +22,48 @@
     width: 400px;
     margin: auto;
 }
+
+
+.module_wrapper {
+    width: 100%;
+    float: left;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.module_half,
+.animated {
+    width: 50%;
+    position: relative;
+    float: left;
+    flex: 25% 1; 
+}
+.animated  img {
+    width: 100%;
+}
+.module_content {
+    width: 100%;
+    height: 100%;
+    float: left;
+    padding: 20px;
+}
+ 
+.homeBtnContainer {
+    width: 50%;
+    float: left;
+}
+
+
+
+
+@media only screen and (max-width: 1024px) { 
+    .module_half,
+    .animated {
+        width: 100%;
+    }
+} 
+
+@media only screen and (max-width: 768px) {
+
+}
