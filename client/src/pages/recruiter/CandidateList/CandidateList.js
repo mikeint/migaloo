@@ -46,7 +46,7 @@ class CandidateList extends React.Component{
         }
     }
     animateButton = (e) => {
-        e.preventDefault; 
+        e.preventDefault(); 
         e.target.classList.remove('animate');
         e.target.classList.add('animate');
         setTimeout(function(){

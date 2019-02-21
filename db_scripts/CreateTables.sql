@@ -56,7 +56,7 @@ CREATE TABLE employer (
     contact_last_name varchar(128) NOT NULL,
     contact_phone_number  varchar(32) NULL,
     company_name  varchar(128) NULL,
-    image_id bigint,
+    image_id varchar(128),
     active boolean default true,
     PRIMARY KEY(employer_id)
 );
@@ -67,7 +67,7 @@ CREATE TABLE recruiter (
     last_name varchar(128) NOT NULL,
     phone_number  varchar(32) NULL,
     coins int DEFAULT 0 NOT NULL CHECK (coins >= 0),
-    image_id bigint,
+    image_id varchar(128),
     active boolean default true,
     PRIMARY KEY(recruiter_id)
 );
