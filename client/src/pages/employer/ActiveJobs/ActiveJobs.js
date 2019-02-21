@@ -82,6 +82,7 @@ class ActiveJobs extends React.Component{
                                         return <div className="addButton jobListItem" key={i} onClick={() => this.callOverlay(i)}>
                                             {item.title}
                                             {item.new_posts_cnt > 0 ? <span className="newPostingCount" title={item.new_posts_cnt+" New Candidate Postings"}>{item.new_posts_cnt}</span> : ""}
+                                            <span className="createdTime">{item.created}</span>
                                         </div>
                                     })
                                 }

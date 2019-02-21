@@ -107,7 +107,8 @@ router.get('/list', passport.authentication,  (req, res) => {
             FROM candidate_posting cp \
             GROUP BY post_id \
         ) cd ON cd.post_id = j.post_id \
-        WHERE j.employer_id = $1 AND j.active', [jwtPayload.id])
+        WHERE j.employer_id = $1 AND j.active \
+        ORDER BY j.created_on DESC', [jwtPayload.id])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
@@ -239,6 +240,7 @@ router.post('/remove', passport.authentication,  (req, res) => {
     if(postId == null){
         return res.status(400).json({success:false, error:"Missing Post Id"})
     }
+    // TODO: Return all coins that have not been accepted or rejected
     postgresdb.none('UPDATE job_posting SET active=false WHERE employer_id = $1 AND post_id = $2', [jwtPayload.id, postId])
     .then((data) => {
         res.json({success:true})

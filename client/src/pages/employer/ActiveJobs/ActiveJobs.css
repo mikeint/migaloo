@@ -46,3 +46,8 @@
     background-color: rgb(61, 59, 165);
     border: 2px solid rgb(97, 83, 83);
 }
+.mainContainer .createdTime{
+    font-size: 12px;
+    float: right;
+    margin-top: 15px;
+}
