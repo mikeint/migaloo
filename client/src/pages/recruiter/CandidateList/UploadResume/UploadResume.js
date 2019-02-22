@@ -37,23 +37,25 @@ class UploadResume extends React.Component{
             }
         }
         return (
-        <div className='modal displayBlock'>
-            <section className='modalMain'>
-                Upload Resume
-                <hr/>
-                <FilePond
-                    ref={ref=>(this.fp = ref)}
-                    server={this.options}
-                    acceptedFileTypes={this.fileTypes}
-                    allowMultiple={false}
-                    maxFiles={1}
-                    className="uploadFile"
-                    // onupdatefiles={this.props.handleClose}
-                    onprocessfile={this.props.handleClose}
-                    />
-                <div className="rowButton" onClick={this.props.handleClose}>Cancel</div>
-            </section>
-        </div>
+            <div className="resumeUploadModal">
+                <div className='modal displayBlock'>
+                    <section className='modalMain'>
+                        Upload Resume
+                        <hr/>
+                        <FilePond
+                            ref={ref=>(this.fp = ref)}
+                            server={this.options}
+                            acceptedFileTypes={this.fileTypes}
+                            allowMultiple={false}
+                            maxFiles={1}
+                            className="uploadFile"
+                            // onupdatefiles={this.props.handleClose}
+                            onprocessfile={this.props.handleClose}
+                            />
+                        <div className="rowButton" onClick={this.props.handleClose}>Cancel</div>
+                    </section>
+                </div>
+            </div>
         );
     };
 }
