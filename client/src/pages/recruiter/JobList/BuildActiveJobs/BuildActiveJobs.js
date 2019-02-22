@@ -15,17 +15,15 @@ class BuildActiveJobs extends React.Component{
                 <h3>{jobObj.experience_type_name}</h3> 
                 <p>{jobObj.company_name}</p> 
                 <p>{jobObj.image_id}</p> 
-                <p>{jobObj.street_address_1}</p> 
-                <p>{jobObj.street_address_2}</p> 
-                <p>{jobObj.city+", "+jobObj.state+", "+jobObj.country}</p>
+                <p>
+                    {jobObj.street_address_1}<br/>
+                    {jobObj.street_address_2}<br/> 
+                    {jobObj.city+", "+jobObj.state+", "+jobObj.country}
+                </p>
 
-                <div className="applicantsAppliedContainer">
-                <div className="apllicantApplied">Applicant 1</div>
-                <div className="apllicantApplied">Applicant 2</div>
-                <div className="apllicantApplied">Applicant 3</div>
-                <div className="apllicantApplied">Applicant 4</div>
-                <div className="apllicantApplied">Applicant 5</div>
-                </div>
+                {jobObj.tag_names?<p>Tags: {jobObj.tag_names.join(", ")}</p>:''}
+                <p>Posted: {jobObj.posted}</p>
+
             </div> 
         )
     }

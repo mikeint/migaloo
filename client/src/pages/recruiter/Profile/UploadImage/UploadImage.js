@@ -1,14 +1,22 @@
 import React from 'react';
-import './UploadResume.css'; 
+import './UploadImage.css'; 
 import AuthFunctions from '../../../../AuthFunctions'; 
 
 import { FilePond, registerPlugin } from "react-filepond";
 
 // Import FilePond styles
 import "filepond/dist/filepond.min.css";
-import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
-registerPlugin(FilePondPluginFileValidateType)
-class UploadResume extends React.Component{
+import FilePondPluginImageCrop from 'filepond-plugin-image-crop';
+import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import FilePondPluginImageResize from 'filepond-plugin-image-resize';
+registerPlugin(FilePondPluginImageCrop,
+    FilePondPluginImageResize,
+    FilePondPluginImageTransform,
+    FilePondPluginImageExifOrientation,
+    FilePondPluginImagePreview)
+class UploadImage extends React.Component{
 
     constructor() {
         super();
@@ -17,16 +25,12 @@ class UploadResume extends React.Component{
         };
         this.Auth = new AuthFunctions();
         this.headers = {'Authorization': 'Bearer ' + this.Auth.getToken()}
-        this.fileTypes = ['application/x-pdf', 'application/pdf', 'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.template']
-
     }
     render(){ 
         this.options = {
-            url: "/api/resume/",
+            url: "/api/recruiter/",
             process: {
-                url: 'upload/'+this.props.id,
+                url: 'uploadImage/',
                 method: 'POST',
                 withCredentials: false,
                 headers: this.headers,
@@ -36,18 +40,32 @@ class UploadResume extends React.Component{
                 ondata: null
             }
         }
+        this.transformOptions =  {
+            'medium_': (transforms) => {
+                transforms.resize.size.width = 384;
+                return transforms;
+            },
+            'small_': (transforms) => {
+                transforms.resize.size.width = 128;
+                return transforms;
+            }
+        }
         return (
-            <div className="resumeUploadModal">
+            <div className='imageUploadModal'>
                 <div className='modal displayBlock'>
                     <section className='modalMain'>
-                        Upload Resume
+                        Upload Image
                         <hr/>
                         <FilePond
                             ref={ref=>(this.fp = ref)}
                             server={this.options}
-                            acceptedFileTypes={this.fileTypes}
+                            allowImagePreview={false}
                             allowMultiple={false}
                             maxFiles={1}
+                            imageTransformOutputMimeType='image/jpg'
+                            imageResizeTargetWidth={600}
+                            imageCropAspectRatio={"1:1"}
+                            imageTransformVariants={this.transformOptions}
                             className="uploadFile"
                             // onupdatefiles={this.props.handleClose}
                             onprocessfile={this.props.handleClose}
@@ -60,4 +78,4 @@ class UploadResume extends React.Component{
     };
 }
 
-export default UploadResume;
+export default UploadImage;

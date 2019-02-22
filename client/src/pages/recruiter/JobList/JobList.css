@@ -1,4 +1,4 @@
-.addJobButton {
+.jobListClassContainer .addJobButton {
     width: 110px;
     height: 110px;
     border-radius: 10px;
@@ -10,22 +10,22 @@
     margin: auto;
     margin-top: 30px; 
 }
-.noJobsText {
+.jobListClassContainer .noJobsText {
     text-align: center;
     font-size: 10px;
     padding: 10px;
 }
-.jobListContainer {
+.jobListClassContainer .jobListContainer {
     width: 100%;
     float: left;
 }
-.jobListItem{ 
+.jobListClassContainer .jobListItem{ 
     padding: 15px 10px;
     font-size: 15px; 
     background: #1a2b6d;
     color: #fff;
 }
-.postJobButton { 
+.jobListClassContainer .postJobButton { 
     position: absolute; 
     height: 40px; 
     width: 40px;
@@ -33,4 +33,9 @@
     top: 0px;
     background-image: url('../../../files/images/addJobBtn.png');
     background-repeat: no-repeat;
+}
+.jobListClassContainer .createdTime{
+    font-size: 12px;
+    float: right;
+    margin-top: 15px;
 }

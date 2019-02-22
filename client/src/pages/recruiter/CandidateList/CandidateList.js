@@ -46,7 +46,7 @@ class CandidateList extends React.Component{
         }
     }
     animateButton = (e) => {
-        e.preventDefault; 
+        e.preventDefault(); 
         e.target.classList.remove('animate');
         e.target.classList.add('animate');
         setTimeout(function(){
@@ -81,11 +81,11 @@ class CandidateList extends React.Component{
                 <NavBar />
                 <TopBar />
                
-                <div className='mainContainer'>
+                <div className='candidateListContainer'>
                     <div className="pageHeading">Candidates<button className="addCandidateBtn" onClick={() => this.callOverlay()}>+</button>{/* <div className="addCandidateButton" onClick={() => this.callOverlay()}></div> */}</div> 
                     {
                         this.state.candidateList ?
-                            <div className="candidateListContainer">
+                            <div className="candidateList">
                                 {
                                     this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} obj={item}></ExpandableRow>})
                                 }

@@ -1,25 +1,32 @@
-.profileImage {
+.profileContainer .profileImageContainer {
     text-align: center;
 }
-.profileName {
+.profileContainer .profileImage {
+    text-align: center;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    border: 4px solid grey;
+}
+.profileContainer .profileName {
     font-size: 20px;
     font-weight: bold;
     border-bottom: 1px solid #e2e2e2;
     width: 340px;
     margin: auto;
 }
-.profileType {
+.profileContainer .profileType {
     font-size: 32px;
     color: #1a2b6d;
     font-weight: bold;
     padding-top: 10px;
 }
-.profileEmail {
+.profileContainer .profileEmail {
     font-size: 12px;
     padding-bottom: 20px; 
 }
 
-.profileBottom {
+.profileContainer .profileBottom {
     width: 100%; 
     background: #1a2b6d;
     padding: 20px;
@@ -28,7 +35,7 @@
     border-bottom: 0px;
 }
 
-.profileItem {  
+.profileContainer .profileItem {  
     width: 100%;
     padding: 20px; 
     font-weight: bold;
@@ -36,7 +43,7 @@
     color: #fff;
     border-bottom: 1px solid #5a6592;
 } 
-.numberCircle {
+.profileContainer .numberCircle {
     display: inline-block;
     border-radius: 50%;
     width: 64px;
@@ -50,7 +57,7 @@
     margin: 5px;
 }
 
-.number {
+.profileContainer .number {
     line-height: 44px;
     vertical-align: middle;
     font-weight: bold;

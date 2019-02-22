@@ -8,6 +8,8 @@ const postings = require('./routes/api/postings');
 const employer = require('./routes/api/employer'); 
 const recruiter = require('./routes/api/recruiter');
 const candidate = require('./routes/api/candidate');  
+const profileImage = require('./routes/api/profileImage');  
+
 const resume = require('./routes/api/resume');  
 const autocomplete = require('./routes/api/autocomplete');  
 //const testAPI = require('./routes/api/testAPI'); 
@@ -27,7 +29,7 @@ app.use(methodOverride('_method'));
 
 // Passport middleware
 passport.init(app);
-app.use('/api/public/resumes/', express.static(path.join(`${__dirname}/public/resumes/`)))
+app.use('/api/public/', express.static(path.join(`${__dirname}/public/`)))
 
 app.get('/', (req, res) => res.send("Hello World"));
 
@@ -39,6 +41,7 @@ app.use('/api/postings', postings);
 app.use('/api/employer', employer);
 app.use('/api/recruiter', recruiter);
 app.use('/api/candidate', candidate);
+app.use('/api/profileImage', profileImage);
 app.use('/api/autocomplete', autocomplete);
 app.use('/api/resume', resume);
 //app.use('/api/testAPI', testAPI);
