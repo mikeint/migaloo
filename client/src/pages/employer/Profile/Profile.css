@@ -1,34 +1,37 @@
-.profileImage {
+.profileContainer_employer .profileImage {
     text-align: center;
 }
-.profileName {
+.profileContainer_employer .profileImage img {
+    width: 140px;
+}
+.profileContainer_employer .profileName {
     font-size: 20px;
     font-weight: bold;
     border-bottom: 1px solid #e2e2e2;
     width: 340px;
     margin: auto;
 }
-.profileType {
+.profileContainer_employer .profileType {
     font-size: 32px;
     color: #1a2b6d;
     font-weight: bold;
     padding-top: 10px;
 }
-.profileEmail {
+.profileContainer_employer .profileEmail {
     font-size: 12px;
     padding-bottom: 20px; 
 }
 
-.profileBottom {
+.profileContainer_employer .profileBottom {
     width: 100%; 
     background: #1a2b6d;
     padding: 20px;
 }
-.profileBottom .profileItem:last-child {
+.profileContainer_employer .profileBottom .profileItem:last-child {
     border-bottom: 0px;
 }
 
-.profileItem {  
+.profileContainer_employer .profileItem {  
     width: 100%;
     padding: 20px; 
     font-weight: bold;

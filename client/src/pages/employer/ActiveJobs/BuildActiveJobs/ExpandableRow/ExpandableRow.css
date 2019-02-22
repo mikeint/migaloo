@@ -1,10 +1,10 @@
-.expandableJobRow .row {
-    padding: 15px 50px;
+.expandableJobRow .candidateExpand {   
+    color: #fff;
+    cursor: pointer; 
+    padding: 15px 10px;
     font-size: 15px; 
     background: #1a2b6d;
     color: #fff;
-    cursor: pointer;
-    font: 24px Arial, sans-serif;
 }
 .expandableJobRow .coins{
     float: right;
@@ -25,33 +25,51 @@
 .expandableJobRow .rowMargin{
     margin: 5px 0px;
 }
-.expandableJobRow .rowButton{
+.expandableJobRow .rowMargin a{ 
+    color: #1a2b6d;
+}
+.expandableJobRow .rowButton {
+    width: 100px;  
+    padding: 10px 5px; 
+    font-size: 14px;
     cursor: pointer;
-    border-radius: 7px;
-    width: 250px;
-    background-color: #1a2b6d;
-    color: #fff;
+    float: left;
     text-align: center;
-    padding: 10px 5px;
-    margin: 10px 10px;
+    background-color: #cecece70;
+    transition: 0.3s;
 }
+ 
 .expandableJobRow .selected{
-    background-color: #0b36e0;
+    background-color: #4CAF50;
+    color: #000;
+    float: right;
+}
+.expandableJobRow img {
+    width: 30px;
+} 
+.expandableJobRow .notSelected {
+    background-color: #cecece70;
+    color: #58585861;
+    width: 40px;
+}
+.expandableJobRow .notSelected img { 
+    width: 20px;
 }
 
-.expandableJobRow .notSelected{
-    background-color: #5a5e70;
-}
-
+.expandableJobRow .thumbsBtn {
+    width: 30px;
+} 
 .expandableJobRow .uploadFile{
     width: 200px;
 }
-.expandableJobRow .flex{
-    padding: 10px 50px;
+.expandableJobRow .flex {
+    padding: 10px;
     width: 100%;
     display: flex;
     flex-direction: row;
-    font: 24px Arial, sans-serif;
+    font-size:14px;
+    background: #8891b6;
+    color: #fff;
 }
 .expandableJobRow .flexColumn{
     flex: 1 0;

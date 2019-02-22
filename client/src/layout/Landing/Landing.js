@@ -71,8 +71,8 @@ class Landing extends Component {
                     {/* <img src={heroHome} alt="" /> */}
                     <div className="heroHome"></div>
 					<div className="heroText"> 
-					<ScrollAnimation animateIn='bounceInLeft' initiallyVisible={true} animateOnce={true}>
-						A platform where EMPLOYERS<br/>post jobs to RECRUITERS.
+					<ScrollAnimation className="heroTxtFull" animateIn='bounceInLeft' initiallyVisible={true} animateOnce={true}> 
+						A platform where EMPLOYERS<br/>post jobs to RECRUITERS. 
 					</ScrollAnimation>
 					</div>
 				</div> 

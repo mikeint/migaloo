@@ -55,20 +55,21 @@ class Profile extends React.Component{
                 <NavBar /> 
                 <TopBar /> 
                 <div className='mainContainer'>
-
-                    <div className='profileImage'>
-                        <img src={profileImg} alt="" />
-                        <div className="profileType">Employer</div>
-                        <div className="profileName">{this.state.profileInfo.contact_first_name} {this.state.profileInfo.contact_last_name}</div>
-                        <div className="profileEmail">{this.state.user.email} {this.state.profileInfo.contact_phone_number}</div>
-                        <div className="profileName">{this.state.profileInfo.company_name}</div>
-                    </div>
-                    <div className='profileBottom'>
-                        <div className="profileItem">Employer info</div>
-                        <div className="profileItem">Account info</div>
-                        <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
+                    <div className="profileContainer_employer">
+                        <div className='profileImage'>
+                            <img src={profileImg} alt="" />
+                            <div className="profileType">Employer</div>
+                            <div className="profileName">{this.state.profileInfo.contact_first_name} {this.state.profileInfo.contact_last_name}</div>
+                            <div className="profileEmail">{this.state.user.email} {this.state.profileInfo.contact_phone_number}</div>
+                            <div className="profileName">{this.state.profileInfo.company_name}</div>
+                        </div>
+                        <div className='profileBottom'>
+                            <div className="profileItem">Employer info</div>
+                            <div className="profileItem">Account info</div>
+                            <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
+                        </div> 
                     </div> 
-                </div> 
+                </div>
             </React.Fragment>
         );
     }

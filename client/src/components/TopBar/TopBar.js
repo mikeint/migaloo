@@ -2,21 +2,29 @@ import React from 'react';
 import './TopBar.css';    
 import bell from '../../files/images/bell.png';
 import axios from 'axios';
-import AuthFunctions from '../../AuthFunctions';
-import AlertItem from '../AlertItem/AlertItem'; 
+import AuthFunctions from '../../AuthFunctions'; 
+import Overlay from '../../components/Overlay/Overlay';
+import BuildNotifications from './BuildNotifications/BuildNotifications';
 
 class TopBar extends React.Component{ 
 
     constructor(props) {
         super(props);
 		this.state = {
+            showOverlay: false,
+            overlayConfig: {direction: "app-menu_t-b", swipeLocation: "swipeBack_b"},
             alertCount: 0,
             alertList: [],
-            showAlerts: false
         };
         this.Auth = new AuthFunctions();
         this.handleAlert();
     }
+
+    callOverlay = (postId) => {
+        this.setState({ showOverlay : !this.state.showOverlay })
+        this.setState({ postId : postId })
+    }
+
     handleAlert = () => {
         
         var config = {
@@ -39,29 +47,31 @@ class TopBar extends React.Component{
             console.log(error);
         });
     }
-    toggleAlerts = () => {
-        this.setState({showAlerts:!this.state.showAlerts})
-    }
 
-    render(){  
+    
+
+    render(){
+        const html = <BuildNotifications alertList={this.state.alertList} />;
+
+
+        console.log(this.state.alertList) 
+
         return (
             <React.Fragment>
                 <div className="topBar">
                     <div className="topBarLogo">HR</div>
                     <div className='alert'>
-                        <span className="alertNumber" onClick={this.toggleAlerts}>{this.state.alertCount}</span>
-                        <img src={bell} onClick={this.toggleAlerts} alt="Alert"/>
-                        <div className={this.state.showAlerts ? 'alertListContainer on' : 'alertListContainer'}>
-                        <div className='alertList'>
-                            {
-                                this.state.alertList.map((item, i) => {
-                                    return <AlertItem key={i} alert={item}/>
-                                })
-                            }
-                        </div>
-                        </div>
+                        <span className="alertNumber" onClick={() => this.callOverlay()}>{this.state.alertCount}</span>
+                        <img src={bell} onClick={() => this.callOverlay()} alt=""/>
                     </div>
                 </div> 
+
+                {this.state.showOverlay && <Overlay
+                                                html={html}  
+                                                callOverlay={this.callOverlay} 
+                                                config={this.state.overlayConfig}
+                                            />}
+
             </React.Fragment>
         );
     }

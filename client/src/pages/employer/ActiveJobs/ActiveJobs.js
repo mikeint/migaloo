@@ -18,8 +18,8 @@ class ActiveJobs extends React.Component{
 		this.state = {
             HROverlay: false, 
             showOverlay: false,
-            postId: '',
             overlayConfig: {direction: "app-menu_l-r", swipeLocation: "swipeBack_r"},
+            postId: '',
             jobList: ''
         };
         this.Auth = new AuthFunctions();
@@ -42,6 +42,7 @@ class ActiveJobs extends React.Component{
                 }
             })
         }
+        document.querySelector(".addBtn").addEventListener('click', this.animateButton, false); 
     } 
     callOverlay = (postId) => {
         this.setState({ showOverlay : !this.state.showOverlay })
@@ -73,7 +74,7 @@ class ActiveJobs extends React.Component{
                 <TopBar />
                
                 <div className='mainContainer'>
-                    <div className="pageHeading">Active Jobs<NavLink to="/employer/postAJob"><div className="postJobButton"></div></NavLink></div> 
+                    <div className="pageHeading">Active Jobs<NavLink to="/employer/postAJob"><button className="addBtn">+</button></NavLink></div> 
                     {
                         this.state.jobList ?
                             <div className="jobListContainer">

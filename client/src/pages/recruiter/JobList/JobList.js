@@ -67,27 +67,29 @@ class JobList extends React.Component{
                 <NavBar />
                 <TopBar />
                
-                <div className='jobListClassContainer'>
-                    <div className="pageHeading">Active Jobs Postings</div> 
-                    {
-                        this.state.jobList ?
-                            <div className="jobListContainer">
-                                  {this.state.jobList.map((item, i) => {
-                                    return <div className="addButton jobListItem" key={i} onClick={() => this.callOverlay(i)}>
-                                        {item.title}
-                                        <span className="createdTime">{item.posted}</span>
-                                    </div>
-                                })}
-                                {this.state.showOverlay && <Overlay
-                                                                html={html}  
-                                                                callOverlay={this.callOverlay} 
-                                                                config={this.state.overlayConfig}
-                                                            />}
-                            </div>
-                        :
-                        <Loader />
-                    } 
-                </div> 
+               <div className="mainContainer">
+                    <div className='jobListClassContainer'>
+                        <div className="pageHeading">Active Jobs Postings</div> 
+                        {
+                            this.state.jobList ?
+                                <div className="jobListContainer">
+                                    {this.state.jobList.map((item, i) => {
+                                        return <div className="addButton jobListItem" key={i} onClick={() => this.callOverlay(i)}>
+                                            {item.title}
+                                            <span className="createdTime">{item.posted}</span>
+                                        </div>
+                                    })}
+                                    {this.state.showOverlay && <Overlay
+                                                                    html={html}  
+                                                                    callOverlay={this.callOverlay} 
+                                                                    config={this.state.overlayConfig}
+                                                                />}
+                                </div>
+                            :
+                            <Loader />
+                        } 
+                    </div>
+                </div>
             </React.Fragment>
         );
     }

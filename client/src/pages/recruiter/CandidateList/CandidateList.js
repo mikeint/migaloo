@@ -40,10 +40,7 @@ class CandidateList extends React.Component{
             })
         }
 
-        var bubblyButtons = document.getElementsByClassName("addCandidateBtn");
-        for (var i = 0; i < bubblyButtons.length; i++) {
-            bubblyButtons[i].addEventListener('click', this.animateButton, false);
-        }
+       document.querySelector(".addBtn").addEventListener('click', this.animateButton, false); 
     }
     animateButton = (e) => {
         e.preventDefault(); 
@@ -81,25 +78,27 @@ class CandidateList extends React.Component{
                 <NavBar />
                 <TopBar />
                
-                <div className='candidateListContainer'>
-                    <div className="pageHeading">Candidates<button className="addCandidateBtn" onClick={() => this.callOverlay()}>+</button>{/* <div className="addCandidateButton" onClick={() => this.callOverlay()}></div> */}</div> 
-                    {
-                        this.state.candidateList ?
-                            <div className="candidateList">
-                                {
-                                    this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} obj={item}></ExpandableRow>})
-                                }
-                            </div>
-                        :
-                        <Loader />
-                    }
+               <div className="mainContainer">
+                    <div className='candidateListContainer'>
+                        <div className="pageHeading">Candidates<button className="addBtn" onClick={() => this.callOverlay()}>+</button></div> 
+                        {
+                            this.state.candidateList ?
+                                <div className="candidateList">
+                                    {
+                                        this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} obj={item}></ExpandableRow>})
+                                    }
+                                </div>
+                            :
+                            <Loader />
+                        }
 
-                    {this.state.showOverlay && <Overlay
-                                                html={html}  
-                                                callOverlay={this.callOverlay} 
-                                                config={this.state.overlayConfig}
-                                            />}
-                </div> 
+                        {this.state.showOverlay && <Overlay
+                                                    html={html}  
+                                                    callOverlay={this.callOverlay} 
+                                                    config={this.state.overlayConfig}
+                                                />}
+                    </div>
+                </div>
             </React.Fragment>
         );
     }

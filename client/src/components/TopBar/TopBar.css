@@ -47,24 +47,7 @@
     vertical-align: middle;
     line-height: 28px;
 }
-.alertListContainer{
-    min-width: 300px;
-    max-height: 0vh;
-    overflow-y: auto;
-    position: absolute;
-    transition: max-height 1s;
-    right: 0px;
-}
-.alertListContainer.on{
-    max-height: 33vh;
-}
-.alertList{
-    background-color: #314592;
-    color: white;
-    margin-top: 2px; 
-    border-bottom: 1px solid black;
-    overflow-y: auto;
-}
+ 
 @media only screen and (max-width: 1024px) {  
     .topBar {
         top: 0px;

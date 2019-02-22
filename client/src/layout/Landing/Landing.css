@@ -80,6 +80,9 @@
     top: 100px; 
     transition: 0.3s;
 }
+.animated.heroTxtFull {
+    width: 100%;
+}
 
 #logoContainer {  
     float: left;     

@@ -47,12 +47,10 @@ class ExpandableRow extends React.Component{
         const rowObj = this.props.obj;
         return (
             <div className="expandableRow">
-                <div className="row" onClick={this.toggle.bind(this)}>
-                    <div>
+                <div className="candidateListItem" onClick={this.toggle.bind(this)}> 
                         {rowObj.first_name} {rowObj.last_name}
                         {rowObj.new_accepted_count > 0 ? <span className="acceptedCount" title={rowObj.new_accepted_count+" New Postings Accepted"}>{rowObj.new_accepted_count}</span> : ""}
                         {rowObj.new_not_accepted_count > 0 ? <span className="notAcceptedCount" title={rowObj.new_not_accepted_count+" New Postings Not Accepted"}>{rowObj.new_not_accepted_count}</span> : ""}
-                    </div>
                 </div>
                 <div className={"collapse" + (this.state.open ? ' in' : '')}>
                     <div className="flex">

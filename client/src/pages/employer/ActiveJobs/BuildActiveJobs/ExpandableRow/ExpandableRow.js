@@ -3,6 +3,9 @@ import './ExpandableRow.css';
 import axios from 'axios';
 import AuthFunctions from '../../../../../AuthFunctions'; 
 
+import acceptImg from '../../../../../files/images/accept.png';
+import rejectImg from '../../../../../files/images/reject.png';
+
 class ExpandableRow extends React.Component{
 
     constructor(props) {
@@ -75,7 +78,7 @@ class ExpandableRow extends React.Component{
     render(){ 
         return (
             <div className="expandableJobRow">
-                <div className="row" onClick={this.toggle.bind(this)}>
+                <div className="candidateExpand" onClick={this.toggle.bind(this)}>
                     <div>
                         {this.state.rowObj.candidate_first_name} {this.state.rowObj.has_seen_post ? '' : <span className="newPost">New</span>}<span className="coins">{this.state.rowObj.coins} coins(s)</span>
                     </div>
@@ -92,8 +95,8 @@ class ExpandableRow extends React.Component{
                             <div className="rowMargin">Email: <span className="rowData"><a href={"mailto:"+this.state.rowObj.email}>{this.state.rowObj.email}</a></span></div>
                         </div>
                         <div className="flexColumn">
-                            <div className={"rowButton "+(this.state.rowObj.accepted?" selected":(this.state.rowObj.not_accepted?" notSelected":""))} onClick={this.handleAccept.bind(this)}>Accept</div>
-                            <div className={"rowButton "+(this.state.rowObj.not_accepted?" selected":(this.state.rowObj.accepted?" notSelected":""))} onClick={this.handleReject.bind(this)}>Reject</div>
+                            <div className={"rowButton "+(this.state.rowObj.accepted?" selected":(this.state.rowObj.not_accepted?" notSelected":""))} onClick={this.handleAccept.bind(this)}><img className="thumbsBtn" src={acceptImg} alt="" /></div>
+                            <div className={"rowButton "+(this.state.rowObj.not_accepted?" selected":(this.state.rowObj.accepted?" notSelected":""))} onClick={this.handleReject.bind(this)}><img className="thumbsBtn" src={rejectImg} alt="" /></div>
                         </div>
                     </div>
                 </div> 

@@ -1,9 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-import AuthFunctions from '../../../../AuthFunctions'; 
-import './BuildActiveJobs.css'; 
+import AuthFunctions from '../../../../AuthFunctions';  
+import './BuildActiveJobs.css';  
+import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import ExpandableRow from './ExpandableRow/ExpandableRow';
- 
   
 class BuildActiveJobs extends React.Component{
 
@@ -30,18 +30,41 @@ class BuildActiveJobs extends React.Component{
         )
     }
     removeJob = () => {
-        if(confirm("Are you sure you want to remove this posting?")){
-            axios.post('/api/postings/remove', {postId:this.state.postId}, this.axiosConfig)
-            .then((res)=>{
-                if(res.data.success){
-                    if(this.props.removedCallback != null){
-                        this.props.removedCallback();
+
+
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this job.',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+          }).then((result) => {
+            if (result.value) { 
+                axios.post('/api/postings/remove', {postId:this.state.postId}, this.axiosConfig)
+                .then((res)=>{
+                    if(res.data.success){
+                        if(this.props.removedCallback != null){
+                            this.props.removedCallback();
+                        }
+                        Swal.fire(
+                            'Deleted!',
+                            'Your job file has been deleted.',
+                            'success'
+                        )
                     }
-                }
-            }).catch(errors => 
-                console.log(errors.response.data)
-            )
-        }
+                }).catch(errors => 
+                    console.log(errors.response.data)
+                )  
+            } 
+          })
+
+
+ 
+
+
+
     }
     render(){ 
 
