@@ -1,11 +1,14 @@
-.back-button{
+.back-button-home{
+    width: 60px;
+    height: 50px;
+    margin-top: 10px;
     text-align: left;
     cursor: pointer;
     position: absolute;
-}
-.back-button:hover{
-	color: #99999988;
-}
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url('../../../files/images/backBtnW.png');
+} 
 
 .registerContent {
     height: 100%; 
@@ -33,14 +36,14 @@
 .chooseIcon {
     height: 50px;
 }
-
-.centerChooseHome {
-
-}
+ 
 
 
 @media only screen and (max-width: 677px) {
     .tab-button {   
         height: calc(50vh - 25px); 
     } 
+    .back-button-home{ 
+        background-image: url('../../../files/images/backBtn.png');
+    }
 }

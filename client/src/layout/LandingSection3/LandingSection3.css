@@ -13,15 +13,9 @@
     cursor: pointer;
 }
 
-.moduleText h1 { 
-    width: 400px;
-    margin: auto;
-}
 
-.moduleText p {
-    width: 400px;
-    margin: auto;
-}
+
+
 
 
 .module_wrapper {
@@ -30,40 +24,66 @@
     position: relative;
     display: flex;
     flex-wrap: wrap;
-}
-
-.module_half,
-.animated {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+} 
+.animated,
+.animated_half {
     width: 50%;
     position: relative;
     float: left;
     flex: 25% 1; 
-}
-.animated  img {
-    width: 100%;
-}
+} 
 .module_content {
-    width: 100%;
+    width: 70%;
     height: 100%;
-    float: left;
     padding: 20px;
+    margin: auto;
 }
+
+.module_img {
+    width: 100%;
+    height: 400px;
+    background-size: cover;
+}
+.module_img1 {background-image: url('../../files/images/landingPage/landing1.png')}
+.module_img2 {background-image: url('../../files/images/landingPage/landing1.png')}
+.module_img3 {background-image: url('../../files/images/landingPage/landing1.png')}
+.module_img4 {background-image: url('../../files/images/landingPage/landing1.png')}
+
  
-.homeBtnContainer {
-    width: 50%;
-    float: left;
+
+.showOnMobile {
+    display: none;
 }
 
 
+@media only screen and (max-width: 1024px) {
+    .module_wrapper {
+        display: inline-block;
+    }
+    .animated,
+    .animated_half {
+        width: 100%;
+    } 
+    .module_img {
+        height: 200px;
+    }
+    .module_content {
+        width: 100%;
+    }
 
-
-@media only screen and (max-width: 1024px) { 
-    .module_half,
-    .animated {
+    .showOnDesktop {
+        display: none;
+    }
+    .showOnMobile {
+        display: block;
+    }
+    .signUpBtnHome {
         width: 100%;
     }
 } 
 
 @media only screen and (max-width: 768px) {
-
 }
