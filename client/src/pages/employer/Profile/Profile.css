@@ -1,8 +1,13 @@
-.profileContainer_employer .profileImage {
+.profileContainer_employer .profileImageContainer {
     text-align: center;
 }
-.profileContainer_employer .profileImage img {
-    width: 140px;
+.profileContainer_employer .profileImage {
+    text-align: center;
+    display: inline-block;
+    width: 33vh;
+    height: 33vh;
+    border-radius: 50%;
+    border: 4px solid grey;
 }
 .profileContainer_employer .profileName {
     font-size: 20px;

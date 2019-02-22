@@ -1,11 +1,9 @@
 .profileContainer .profileImageContainer {
     text-align: center;
 }
-.profileContainer .profileImage img {
-    width: 140px;
-}
 .profileContainer .profileImage {
     text-align: center;
+    display: inline-block;
     width: 33vh;
     height: 33vh;
     border-radius: 50%;

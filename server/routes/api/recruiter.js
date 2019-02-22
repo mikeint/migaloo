@@ -14,7 +14,7 @@ const generateImageFileNameAndValidation = (req, res, next) => {
     // Validate this candidate is with this recruiter
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be an recruiter for this"})
+        return res.status(400).json({success:false, error:"Must be a recruiter for this"})
     }
     var now = Date.now()
     req.params.fileName = jwtPayload.id+"_image_"+now.toString()
@@ -55,7 +55,7 @@ router.post('/uploadImage', passport.authentication, generateImageFileNameAndVal
 router.get('/getCoins', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be an recruiter for this"})
+        return res.status(400).json({success:false, error:"Must be a recruiter for this"})
     }
     
     postgresdb.one('\
@@ -82,7 +82,7 @@ router.get('/getCoins', passport.authentication,  (req, res) => {
 router.get('/getProfile', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be an recruiter for this"})
+        return res.status(400).json({success:false, error:"Must be a recruiter for this"})
     }
     
     postgresdb.one('\
@@ -120,7 +120,7 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be an recruiter for this"})
+        return res.status(400).json({success:false, error:"Must be a recruiter for this"})
     }
     var fields = ['first_name', 'last_name', 'phone_number'];
     var addressFields = ['street_address_1', 'street_address_2', 'city', 'state', 'country'];
@@ -183,7 +183,7 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
 router.get('/alerts', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be an recruiter for this"})
+        return res.status(400).json({success:false, error:"Must be a recruiter for this"})
     }
     
     postgresdb.any('\
@@ -223,7 +223,7 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
     var postId = req.params.postId
     var candidateId = req.params.candidateId
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be an recruiter to look at postings"})
+        return res.status(400).json({success:false, error:"Must be a recruiter to look at postings"})
     }
     if(postId == null){
         return res.status(400).json({success:false, error:"Missing Post Id"})

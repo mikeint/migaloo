@@ -1,6 +1,6 @@
 import React from 'react';
 import './UploadImage.css'; 
-import AuthFunctions from '../../../../AuthFunctions'; 
+import AuthFunctions from '../../../AuthFunctions'; 
 
 import { FilePond, registerPlugin } from "react-filepond";
 
@@ -18,19 +18,21 @@ registerPlugin(FilePondPluginImageCrop,
     FilePondPluginImagePreview)
 class UploadImage extends React.Component{
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         // Initial state
         this.state = {
+            baseUrl: props.baseUrl,
+            uploadUrl: props.uploadUrl,
         };
         this.Auth = new AuthFunctions();
         this.headers = {'Authorization': 'Bearer ' + this.Auth.getToken()}
     }
     render(){ 
         this.options = {
-            url: "/api/recruiter/",
+            url: this.state.baseUrl,
             process: {
-                url: 'uploadImage/',
+                url: this.state.uploadUrl,
                 method: 'POST',
                 withCredentials: false,
                 headers: this.headers,

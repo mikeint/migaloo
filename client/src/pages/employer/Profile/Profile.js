@@ -5,8 +5,7 @@ import NavBar from '../../../components/employer/NavBar/NavBar';
 import TopBar from '../../../components/TopBar/TopBar';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
-
-import profileImg from '../../../files/images/profileImg.png'
+import UploadImage from '../../utils/UploadImage/UploadImage'; 
 
 class Profile extends React.Component{
 
@@ -15,17 +14,23 @@ class Profile extends React.Component{
         this.state={ 
             logout: false, 
             searchTerm: '', 
-            user: '',
+            user: {},
             profile: '',
             profileInfo: {},
+            showUpload:false,
+            profileImage: ''
         }
         this.Auth = new AuthFunctions();
+        this.axiosConfig = {
+            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
+        }
     } 
 
     componentWillMount = () => {
         this.setState({ user: this.Auth.getUser() });
         this.setState({ profile: this.Auth.getProfile() });
         this.getProfileInfo();
+        this.getImage();
     }
     handleLogout = () => {
         this.Auth.logout();
@@ -43,6 +48,25 @@ class Profile extends React.Component{
             console.log(errors.response.data)
         )
     }
+    handleClose = (err, d) => {
+        this.setState({showUpload:false});
+        this.getImage();
+    }
+    getImage = () => {
+        axios.get('/api/profileImage/view/medium', this.axiosConfig)
+        .then((res)=>{
+            if(res.data.success){
+                this.setState({ profileImage: res.data.url }) 
+            }else{
+                this.setState({ profileImage: '' })
+            }
+        }).catch(errors => {
+            this.setState({ profileImage: '' })
+        })
+    }
+    showUpload = () => {
+        this.setState({showUpload:true})
+    }
 
     render(){
         
@@ -56,8 +80,8 @@ class Profile extends React.Component{
                 <TopBar /> 
                 <div className='mainContainer'>
                     <div className="profileContainer_employer">
-                        <div className='profileImage'>
-                            <img src={profileImg} alt="" />
+                        <div className='profileImageContainer'>
+                            <img  className='profileImage' src={this.state.profileImage} alt="" onClick={this.showUpload}/>
                             <div className="profileType">Employer</div>
                             <div className="profileName">{this.state.profileInfo.contact_first_name} {this.state.profileInfo.contact_last_name}</div>
                             <div className="profileEmail">{this.state.user.email} {this.state.profileInfo.contact_phone_number}</div>
@@ -68,7 +92,10 @@ class Profile extends React.Component{
                             <div className="profileItem">Account info</div>
                             <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
                         </div> 
-                    </div> 
+                        {this.state.showUpload?<UploadImage 
+                                                    baseUrl={"/api/employer/"}
+                                                    uploadUrl={"uploadImage/"}
+                                                    handleClose={this.handleClose} />:''}                    </div> 
                 </div>
             </React.Fragment>
         );

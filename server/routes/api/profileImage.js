@@ -16,10 +16,19 @@ const useAWS = process.env.AWS ? true : false;
  */
 router.get('/view/:size', passport.authentication, (req, res) => {
     var jwtPayload = req.body.jwtPayload;
-    postgresdb.one('\
+    var query;
+    if(jwtPayload.userType == 1){
+        query = '\
         SELECT image_id \
         FROM recruiter r \
-        WHERE r.recruiter_id = $1', [jwtPayload.id])
+        WHERE r.recruiter_id = $1'
+    }else if(jwtPayload.userType == 2){
+        query = '\
+        SELECT image_id \
+        FROM employer r \
+        WHERE r.employer_id = $1'
+    }
+    postgresdb.one(query, [jwtPayload.id])
     .then((data) => {
         if(data.image_id != null){
             if(useAWS){
