@@ -3,51 +3,11 @@ const router = express.Router();
 const passport = require('../../config/passport');
 
 const postgresdb = require('../../config/db').postgresdb
-var aws = require('aws-sdk')
-var s3 = new aws.S3()
-
-var multer  = require('multer')
-var multerS3  = require('multer-s3')
-const bucketName = 'hireranked-data'
-const MIME_TYPE_MAP = {
-    'application/x-pdf':'pdf',
-    'application/pdf':'pdf',
-    'application/msword':'doc',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document':'docx',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.template':'docx'
-}
+const generateUploadMiddleware = require('../upload').generateUploadMiddleware
+const upload = generateUploadMiddleware('resumes/')
 const useAWS = process.env.AWS ? true : false;
-var upload = (useAWS ? 
-    multer({
-        storage: multerS3({
-                s3: s3,
-                bucket: bucketName,
-            metadata: function (req, file, cb) {
-                console.log(file)
-                cb(null, {fieldName: file.fieldname});
-            },
-            key: function (req, file, cb) {
-                const ext = MIME_TYPE_MAP[file.mimetype]
-                req.params.finalFileName = `${req.params.fileName}.${ext}`
-                cb(null,  "resumes/"+req.params.finalFileName)
-            }
-        })
-    })
-    :
-    multer({ 
-        storage: multer.diskStorage({
-            destination: (req, file, callback) => {
-                callback(null, 'public/resumes/')
-            },
-            filename: (req, file, callback) => {
-                const ext = MIME_TYPE_MAP[file.mimetype]
-                req.params.finalFileName = `${req.params.fileName}.${ext}`
-                callback(null, req.params.finalFileName)
-            }
-        })
-    })
-)
-const recruiterCandidateValidation = (req, res, next) => {
+
+const generateResumeFileNameAndValidation = (req, res, next) => {
     // Validate this candidate is with this recruiter
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
@@ -76,9 +36,7 @@ const recruiterCandidateValidation = (req, res, next) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/upload/:candidateId', passport.authentication, recruiterCandidateValidation, upload.single('filepond'), (req, res) => {
-    console.log(req.body)
-    console.log(req.params)
+router.post('/upload/:candidateId', passport.authentication, generateResumeFileNameAndValidation, upload.single('filepond'), (req, res) => {
     postgresdb.none('UPDATE candidate SET resume_id=$1 WHERE candidate_id = $2', [req.params.finalFileName, req.params.candidateId])
     .then((data) => {
         res.json({success:true, resume_id:req.params.finalFileName})
@@ -97,7 +55,7 @@ router.post('/upload/:candidateId', passport.authentication, recruiterCandidateV
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.get('/view/:candidateId', passport.authentication,  recruiterCandidateValidation, (req, res) => {
+router.get('/view/:candidateId', passport.authentication,  generateResumeFileNameAndValidation, (req, res) => {
     postgresdb.one('\
         SELECT resume_id \
         FROM candidate c \

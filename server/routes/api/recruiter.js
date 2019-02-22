@@ -7,7 +7,41 @@ const moment = require('moment');
 const validateEmployerInput = require('../../validation/recruiter');  
 
 const postgresdb = require('../../config/db').postgresdb
- 
+const generateUploadMiddleware = require('../upload').generateUploadMiddleware
+const upload = generateUploadMiddleware('profile_image/')
+
+const generateImageFileNameAndValidation = (req, res, next) => {
+    // Validate this candidate is with this recruiter
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        return res.status(400).json({success:false, error:"Must be an recruiter for this"})
+    }
+    var now = Date.now()
+    req.params.fileName = jwtPayload.id+"_image_"+now.toString()
+    req.params.jwtPayload = jwtPayload
+    next()
+}
+
+/**
+ * Upload recruiter profile image
+ * @route GET api/recruiter/uploadImage
+ * @group recruiter - Recruiter
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/uploadImage', passport.authentication, generateImageFileNameAndValidation, upload.any('filepond'), (req, res) => {
+    var jwtPayload = req.params.jwtPayload;
+    postgresdb.none('UPDATE recruiter SET image_id=$1 WHERE recruiter_id = $2', [req.params.finalFileName, jwtPayload.id])
+    .then((data) => {
+        res.json({success:true, image_id:req.params.finalFileName})
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
 
 /**
  * Get recruiter coins
@@ -165,7 +199,6 @@ router.get('/alerts', passport.authentication,  (req, res) => {
         ORDER BY responded_on DESC \
         LIMIT 10', [jwtPayload.id])
     .then((data) => {
-        console.log(data)
         // Marshal data
         data = data.map(m=>{
             var timestamp = moment(m.responded_on);
