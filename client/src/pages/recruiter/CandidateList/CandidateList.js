@@ -19,7 +19,7 @@ class CandidateList extends React.Component{
 		this.state = {
             HROverlay: false, 
             showOverlay: false,
-            overlayConfig: {direction: "app-menu_b-t", backButtonLocation: "back_t-m"},
+            overlayConfig: {direction: "app-menu_b-t", swipeLocation: "swipeBack_t"},
             candidateList: [], 
         };
         this.Auth = new AuthFunctions();

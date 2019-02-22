@@ -1,4 +1,4 @@
-#navBar_admin {
+.navbar_recruiter {
     width: 100%;        
     height: 60px;
     float: left;
@@ -7,9 +7,9 @@
     z-index: 99;
 }
 
-#navBar_admin a {
+.navbar_recruiter a {
     width: 33.333333%;
-    line-height: 70px;
+    line-height: 50px;
     color: #1a2b6d;
     float: left;
     text-align: center;
@@ -17,37 +17,47 @@
 }
  
 
-#navBar_admin .active .navBtn {
+.navbar_recruiter .active .navBtn {
     background: #5a659226;
     color: #5a6592;
 }
 
-.navBtn {
-    width: 130px;
+.navbar_recruiter .navBtn {
+    width: 80%;
     height: 50px;
     font-weight: bold;
     margin: auto;
     border-radius: 5px;
     position: relative;
 }
-.navBtn img {
+.navbar_recruiter .navBtn img {
+    display: none;
     text-align: center;
     width: 30px;
     position: absolute;
     left: 50px;
 }
 
-.navText { 
+.navbar_recruiter .navText { 
     margin-top: 5px;
     white-space: nowrap;
 } 
 @media only screen and (max-width: 1024px) {  
-    #navBar_admin {
+    .navbar_recruiter {
         bottom: 0px;
         position: fixed;
         width: 100%;
-    }  
-    .navText {
+    }
+    .navbar_recruiter a { 
+        line-height: 70px;
+    }
+    .navbar_recruiter .navBtn img {
+        display: block;
+    }
+    .navbar_recruiter .navText {
         font-size: 10px;     
+    }
+    .navbar_recruiter .navBtn {
+        width: 130px;
     }
 }

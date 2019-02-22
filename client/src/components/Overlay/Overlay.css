@@ -1,41 +1,31 @@
- .back {
+.swipeBack_r {
     width: 30px;
-    height: 50px;    
-    color: #fff;
-    background: #1a2b6d;
-    font-size: 30px;
-    line-height: 45px;
-    cursor: pointer;
-    text-align: center;
-} 
-.back_t-r {
+    height: 100%;
+    position: absolute;
     right: 0px;
-    position: absolute;
-}
-.back_t-l {
-    left: 0px;
-    position: absolute;
-}
-.back_t-m {
-    width: 100%;
-    height: 30px;
-    line-height: 30px;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px; 
-
+    z-index: 99999;
 } 
-.back_b-m {
+.swipeBack_l {
+    width: 30px;
+    height: 100%;
+    position: absolute;
+    z-index: 99999;
+}
+.swipeBack_t {
     width: 100%;
     height: 30px;
-    line-height: 30px;
-    border-bottom-right-radius: 10px;
-    border-bottom-left-radius: 10px;
-    bottom: 0px;
     position: absolute;
+    top: 0px;
+    z-index: 99999;
 }
-
-
-
+.swipeBack_b {
+    width: 100%;
+    height: 30px;
+    position: absolute;
+    bottom: 0px;
+    z-index: 99999;
+}
+ 
 .menu {
     position: fixed;
     left: 0;
@@ -50,20 +40,24 @@
     pointer-events: auto;
 }
 .app-menu {
-    background-color: #fff; 
-    position: relative; 
+    background-color: #fff;
+    position: relative;
     width: 95%;
     margin-left: 5%;
     height: 100%;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     -webkit-transform: translateX(103%);
-            transform: translateX(103%); 
+            transform: translateX(103%);
 
     display: flex;
     flex-direction: column;
     will-change: transform;
     z-index: 160;
-    pointer-events: auto;            
+    pointer-events: auto;
+    
+    height: 100%;
+    position: absolute;
+    overflow-y: scroll;
 }
 .app-menu_l-r {
     -webkit-transform: translateX(-103%);
@@ -119,3 +113,4 @@
     opacity: 1;
     pointer-events: auto;
 }
+

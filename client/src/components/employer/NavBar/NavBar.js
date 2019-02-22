@@ -13,25 +13,26 @@ class NavBar extends React.Component{
             <React.Fragment> 
 
                 <div id="navBar_admin"> 
-                     
-                    <NavLink to="/employer/activeJobs">
-                        <div className="navBtn">
-                            <img src={active_icon} alt="" />
-                            <div className="navText">Active Jobs</div>
-                        </div>
-                    </NavLink>  
-                    <NavLink to="/employer/postAJob">
-                        <div className="navBtn">
-                            <img src={post_icon} alt="" />
-                            <div className="navText">Post a Job</div>
-                        </div>
-                    </NavLink>  
-                    <NavLink to="/employer/profile">
-                        <div className="navBtn">
-                            <img src={profile_icon} alt="" />
-                            <div className="navText">Profile</div>
-                        </div>
-                    </NavLink>  
+                    <div className="navbar_employer"> 
+                        <NavLink to="/employer/activeJobs">
+                            <div className="navBtn">
+                                <img src={active_icon} alt="" />
+                                <div className="navText">Active Jobs</div>
+                            </div>
+                        </NavLink>  
+                        <NavLink to="/employer/postAJob">
+                            <div className="navBtn">
+                                <img src={post_icon} alt="" />
+                                <div className="navText">Post a Job</div>
+                            </div>
+                        </NavLink>  
+                        <NavLink to="/employer/profile">
+                            <div className="navBtn">
+                                <img src={profile_icon} alt="" />
+                                <div className="navText">Profile</div>
+                            </div>
+                        </NavLink>
+                    </div>
 
                 </div>  
             </React.Fragment>

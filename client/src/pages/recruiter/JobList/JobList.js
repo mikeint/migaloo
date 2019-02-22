@@ -18,7 +18,7 @@ class JobList extends React.Component{
             HROverlay: false, 
             showOverlay: false,
             postId: '',
-            overlayConfig: {direction: "app-menu_l-r", backButtonLocation: "back_t-r"},
+            overlayConfig: {direction: "app-menu_l-r", swipeLocation: "swipeBack_r"},
             jobList: '', 
         };
         this.Auth = new AuthFunctions();
