@@ -6,8 +6,8 @@
 }
 .profileContainer .profileImage {
     text-align: center;
-    width: 300px;
-    height: 300px;
+    width: 33vh;
+    height: 33vh;
     border-radius: 50%;
     border: 4px solid grey;
 }
@@ -15,7 +15,6 @@
     font-size: 20px;
     font-weight: bold;
     border-bottom: 1px solid #e2e2e2;
-    width: 340px;
     margin: auto;
 }
 .profileContainer .profileType {
@@ -47,21 +46,22 @@
     border-bottom: 1px solid #5a6592;
 } 
 .profileContainer .numberCircle {
+    position: relative;
     display: inline-block;
-    border-radius: 50%;
-    width: 64px;
-    height: 64px;
-    padding: 8px;
-    background: #f3f33f;
-    border: 2px solid #b2bb23;
-    color: #666;
+    color: rgb(70, 69, 69);
     text-align: center;
-    font: 24px Arial, sans-serif;
+    font: 24px Arial, sans-serif; 
     margin: 5px;
 }
 
 .profileContainer .number {
-    line-height: 44px;
-    vertical-align: middle;
+    position: absolute;
+    line-height: 100px;
     font-weight: bold;
+    left: 0;
+    right: 0;
+}
+.profileContainer .numberCoin {
+    width: 110px;
+    border-radius: 50%;
 }

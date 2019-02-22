@@ -8,6 +8,7 @@ import axios from 'axios';
 import UploadImage from './UploadImage/UploadImage'; 
 
 import profileImg from '../../../files/images/profileImg2.png'
+import coin from '../../../files/images/coin.jpg'
 
 class Profile extends React.Component{
 
@@ -89,7 +90,10 @@ class Profile extends React.Component{
                             <div className="profileType">Recruiter</div>
                             <div className="profileName">{this.state.profileInfo.first_name} {this.state.profileInfo.last_name}</div>
                             <div className="profileEmail">{this.state.user.email} {this.state.profileInfo.phone_number}</div>
-                            <div className="numberCircle"><span className="number">{this.state.profileInfo.coins}</span></div>
+                            <div className="numberCircle">
+                                <img className="numberCoin" src={coin} alt=""/>
+                                <span className="number">{this.state.profileInfo.coins}</span>
+                            </div>
                         </div>
                         <div className='profileBottom'>
                             <div className="profileItem">Recruiter info</div>
