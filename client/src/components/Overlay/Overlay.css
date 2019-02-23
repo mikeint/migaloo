@@ -40,6 +40,10 @@
     background-position-x: 208px;
 }
  
+.fixedRoot {
+    position: fixed;
+    width: 100%;
+}
 .menu {
     position: fixed;
     left: 0;

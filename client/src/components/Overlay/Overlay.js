@@ -28,12 +28,14 @@ class Overlay extends Component {
     toggleClassMenu() {
         //console.log(document.querySelector(".menu"))
         document.querySelector(".menu").classList.add("menu--animatable");	
-        if(!document.querySelector(".menu").classList.contains("menu--visible")) {		
-            document.querySelector(".menu").classList.add("menu--visible"); 
+        if(!document.querySelector(".menu").classList.contains("menu--visible")) {
+            document.querySelector(".menu").classList.add("menu--visible");
+            document.getElementById("root").classList.add("fixedRoot");
         } else {
             document.querySelector(".menu").classList.remove('menu--visible');
-            setTimeout(() => { 
-                this.props.callOverlay(); 
+            document.getElementById("root").classList.remove("fixedRoot");
+            setTimeout(() => {
+                this.props.callOverlay();
             }, 150);
         } 
     } 
