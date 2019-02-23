@@ -2,8 +2,7 @@ import React from 'react';
 import './Profile.css';  
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import AuthFunctions from '../../../AuthFunctions';  
-import NavBar from '../../../components/employer/NavBar/NavBar';
-import TopBar from '../../../components/TopBar/TopBar';
+import NavBar from '../../../components/employer/NavBar/NavBar'; 
 import { Redirect } from 'react-router-dom';
 import Overlay from '../../../components/Overlay/Overlay';
 import axios from 'axios';

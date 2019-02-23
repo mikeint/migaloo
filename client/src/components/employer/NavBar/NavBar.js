@@ -25,6 +25,12 @@ class NavBar extends React.Component{
                                 <img src={post_icon} alt="" />
                                 <div className="navText">Post a Job</div>
                             </div>
+                        </NavLink>
+                        <NavLink to="/employer/chat">
+                            <div className="navBtn">
+                                <img src={post_icon} alt="" />
+                                <div className="navText">Chat</div>
+                            </div>
                         </NavLink>  
                         <NavLink to="/employer/profile">
                             <div className="navBtn">

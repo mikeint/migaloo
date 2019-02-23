@@ -6,7 +6,9 @@ import Login from './pages/Login/Login';
 import ActiveJobs from './pages/employer/ActiveJobs/ActiveJobs';
 import PostAJob from './pages/employer/PostAJob/PostAJob';
 import EmployerProfile from './pages/employer/Profile/Profile';
-import RecruiterProfile from './pages/recruiter/Profile/Profile';
+import RecruiterProfile from './pages/recruiter/Profile/Profile'; 
+import eChat from './components/employer/Chat/Chat';
+import rChat from './components/recruiter/Chat/Chat';
 import JobList from './pages/recruiter/JobList/JobList';
 import CandidateList from './pages/recruiter/CandidateList/CandidateList';
 import AddCandidate from './pages/recruiter/AddCandidate/AddCandidate';
@@ -41,11 +43,13 @@ class App extends Component {
                     <PrivateEmployerRoute exact path="/employer/profile" component={EmployerProfile} />  
                     <PrivateEmployerRoute exact path="/employer/activeJobs" component={ActiveJobs} />
                     <PrivateEmployerRoute exact path="/employer" component={ActiveJobs} />
+                    <PrivateEmployerRoute exact path="/employer/chat" component={eChat} />
                     <PrivateRecruiterRoute exact path="/recruiter/profile" component={RecruiterProfile} />
                     <PrivateRecruiterRoute exact path="/recruiter/candidateList" component={CandidateList} />
                     <PrivateRecruiterRoute exact path="/recruiter/addCandidate" component={AddCandidate} />
                     <PrivateRecruiterRoute exact path="/recruiter/jobList" component={JobList} />
                     <PrivateRecruiterRoute exact path="/recruiter" component={JobList} />
+                    <PrivateRecruiterRoute exact path="/recruiter/chat" component={rChat} />
 
                     <Route exact path="/" component={Landing} />
                     <Route exact path='/login' render={ () => (<Login />) } />
