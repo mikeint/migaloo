@@ -1,5 +1,6 @@
 import React from 'react';
 import './TopBar.css';    
+import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import bell from '../../files/images/bell.png';
 import axios from 'axios';
 import AuthFunctions from '../../AuthFunctions'; 
@@ -21,8 +22,18 @@ class TopBar extends React.Component{
     }
 
     callOverlay = (postId) => {
-        this.setState({ showOverlay : !this.state.showOverlay })
-        this.setState({ postId : postId })
+        if (this.state.alertCount === 0) {
+            Swal.fire({
+                position: 'top-end',
+                type: 'success',
+                title: 'You are all caught up',
+                showConfirmButton: false,
+                timer: 1500
+              })
+        } else {
+            this.setState({ showOverlay : !this.state.showOverlay })
+            this.setState({ postId : postId })
+        }
     }
 
     handleAlert = () => {
