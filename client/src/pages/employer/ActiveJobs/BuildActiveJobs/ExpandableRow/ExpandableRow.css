@@ -68,8 +68,8 @@
     display: flex;
     flex-direction: row;
     font-size:14px;
-    background: #8891b6;
-    color: #fff;
+    background: #8891b652;
+    color: #1a2b6d;
 }
 .expandableJobRow .flexColumn{
     flex: 1 0;

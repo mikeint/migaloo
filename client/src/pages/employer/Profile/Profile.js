@@ -1,9 +1,11 @@
 import React from 'react';
 import './Profile.css';  
+import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import AuthFunctions from '../../../AuthFunctions';  
 import NavBar from '../../../components/employer/NavBar/NavBar';
 import TopBar from '../../../components/TopBar/TopBar';
 import { Redirect } from 'react-router-dom';
+import Overlay from '../../../components/Overlay/Overlay';
 import axios from 'axios';
 import UploadImage from '../../utils/UploadImage/UploadImage'; 
 
@@ -13,6 +15,8 @@ class Profile extends React.Component{
         super();
         this.state={ 
             logout: false, 
+            showOverlay: false,
+            overlayConfig: {direction: "app-menu_r-l", swipeLocation: "swipeBack_l"},
             searchTerm: '', 
             user: {},
             profile: '',
@@ -32,9 +36,21 @@ class Profile extends React.Component{
         this.getProfileInfo();
         this.getImage();
     }
-    handleLogout = () => {
-        this.Auth.logout();
-        this.setState({logout: true}) 
+    handleLogout = () => { 
+        Swal.fire({
+            title: 'Are you sure?', 
+            showCancelButton: true,
+            confirmButtonText: 'Yes, logout',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.value) {
+                this.Auth.logout();
+                this.setState({logout: true})
+            } 
+        }) 
+    }
+    callOverlay = () => {
+        this.setState({ showOverlay : !this.state.showOverlay }) 
     }
 
     getProfileInfo = () => {
@@ -73,12 +89,12 @@ class Profile extends React.Component{
         if (this.state.logout) {
             return <Redirect to='/login' />
         }
-
+        
+        const html = "HELLO"
         return (
             <React.Fragment>
-                <NavBar /> 
-                <TopBar /> 
-                <div className='mainContainer'>
+                <NavBar />  
+                <div className='mainContainerProfile'>
                     <div className="profileContainer_employer">
                         <div className='profileImageContainer'>
                             <img  className='profileImage' src={this.state.profileImage} alt="" onClick={this.showUpload}/>
@@ -88,14 +104,21 @@ class Profile extends React.Component{
                             <div className="profileName">{this.state.profileInfo.company_name}</div>
                         </div>
                         <div className='profileBottom'>
-                            <div className="profileItem">Employer info</div>
-                            <div className="profileItem">Account info</div>
+                            <div className="profileItem" onClick={() => this.callOverlay()}>Employer info</div>
+                            <div className="profileItem" onClick={() => this.callOverlay()}>Account info</div>
                             <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
                         </div> 
                         {this.state.showUpload?<UploadImage 
                                                     baseUrl={"/api/employer/"}
                                                     uploadUrl={"uploadImage/"}
-                                                    handleClose={this.handleClose} />:''}                    </div> 
+                                                    handleClose={this.handleClose} />:''}                    
+                        </div> 
+
+                        {this.state.showOverlay && <Overlay
+                                                        html={html}  
+                                                        callOverlay={this.callOverlay} 
+                                                        config={this.state.overlayConfig}
+                                                    />}
                 </div>
             </React.Fragment>
         );

@@ -82,7 +82,10 @@ a {
     .mainContainer { 
         margin-bottom: 60px;
         margin-top: 60px;
-    } 
+    }
+    .mainContainerProfile {
+        padding-top:20px; 
+    }
 }
 
 .mc_1 {

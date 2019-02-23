@@ -1,12 +1,12 @@
 import React from 'react';
 import './Profile.css';  
+import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import AuthFunctions from '../../../AuthFunctions';  
 import NavBar from '../../../components/recruiter/NavBar/NavBar';
-import TopBar from '../../../components/TopBar/TopBar';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import UploadImage from '../../utils/UploadImage/UploadImage'; 
-import coin from '../../../files/images/coin.jpg'
+import coin from '../../../files/images/coin.png'
 
 class Profile extends React.Component{
 
@@ -33,9 +33,18 @@ class Profile extends React.Component{
         this.getProfileInfo();
         this.getImage();
     }
-    handleLogout = () => {
-        this.Auth.logout();
-        this.setState({logout: true}) 
+    handleLogout = () => { 
+        Swal.fire({
+            title: 'Are you sure?', 
+            showCancelButton: true,
+            confirmButtonText: 'Yes, logout',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.value) {
+                this.Auth.logout();
+                this.setState({logout: true})
+            } 
+        }) 
     }
     getProfileInfo = () => {
         axios.get('/api/recruiter/getProfile', this.axiosConfig)
@@ -74,8 +83,7 @@ class Profile extends React.Component{
         return (
             <React.Fragment>
                 <NavBar /> 
-                <TopBar /> 
-                <div className="mainContainer">
+                <div className="mainContainerProfile">
                     <div className='profileContainer'>
                         <div className='profileImageContainer'>
                             <img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>
