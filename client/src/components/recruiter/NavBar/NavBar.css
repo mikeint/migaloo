@@ -26,20 +26,20 @@
     width: 80%;
     height: 50px;
     font-weight: bold;
-    margin: auto;
+    margin-top: 5px;
     border-radius: 5px;
     position: relative;
 }
 .navbar_recruiter .navBtn img {
-    display: none;
-    text-align: center;
-    width: 30px;
-    position: absolute;
-    left: 37px;
+    display: none; 
+    width: 34px;
+    height: 31px;
+    margin: auto;
+    padding: 3px;
 }
 
 .navbar_recruiter .navText { 
-    margin-top: 5px;
+    margin-top: -25px;
     white-space: nowrap;
 } 
 @media only screen and (max-width: 1024px) {  

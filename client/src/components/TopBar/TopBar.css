@@ -38,14 +38,17 @@
     background-color: #de3141;
     color: white;
     cursor: pointer;
-    width: 32px;
-    height: 32px;
+    width: 22px;
+    height: 22px;
     display: inline-block;
     padding: 4px;
     text-align: center;
     border-radius: 50%;
     vertical-align: middle;
-    line-height: 28px;
+    line-height: 14px;
+    position: absolute;
+    margin-top: 10px;
+    margin-left: 16px;
 }
  
 @media only screen and (max-width: 1024px) {  
