@@ -7,6 +7,16 @@ const validateCandidatePosting = require('../../validation/jobs');
 const postgresdb = require('../../config/db').postgresdb
 
 
+/**
+ * List all available job postings
+ * @route GET api/jobs/listJobs
+ * @group jobs - Jobs for Recruiters
+ * @returns {object} 200 - A list of maps containing jobs
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/list', passport.authentication, getJobs);
+router.get('/list/:page', passport.authentication, getJobs);
 function getJobs(req, res){
     var page = req.params.page;
     if(page == null)
@@ -16,8 +26,9 @@ function getJobs(req, res){
         return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
     }
     postgresdb.any('\
-        SELECT title, caption, experience_type_name, company_name, image_id, \
-            street_address_1, street_address_2, city, state, country, tag_ids, tag_names, j.created_on as posted_on \
+        SELECT j.employer_id, j.post_id, title, caption, experience_type_name, company_name, image_id, \
+            street_address_1, street_address_2, city, state, country, tag_ids, \
+            tag_names, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting j \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         INNER JOIN employer e ON j.employer_id = e.employer_id \
@@ -28,7 +39,9 @@ function getJobs(req, res){
             INNER JOIN tags t ON t.tag_id = pt.tag_id \
             GROUP BY post_id \
         ) tg ON tg.post_id = j.post_id \
-        OFFSET $1 LIMIT 10', [(page-1)*10])
+        ORDER BY j.created_on DESC \
+        OFFSET $1 \
+        LIMIT 10', [(page-1)*10])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
@@ -45,16 +58,6 @@ function getJobs(req, res){
         res.status(400).json(err)
     });
 }
-/**
- * List all available job postings
- * @route GET api/jobs/listJobs
- * @group jobs - Jobs for Recruiters
- * @returns {object} 200 - A list of maps containing jobs
- * @returns {Error}  default - Unexpected error
- * @access Private
- */
-router.get('/list', passport.authentication, getJobs);
-router.get('/list/:page', passport.authentication, getJobs);
 
 /**
  * List job postings that match candidates
@@ -65,6 +68,9 @@ router.get('/list/:page', passport.authentication, getJobs);
  * @access Private
  */
 router.get('/listForCandidate/:candidateId', passport.authentication,  (req, res) => {
+    var page = req.params.page;
+    if(page == null)
+        page = 1;
     var candidateId = req.params.candidateId
     if(candidateId == null)
         return res.status(400).json({success:false, error:"Missing Candidate Id"})
@@ -75,7 +81,8 @@ router.get('/listForCandidate/:candidateId', passport.authentication,  (req, res
     }
     postgresdb.any('\
         SELECT title, caption, experience_type_name, company_name, image_id, \
-            street_address_1, street_address_2, city, state, country, tag_ids, tag_names, tag_score, j.created_on as posted_on \
+            street_address_1, street_address_2, city, state, country, tag_ids, tag_names, \
+            tag_score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting j \
         LEFT JOIN ( \
             SELECT post_id, cast(COUNT(1) as decimal)/( \
@@ -90,9 +97,10 @@ router.get('/listForCandidate/:candidateId', passport.authentication,  (req, res
             ) as tag_score \
             FROM candidate_tags ct \
             INNER JOIN posting_tags pt ON pt.tag_id = ct.tag_id \
-            WHERE candidate_id = $2 \
+            WHERE candidate_id = $1 \
             GROUP BY post_id \
         ) jc ON jc.post_id = j.post_id \
+        LEFT ANTI candidate_posting cp ON cp.candidate_id = $1 AND cp.recruiter_id = $1 \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         INNER JOIN employer e ON j.employer_id = e.employer_id \
         LEFT JOIN address a ON a.address_id = e.address_id \
@@ -102,7 +110,9 @@ router.get('/listForCandidate/:candidateId', passport.authentication,  (req, res
             INNER JOIN tags t ON t.tag_id = pt.tag_id \
             GROUP BY post_id \
         ) tg ON tg.post_id = j.post_id \
-        ORDER BY tag_score DESC', [candidateId, candidateId])
+        ORDER BY tag_score DESC, j.created_on DESC \
+        OFFSET $3 \
+        LIMIT 10', [candidateId, jwtPayload.id, (page-1)*10])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{

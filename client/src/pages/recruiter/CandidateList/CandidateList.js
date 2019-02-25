@@ -11,6 +11,7 @@ import ExpandableRow from './ExpandableRow/ExpandableRow';
 import Overlay from '../../../components/Overlay/Overlay';
 import '../../../constants/AnimateOverlay'; 
 import AddCandidate from '../AddCandidate/AddCandidate';
+import ReactPaginate from 'react-paginate';
 
 class CandidateList extends React.Component{
 
@@ -21,6 +22,8 @@ class CandidateList extends React.Component{
             showOverlay: false,
             overlayConfig: {direction: "app-menu_b-t", swipeLocation: "swipeBack_t"},
             candidateList: [], 
+            page: 1,
+            pageCount: 1
         };
         this.Auth = new AuthFunctions();
     }
@@ -58,9 +61,9 @@ class CandidateList extends React.Component{
         var config = {
             headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
         }
-        axios.get('/api/candidate/list', config)
-        .then((res)=>{    
-            this.setState({ candidateList: res.data }) 
+        axios.get('/api/candidate/list/'+this.state.page, config)
+        .then((res)=>{
+            this.setState({ candidateList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )
@@ -68,6 +71,15 @@ class CandidateList extends React.Component{
     callOverlay = () => {
         this.setState({ showOverlay : !this.state.showOverlay })
     }
+
+
+    handlePageClick = data => {
+        let selected = data.selected+1;
+    
+        this.setState({ page: selected }, () => {
+            this.getJobList();
+        });
+    };
 
     render(){
         const html = <AddCandidate />
@@ -87,6 +99,21 @@ class CandidateList extends React.Component{
                                     {
                                         this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} obj={item}></ExpandableRow>})
                                     }
+                                    <div className="paginationContainer">
+                                        <ReactPaginate
+                                            previousLabel={'Back'}
+                                            nextLabel={'Next'}
+                                            breakLabel={'...'}
+                                            breakClassName={'break-me'}
+                                            pageCount={this.state.pageCount}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={10}
+                                            onPageChange={this.handlePageClick}
+                                            containerClassName={'pagination'}
+                                            subContainerClassName={'pages pagination'}
+                                            activeClassName={'active'}
+                                            />
+                                    </div>
                                 </div>
                             :
                             <Loader />

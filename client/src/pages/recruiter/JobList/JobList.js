@@ -9,6 +9,7 @@ import Loader from '../../../components/Loader/Loader';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import '../../../constants/AnimateOverlay'; 
+import ReactPaginate from 'react-paginate';
 
 class JobList extends React.Component{
 
@@ -19,7 +20,9 @@ class JobList extends React.Component{
             showOverlay: false,
             postId: '',
             overlayConfig: {direction: "app-menu_l-r", swipeLocation: "swipeBack_r"},
-            jobList: '', 
+            jobList: [], 
+            page: 1,
+            pageCount: 1
         };
         this.Auth = new AuthFunctions();
     }
@@ -49,15 +52,23 @@ class JobList extends React.Component{
         var config = {
             headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
         }
-        axios.get('/api/jobs/list', config)
+        axios.get('/api/jobs/list/'+this.state.page, config)
         .then((res)=>{    
-            this.setState({ jobList: res.data }) 
+            this.setState({ jobList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )
     }
 
 
+    handlePageClick = data => {
+        let selected = data.selected+1;
+    
+        this.setState({ page: selected }, () => {
+            this.getJobList();
+        });
+    };
+    
     render(){ 
         const html = <BuildActiveJobs obj={this.state.jobList[this.state.postId]} />
 
@@ -79,6 +90,21 @@ class JobList extends React.Component{
                                             <span className="createdTime">{item.posted}</span>
                                         </div>
                                     })}
+                                    <div className="paginationContainer">
+                                        <ReactPaginate
+                                            previousLabel={'Back'}
+                                            nextLabel={'Next'}
+                                            breakLabel={'...'}
+                                            breakClassName={'break-me'}
+                                            pageCount={this.state.pageCount}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={10}
+                                            onPageChange={this.handlePageClick}
+                                            containerClassName={'pagination'}
+                                            subContainerClassName={'pages pagination'}
+                                            activeClassName={'active'}
+                                            />
+                                    </div>
                                     {this.state.showOverlay && <Overlay
                                                                     html={html}  
                                                                     callOverlay={this.callOverlay} 

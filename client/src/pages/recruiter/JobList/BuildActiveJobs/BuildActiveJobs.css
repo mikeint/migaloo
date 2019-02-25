@@ -3,3 +3,8 @@
     overflow-y: auto;
 }
 
+.jobPostingContainer .profileImage{
+    float: right;
+    margin: 20px;
+    width: 200px;
+}

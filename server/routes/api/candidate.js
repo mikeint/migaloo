@@ -79,7 +79,12 @@ router.post('/create', passport.authentication,  (req, res) => {
 // @route       GET api/candidate/lisy
 // @desc        List all candidates for a recruiter
 // @access      Private
-router.get('/list', passport.authentication,  (req, res) => {
+router.get('/list', passport.authentication, listCandidates);
+router.get('/list/:page', passport.authentication, listCandidates);
+function listCandidates(req, res){
+    var page = req.params.page;
+    if(page == null)
+        page = 1;
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         return res.status(400).json({success:false, error:"Must be an recruiter to look at canidates"})
@@ -89,7 +94,8 @@ router.get('/list', passport.authentication,  (req, res) => {
         SELECT c.candidate_id, c.first_name, c.last_name, c.email, c.created_on, c.resume_id, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
             coalesce(cpd.not_accepted_count, 0) as not_accepted_count, coalesce(cpd.coins_spent, 0) as coins_spent, \
-            coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count \
+            coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
+            (count(1) OVER())/10+1 AS page_count \
         FROM recruiter_candidate rc \
         INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
         LEFT JOIN ( \
@@ -105,7 +111,9 @@ router.get('/list', passport.authentication,  (req, res) => {
             GROUP BY cp.candidate_id \
         ) cpd ON cpd.candidate_id = c.candidate_id\
         WHERE rc.recruiter_id = $1 AND c.active \
-        ORDER BY c.last_name ASC', [jwtPayload.id])
+        ORDER BY c.last_name ASC \
+        OFFSET $1 \
+        LIMIT 10', [jwtPayload.id, (page-1)*10])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
@@ -121,6 +129,6 @@ router.get('/list', passport.authentication,  (req, res) => {
         console.log(err)
         res.status(400).json(err)
     });
-});
+}
 
 module.exports = router;

@@ -39,7 +39,6 @@
 }
 
 .navbar_employer .navText { 
-    margin-top: -25px;
     white-space: nowrap;
 } 
 @media only screen and (max-width: 1024px) {  
@@ -55,6 +54,7 @@
         display: block;
     }
     .navbar_employer .navText {
+        margin-top: -25px;
         font-size: 10px;     
     }
     .navbar_employer .navBtn {
