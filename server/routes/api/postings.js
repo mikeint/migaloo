@@ -85,14 +85,20 @@ router.post('/create', passport.authentication,  (req, res) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.get('/list', passport.authentication,  (req, res) => {
+router.get('/list', passport.authentication, postListing);
+router.get('/list/:page', passport.authentication, postListing);
+function postListing(req, res){
+    var page = req.params.page;
+    if(page == null)
+        page = 1;
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
         return res.status(400).json({success:false, error:"Must be an employer to look at postings"})
     }
 
     postgresdb.any('\
-        SELECT j.post_id, title, caption, experience_type_name, salary_type_name, tag_names, tag_ids, new_posts_cnt, posts_cnt, j.created_on \
+        SELECT j.post_id, title, caption, experience_type_name, salary_type_name, tag_names, tag_ids, new_posts_cnt, \
+            posts_cnt, j.created_on, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting j \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
@@ -108,7 +114,9 @@ router.get('/list', passport.authentication,  (req, res) => {
             GROUP BY post_id \
         ) cd ON cd.post_id = j.post_id \
         WHERE j.employer_id = $1 AND j.active \
-        ORDER BY j.created_on DESC', [jwtPayload.id])
+        ORDER BY j.created_on DESC \
+        OFFSET $2 \
+        LIMIT 10', [jwtPayload.id, (page-1)*10])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
@@ -124,7 +132,7 @@ router.get('/list', passport.authentication,  (req, res) => {
         console.log(err)
         res.status(400).json(err)
     });
-});
+}
 
 /**
  * Set posting to be considered read
@@ -200,7 +208,7 @@ router.post('/setAcceptedState/:postId/:candidateId', passport.authentication,  
         SELECT 1 \
         FROM job_posting jp \
         INNER JOIN candidate_posting cp ON jp.post_id = cp.post_id \
-        WHERE jp.employer_id = $1 AND j.active \
+        WHERE jp.employer_id = $1 AND jp.active \
         LIMIT 1', [jwtPayload.id])
     .then(d=>{
         if(d.length > 0){

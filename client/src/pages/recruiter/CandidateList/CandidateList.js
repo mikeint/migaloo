@@ -26,6 +26,9 @@ class CandidateList extends React.Component{
             pageCount: 1
         };
         this.Auth = new AuthFunctions();
+        this.axiosConfig = {
+            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
+        }
     }
 
     componentWillMount = () => {
@@ -58,10 +61,7 @@ class CandidateList extends React.Component{
 
 
     getCandidateList = () => {
-        var config = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
-        axios.get('/api/candidate/list/'+this.state.page, config)
+        axios.get('/api/candidate/list/'+this.state.page, this.axiosConfig)
         .then((res)=>{
             this.setState({ candidateList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
         }).catch(errors => 
@@ -77,7 +77,7 @@ class CandidateList extends React.Component{
         let selected = data.selected+1;
     
         this.setState({ page: selected }, () => {
-            this.getJobList();
+            this.getCandidateList();
         });
     };
 

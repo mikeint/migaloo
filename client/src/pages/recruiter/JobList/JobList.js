@@ -25,6 +25,9 @@ class JobList extends React.Component{
             pageCount: 1
         };
         this.Auth = new AuthFunctions();
+        this.axiosConfig = {
+            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
+        }
     }
 
     componentWillMount = () => {
@@ -49,10 +52,7 @@ class JobList extends React.Component{
 
 
     getJobList = () => {
-        var config = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
-        axios.get('/api/jobs/list/'+this.state.page, config)
+        axios.get('/api/jobs/list/'+this.state.page, this.axiosConfig)
         .then((res)=>{    
             this.setState({ jobList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
         }).catch(errors => 
