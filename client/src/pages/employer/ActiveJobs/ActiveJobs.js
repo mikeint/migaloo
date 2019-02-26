@@ -3,10 +3,9 @@ import './ActiveJobs.css';
 import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions'; 
-import NavBar from '../../../components/employer/NavBar/NavBar';
-import TopBar from '../../../components/TopBar/TopBar';
 import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
+import TopBar from '../../.../../../components/TopBar/TopBar';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import '../../../constants/AnimateOverlay'; 
@@ -79,9 +78,8 @@ class ActiveJobs extends React.Component{
 
         return (
             <React.Fragment>  
-                { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
-                <NavBar />
                 <TopBar />
+                { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                
                 <div className='mainContainer'>
                     <div className="pageHeading">Active Jobs<NavLink to="/employer/postAJob"><button className="addBtn">+</button></NavLink></div> 

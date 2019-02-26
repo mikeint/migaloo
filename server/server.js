@@ -9,6 +9,7 @@ const employer = require('./routes/api/employer');
 const recruiter = require('./routes/api/recruiter');
 const candidate = require('./routes/api/candidate');  
 const profileImage = require('./routes/api/profileImage');  
+const message = require('./routes/api/message');  
 
 const resume = require('./routes/api/resume');  
 const autocomplete = require('./routes/api/autocomplete');  
@@ -44,6 +45,7 @@ app.use('/api/candidate', candidate);
 app.use('/api/profileImage', profileImage);
 app.use('/api/autocomplete', autocomplete);
 app.use('/api/resume', resume);
+app.use('/api/message', message);
 //app.use('/api/testAPI', testAPI);
 
 

@@ -3,10 +3,9 @@ import './CandidateList.css';
 //import { NavLink } from 'react-router-dom';
 import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions'; 
-import NavBar from '../../../components/recruiter/NavBar/NavBar';
-import TopBar from '../../../components/TopBar/TopBar';
 import Loader from '../../../components/Loader/Loader';
 import ExpandableRow from './ExpandableRow/ExpandableRow';
+import TopBar from '../../../components/TopBar/TopBar';
 
 import Overlay from '../../../components/Overlay/Overlay';
 import '../../../constants/AnimateOverlay'; 
@@ -86,9 +85,8 @@ class CandidateList extends React.Component{
 
         return (
             <React.Fragment>  
-                { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
-                <NavBar />
                 <TopBar />
+                { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                
                <div className="mainContainer">
                     <div className='candidateListContainer'>

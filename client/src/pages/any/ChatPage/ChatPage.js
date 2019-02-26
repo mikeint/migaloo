@@ -1,23 +1,20 @@
 import React, { Component } from "react"; 
-import "./Chat.css"; 
+import "./ChatPage.css"; 
 import TopBar from '../../../components/TopBar/TopBar';
-import NavBar from '../NavBar/NavBar';
+import Chat from '../../../components/Chat/Chat';
 
-class Chat extends Component {
-  
+class ChatPage extends Component {
     render() {
   
         return (
             <React.Fragment>
-                <NavBar />
                 <TopBar />
-            
                 <div className="mainContainer">
-                    <h2>Conversations, say what up</h2>
+                    <Chat/>
                 </div>
             </React.Fragment>
         );
     }
 }
  
-export default Chat;
+export default ChatPage;

@@ -2,10 +2,10 @@ import React from 'react';
 import './Profile.css';  
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import AuthFunctions from '../../../AuthFunctions';  
-import NavBar from '../../../components/recruiter/NavBar/NavBar';
+import TopBar from '../../../components/TopBar/TopBar';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
-import UploadImage from '../../utils/UploadImage/UploadImage'; 
+import UploadImage from '../../../components/UploadImage/UploadImage'; 
 import coin from '../../../files/images/coin.png'
 
 class Profile extends React.Component{
@@ -16,7 +16,6 @@ class Profile extends React.Component{
             logout: false, 
             searchTerm: '', 
             user: {},
-            profile: '',
             profileInfo: {},
             showUpload:false,
             profileImage: ''
@@ -28,8 +27,8 @@ class Profile extends React.Component{
     } 
 
     componentWillMount = () => {
+        this.setState({logout: false})
         this.setState({ user: this.Auth.getUser() });
-        this.setState({ profile: this.Auth.getProfile() });
         this.getProfileInfo();
         this.getImage();
     }
@@ -82,7 +81,7 @@ class Profile extends React.Component{
 
         return (
             <React.Fragment>
-                <NavBar /> 
+                <TopBar />
                 <div className="mainContainerProfile">
                     <div className='profileContainer'>
                         <div className='profileImageContainer'>

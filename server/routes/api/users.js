@@ -9,6 +9,8 @@ const postgresdb = require('../../config/db').postgresdb;
 //load input validation
 const validateRegisterInput = require('../../validation/register'); 
 const validateLoginInput = require('../../validation/login');
+
+// TODO: encrypt JWT with public key
 function createJWT(userId, email, type){
     return new Promise((resolve, reject)=>{
         //create jwt payload
@@ -85,7 +87,7 @@ function checkEmailExists(email){
 // @route       GET api/user/register
 // @desc        Register route
 // @access      Public
-router.post('/register', (req, res) => {
+router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
     var body = req.body;
     console.log(body)
     const { errors, isValid } = validateRegisterInput(body);
@@ -107,32 +109,52 @@ router.post('/register', (req, res) => {
                                     [body.email, hash, type]);
                     return q1.then((login_ret)=>{
                         console.log(login_ret)
-                        var q2;
                         if(type == 1){ // Recruiter
-                            q2 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
+                            var q2 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
                                     [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
-                        }else if(type == 2){ // Employer
-                            q2 = t.none('INSERT INTO employer (employer_id, contact_first_name, contact_last_name, contact_phone_number, company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6)',
-                                    [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, body.companyName, null])
-                        }
-                        return q2
-                            .then(() => {
-                                createJWT(login_ret.user_id, body.email, type).then((token)=>{
-                                    res.status(200).json(token)
+                            return q2
+                                .then(() => {
+                                    createJWT(login_ret.user_id, body.email, type).then((token)=>{
+                                        res.status(200).json(token)
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.status(400).json({success: false, error:err})
+                                    });
+                                    return []
                                 })
                                 .catch(err => {
                                     console.log(err)
                                     res.status(400).json({success: false, error:err})
                                 });
-                                return []
+                        }else if(type == 2){ // Employer
+                            var q2 = t.one('INSERT INTO employer (company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING employer_id',
+                                    [body.companyName, null])
+                            return q2.then((employer_data) => {
+                                var q3 = t.none('INSERT INTO employer_contact (employer_contact_id, employer_id, first_name, last_name, phone_number) VALUES ($1, $2, $3, $4, $5)',
+                                    [login_ret.user_id, employer_data.employer_id, body.firstName, body.lastName, body.phoneNumber])
+                                return q3.then(() => {
+                                    createJWT(login_ret.user_id, body.email, type).then((token)=>{
+                                        res.status(200).json(token)
+                                    })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.status(400).json({success: false, error:err})
+                                    });
+                                    return []
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                    res.status(400).json({success: false, error:err})
+                                });
                             })
                             .catch(err => {
                                 console.log(err)
                                 res.status(400).json({success: false, error:err})
                             });
+                        }
                     })
                     .catch(err => {
-                        
                         console.log(err)
                         res.status(400).json({success: false, error:err})
                     });

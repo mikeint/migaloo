@@ -6,10 +6,10 @@ module.exports = function validateCandidateInput(data) {
 
     // Need: given_name, family_name, phone_number
     if (Validator.isEmpty(data.firstName)) {
-        errors.title = 'First field is required';
+        errors.firstName = 'First Name field is required';
     }
     if (Validator.isEmpty(data.lastName)) {
-        errors.title = 'Last field is required';
+        errors.lastName = 'Last Name field is required';
     }
     //validator function isEmail checks.
     if (!Validator.isEmail(data.email)) {

@@ -27,6 +27,11 @@ router.get('/view/:size', passport.authentication, (req, res) => {
         SELECT image_id \
         FROM employer r \
         WHERE r.employer_id = $1'
+    }else if(jwtPayload.userType == 3){
+        query = '\
+        SELECT image_id \
+        FROM candidate r \
+        WHERE r.candidate_id = $1'
     }
     postgresdb.one(query, [jwtPayload.id])
     .then((data) => {
@@ -69,8 +74,13 @@ router.get('/view/:type/:id/:size', passport.authentication, (req, res) => {
     }else if(req.params.type == 2){
         query = '\
             SELECT image_id \
-            FROM employer r \
-            WHERE r.employer_id = $1'
+            FROM employer_contact r \
+            WHERE r.employer_contact_id = $1'
+    }else if(req.params.type == 3){
+        query = '\
+            SELECT image_id \
+            FROM candidate r \
+            WHERE r.candidate_id = $1'
     }
     postgresdb.one(query, [req.params.id])
     .then((data) => {

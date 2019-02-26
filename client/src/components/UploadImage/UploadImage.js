@@ -1,6 +1,6 @@
 import React from 'react';
 import './UploadImage.css'; 
-import AuthFunctions from '../../../AuthFunctions'; 
+import AuthFunctions from '../../AuthFunctions'; 
 
 import { FilePond, registerPlugin } from "react-filepond";
 

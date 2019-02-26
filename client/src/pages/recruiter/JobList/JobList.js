@@ -2,10 +2,9 @@ import React from 'react';
 import './JobList.css';    
 import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions'; 
-import NavBar from '../../../components/recruiter/NavBar/NavBar';
-import TopBar from '../../../components/TopBar/TopBar';
 import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
+import TopBar from '../../../components/TopBar/TopBar';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import '../../../constants/AnimateOverlay'; 
@@ -73,10 +72,9 @@ class JobList extends React.Component{
         const html = <BuildActiveJobs obj={this.state.jobList[this.state.postId]} />
 
         return (
-            <React.Fragment>  
-                { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
-                <NavBar />
+            <React.Fragment>
                 <TopBar />
+                { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                
                <div className="mainContainer">
                     <div className='jobListClassContainer'>

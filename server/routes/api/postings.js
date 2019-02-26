@@ -40,36 +40,41 @@ router.post('/create', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:"Must be an employer to add a posting"})
     }
 
-    postgresdb.tx(t => {
-        // creating a sequence of transaction queries:
-        const q1 = t.one('INSERT INTO job_posting (employer_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING post_id',
-                            [jwtPayload.id, body.title, body.caption, body.experienceTypeId, body.salaryTypeId])
-        return q1.then((post_ret)=>{
-            if(body.tagIds != null && body.tagIds.length > 0){
-                const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper);
-                const q2 = t.none(query);
-                return q2
-                    .then(() => {
-                        res.status(200).json({success: true})
-                        return []
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        res.status(400).json({success: false, error:err})
-                    });
-            }else{
-                res.status(200).json({success: true})
-                return []
-            }
+    postgresdb.one('SELECT employer_id FROM employer_contact ec WHERE ec.employer_contact_id = $1 AND ec.active', [jwtPayload.id]).then((employer_data)=>{
+        postgresdb.tx(t => {
+            // creating a sequence of transaction queries:
+            const q1 = t.one('INSERT INTO job_posting (employer_id, employer_contact_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING post_id',
+                                [employer_data.employer_id, jwtPayload.id, body.title, body.caption, body.experienceTypeId, body.salaryTypeId])
+            return q1.then((post_ret)=>{
+                if(body.tagIds != null && body.tagIds.length > 0){
+                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper);
+                    const q2 = t.none(query);
+                    return q2
+                        .then(() => {
+                            res.status(200).json({success: true})
+                            return []
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.status(400).json({success: false, error:err})
+                        });
+                }else{
+                    res.status(200).json({success: true})
+                    return []
+                }
+            })
+            .catch(err => {
+                
+                console.log(err)
+                res.status(400).json({success: false, error:err})
+            });
         })
-        .catch(err => {
-            
+        .then(() => {
+            console.log("Done TX")
+        }).catch((err)=>{
             console.log(err)
-            res.status(400).json({success: false, error:err})
+            return res.status(500).json({success: false, error:err})
         });
-    })
-    .then(() => {
-        console.log("Done TX")
     }).catch((err)=>{
         console.log(err)
         return res.status(500).json({success: false, error:err})
@@ -100,6 +105,7 @@ function postListing(req, res){
         SELECT j.post_id, title, caption, experience_type_name, salary_type_name, tag_names, tag_ids, new_posts_cnt, \
             posts_cnt, j.created_on, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting j \
+        INNER JOIN employer_contact ec ON j.employer_id = ec.employer_id \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
         LEFT JOIN ( \
@@ -113,7 +119,7 @@ function postListing(req, res){
             FROM candidate_posting cp \
             GROUP BY post_id \
         ) cd ON cd.post_id = j.post_id \
-        WHERE j.employer_id = $1 AND j.active \
+        WHERE ec.employer_contact_id = $1 AND j.active \
         ORDER BY j.created_on DESC \
         OFFSET $2 \
         LIMIT 10', [jwtPayload.id, (page-1)*10])
@@ -159,8 +165,9 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
     postgresdb.any('\
         SELECT 1 \
         FROM job_posting jp \
+        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
         INNER JOIN candidate_posting cp ON jp.post_id = cp.post_id \
-        WHERE jp.employer_id = $1 \
+        WHERE ec.employer_contact_id = $1 AND jp.active \
         LIMIT 1', [jwtPayload.id])
     .then(d=>{
         if(d.length > 0){
@@ -207,8 +214,9 @@ router.post('/setAcceptedState/:postId/:candidateId', passport.authentication,  
     postgresdb.any('\
         SELECT 1 \
         FROM job_posting jp \
+        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
         INNER JOIN candidate_posting cp ON jp.post_id = cp.post_id \
-        WHERE jp.employer_id = $1 AND jp.active \
+        WHERE ec.employer_contact_id = $1 AND jp.active \
         LIMIT 1', [jwtPayload.id])
     .then(d=>{
         if(d.length > 0){
@@ -248,10 +256,16 @@ router.post('/remove', passport.authentication,  (req, res) => {
     if(postId == null){
         return res.status(400).json({success:false, error:"Missing Post Id"})
     }
-    // TODO: Return all coins that have not been accepted or rejected
-    postgresdb.none('UPDATE job_posting SET active=false WHERE employer_id = $1 AND post_id = $2', [jwtPayload.id, postId])
-    .then((data) => {
-        res.json({success:true})
+    postgresdb.one('SELECT employer_id FROM employer_contact ec WHERE ec.employer_contact_id = $1 AND ec.active', [jwtPayload.id]).then((employer_data)=>{
+        // TODO: Return all coins that have not been accepted or rejected
+        postgresdb.none('UPDATE job_posting SET active=false WHERE employer_id = $1 AND post_id = $2', [employer_data.employer_id, postId])
+        .then((data) => {
+            res.json({success:true})
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).json(err)
+        });
     })
     .catch(err => {
         console.log(err)
@@ -282,11 +296,12 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
         SELECT c.candidate_id, cp.coins, r.first_name, r.last_name, r.phone_number, rl.email, cp.accepted, cp.not_accepted,\
             cp.has_seen_post, c.first_name as candidate_first_name, j.created_on as posted_on, c.resume_id \
         FROM job_posting j \
+        INNER JOIN employer_contact ec ON j.employer_id = ec.employer_id \
         INNER JOIN candidate_posting cp ON cp.post_id = j.post_id \
         INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
         INNER JOIN recruiter r ON r.recruiter_id = cp.recruiter_id \
         INNER JOIN login rl ON r.recruiter_id = rl.user_id \
-        WHERE j.post_id = $1 AND j.employer_id = $2 AND j.active \
+        WHERE j.post_id = $1 AND ec.employer_contact_id = $2 AND j.active \
         ORDER BY cp.coins DESC', [postId, jwtPayload.id])
     .then((data) => {
         // Marshal data

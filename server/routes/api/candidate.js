@@ -42,16 +42,18 @@ router.post('/create', passport.authentication,  (req, res) => {
 
     postgresdb.tx(t => {
         // creating a sequence of transaction queries:
-        const q1 = t.one('INSERT INTO candidate (first_name, last_name, email, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING candidate_id',
-                            [body.firstName, body.lastName, body.email, body.experienceTypeId, body.salaryTypeId])
+        const q1 = t.one('INSERT INTO login (email) VALUES ($1) RETURNING user_id ON CONFLICT DO UPDATE email = EXCLUDED.email RETURNING user_id',
+                            [body.email])
         return q1.then((candidate_ret)=>{
             const q2 = t.none('INSERT INTO recruiter_candidate (candidate_id, recruiter_id) VALUES ($1, $2)',
-                                [candidate_ret.candidate_id, jwtPayload.id])
-            var queries = [q2];
+                                [candidate_ret.user_id, jwtPayload.id])
+            const q3 = t.none('INSERT INTO candidate (first_name, last_name, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4)',
+                                [body.firstName, body.lastName, body.experienceTypeId, body.salaryTypeId])
+            var queries = [q2, q3];
             if(body.tagIds != null && body.tagIds.length > 0){
-                const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidate_ret.candidate_id, tag_id: d}}), candidateTagsInsertHelper);
-                const q3 = t.none(query);
-                queries.push(q3)
+                const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidate_ret.user_id, tag_id: d}}), candidateTagsInsertHelper);
+                const q4 = t.none(query);
+                queries.push(q4)
             }
             return t.batch(queries).then(()=>{
                 res.json({success: true})
@@ -76,7 +78,7 @@ router.post('/create', passport.authentication,  (req, res) => {
     });
 });
 
-// @route       GET api/candidate/lisy
+// @route       GET api/candidate/list
 // @desc        List all candidates for a recruiter
 // @access      Private
 router.get('/list', passport.authentication, listCandidates);
@@ -91,13 +93,14 @@ function listCandidates(req, res){
     }
 
     postgresdb.any(' \
-        SELECT c.candidate_id, c.first_name, c.last_name, c.email, c.created_on, c.resume_id, \
+        SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
             coalesce(cpd.not_accepted_count, 0) as not_accepted_count, coalesce(cpd.coins_spent, 0) as coins_spent, \
             coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
             (count(1) OVER())/10+1 AS page_count \
         FROM recruiter_candidate rc \
         INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
+        INNER JOIN login l ON l.user_id = c.candidate_id \
         LEFT JOIN ( \
             SELECT cp.candidate_id, \
                 SUM(1) as posted_count, \
@@ -111,7 +114,7 @@ function listCandidates(req, res){
             GROUP BY cp.candidate_id \
         ) cpd ON cpd.candidate_id = c.candidate_id\
         WHERE rc.recruiter_id = $1 AND c.active \
-        ORDER BY c.last_name ASC \
+        ORDER BY c.last_name ASC, c.first_name ASC \
         OFFSET $1 \
         LIMIT 10', [jwtPayload.id, (page-1)*10])
     .then((data) => {

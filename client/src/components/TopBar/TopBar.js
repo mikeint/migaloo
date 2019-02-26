@@ -4,7 +4,8 @@ import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import bell from '../../files/images/bell.png';
 import axios from 'axios';
 import AuthFunctions from '../../AuthFunctions'; 
-import Overlay from '../../components/Overlay/Overlay';
+import NavBar from '../NavBar/NavBar';
+import Overlay from '../Overlay/Overlay';
 import BuildNotifications from './BuildNotifications/BuildNotifications';
 
 class TopBar extends React.Component{ 
@@ -69,6 +70,7 @@ class TopBar extends React.Component{
 
         return (
             <React.Fragment>
+                <NavBar/>
                 <div className="topBar">
                     <div className="topBarLogo">HR</div>
                     <div className='alert'>

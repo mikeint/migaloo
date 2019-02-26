@@ -1,10 +1,8 @@
 import React from 'react';
 import './AddCandidate.css'; 
 import { Redirect } from 'react-router-dom';
-
 import AuthFunctions from '../../../AuthFunctions'; 
-//import NavBar from '../../../components/employer/NavBar/NavBar';
-//import TopBar from '../../../components/TopBar/TopBar';
+import TopBar from '../../../components/TopBar/TopBar';
 
 import axios from 'axios';
 
@@ -56,6 +54,7 @@ class AddCandidate extends React.Component{
     render(){   
         return (
             <React.Fragment>
+                <TopBar />
                 {/* <NavBar />
                 <TopBar /> */}
                 {/* this.state.redirect ? <Redirect to='/recruiter/candidateList' /> : '' */}

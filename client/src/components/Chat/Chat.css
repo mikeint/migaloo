@@ -1,0 +1,15 @@
+.chatContainer .chatRow{
+    width: 100%;
+    padding: 10px 10px;
+    font-size: 15px; 
+    background: #1a2b6d;
+    color: #fff;
+    display: flex;
+    cursor: pointer;
+}
+.chatContainer .flexColumn{
+    flex: 1 0;
+}
+.chatContainer .heading{
+    font-weight: bold;
+}
