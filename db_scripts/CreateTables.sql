@@ -203,7 +203,7 @@ CREATE INDEX candidate_tags_idx ON candidate_tags(tag_id);
 
 CREATE VIEW user_master AS 
 SELECT 
-    l.created_on, l.user_id, l.user_type_id, l.last_login, l.email, ut.user_type_name, ut.user_type_id, ec.employer_id, e.company_name,
+    l.created_on, l.user_id, l.user_type_id, l.last_login, l.email, ut.user_type_name, ec.employer_id, e.company_name,
     coalesce(c.first_name, r.first_name, ec.first_name) as first_name,
     coalesce(c.last_name, r.last_name, ec.last_name) as last_name,
     coalesce(c.phone_number, r.phone_number, ec.phone_number) as phone_number,
@@ -363,6 +363,3 @@ INSERT INTO messages (user_id_1, user_id_2, to_id, subject_user_id, post_id, sub
     (3, 100, 100, 1006, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '3' day),
     (3, 100, 3, 1006, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '3' day),
     (3, 100, 100, 1006, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '2' day);
-
-COMMIT;
-
