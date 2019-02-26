@@ -2,13 +2,15 @@ import React, { Component } from "react";
 import "./Chat.css"; 
 import AuthFunctions from '../../AuthFunctions'; 
 import axios from 'axios';
+import ConversationRow from "./ConversationRow/ConversationRow"; 
 
 class Chat extends Component {
 
     constructor(props) {
         super(props);
 		this.state = {
-            messageList: []
+            conversationList: [],
+            pageCount: 0
         };
         this.Auth = new AuthFunctions();
         this.axiosConfig = {
@@ -16,12 +18,12 @@ class Chat extends Component {
         }
     }
     componentWillMount = () => {
-        this.getMessageList();
+        this.getConversationList();
     }
-    getMessageList = () => {
+    getConversationList = () => {
         axios.get('/api/message/list/', this.axiosConfig)
         .then((res)=>{
-            this.setState({ messageList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
+            this.setState({ conversationList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )
@@ -38,17 +40,8 @@ class Chat extends Component {
                 <div className="chatContainer">
                     <div className="pageHeading">Conversations</div>
                     {
-                        this.state.messageList.map((d, i)=>{
-                            return <div className="chatRow" key={i} onClick={this.showAllChat.bind(i)}>
-                                <div className="flexColumn">
-                                    <div><span className="heading">Subject: </span>{d.subject}</div>
-                                    <div><span className="heading">Total Messages: </span>{d.message_count}</div>
-                                </div>
-                                <div className="flexColumn">
-                                    <div><span className="heading">Last Message: </span>{d.message}</div>
-                                    <div>{d.created}</div> 
-                                </div>
-                            </div>
+                        this.state.conversationList.map((conv, i)=>{
+                            return <ConversationRow key={i} conversation={conv}/>
                         })
                     }
                 </div>

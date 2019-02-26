@@ -16,13 +16,13 @@ class AlertItem extends React.Component{
         var row1, row2, row3;
         if(alert.userType === 1){ // Recuiter
             row1 = `${alert.first_name} ${alert.last_name} has ${alert.accepted?'':'not '} been accepted`;
-            row2 = `Your ${alert.coins} coins have been ${alert.accepted?'returned':'lost'}`;
+            row2 = `Your ${alert.coins} coin${alert.coins>1?'s have':' has'} been ${alert.accepted?'returned':'lost'}`;
             row3 = alert.responded;
         }else{ // Employer
             var title = alert.title;
             title = title.length > 30 ? title.substring(0, 27).replace(/(^[^A-Za-z0-9]+|[^A-Za-z0-9]+$)/g, '').trim()+'...': title; // Limit the title to 30 characters
             row1 = `${alert.first_name} has been posted to`;
-            row2 = `${title} for ${alert.coins} coin`;
+            row2 = `${title} for ${alert.coins} coin${alert.coins>1?'s':''}`;
             row3 = alert.created;
         }
         return (

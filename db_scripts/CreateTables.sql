@@ -1,3 +1,4 @@
+Drop VIEW user_master;
 DROP TABLE rate_employer;
 DROP TABLE rate_recruiter;
 DROP TABLE rate_candidate;
@@ -37,7 +38,7 @@ CREATE TABLE salary_type (
 );
 CREATE TABLE login (
     user_id bigserial,
-    email varchar(128) UNIQUE NOT NULL,
+    email varchar(128) UNIQUE,
     passwordhash varchar(128),
     created_on timestamp default NOW(),
     last_login timestamp,
@@ -56,7 +57,7 @@ CREATE TABLE address (
     PRIMARY KEY(address_id)
 );
 CREATE TABLE employer (
-    employer_id bigserial,
+    employer_id bigserial REFERENCES login(user_id),
     address_id bigint REFERENCES address(address_id),
     company_name  varchar(128) NULL,
     image_id varchar(128),
@@ -121,6 +122,7 @@ CREATE TABLE candidate (
     first_name varchar(128) NOT NULL,
     last_name varchar(128) NOT NULL,
     resume_id varchar(128),
+    phone_number  varchar(32) NULL,
     salary_type_id int REFERENCES salary_type(salary_type_id),
     experience_type_id int REFERENCES experience_type(experience_type_id),
     active boolean default true,
@@ -157,19 +159,19 @@ CREATE INDEX candidate_posting_idx ON candidate_posting(post_id, recruiter_id);
 CREATE INDEX candidate_posting_cdt_idx ON candidate_posting(candidate_id);
 CREATE TABLE messages (
     message_id bigserial,
-    from_id bigint REFERENCES login(user_id),
+    user_id_1 bigint REFERENCES login(user_id),
+    user_id_2 bigint REFERENCES login(user_id),
+    subject_user_id bigint REFERENCES login(user_id),
     to_id bigint REFERENCES login(user_id),
-    candidate_id bigint REFERENCES candidate(candidate_id),
     post_id bigint REFERENCES job_posting(post_id),
-    chain_id bigserial NOT NULL,
     subject varchar(128) NOT NULL,
     message text NOT NULL,
     created_on timestamp default NOW(),
-    to_has_seen boolean default false,
-    from_has_seen boolean default false,
+    has_seen boolean default false,
     PRIMARY KEY(message_id)
 );
-CREATE INDEX message_from_idx ON messages(from_id);
+CREATE INDEX message_chain_idx ON messages(user_id_1, user_id_2);
+CREATE INDEX message_chain_subject_idx ON messages(user_id_1, user_id_2, subject_user_id);
 CREATE INDEX message_to_idx ON messages(to_id);
 CREATE TABLE transactions (
     transaction_id bigserial,
@@ -199,11 +201,27 @@ CREATE TABLE candidate_tags (
 );
 CREATE INDEX candidate_tags_idx ON candidate_tags(tag_id);
 
+CREATE VIEW user_master AS 
+SELECT 
+    l.created_on, l.user_id, l.user_type_id, l.last_login, l.email, ut.user_type_name, ut.user_type_id, ec.employer_id, e.company_name,
+    coalesce(c.first_name, r.first_name, ec.first_name) as first_name,
+    coalesce(c.last_name, r.last_name, ec.last_name) as last_name,
+    coalesce(c.phone_number, r.phone_number, ec.phone_number) as phone_number,
+    coalesce(c.rating, r.rating, e.rating) as rating,
+    coalesce(c.active, r.active, ec.active) as active
+FROM login l
+INNER JOIN user_type ut ON ut.user_type_id = l.user_type_id
+LEFT JOIN candidate c ON c.candidate_id = l.user_id
+LEFT JOIN recruiter r ON r.recruiter_id = l.user_id
+LEFT JOIN employer_contact ec ON ec.employer_contact_id = l.user_id
+LEFT JOIN employer e ON e.employer_id = ec.employer_id;
+
 -- DATA START
 INSERT INTO user_type (user_type_name) VALUES
     ('Recruiter'),
-    ('Employer'),
-    ('Candidate');
+    ('Employer Contact'),
+    ('Candidate'),
+    ('Employer');
 INSERT INTO experience_type (experience_type_name) VALUES 
     ('Entry Level'),
     ('Mid Level'),
@@ -236,22 +254,9 @@ INSERT INTO login (user_id, email, passwordhash, created_on, user_type_id) VALUE
     (2, 'r2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-11-25 10:23:54', 1), -- Add Recruiter, pass: test
     (3, 'r3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-12-25 10:23:54', 1), -- Add Recruiter, pass: test
     (100, 'e1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-01-21 10:23:54', 2), -- Add Employer, pass: test
-    (101, 'e2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2); -- Add Employer, pass: test
-INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('123 Main St.', 'Toronto', 'ON', 'CA', point(43.6531, -79.3831));
-INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('4312 Dundas Rd.', 'Toronto', 'ON', 'CA', point(43.6533, -79.3833));
-INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('21 Backersfield Rd.', 'North York', 'ON', 'CA', point(43.65335, -79.38325));
-INSERT INTO address (street_address_1, street_address_2, city, state, country, lat_lon) VALUES ('654 York Rd.', 'Suite 203', 'Toronto', 'ON', 'CA', point(43.65325, -79.38312));
-INSERT INTO address (street_address_1, street_address_2, city, state, country, lat_lon) VALUES ('1325 York Rd.', 'Building 3', 'Toronto', 'ON', 'CA', point(43.65324, -79.38328));
-INSERT INTO employer (employer_id, company_name, address_id) VALUES
-    (500, 'Google Inc.', 1), 
-    (501, 'Microsoft Inc.', 2);
-INSERT INTO employer_contact (employer_id, employer_contact_id, first_name, last_name, phone_number, isAdmin) VALUES
-    (500, 100, 'Steve', 'Smith', '905-555-8942', true), 
-    (501, 101, 'Jerry', 'McGuire', '905-555-0425', true);
-INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, coins, address_id) VALUES
-    (1, 'John', 'Macabee', '443-555-8234', 25, 3),
-    (2, 'Milton', 'Walker', '443-555-6456', 50, 4),
-    (3, 'Jill', 'Stein', '443-555-3453', 32, 5);
+    (101, 'e2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
+    (500, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4), -- Dummy Employer, pass: test
+    (501, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4); -- Dummy Employer, pass: test
 INSERT INTO login (user_id, email, created_on, user_type_id) VALUES 
     (1000, 'c1@test.com', TIMESTAMP '2019-02-17 10:23:54', 3), -- Add candidate
     (1001, 'c2@test.com', TIMESTAMP '2018-11-25 10:23:54', 3), -- Add candidate
@@ -261,6 +266,21 @@ INSERT INTO login (user_id, email, created_on, user_type_id) VALUES
     (1005, 'c6@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
     (1006, 'c7@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
     (1007, 'c8@test.com', TIMESTAMP '2019-02-20 10:23:54', 3); -- Add candidate
+INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('123 Main St.', 'Toronto', 'ON', 'CA', point(43.6531, -79.3831));
+INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('4312 Dundas Rd.', 'Toronto', 'ON', 'CA', point(43.6533, -79.3833));
+INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('21 Backersfield Rd.', 'North York', 'ON', 'CA', point(43.65335, -79.38325));
+INSERT INTO address (street_address_1, street_address_2, city, state, country, lat_lon) VALUES ('654 York Rd.', 'Suite 203', 'Toronto', 'ON', 'CA', point(43.65325, -79.38312));
+INSERT INTO address (street_address_1, street_address_2, city, state, country, lat_lon) VALUES ('1325 York Rd.', 'Building 3', 'Toronto', 'ON', 'CA', point(43.65324, -79.38328));
+INSERT INTO employer (employer_id, company_name, address_id) VALUES
+    (500, 'Google Inc.', 1), 
+    (501, 'Microsoft Inc.', 2);
+INSERT INTO employer_contact (employer_contact_id, employer_id, first_name, last_name, phone_number, isAdmin) VALUES
+    (100, 500, 'Steve', 'Smith', '905-555-8942', true), 
+    (101, 501, 'Jerry', 'McGuire', '905-555-0425', true);
+INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, coins, address_id) VALUES
+    (1, 'John', 'Macabee', '443-555-8234', 25, 3),
+    (2, 'Milton', 'Walker', '443-555-6456', 50, 4),
+    (3, 'Jill', 'Stein', '443-555-3453', 32, 5);
 INSERT INTO candidate (candidate_id, first_name, last_name) VALUES
     (1000, 'Sarah', 'Williams'),
     (1001, 'Amanda', 'Taylor'),
@@ -334,14 +354,15 @@ INSERT INTO candidate_tags (candidate_id, tag_id) VALUES
     (1000, 4),
     (1001, 5),
     (1002, 4);
-INSERT INTO messages (from_id, to_id, candidate_id, post_id, chain_id, subject, message, created_on) VALUES
-    (100, 1, 1000, 1, 1, 'Sarah Sounds Great!', 'We would like to hear more about sarah.', current_date - interval '6' day),
-    (1, 100, 1000, 1, 1, 'Sarah Sounds Great!', 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', current_date - interval '5' day),
-    (100, 1, 1000, 1, 1, 'Sarah Sounds Great!', 'That sounds great please send me a call at 3pm on tuesday for a follow-up.', current_date - interval '4' day),
-    (1, 100, 1000, 1, 1, 'Sarah Sounds Great!', '3PM that sounds perfect!', current_date - interval '3' day),
-    (100, 3, 1006, 1, 3, 'Moving forward with Stephanie', 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '4' day),
-    (3, 100, 1006, 1, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '3' day),
-    (100, 3, 1006, 1, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '3' day),
-    (3, 100, 1006, 1, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '2' day);
+INSERT INTO messages (user_id_1, user_id_2, to_id, subject_user_id, post_id, subject, message, created_on) VALUES
+    (1, 100, 1, 1000, 1, 'Sarah Sounds Great!', 'We would like to hear more about sarah.', current_date - interval '6' day),
+    (1, 100, 100, 1000, 1, 'Sarah Sounds Great!', 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', current_date - interval '5' day),
+    (1, 100, 1, 1000, 1, 'Sarah Sounds Great!', 'That sounds great please send me a call at 3pm on tuesday for a follow-up.', current_date - interval '4' day),
+    (1, 100, 100, 1000, 1, 'Sarah Sounds Great!', '3PM that sounds perfect!', current_date - interval '3' day),
+    (3, 100, 3, 1006, 3, 'Moving forward with Stephanie', 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '4' day),
+    (3, 100, 100, 1006, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '3' day),
+    (3, 100, 3, 1006, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '3' day),
+    (3, 100, 100, 1006, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '2' day);
 
 COMMIT;
+

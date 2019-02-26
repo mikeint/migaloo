@@ -119,28 +119,34 @@ function listMessages(req, res){
     if(page == null)
         page = 1;
     var jwtPayload = req.body.jwtPayload;
-
+    
+    var userId = jwtPayload.employer_id?jwtPayload.employer_id:jwtPayload.id;
     postgresdb.any('\
-        SELECT m.chain_id, m.post_id, m.created_on, m.message_id, \
-            m.candidate_id, m.subject, m.message, m.to_has_seen, m.from_has_seen, \
-            CASE WHEN employer_contact_id IS NOT NULL AND employer_contact_id = m.to_id THEN employer_contact_id ELSE m.to_id END as to_id, \
-            CASE WHEN employer_contact_id IS NOT NULL AND employer_contact_id = m.from_id THEN employer_contact_id ELSE m.from_id END as from_id, \
+        SELECT m.post_id, m.to_id, m.created_on, \
+            m.subject, m.message, m.has_seen, \
+            um.user_type_id as subject_user_type_id, um.user_type_name  as subject_user_type_name, \
+            um.user_id as subject_user_id, um.first_name as subject_first_name, \
+            m.user_id_1, um1.first_name as user_1_first_name, um1.last_name as user_1_first_name , um1.company_name as user_1_company_name, \
+            m.user_id_2, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
             (count(1) OVER())/10+1 AS page_count, message_count \
         FROM ( \
-            SELECT jpc.employer_contact_id, m.chain_id, max(m.message_id) as message_id, count(1) as message_count \
+            SELECT m.user_id_1, m.user_id_2, m.subject_user_id, max(m.message_id) as message_id, count(1) as message_count \
             FROM messages m \
-            INNER JOIN job_posting_contact jpc ON m.post_id = jpc.post_id \
-            WHERE m.to_id = $1 OR m.from_id = $1 \
-            GROUP BY jpc.employer_contact_id, m.chain_id \
+            WHERE m.user_id_1 = $1 OR m.user_id_2 = $1 \
+            GROUP BY m.user_id_1, m.user_id_2, m.subject_user_id \
             ORDER BY max(m.created_on) DESC \
             OFFSET $2 \
             LIMIT 10 \
         ) ml \
         INNER JOIN messages m ON m.message_id = ml.message_id \
-        ', [jwtPayload.id, (page-1)*10])
+        INNER JOIN user_master um ON um.user_id = ml.subject_user_id \
+        INNER JOIN user_master um1 ON um1.user_id = ml.user_id_1 \
+        INNER JOIN user_master um2 ON um2.user_id = ml.user_id_2 \
+        ', [userId, (page-1)*10])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
+            m.toMe = m.to_id == userId;
             var timestamp = moment(m.created_on);
             var ms = timestamp.diff(moment());
             m.created = moment.duration(ms).humanize() + " ago";
@@ -157,31 +163,60 @@ function listMessages(req, res){
 // @route       GET api/message/listChain/:chainId
 // @desc        List all messages for a message chain
 // @access      Private
-router.get('/listChain/:chainId', passport.authentication, listMessagesChain);
-router.get('/listChain/:chainId/:page', passport.authentication, listMessagesChain);
-function listMessagesChain(req, res){
+router.get('/listConversationMessages/:user_id_1/:user_id_2/:subject_user_id', passport.authentication, listConversationMessages);
+router.get('/listConversationMessages/:user_id_1/:user_id_2/:subject_user_id/:page', passport.authentication, listConversationMessages);
+function listConversationMessages(req, res){
     var page = req.params.page;
-    var chainId = parseInt(req.params.chain_id, 10);
-    if(chainId == null){
-        return res.status(400).json({success:false, error:"Missing chain Id"})
+    var userId1 = parseInt(req.params.user_id_1, 10);
+    var userId2 = parseInt(req.params.user_id_2, 10);
+    var subjectUserId = parseInt(req.params.subject_user_id, 10);
+    if(userId1 == null){
+        return res.status(400).json({success:false, error:"Missing User ID 1"})
+    }
+    if(userId2 == null){
+        return res.status(400).json({success:false, error:"Missing User ID 2"})
+    }
+    if(subjectUserId == null){
+        return res.status(400).json({success:false, error:"Missing Subject User ID"})
+    }
+    // Enforce user id 1 being less than 2
+    if(userId1 > userId2){
+        var t = userId1;
+        userId1 = userId2;
+        userId2 = t;
+    }
+    var jwtPayload = req.body.jwtPayload;
+    // Validate that the user id of the user is in the requested chain
+    var userId = jwtPayload.employer_id?jwtPayload.employer_id:jwtPayload.id;
+    console.log(userId, jwtPayload.id, jwtPayload.employer_id)
+    console.log(userId1, userId2)
+    if(userId != userId1 && userId != userId2){
+        return res.status(400).json({success:false, error:"You are not able to view this message chain"})
     }
     if(page == null)
         page = 1;
-    var jwtPayload = req.body.jwtPayload;
 
     postgresdb.any('\
-        SELECT m.chain_id, m.post_id, m.created_on, m.message_id, m.to_id, m.from_id, \
-            m.candidate_id, m.subject, m.message, m.to_has_seen, m.from_has_seen, \
+        SELECT m.message_id, m.post_id, m.to_id, m.created_on, \
+            m.subject, m.message, m.has_seen, \
+            um.user_type_id as subject_user_type_id, um.user_type_name as subject_user_type_name, \
+            um.user_id as subject_user_id, um.first_name as subject_first_name, \
+            m.user_id_1, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
+            m.user_id_2, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
             (count(1) OVER())/10+1 AS page_count \
         FROM messages m \
-        WHERE (m.to_id = $1 OR m.from_id = $1) AND m.chain_id = $2 \
+        INNER JOIN user_master um ON um.user_id = m.subject_user_id \
+        INNER JOIN user_master um1 ON um1.user_id = m.user_id_1 \
+        INNER JOIN user_master um2 ON um2.user_id = m.user_id_2 \
+        WHERE m.user_id_1 = $1 AND m.user_id_2 = $2 AND m.subject_user_id = $3 \
         ORDER BY m.created_on DESC \
-        OFFSET $1 \
+        OFFSET $4 \
         LIMIT 10 \
-        ', [jwtPayload.id, chainId, (page-1)*10])
+        ', [userId1, userId2, subjectUserId, (page-1)*10])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
+            m.toMe = m.to_id == userId;
             var timestamp = moment(m.created_on);
             var ms = timestamp.diff(moment());
             m.created = moment.duration(ms).humanize() + " ago";
