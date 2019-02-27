@@ -1,29 +1,37 @@
 
-.swipeBack { 
+.swiper { 
     position: absolute;
     z-index: 99999;
     background-image:url("../../files/images/swipeBtn.png");
     background-repeat: no-repeat; 
-    background-position-y: 50%;
-    background-position-x: 15px;
     background-size: 20px;
     opacity: 0.7;
-} 
-.swipeBack_r { 
+}  
+.swiper_r {
     width: 40px;
-    height: 100%; 
-} 
-.swipeBack_l {
-    width: 25px;
     height: 100%;
-    background-repeat: no-repeat;
+    right: 0px;
+    position: absolute;  
+    height: 100%; 
+    background-position-y: 50%;
+    background-position-x: 15px; 
+}
+.swiper_l {
+    width: 40px;
+    height: 100%;
+    left: 0px;
+    position: absolute; 
+    height: 100%; 
     background-position-y: 50%;
     -webkit-transform: rotate(30deg);
     transform: rotate(-180deg);
-    background-position-x: 2px;
+    background-position-x: 15px;
 }
-.swipeBack_t {
+.swiper_t {
+    width: 100%;
+    height: 40px;
     width: 20px;
+    position: absolute;
     height: 40px;
     text-align: center; 
     -ms-transform: rotate(-90deg);
@@ -32,7 +40,11 @@
     background-position-x: 0px;
     margin-left: 49%;
 }
-.swipeBack_b {
+.swiper_b {
+    width: 100%;
+    height: 40px;
+    bottom: 0px;
+    position: absolute;
     width: 20px;
     height: 50px;
     text-align: center; 
@@ -41,28 +53,6 @@
     background-position-y: 50%;
     background-position-x: 0px;
     margin-left: 49%;
-}
-.swiper_t {
-    width: 100%;
-    height: 40px;
-}
-.swiper_b {
-    width: 100%;
-    height: 40px;
-    bottom: 0px;
-    position: fixed;
-}
-.swiper_r {
-    width: 40px;
-    height: 100%;
-    right: 0px;
-    position: fixed;
-}
-.swiper_l {
-    width: 40px;
-    height: 100%;
-    left: 0px;
-    position: fixed;
 }
 
 .fixedRoot {
