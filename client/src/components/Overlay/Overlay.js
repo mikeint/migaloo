@@ -47,11 +47,14 @@ class Overlay extends Component {
         return (
             <React.Fragment>
                 <div className="menu">
-                    <Swipe onClick={this.toggleClassMenu.bind(this)} onSwipeEnd={this.toggleClassMenu.bind(this)}>
-                        <div className={"swipeBack "+config.swipeLocation}></div>
-                    </Swipe>
+             
 
                     <div className={"app-menu "  + config.direction}>
+                        <Swipe onClick={this.toggleClassMenu.bind(this)} onSwipeEnd={this.toggleClassMenu.bind(this)}>
+                            <div className={"swipeBack "+config.swipeLocation}></div>
+                        </Swipe>
+
+                        
                         {/* <div className={"back " + config.swipeButton} onClick={this.toggleClassMenu.bind(this)}>x</div> */}
                         {this.props.html}
                     </div>
