@@ -48,16 +48,17 @@ class ExpandableRow extends React.Component{
         return (
             <div className="expandableRow">
                 <div className="candidateListItem" onClick={this.toggle.bind(this)}> 
-                        {rowObj.first_name} {rowObj.last_name}
-                        {rowObj.new_accepted_count > 0 ? <span className="acceptedCount" title={rowObj.new_accepted_count+" New Postings Accepted"}>{rowObj.new_accepted_count}</span> : ""}
-                        {rowObj.new_not_accepted_count > 0 ? <span className="notAcceptedCount" title={rowObj.new_not_accepted_count+" New Postings Not Accepted"}>{rowObj.new_not_accepted_count}</span> : ""}
+                    {rowObj.coins_spent > 0 ? <div className="coinContainer"><span className="coinAmount">{rowObj.coins_spent}</span></div> : ""}
+                    <div className="nameContainer">{rowObj.first_name} {rowObj.last_name}</div>
+                    {rowObj.new_accepted_count > 0 ? <div className="acceptedCount" title={rowObj.new_accepted_count+" New Postings Accepted"}>{rowObj.new_accepted_count}</div> : ""}
+                    {rowObj.new_not_accepted_count > 0 ? <div className="notAcceptedCount" title={rowObj.new_not_accepted_count+" New Postings Not Accepted"}>{rowObj.new_not_accepted_count}</div> : ""}
                 </div>
                 <div className={"collapse" + (this.state.open ? ' in' : '')}>
                     <div className="flex">
                         <div className="flexColumn">
                             <div className="rowMargin">Email: {rowObj.email}</div>
                             <div className="rowMargin">Created: {rowObj.created}</div>
-                            <div className="rowMargin">Coins Spent on Candidate: {rowObj.coins_spent} coins(s)</div>
+                            {/* <div className="rowMargin">Coins Spent on Candidate: {rowObj.coins_spent} coins(s)</div> */}
                             <div className="rowMargin">Posted to Job: {rowObj.posted_count} time(s)</div>
                         </div>
                         <div className="flexColumn">

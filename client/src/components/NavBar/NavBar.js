@@ -1,9 +1,9 @@
 import React from 'react';
 import './NavBar.css';  
 import { NavLink } from 'react-router-dom';  
-import active_icon from '../../files/images/active_icon.png';
-import post_icon from '../../files/images/post_icon.png';
-import profile_icon from '../../files/images/profile_icon.png';
+import active_icon from '../../files/images/navImages/active_icon.png';
+import post_icon from '../../files/images/navImages/post_icon.png';
+import profile_icon from '../../files/images/navImages/profile_icon.png';
 import AuthFunctions from '../../AuthFunctions'; 
 
 

@@ -1,3 +1,9 @@
+.candidateListContainer {
+    float: left;
+    width: 100%;
+    overflow-y: scroll;
+}
+
 .candidateListContainer .addJobButton {
     width: 110px;
     height: 110px;
@@ -19,8 +25,7 @@
     width: 100%;
     float: left;
 }
-.candidateListContainer .candidateListItem{ 
-    padding: 15px 10px;
+.candidateListContainer .candidateListItem{  
     font-size: 15px; 
     background: #1a2b6d;
     color: #fff;

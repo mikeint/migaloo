@@ -6,7 +6,7 @@ import { Redirect } from 'react-router-dom';
 import Overlay from '../../../components/Overlay/Overlay';
 import axios from 'axios';
 import UploadImage from '../../../components/UploadImage/UploadImage'; 
-import TopBar from '../../../components/TopBar/TopBar';
+import NavBar from '../../../components/NavBar/NavBar';
 
 class Profile extends React.Component{
 
@@ -92,7 +92,7 @@ class Profile extends React.Component{
         const html = "HELLO"
         return (
             <React.Fragment>
-                <TopBar />
+                <NavBar />
                 <div className='mainContainerProfile'>
                     <div className="profileContainer_employer">
                         <div className='profileImageContainer'>

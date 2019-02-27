@@ -90,7 +90,7 @@ class CandidateList extends React.Component{
                
                <div className="mainContainer">
                     <div className='candidateListContainer'>
-                        <div className="pageHeading">Candidates<button className="addBtn" onClick={() => this.callOverlay()}>+</button></div> 
+                        <div className="pageHeading">Candidates<button className="addBtn" onClick={() => this.callOverlay()}>add new</button></div> 
                         {
                             this.state.candidateList ?
                                 <div className="candidateList">

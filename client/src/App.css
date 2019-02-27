@@ -80,10 +80,10 @@ a {
 
 @media only screen and (max-width: 1024px) {
     .mainContainer { 
-        margin-bottom: 60px;
-        margin-top: 60px;
+        margin-bottom: 120px;
+        padding-top: 60px;
     }
-    .mainContainerProfile {
+    .mainContainerProfile { 
         padding-top:20px; 
     }
 }
@@ -162,18 +162,20 @@ a {
 .addBtn{
     font-family: 'Helvetica', 'Arial', sans-serif;
     display: inline-block;
-    font-size: 20px;
-    padding: 2px 10px;
+    font-size: 16px;
+    margin-top: 0px;
+    position: absolute;
+    padding: 5px 13px;
+    margin-left: 10px;
     font-weight: bold; 
     -webkit-appearance: none;
     appearance: none;
     background-color: #1a2b6d;
     color: #fff;
-    border-radius: 4px;
-    float: right;
+    border-radius: 4px; 
     border: none;
     cursor: pointer;
-    position: relative;
+    position: absolute;
     transition: transform ease-in 0.1s, box-shadow ease-in 0.25s;
     box-shadow: 0 3px 8px rgba(26, 43, 109, 0.43);
 }

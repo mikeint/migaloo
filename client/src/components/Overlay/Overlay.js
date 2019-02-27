@@ -33,10 +33,10 @@ class Overlay extends Component {
             document.getElementById("root").classList.add("fixedRoot");
         } else {
             document.querySelector(".menu").classList.remove('menu--visible');
-            document.getElementById("root").classList.remove("fixedRoot");
             setTimeout(() => {
                 this.props.callOverlay();
             }, 150);
+            document.getElementById("root").classList.remove("fixedRoot"); 
         } 
     } 
 
