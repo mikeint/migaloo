@@ -70,15 +70,20 @@
 }
 .conversationModal .messageContainer{
     color: #fff;
-    width: 75%;
+    max-width: 75%;
+    display: inline-block;
     border-radius: 7px;
     padding: 8px;
 }
-.conversationModal .mine{
-    background-color: #1a2b6d;
-    margin-left: auto;
+.messageRow.mine{
+    text-align: right;
 }
-.conversationModal .theirs{
+.messageRow.theirs{
+}
+.messageContainer.mine{
+    background-color: #1a2b6d;
+}
+.messageContainer.theirs{
     background-color: #1a6d2c;
 }
 .messageContainer .date{

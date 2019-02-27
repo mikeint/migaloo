@@ -122,7 +122,7 @@ class Conversation extends Component {
                                 {this.state.showLoader?<Loader/>:''}
                                 {
                                     this.state.messageList.map((d, i)=>{
-                                        return <div className="messageRow" key={i}>
+                                        return <div className={d.type === 'message'?(d.mine?"messageRow mine":"messageRow theirs"):"messageRow"} key={i}>
                                             {d.type === 'load'?<div className="loadMore more" onClick={this.getMessageList.bind(this)}>
                                                 Load More
                                             </div>:''}
