@@ -14,7 +14,7 @@ class Notifications extends React.Component{
         super(props);
 		this.state = {
             showOverlay: false,
-            overlayConfig: {direction: "app-menu_t-b", swipeLocation: "swipeBack_b"},
+            overlayConfig: {direction: "t-b", swipeLocation: "b"},
             alertCount: 0,
             alertList: [],
         };

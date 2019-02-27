@@ -49,9 +49,9 @@ class Overlay extends Component {
                 <div className="menu">
              
 
-                    <div className={"app-menu "  + config.direction}>
-                        <Swipe onClick={this.toggleClassMenu.bind(this)} onSwipeEnd={this.toggleClassMenu.bind(this)}>
-                            <div className={"swipeBack "+config.swipeLocation}></div>
+                    <div className={"app-menu app-menu_"+config.direction}>
+                        <Swipe className={"swiper_"+config.swipeLocation} onClick={this.toggleClassMenu.bind(this)} onSwipeEnd={this.toggleClassMenu.bind(this)}>
+                            <div className={"swipeBack swipeBack_"+config.swipeLocation}></div>
                         </Swipe>
 
                         

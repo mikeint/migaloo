@@ -19,7 +19,7 @@ class CandidateList extends React.Component{
 		this.state = {
             HROverlay: false, 
             showOverlay: false,
-            overlayConfig: {direction: "app-menu_b-t", swipeLocation: "swipeBack_t"},
+            overlayConfig: {direction: "b-t", swipeLocation: "t"},
             candidateList: [], 
             page: 1,
             pageCount: 1

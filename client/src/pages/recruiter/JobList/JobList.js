@@ -18,7 +18,7 @@ class JobList extends React.Component{
             HROverlay: false, 
             showOverlay: false,
             postId: '',
-            overlayConfig: {direction: "app-menu_l-r", swipeLocation: "swipeBack_r"},
+            overlayConfig: {direction: "l-r", swipeLocation: "r"},
             jobList: [], 
             page: 1,
             pageCount: 1

@@ -18,7 +18,7 @@ class ActiveJobs extends React.Component{
 		this.state = {
             HROverlay: false, 
             showOverlay: false,
-            overlayConfig: {direction: "app-menu_l-r", swipeLocation: "swipeBack_r"},
+            overlayConfig: {direction: "l-r", swipeLocation: "r"},
             postId: '',
             jobList: '', 
             page: 1,

@@ -15,7 +15,7 @@ class Profile extends React.Component{
         this.state={ 
             logout: false, 
             showOverlay: false,
-            overlayConfig: {direction: "app-menu_r-l", swipeLocation: "swipeBack_l"},
+            overlayConfig: {direction: "r-l", swipeLocation: "l"},
             searchTerm: '', 
             user: {},
             profile: '',

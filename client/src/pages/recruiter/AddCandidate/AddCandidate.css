@@ -21,6 +21,7 @@
     border: none;
     border-bottom: 1px solid #1a2b6d;
     font-size: 20px; 
+    border-radius: 0px;
 }
 .postACandidateContainer select {
     width: 100%;
