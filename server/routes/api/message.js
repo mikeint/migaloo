@@ -7,10 +7,9 @@ const validateMessageInput = require('../../validation/message');
 const db = require('../../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
-const messagesInsertHelper = new pgp.helpers.ColumnSet(['from_id', 'to_id', 'candidate_id', 'post_id', 'chain_id', 'subject', 'message'], {table: 'messages'});
-
+const messagesInsertHelper = new pgp.helpers.ColumnSet(['user_id_1', 'user_id_2', 'to_id', 'subject_user_id', 'post_id', 'subject', 'message'], {table: 'messages'});
 /**
- * Create a new candidate for the recruiter
+ * Create a new message conversation
  * @route POST api/message/create
  * @group message - Chat Messages
  * @param {Object} body.optional
@@ -23,9 +22,9 @@ router.post('/create', passport.authentication,  (req, res) => {
      * Inputs Body:
      * subject
      * message
-     * post_id
-     * candidate_id
-     * chain_id (Optional)
+     * postId
+     * subjectUserId
+     * toId
      */
     var body = req.body
     const { errors, isValid } = validateMessageInput(body);
@@ -34,76 +33,49 @@ router.post('/create', passport.authentication,  (req, res) => {
         return res.status(400).json(errors);
     }
     var jwtPayload = body.jwtPayload;
+    var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
+    var userId1 = userId;
+    var userId2 = body.toId;
+    if(userId1 > userId2){
+        var t = userId1;
+        userId1 = userId2;
+        userId2 = t;
+    }
     postgresdb.tx(t => {
-        // Get basic data, and ensure they can message
-        return t.any('\
-            SELECT ec.employer_contact_id, cp.recruiter_id, cp.candidate_id, cp.post_id \
+        // Get basic data, and ensure they can message, candidate posting must be accepted
+        return t.one('\
+            SELECT cp.candidate_id, cp.post_id \
             FROM candidate_posting cp \
-            INNER JOIN job_posting_contact jpc ON cp.post_id = jpc.post_id \
             INNER JOIN job_posting jp ON cp.post_id = jp.post_id \
-            INNER JOIN employer_contact ec ON cp.employer_id = ec.employer_id \
-            WHERE cp.accepted AND jp.post_id = $1 AND cp.candidate_id = $2', [body.post_id, body.candidate_id])
+            INNER JOIN job_posting_contact jpc ON cp.post_id = jpc.post_id \
+            INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
+            WHERE cp.accepted AND jpc.post_id = $1 AND cp.candidate_id = $2 AND (ec.employer_contact_id = $3 OR cp.recruiter_id = $3)', [body.postId, body.subjectUserId, jwtPayload.id])
         .then((data) => {
             // Ensure the person is in this chain
-            if(data.length == 0 || data.findIndex(d=>d.employer_contact_id == jwtPayload.id || d.recruiter_id == jwtPayload.id) == -1){
-                return res.status(400).json({success: false, error:"You are not involved in this conversation"})
-            }else{
-                const makeMessage = (d, chain_id)=>{
-                    if(body.post_id == d.employer_contact_id){
-                        d.from_id = d.employer_contact_id;
-                        d.to_id = d.recruiter_id;
-                    }else{
-                        d.from_id = d.recruiter_id;
-                        d.to_id = d.employer_contact_id;
-                    }
-                    d.chain_id = chain_id;
-                    d.subject = body.subject;
-                    d.message = body.message;
-                    return d
-                }
-                // If this is the first message in the chain
-                if(body.chain_id != null){
-                    // Write the first message, and return the chain_id
-                    var data0 = data[0];
-                    return t.one('\
-                    INSERT INTO messages (from_id, to_id, candidate_id, post_id, subject, message) \
-                    VALUES ($/from_id/, $/to_id/, $/candidate_id/, $/post_id/, $/subject/, $/message/) RETURNING chain_id', makeMessage(data0, null)).then((message_data) => {
-                        // Check if there is more then one message
-                        if(data.length > 1){
-                            const query = pgp.helpers.insert(data.slice(1).map(makeMessage, message_data.chain_id), messagesInsertHelper);
-                            return t.none(query).then(() => {
-                                return res.json({success: true})
-                            }).catch((err)=>{
-                                console.log(err)
-                                return res.status(500).json({success: false, error:err})
-                            });
-                        }else{
-                            // If there is only one message end
-                            return res.json({success: true})
-                        }
-                    }).catch((err)=>{
-                        console.log(err)
-                        return res.status(500).json({success: false, error:err})
-                    });
-                }else{
-                    // If this is not the first message in the chain, just write
-                    const query = pgp.helpers.insert(data.map(makeMessage, body.chain_id), messagesInsertHelper);
-    
-                    return t.none(query).then(() => {
-                        res.json({success: true})
-                    }).catch((err)=>{
-                        console.log(err)
-                        return res.status(500).json({success: false, error:err})
-                    });
-                }
+            const makeMessage = {
+                user_id_1:userId1,
+                user_id_2:userId2,
+                to_id:body.toId,
+                subject_user_id:body.subjectUserId,
+                post_id:body.postId,
+                subject:body.subject,
+                message:body.message
             }
+            const query = pgp.helpers.insert(makeMessage, messagesInsertHelper);
+
+            return t.none(query).then(() => {
+                res.json({success: true})
+            }).catch((err)=>{
+                console.log(err)
+                return res.status(500).json({success: false, error:err})
+            });
         }).catch((err)=>{
             console.log(err)
             return res.status(500).json({success: false, error:err})
         });
     })
     .then(() => {
-        console.log("Done TX")
+        
     }).catch((err)=>{
         console.log(err) // Not an admin
         return res.status(500).json({success: false, error:err})
@@ -120,13 +92,13 @@ function listMessages(req, res){
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     
-    var userId = jwtPayload.employer_id?jwtPayload.employer_id:jwtPayload.id;
+    var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
     postgresdb.any('\
         SELECT m.post_id, m.to_id, m.created_on, \
             m.subject, m.message, m.has_seen, \
             um.user_type_id as subject_user_type_id, um.user_type_name  as subject_user_type_name, \
             um.user_id as subject_user_id, um.first_name as subject_first_name, \
-            m.user_id_1, um1.first_name as user_1_first_name, um1.last_name as user_1_first_name , um1.company_name as user_1_company_name, \
+            m.user_id_1, um1.first_name as user_1_first_name, um1.last_name as user_1_first_name, um1.company_name as user_1_company_name, \
             m.user_id_2, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
             (count(1) OVER())/10+1 AS page_count, message_count \
         FROM ( \
@@ -187,9 +159,7 @@ function listConversationMessages(req, res){
     }
     var jwtPayload = req.body.jwtPayload;
     // Validate that the user id of the user is in the requested chain
-    var userId = jwtPayload.employer_id?jwtPayload.employer_id:jwtPayload.id;
-    console.log(userId, jwtPayload.id, jwtPayload.employer_id)
-    console.log(userId1, userId2)
+    var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
     if(userId != userId1 && userId != userId2){
         return res.status(400).json({success:false, error:"You are not able to view this message chain"})
     }
@@ -201,8 +171,8 @@ function listConversationMessages(req, res){
             m.subject, m.message, m.has_seen, \
             um.user_type_id as subject_user_type_id, um.user_type_name as subject_user_type_name, \
             um.user_id as subject_user_id, um.first_name as subject_first_name, \
-            m.user_id_1, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
-            m.user_id_2, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
+            m.user_id_1, um1.user_type_name as user_1_type_name, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
+            m.user_id_2, um2.user_type_name as user_2_type_name, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
             (count(1) OVER())/10+1 AS page_count \
         FROM messages m \
         INNER JOIN user_master um ON um.user_id = m.subject_user_id \

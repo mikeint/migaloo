@@ -37,23 +37,40 @@
 }
 .conversationModal .contactHeader{
     text-align: center;
+    font-weight: bold;
+    font-size: 1.5em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 100%;
 }
 .conversationModal .chatWindow{
-    padding: 20px;
+    padding: 0.75em;
     border: 1px solid black;
     border-radius: 10px;
     overflow-y: scroll;
-    
     display: flex;
     flex-direction: column-reverse;
-    max-height: 200px;
+    height: 50vh;
+}
+.conversationModal .loadMore{
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px 0px;
+    background-color: #1a2b6d;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+.conversationModal .more{
+    cursor: pointer;
 }
 .conversationModal .messageRow{
     margin: 5px;
 }
 .conversationModal .messageContainer{
     color: #fff;
-    width: 50%;
+    width: 75%;
     border-radius: 7px;
     padding: 8px;
 }
@@ -68,19 +85,32 @@
     font-size: 12px;
 }
 .conversationModal .chatInput { 
-	width: 100%;
-    padding: 5px 20px;
-}
-.conversationModal .chatInput label{
-	width: 110px;
-}
-.conversationModal .chatInput input{
-	width: 100%;
-	height: 40px;
-	padding: 10px;
+    padding: 5px 5px;
+    margin-top: 5px;
 	border: 0px; 
 	font-size: 18px;
 	background: none;
 	border: 1px solid black;
 	color: black; 
+	width: 100%;
+    padding-right: 60px;
+    height: 60px;
+    resize: none;
+}
+.conversationModal .chatInput label{
+	width: 110px;
+}
+.conversationModal .sendButton{
+    /* Must match .chatInput */
+    margin-top: 5px;
+	font-size: 16px;
+    background-color: #1a2b6d;
+    display: inline-block;
+    position: absolute;
+    color: white;
+    width: 60px;
+    margin-left: -60px;
+    text-align: center;
+    line-height: 60px;
+    cursor: pointer;
 }

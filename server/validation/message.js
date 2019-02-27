@@ -11,6 +11,15 @@ module.exports = function validateMessageInput(data) {
     if (Validator.isEmpty(data.message)) {
         errors.message = 'Message field is required';
     }
+    if (Validator.isEmpty(data.postId)) {
+        errors.postId = 'Post Id field is required';
+    }
+    if (Validator.isEmpty(data.subjectUserId)) {
+        errors.subjectUserId = 'Subject User Id field is required';
+    }
+    if (Validator.isEmpty(data.toId)) {
+        errors.toId = 'To Id field is required';
+    }
     return {
         errors,
         isValid: isEmpty(errors)

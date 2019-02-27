@@ -203,8 +203,9 @@ CREATE INDEX candidate_tags_idx ON candidate_tags(tag_id);
 
 CREATE VIEW user_master AS 
 SELECT 
-    l.created_on, l.user_id, l.user_type_id, l.last_login, l.email, ut.user_type_name, ec.employer_id, e.company_name,
+    l.created_on, l.user_id, l.user_type_id, l.last_login, l.email, ut.user_type_name, ec.employer_id,
     coalesce(c.first_name, r.first_name, ec.first_name) as first_name,
+    coalesce(e.company_name, eec.company_name) as company_name,
     coalesce(c.last_name, r.last_name, ec.last_name) as last_name,
     coalesce(c.phone_number, r.phone_number, ec.phone_number) as phone_number,
     coalesce(c.rating, r.rating, e.rating) as rating,
@@ -213,8 +214,9 @@ FROM login l
 INNER JOIN user_type ut ON ut.user_type_id = l.user_type_id
 LEFT JOIN candidate c ON c.candidate_id = l.user_id
 LEFT JOIN recruiter r ON r.recruiter_id = l.user_id
+LEFT JOIN employer e ON e.employer_id = l.user_id
 LEFT JOIN employer_contact ec ON ec.employer_contact_id = l.user_id
-LEFT JOIN employer e ON e.employer_id = ec.employer_id;
+LEFT JOIN employer eec ON eec.employer_id = ec.employer_id;
 
 -- DATA START
 INSERT INTO user_type (user_type_name) VALUES
@@ -355,11 +357,23 @@ INSERT INTO candidate_tags (candidate_id, tag_id) VALUES
     (1001, 5),
     (1002, 4);
 INSERT INTO messages (user_id_1, user_id_2, to_id, subject_user_id, post_id, subject, message, created_on) VALUES
-    (1, 100, 1, 1000, 1, 'Sarah Sounds Great!', 'We would like to hear more about sarah.', current_date - interval '6' day),
-    (1, 100, 100, 1000, 1, 'Sarah Sounds Great!', 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', current_date - interval '5' day),
-    (1, 100, 1, 1000, 1, 'Sarah Sounds Great!', 'That sounds great please send me a call at 3pm on tuesday for a follow-up.', current_date - interval '4' day),
-    (1, 100, 100, 1000, 1, 'Sarah Sounds Great!', '3PM that sounds perfect!', current_date - interval '3' day),
-    (3, 100, 3, 1006, 3, 'Moving forward with Stephanie', 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '4' day),
-    (3, 100, 100, 1006, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '3' day),
-    (3, 100, 3, 1006, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '3' day),
-    (3, 100, 100, 1006, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '2' day);
+    (1, 500, 1, 1000, 1, 'Sarah Sounds Great!', 'We would like to hear more about sarah.', current_date - interval '6' day),
+    (1, 500, 500, 1000, 1, 'Sarah Sounds Great!', 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', current_date - interval '5' day),
+    (1, 500, 1, 1000, 1, 'Sarah Sounds Great!', 'That sounds great please send me a call at 3pm on tuesday for a follow-up.', current_date - interval '4' day),
+    (1, 500, 500, 1000, 1, 'Sarah Sounds Great!', '3PM that sounds perfect!', current_date - interval '3' day),
+    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '10' day),
+    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '9' day),
+    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '8' day),
+    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '7' day),
+    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '6' day),
+    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '5' day),
+    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '4' day),
+    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '3' day),
+    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '2' day),
+    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '1' day),
+    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '12' hour),
+    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '11' hour),
+    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '10' hour),
+    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '9' hour),
+    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '8' hour),
+    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '7' hour);
