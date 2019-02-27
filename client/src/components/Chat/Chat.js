@@ -3,6 +3,7 @@ import "./Chat.css";
 import AuthFunctions from '../../AuthFunctions'; 
 import axios from 'axios';
 import ConversationRow from "./ConversationRow/ConversationRow"; 
+import ReactPaginate from 'react-paginate';
 
 class Chat extends Component {
 
@@ -10,7 +11,8 @@ class Chat extends Component {
         super(props);
 		this.state = {
             conversationList: [],
-            pageCount: 0
+            page: 1,
+            pageCount: 1
         };
         this.Auth = new AuthFunctions();
         this.axiosConfig = {
@@ -21,18 +23,21 @@ class Chat extends Component {
         this.getConversationList();
     }
     getConversationList = () => {
-        axios.get('/api/message/list/', this.axiosConfig)
+        axios.get('/api/message/list/'+this.state.page, this.axiosConfig)
         .then((res)=>{
-            this.setState({ conversationList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
+            this.setState({ conversationList: res.data,
+                pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )
     }
-    showAllChat = (d) => {
-        // TODO: On click grap the chain_id and call GET api/message/listChain/:chainId
-        // Should dispaly a chat log with ability to contact POST api/message/create
-        console.log(d)
-    }
+    handlePageClick = data => {
+        let selected = data.selected+1;
+    
+        this.setState({ page: selected }, () => {
+            this.getConversationList();
+        });
+    };
     render() {
   
         return (
@@ -44,6 +49,21 @@ class Chat extends Component {
                             return <ConversationRow key={i} conversation={conv}/>
                         })
                     }
+                    <div className="paginationContainer">
+                        <ReactPaginate
+                            previousLabel={'Back'}
+                            nextLabel={'Next'}
+                            breakLabel={'...'}
+                            breakClassName={'break-me'}
+                            pageCount={this.state.pageCount}
+                            marginPagesDisplayed={2}
+                            pageRangeDisplayed={10}
+                            onPageChange={this.handlePageClick}
+                            containerClassName={'pagination'}
+                            subContainerClassName={'pages pagination'}
+                            activeClassName={'active'}
+                            />
+                    </div>
                 </div>
             </React.Fragment>
         );
