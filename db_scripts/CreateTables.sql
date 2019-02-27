@@ -318,7 +318,7 @@ INSERT INTO job_posting_contact (post_id, employer_contact_id) VALUES
     (4, 101);
 
 INSERT INTO candidate_posting (post_id, candidate_id, recruiter_id, coins, created_on, responded_on, has_seen_post, has_seen_response, accepted, not_accepted, comment) VALUES
-    (1, 1000, 1, 10, current_date - interval '1' day, current_date - interval '0' day, true, true, true, false, 'I think this Sarah would be great for the job'),
+    (1, 1000, 1, 10, current_date - interval '1' day, current_date - interval '0' day, true, false, true, false, 'I think this Sarah would be great for the job'),
     (1, 1001, 2, 5, current_date - interval '2' day, current_date - interval '1' day, true, false, false, true, 'Amanda has all of the skills you need'),
     (1, 1002, 3, 1, current_date - interval '1' day, NULL, false, false, false, false, 'Beth is very respectable and I think she will be a great addition to your team'),
     (2, 1003, 1, 2, current_date - interval '3' day, current_date - interval '2' day, true, true, true, false, 'Stephanie meets your criteria exactly, please have a look at her resume'),
