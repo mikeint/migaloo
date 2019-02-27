@@ -4,7 +4,7 @@ import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions'; 
 import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
-import TopBar from '../../../components/TopBar/TopBar';
+import Notifications from '../../../components/Notifications/Notifications';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import '../../../constants/AnimateOverlay'; 
@@ -73,7 +73,7 @@ class JobList extends React.Component{
 
         return (
             <React.Fragment>
-                <TopBar />
+                <Notifications />
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                
                <div className="mainContainer">

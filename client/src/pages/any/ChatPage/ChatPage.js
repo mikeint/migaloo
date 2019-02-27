@@ -1,6 +1,6 @@
 import React, { Component } from "react"; 
 import "./ChatPage.css"; 
-import TopBar from '../../../components/TopBar/TopBar';
+import Notifications from '../../../components/Notifications/Notifications';
 import Chat from '../../../components/Chat/Chat';
 
 class ChatPage extends Component {
@@ -8,7 +8,7 @@ class ChatPage extends Component {
   
         return (
             <React.Fragment>
-                <TopBar />
+                <Notifications />
                 <div className="mainContainer">
                     <Chat/>
                 </div>

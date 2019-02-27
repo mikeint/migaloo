@@ -3,7 +3,7 @@ import './PostAJob.css';
 import { Redirect } from 'react-router-dom';
 
 import AuthFunctions from '../../../AuthFunctions'; 
-import TopBar from '../../../components/TopBar/TopBar';
+import Notifications from '../../../components/Notifications/Notifications';
 
 import axios from 'axios';
 
@@ -50,7 +50,7 @@ class PostAJob extends React.Component{
     render(){   
         return (
             <React.Fragment>
-                <TopBar />
+                <Notifications />
                 {this.state.redirect ? <Redirect to='/employer/activeJobs' /> : ''}
                 <div className='mainContainer'>
                     <div className="pageHeading">Post a job</div>

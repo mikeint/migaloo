@@ -20,7 +20,7 @@
     background-position-y: 50%;
     -webkit-transform: rotate(30deg);
     transform: rotate(-180deg);
-    background-position-x: 5px;
+    background-position-x: 2px;
 }
 .swipeBack_t {
     width: 20px;
