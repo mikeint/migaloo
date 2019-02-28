@@ -3,6 +3,7 @@ import './ExpandableRow.css';
 import UploadResume from '../UploadResume/UploadResume';
 import axios from 'axios';
 import AuthFunctions from '../../../../AuthFunctions'; 
+import Redirect from 'react-router-dom/Redirect';
 
 class ExpandableRow extends React.Component{
 
@@ -13,7 +14,8 @@ class ExpandableRow extends React.Component{
             open: false,
             showUpload: false,
             resumeId: null,
-            files: []
+            files: [],
+            redirectCandidate: false
         };
         this.Auth = new AuthFunctions();
     }
@@ -21,7 +23,6 @@ class ExpandableRow extends React.Component{
     toggle() {
         this.setState({
             open: !this.state.open,
-
         });
     }
     handleClose = (err, d) => {
@@ -29,6 +30,9 @@ class ExpandableRow extends React.Component{
     }
     showUpload = () => {
         this.setState({showUpload:true})
+    }
+    searchJobsForCandidates = () => {
+        this.setState({redirectCandidate:true})
     }
     getResumeURL = () => {
         var config = {
@@ -47,6 +51,7 @@ class ExpandableRow extends React.Component{
         const rowObj = this.props.obj;
         return (
             <div className="expandableRow">
+                {this.state.redirectCandidate ? <Redirect to={'/recruiter/jobList/'+this.props.obj.candidate_id}/> : ''}
                 <div className="candidateListItem" onClick={this.toggle.bind(this)}> 
                     {rowObj.coins_spent > 0 ? <div className="coinContainer"><span className="coinAmount">{rowObj.coins_spent}</span></div> : ""}
                     <div className="nameContainer">{rowObj.first_name} {rowObj.last_name}</div>
@@ -58,14 +63,19 @@ class ExpandableRow extends React.Component{
                         <div className="flexColumn">
                             <div className="rowMargin">Email: {rowObj.email}</div>
                             <div className="rowMargin">Created: {rowObj.created}</div>
+                            <div className="rowMargin">Experience: {rowObj.experience_type_name}</div> 
+                            {rowObj.tag_names?<div className="rowMargin">Tags: {rowObj.tag_names.join(", ")}</div>:''}
                             {/* <div className="rowMargin">Coins Spent on Candidate: {rowObj.coins_spent} coins(s)</div> */}
                             <div className="rowMargin">Posted to Job: {rowObj.posted_count} time(s)</div>
+                            <div className="rowButton" onClick={this.searchJobsForCandidates}>Search Jobs</div>
                         </div>
                         <div className="flexColumn">
                             <div className="rowMargin">Accepted by Postings: {rowObj.accepted_count} time(s)</div>
                             <div className="rowMargin">Not Accepted by Postings: {rowObj.not_accepted_count} time(s)</div>
-                            {rowObj.resume_id != null ? <div className="rowButton" onClick={this.getResumeURL}>View Resume</div> : ''}
-                            <div className="rowButton" onClick={this.showUpload}>Upload Resume</div>
+                            <div className="resumeButtons">
+                                {rowObj.resume_id != null ? <div className="rowButton" onClick={this.getResumeURL}>View Resume</div> : ''}
+                                <div className="rowButton" onClick={this.showUpload}>Upload Resume</div>
+                            </div>
                             
                             {this.state.showUpload?<UploadResume id={rowObj.candidate_id} handleClose={this.handleClose} />:''}
                         </div>

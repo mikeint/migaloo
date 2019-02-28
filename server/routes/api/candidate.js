@@ -93,14 +93,21 @@ function listCandidates(req, res){
     }
 
     postgresdb.any(' \
-        SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, \
+        SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, et.experience_type_name, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
             coalesce(cpd.not_accepted_count, 0) as not_accepted_count, coalesce(cpd.coins_spent, 0) as coins_spent, \
             coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
-            (count(1) OVER())/10+1 AS page_count \
+            (count(1) OVER())/10+1 AS page_count, tag_names, tag_ids \
         FROM recruiter_candidate rc \
         INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
+        LEFT JOIN experience_type et ON c.experience_type_id = et.experience_type_id \
         INNER JOIN login l ON l.user_id = c.candidate_id \
+        LEFT JOIN ( \
+            SELECT ct.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
+            FROM candidate_tags ct \
+            INNER JOIN tags t ON t.tag_id = ct.tag_id \
+            GROUP BY candidate_id \
+        ) tg ON tg.candidate_id = c.candidate_id \
         LEFT JOIN ( \
             SELECT cp.candidate_id, \
                 SUM(1) as posted_count, \

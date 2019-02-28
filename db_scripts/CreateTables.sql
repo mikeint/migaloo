@@ -283,15 +283,15 @@ INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, coins,
     (1, 'John', 'Macabee', '443-555-8234', 25, 3),
     (2, 'Milton', 'Walker', '443-555-6456', 50, 4),
     (3, 'Jill', 'Stein', '443-555-3453', 32, 5);
-INSERT INTO candidate (candidate_id, first_name, last_name) VALUES
-    (1000, 'Sarah', 'Williams'),
-    (1001, 'Amanda', 'Taylor'),
-    (1002, 'Elizabeth ', 'Blaese'),
-    (1003, 'Stephanie', 'Kim'),
-    (1004, 'Nicholas ', 'Diaz'),
-    (1005, 'Anton', 'Moore'),
-    (1006, 'Chris', 'Roth'),
-    (1007, 'Lukas', 'Page');
+INSERT INTO candidate (candidate_id, first_name, last_name, experience_type_id, salary_type_id) VALUES
+    (1000, 'Sarah', 'Williams', 3, 6),
+    (1001, 'Amanda', 'Taylor', 2, 5),
+    (1002, 'Elizabeth ', 'Blaese', 2, 5),
+    (1003, 'Stephanie', 'Kim', 2, 5),
+    (1004, 'Nicholas ', 'Diaz', 3, 7),
+    (1005, 'Anton', 'Moore', 3, 6),
+    (1006, 'Chris', 'Roth', 2, 5),
+    (1007, 'Lukas', 'Page', 1, 4);
 INSERT INTO recruiter_candidate (candidate_id, recruiter_id, created_on) VALUES
     (1000, 1, current_date - interval '1' day),
     (1001, 1, current_date - interval '2' day),
@@ -305,11 +305,11 @@ INSERT INTO recruiter_candidate (candidate_id, recruiter_id, created_on) VALUES
     (1007, 1, current_date - interval '8' day),
     (1007, 2, current_date - interval '8' day),
     (1007, 3, current_date - interval '8' day);
-INSERT INTO job_posting (post_id, employer_id, created_on, title, caption, experience_type_id) VALUES
-    (1, 500, current_date - interval '5' minute, 'Senior Software Developer - Working on exciting projects', 'We are a small company that develops solutions to protect national security and everyday folks. That includes OS integration; programming in C, C++, Java, Scala, Python, JS, or whatever the job calls for; writing security policies, and everything in between.', 2),
-    (2, 501, current_date - interval '1' hour, 'Software Developer', 'As a software developer, you will be a key individual contributor on a sprint team building the future software at the core of the business. The role is for a full stack developer with the ability to develop solutions for the user interface, business logic, persistence layer and data store. Developers are responsible for implementing well-defined requirements as part of the sprint team including unit tests.', null),
-    (3, 500, current_date - interval '3' hour, 'Director of Technical Support', 'As Director of Technical Support for Tenable, you will provide strategic direction, leadership, development and management with our Americas Technical Support team. The Director of Technical Support is an experienced, enthusiastic, hands-on leader focused on building a world class Technical Support organization that is focused on delivering customer success. You will be the conduit between the Technical Support team, Customer Success Management team, Product and Development teams, and other internal stakeholders developing a trusted advisor relationship that enables rapid, focused, resolution for our customers. To be successful in this role, the Director of Technical Support must have the right combination of strategy, leadership and operational skills to manage a growing team of dedicated Technical Support Engineers.', 3),
-    (4, 501, current_date - interval '1' day, 'IT Director', 'The primary directive of the IT Director is to ensure that the technology and computing needs of the company are met. The candidate will work with executive leadership to help develop and maintain an IT roadmap keeping the company�s future objectives in mind. This position requires significant hands-on technical knowledge and expertise coupled with solid business knowledge. The IT Director must be able to collaborate with internal customers to identify and prioritize business requirements and deliver business and technology solutions with a focus on process transformation from planning through implementation. They will support the organizational initiative of process re-engineering by involving client departments in process flow analysis and work re-design. ', 3);
+INSERT INTO job_posting (post_id, employer_id, created_on, title, caption, experience_type_id, salary_type_id) VALUES
+    (1, 500, current_date - interval '5' minute, 'Senior Software Developer - Working on exciting projects', 'We are a small company that develops solutions to protect national security and everyday folks. That includes OS integration; programming in C, C++, Java, Scala, Python, JS, or whatever the job calls for; writing security policies, and everything in between.', 2, 4),
+    (2, 501, current_date - interval '1' hour, 'Software Developer', 'As a software developer, you will be a key individual contributor on a sprint team building the future software at the core of the business. The role is for a full stack developer with the ability to develop solutions for the user interface, business logic, persistence layer and data store. Developers are responsible for implementing well-defined requirements as part of the sprint team including unit tests.', null, 5),
+    (3, 500, current_date - interval '3' hour, 'Director of Technical Support', 'As Director of Technical Support for Tenable, you will provide strategic direction, leadership, development and management with our Americas Technical Support team. The Director of Technical Support is an experienced, enthusiastic, hands-on leader focused on building a world class Technical Support organization that is focused on delivering customer success. You will be the conduit between the Technical Support team, Customer Success Management team, Product and Development teams, and other internal stakeholders developing a trusted advisor relationship that enables rapid, focused, resolution for our customers. To be successful in this role, the Director of Technical Support must have the right combination of strategy, leadership and operational skills to manage a growing team of dedicated Technical Support Engineers.', 3, 6),
+    (4, 501, current_date - interval '1' day, 'IT Director', 'The primary directive of the IT Director is to ensure that the technology and computing needs of the company are met. The candidate will work with executive leadership to help develop and maintain an IT roadmap keeping the company�s future objectives in mind. This position requires significant hands-on technical knowledge and expertise coupled with solid business knowledge. The IT Director must be able to collaborate with internal customers to identify and prioritize business requirements and deliver business and technology solutions with a focus on process transformation from planning through implementation. They will support the organizational initiative of process re-engineering by involving client departments in process flow analysis and work re-design. ', 3, 7);
 
 INSERT INTO job_posting_contact (post_id, employer_contact_id) VALUES
     (1, 100),
@@ -346,16 +346,29 @@ INSERT INTO posting_tags (post_id, tag_id) VALUES
     (4, 4);
 INSERT INTO candidate_tags (candidate_id, tag_id) VALUES
     (1000, 1),
+    (1000, 4),
+    (1000, 5),
     (1001, 2),
+    (1001, 5),
+    (1001, 3),
     (1002, 3),
+    (1002, 4),
+    (1002, 1),
+    (1003, 1),
+    (1003, 3),
     (1003, 4),
+    (1004, 2),
     (1004, 5),
     (1005, 1),
+    (1005, 2),
+    (1005, 3),
+    (1005, 4),
+    (1006, 1),
+    (1006, 2),
     (1006, 3),
+    (1007, 3),
     (1007, 4),
-    (1000, 4),
-    (1001, 5),
-    (1002, 4);
+    (1007, 5);
 INSERT INTO messages (user_id_1, user_id_2, to_id, subject_user_id, post_id, subject, message, created_on) VALUES
     (1, 500, 1, 1000, 1, 'Sarah Sounds Great!', 'We would like to hear more about sarah.', current_date - interval '6' day),
     (1, 500, 500, 1000, 1, 'Sarah Sounds Great!', 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', current_date - interval '5' day),

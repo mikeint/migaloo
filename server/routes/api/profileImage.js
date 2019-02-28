@@ -15,6 +15,8 @@ const useAWS = process.env.AWS ? true : false;
  * @access Private
  */
 router.get('/view/:size', passport.authentication, (req, res) => {
+    if(req.params.size == null)
+        return res.status(400).json({success:false, error:"Missing Size"})
     var jwtPayload = req.body.jwtPayload;
     var query;
     if(jwtPayload.userType == 1){
@@ -65,6 +67,12 @@ router.get('/view/:size', passport.authentication, (req, res) => {
  * @access Private
  */
 router.get('/view/:type/:id/:size', passport.authentication, (req, res) => {
+    if(req.params.type == null)
+        return res.status(400).json({success:false, error:"Missing Type"})
+    if(req.params.id == null)
+        return res.status(400).json({success:false, error:"Missing Id"})
+    if(req.params.size == null)
+        return res.status(400).json({success:false, error:"Missing Size"})
     var query;
     if(req.params.type == 1){
         query = '\

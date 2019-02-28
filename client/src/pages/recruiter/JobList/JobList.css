@@ -17,16 +17,35 @@
 }
 .jobListClassContainer .jobListContainer {
     width: 100%;
-    float: left;
 }
 .jobListClassContainer .jobListItem{ 
-    padding: 15px 10px;
+    padding: 5px 10px;
     font-size: 15px; 
     background: #1a2b6d;
     color: #fff;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid #615353;
 }
 .jobListClassContainer .createdTime{
     font-size: 12px;
-    float: right;
-    margin-top: 15px;
+}
+.jobListClassContainer .jobInfo{
+
+}
+.jobListClassContainer .score{
+    width: 40px;
+    height: 100%;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 50px;
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    font-size: 14px;
+    font-weight: bold; 
+    font-weight: bold;
+    background-color: #4CAF50;
+    border: 1px solid #615353;
 }

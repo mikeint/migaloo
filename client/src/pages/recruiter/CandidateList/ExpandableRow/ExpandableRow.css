@@ -80,7 +80,7 @@
 .expandableRow .rowButton{
     cursor: pointer;
     border-radius: 7px;
-    width: 250px;
+    width: 200px;
     background-color: #1a2b6d;
     color: #fff;
     text-align: center;
@@ -97,7 +97,10 @@
     flex-direction: row;
     font-size: 14px;
 }
- 
+.expandableRow .resumeButtons{
+    display: flex;
+    flex-direction: row;
+}
 
 
 .expandableRow .flexColumn{

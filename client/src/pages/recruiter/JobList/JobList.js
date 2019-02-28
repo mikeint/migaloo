@@ -21,7 +21,9 @@ class JobList extends React.Component{
             overlayConfig: {direction: "l-r", swipeLocation: "r"},
             jobList: null, 
             page: 1,
-            pageCount: 1
+            pageCount: 1,
+            candidateId: props.match.params.candidateId,
+            candidateData: null
         };
         this.Auth = new AuthFunctions();
         this.axiosConfig = {
@@ -51,9 +53,18 @@ class JobList extends React.Component{
 
 
     getJobList = () => {
-        axios.get('/api/jobs/list/'+this.state.page, this.axiosConfig)
-        .then((res)=>{    
-            this.setState({ jobList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
+        (this.state.candidateId?
+            axios.get('/api/jobs/listForCandidate/'+this.state.candidateId, this.axiosConfig):
+            axios.get('/api/jobs/list/'+this.state.page, this.axiosConfig))
+        .then((res)=>{
+            if(res.data.success){
+                const jobList = res.data.jobList;
+                const candidateData = res.data.candidate;
+                this.setState({
+                    jobList: jobList,
+                    candidateData: candidateData,
+                    pageCount: (res.data&&jobList.length>0)?parseInt(jobList[0].page_count, 10):1 }) 
+            }
         }).catch(errors => 
             console.log(errors.response.data)
         )
@@ -76,14 +87,15 @@ class JobList extends React.Component{
                
                <div className="mainContainer">
                     <div className='jobListClassContainer'>
-                        <div className="pageHeading">Active Jobs Postings</div> 
+                        <div className="pageHeading">Active Jobs Postings {this.state.candidateData?" - For: "+this.state.candidateData.first_name + " " + this.state.candidateData.last_name:''}</div> 
                         {
                             this.state.jobList ?
                                 <div className="jobListContainer">
                                     {this.state.jobList.map((item, i) => {
                                         return <div className="addButton jobListItem" key={i} onClick={() => this.callOverlay(i)}>
-                                            {item.title}
-                                            <span className="createdTime">{item.posted}</span>
+                                            <div className="jobInfo">{item.title}</div>
+                                            <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
+                                            {item.tag_score?<span className="score">{parseInt(item.tag_score, 10)+"%"}</span>:''}
                                         </div>
                                     })}
                                     <div className="paginationContainer">

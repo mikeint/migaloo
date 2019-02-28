@@ -51,7 +51,8 @@ class BuildActiveJobs extends React.Component{
                     {jobObj.street_address_2}<br/>
                     {jobObj.city+", "+jobObj.state+", "+jobObj.country}
                 </p>
-                <h5>{jobObj.experience_type_name}</h5> 
+                <h5>Experience: {jobObj.experience_type_name}</h5> 
+                <h5>Salary: {jobObj.salary_type_name}</h5> 
                 {jobObj.tag_names?<p>Tags: {jobObj.tag_names.join(", ")}</p>:''}
                 <p>Posted: {jobObj.posted}</p>
 
