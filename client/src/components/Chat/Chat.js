@@ -4,13 +4,14 @@ import AuthFunctions from '../../AuthFunctions';
 import axios from 'axios';
 import ConversationRow from "./ConversationRow/ConversationRow"; 
 import ReactPaginate from 'react-paginate';
+import Loader from "../Loader/Loader";
 
 class Chat extends Component {
 
     constructor(props) {
         super(props);
 		this.state = {
-            conversationList: [],
+            conversationList: null,
             page: 1,
             pageCount: 1
         };
@@ -45,9 +46,11 @@ class Chat extends Component {
                 <div className="chatContainer">
                     <div className="pageHeading">Conversations</div>
                     {
-                        this.state.conversationList.map((conv, i)=>{
-                            return <ConversationRow key={i} conversation={conv}/>
-                        })
+                        this.state.conversationList != null ?
+                            this.state.conversationList.map((conv, i)=>{
+                                return <ConversationRow key={i} conversation={conv}/>
+                            })
+                        : <Loader/>
                     }
                     <div className="paginationContainer">
                         <ReactPaginate

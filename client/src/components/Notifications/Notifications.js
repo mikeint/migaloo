@@ -63,11 +63,6 @@ class Notifications extends React.Component{
     
 
     render(){
-        const html = <BuildNotifications alertList={this.state.alertList} />;
-
-
-        console.log(this.state.alertList) 
-
         return (
             <React.Fragment>
                 <NavBar/>
@@ -79,7 +74,7 @@ class Notifications extends React.Component{
                 </div> 
 
                 {this.state.showOverlay && <Overlay
-                                                html={html}  
+                                                html={<BuildNotifications alertList={this.state.alertList} />}  
                                                 callOverlay={this.callOverlay} 
                                                 config={this.state.overlayConfig}
                                             />}

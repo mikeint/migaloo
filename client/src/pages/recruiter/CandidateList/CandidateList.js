@@ -20,7 +20,7 @@ class CandidateList extends React.Component{
             HROverlay: false, 
             showOverlay: false,
             overlayConfig: {direction: "b-t", swipeLocation: "t"},
-            candidateList: [], 
+            candidateList: null, 
             page: 1,
             pageCount: 1
         };

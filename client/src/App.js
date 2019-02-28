@@ -41,13 +41,14 @@ class App extends Component {
                     <PrivateEmployerRoute exact path="/employer/postAJob" component={PostAJob} />
                     <PrivateEmployerRoute exact path="/employer/profile" component={EmployerProfile} />  
                     <PrivateEmployerRoute exact path="/employer/activeJobs" component={ActiveJobs} />
-                    <PrivateEmployerRoute exact path="/employer" component={ActiveJobs} />
+                    <PrivateEmployerRoute exact path="/employer" redirect="/employer/postAJob" />
                     <PrivateEmployerRoute exact path="/employer/chat" component={ChatPage} />
                     <PrivateRecruiterRoute exact path="/recruiter/profile" component={RecruiterProfile} />
                     <PrivateRecruiterRoute exact path="/recruiter/candidateList" component={CandidateList} />
                     <PrivateRecruiterRoute exact path="/recruiter/addCandidate" component={AddCandidate} />
+                    <PrivateRecruiterRoute exact path="/recruiter/jobList/:candidateId" component={JobList} />
                     <PrivateRecruiterRoute exact path="/recruiter/jobList" component={JobList} />
-                    <PrivateRecruiterRoute exact path="/recruiter" component={JobList} />
+                    <PrivateRecruiterRoute exact path="/recruiter" redirect="/recruiter/jobList" />
                     <PrivateRecruiterRoute exact path="/recruiter/chat" component={ChatPage} />
 
                     <Route exact path="/" component={Landing} />
