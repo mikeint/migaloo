@@ -61,17 +61,17 @@ class ExpandableRow extends React.Component{
                 <div className={"collapse" + (this.state.open ? ' in' : '')}>
                     <div className="flex">
                         <div className="flexColumn">
-                            <div className="rowMargin">Email: {rowObj.email}</div>
-                            <div className="rowMargin">Created: {rowObj.created}</div>
-                            <div className="rowMargin">Experience: {rowObj.experience_type_name}</div> 
-                            {rowObj.tag_names?<div className="rowMargin">Tags: {rowObj.tag_names.join(", ")}</div>:''}
+                            <div className="rowMargin"><span className="heading">Email:</span> {rowObj.email}</div>
+                            <div className="rowMargin"><span className="heading">Created:</span> {rowObj.created}</div>
+                            <div className="rowMargin"><span className="heading">Experience:</span> {rowObj.experience_type_name}</div> 
+                            {rowObj.tag_names?<div className="rowMargin"><span className="heading">Tags:</span> {rowObj.tag_names.join(", ")}</div>:''}
                             {/* <div className="rowMargin">Coins Spent on Candidate: {rowObj.coins_spent} coins(s)</div> */}
-                            <div className="rowMargin">Posted to Job: {rowObj.posted_count} time(s)</div>
+                            <div className="rowMargin"><span className="heading">Posted to Job:</span> {rowObj.posted_count} time(s)</div>
                             <div className="rowButton" onClick={this.searchJobsForCandidates}>Search Jobs</div>
                         </div>
                         <div className="flexColumn">
-                            <div className="rowMargin">Accepted by Postings: {rowObj.accepted_count} time(s)</div>
-                            <div className="rowMargin">Not Accepted by Postings: {rowObj.not_accepted_count} time(s)</div>
+                            <div className="rowMargin"><span className="heading">Accepted by Postings:</span> {rowObj.accepted_count} time(s)</div>
+                            <div className="rowMargin"><span className="heading">Not Accepted by Postings:</span> {rowObj.not_accepted_count} time(s)</div>
                             <div className="resumeButtons">
                                 {rowObj.resume_id != null ? <div className="rowButton" onClick={this.getResumeURL}>View Resume</div> : ''}
                                 <div className="rowButton" onClick={this.showUpload}>Upload Resume</div>
