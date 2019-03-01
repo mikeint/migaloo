@@ -4,9 +4,15 @@ import Swipe from 'react-easy-swipe';
 
 class Overlay extends Component {
 
-    componentDidMount = () => { 
-        //console.log("overlay loaded");
-        //console.log(document.querySelector(".menu"))
+    constructor() {
+        super();
+        this.state = {
+            screenWidth: 0,
+        }
+    }
+
+    componentDidMount = () => {  
+        this.setState({screenWidth:window.innerWidth})
         setTimeout(() => {
             this.toggleClassMenu();
         }, 100); 
@@ -47,8 +53,13 @@ class Overlay extends Component {
         return (
             <React.Fragment>
                 <div className="menu"> 
-                    <div className={"app-menu app-menu_"+config.direction}>
-                        <Swipe className={"swiper swiper_"+config.swipeLocation} onSwipeEnd={this.toggleClassMenu.bind(this)} onClick={this.toggleClassMenu.bind(this)}></Swipe> 
+                    <div className={"app-menu app-menu_"+config.direction}> 
+                        {this.state.screenWidth > 1024 ?
+                            <Swipe className={"swiper swiper_"+config.swipeLocation} onSwipeEnd={this.toggleClassMenu.bind(this)} onClick={this.toggleClassMenu.bind(this)}></Swipe> 
+                        :
+                            <Swipe className={"swiper swiper_"+config.swipeLocation} onSwipeEnd={this.toggleClassMenu.bind(this)}></Swipe> 
+                        } 
+
                         {this.props.html}
                     </div> 
                 </div>

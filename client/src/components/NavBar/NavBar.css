@@ -32,8 +32,7 @@
 }
 .navbar_employer .navBtn img {
     display: none;
-    width: 34px;
-    height: 31px;
+    width: 34px; 
     margin: auto;
     padding: 3px;
 }
@@ -54,7 +53,7 @@
         display: block;
     }
     .navbar_employer .navText {
-        margin-top: -25px;
+        margin-top: -30px;
         font-size: 10px;     
     }
     .navbar_employer .navBtn {
