@@ -9,6 +9,7 @@ import Notifications from '../../.../../../components/Notifications/Notification
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import ReactPaginate from 'react-paginate';
+import '../../../constants/AnimateHROverlay'; 
 
 class ActiveJobs extends React.Component{
 

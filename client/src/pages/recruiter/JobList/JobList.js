@@ -8,6 +8,7 @@ import Notifications from '../../../components/Notifications/Notifications';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import ReactPaginate from 'react-paginate';
+import '../../../constants/AnimateHROverlay'; 
 
 class JobList extends React.Component{
 

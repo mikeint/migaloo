@@ -10,6 +10,7 @@ import Notifications from '../../../components/Notifications/Notifications';
 import Overlay from '../../../components/Overlay/Overlay';
 import AddCandidate from '../AddCandidate/AddCandidate';
 import ReactPaginate from 'react-paginate';
+import '../../../constants/AnimateHROverlay'; 
 
 class CandidateList extends React.Component{
 
