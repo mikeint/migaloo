@@ -10,6 +10,10 @@
     border-radius: 30px;
     padding: 6px;
     z-index: 9;
+    transition: 0.3s;
+}
+.opacAlert {
+    opacity: 0.4;
 }
 .alert img{
     width: 48px;

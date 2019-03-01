@@ -17,6 +17,7 @@
 }
 .jobListClassContainer .jobListContainer {
     width: 100%;
+    float: left;
 }
 .jobListClassContainer .jobListItem{ 
     padding: 5px 10px;

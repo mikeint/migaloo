@@ -14,12 +14,28 @@ class Notifications extends React.Component{
         super(props);
 		this.state = {
             showOverlay: false,
-            overlayConfig: {direction: "t-b", swipeLocation: "b"},
+            overlayConfig: {direction: "t-b", swipeLocation: "b"}, 
+            scrollY,
             alertCount: 0,
             alertList: [],
         };
         this.Auth = new AuthFunctions();
         this.handleAlert();
+    } 
+
+    componentDidMount() {
+        window.addEventListener('scroll', this.handleScroll);
+    } 
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll);
+    } 
+    handleScroll = (e) => {
+        let scrollTop = event.srcElement.body.scrollTop,
+            itemTranslate = Math.min(0, scrollTop/3 - 60);
+    
+        this.setState({
+            scrollY: itemTranslate
+        });
     }
 
     callOverlay = (postId) => {
@@ -63,11 +79,12 @@ class Notifications extends React.Component{
     
 
     render(){
+        console.log("dear Cutch, its weird this renders 3x. Thoughts?")
         return (
             <React.Fragment>
                 <NavBar/>
                 <div className="Notifications"> 
-                    <div className='alert'>
+                    <div className={scrollY > 5 ? 'alert opacAlert' : 'alert'}>
                         <span className="alertNumber" onClick={() => this.callOverlay()}>{this.state.alertCount}</span>
                         <img src={bell} onClick={() => this.callOverlay()} alt=""/>
                     </div>

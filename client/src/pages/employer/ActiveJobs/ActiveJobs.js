@@ -8,7 +8,6 @@ import Loader from '../../../components/Loader/Loader';
 import Notifications from '../../.../../../components/Notifications/Notifications';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
-import '../../../constants/AnimateOverlay'; 
 import ReactPaginate from 'react-paginate';
 
 class ActiveJobs extends React.Component{
@@ -88,7 +87,7 @@ class ActiveJobs extends React.Component{
                             <div className="jobListContainer">
                                 {
                                     this.state.jobList.map((item, i) => {
-                                        return <div className="addButton jobListItem" key={i} onClick={() => this.callOverlay(i)}>
+                                        return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}>
                                             {item.title}
                                             {item.new_posts_cnt > 0 ? <span className="newPostingCount" title={item.new_posts_cnt+" New Candidate Postings"}>{item.new_posts_cnt}</span> : ""}
                                             <span className="createdTime">{item.created}</span>

@@ -7,7 +7,6 @@ import Loader from '../../../components/Loader/Loader';
 import Notifications from '../../../components/Notifications/Notifications';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
-import '../../../constants/AnimateOverlay'; 
 import ReactPaginate from 'react-paginate';
 
 class JobList extends React.Component{
@@ -92,7 +91,7 @@ class JobList extends React.Component{
                             this.state.jobList ?
                                 <div className="jobListContainer">
                                     {this.state.jobList.map((item, i) => {
-                                        return <div className="addButton jobListItem" key={i} onClick={() => this.callOverlay(i)}>
+                                        return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}>
                                             <div className="jobInfo">{item.title}</div>
                                             <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
                                             {item.tag_score?<span className="score">{parseInt(item.tag_score, 10)+"%"}</span>:''}

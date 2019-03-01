@@ -8,7 +8,6 @@ import ExpandableRow from './ExpandableRow/ExpandableRow';
 import Notifications from '../../../components/Notifications/Notifications';
 
 import Overlay from '../../../components/Overlay/Overlay';
-import '../../../constants/AnimateOverlay'; 
 import AddCandidate from '../AddCandidate/AddCandidate';
 import ReactPaginate from 'react-paginate';
 

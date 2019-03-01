@@ -47,10 +47,6 @@
     background-size: 40px;
 }
 
-.fixedRoot {
-    position: fixed;
-    width: 100%;
-}
 .menu {
     position: fixed;
     left: 0;
@@ -138,4 +134,8 @@
     opacity: 1;
     pointer-events: auto;
 }
-
+ 
+.fixedRoot {
+    position: fixed;
+    overflow: hidden;
+}

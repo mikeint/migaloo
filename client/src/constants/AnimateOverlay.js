@@ -1,3 +1,6 @@
+
+/* WHY IS THIS EVEN HERE */
+
 (function() {
     var FX = {
         easing: {

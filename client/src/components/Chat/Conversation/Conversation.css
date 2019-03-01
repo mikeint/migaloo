@@ -11,12 +11,12 @@
     position: fixed;
     background: white;
     width: 95%;
-    height: 90%;
+    height: 95%;
     top: 50%;
     left: 50%;
     -ms-transform: translate(-50%,-50%);
     transform: translate(-50%,-50%);
-    padding: 10px;
+    padding: 5px;
     box-shadow: 0px 0px 1px 1px #1a2b6d;
 }
 .conversationModal .displayBlock {
@@ -28,13 +28,15 @@
 }
 .conversationModal .rowButton{
     cursor: pointer;
-    width: 40px;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
     font-weight: bold;
     background-color: #1a2b6d;
     color: #fff;
     text-align: center;
-    padding: 10px 5px;
     float: right;
+    border-radius: 30px;
 }
 .conversationModal .contactHeader{
     width: 100%;  
@@ -50,8 +52,9 @@
     overflow-y: scroll;
     display: flex;
     flex-direction: column-reverse;
-    height: 50vh;
-    border: 1px solid #1a2b6d; 
+    height: 55vh;
+    border: 1px solid #1a2b6d;
+    border-radius: 4px;
 }
 .conversationModal .loadMore{
     border: 1px solid black;
@@ -107,16 +110,18 @@
 }
 .conversationModal .sendButton{
     /* Must match .chatInput */
-    width: 60px;
-    height: 70px;
-    margin-top: 5px;
-	font-size: 16px;
+    width: 55px;
+    height: 55px;
+    line-height: 55px;
+    margin-top: 12px;
+    font-size: 16px;
     background-color: #1a2b6d;
     display: inline-block;
     position: absolute;
     color: white;
+    font-weight: bold;
     margin-left: -60px;
     text-align: center;
-    line-height: 70px;
     cursor: pointer;
+    border-radius: 60px;
 }

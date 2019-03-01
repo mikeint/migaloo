@@ -20,29 +20,26 @@ class Overlay extends Component {
 
     onSwipeStart(event) {
         console.log('Start swiping...', event);
-    }
-    
+    } 
     onSwipeMove(position, event) {
         console.log(`Moved ${position.x} pixels horizontally`, event);
         console.log(`Moved ${position.y} pixels vertically`, event);
-    }
-    
+    }  
     onSwipeEnd(event) {
         console.log('End swiping...', event);
     }
 
     toggleClassMenu() {
-        //console.log(document.querySelector(".menu"))
         document.querySelector(".menu").classList.add("menu--animatable");	
         if(!document.querySelector(".menu").classList.contains("menu--visible")) {
             document.querySelector(".menu").classList.add("menu--visible");
-            document.getElementById("root").classList.add("fixedRoot");
+            document.getElementById("root").classList.add("fixedRoot"); 
         } else {
             document.querySelector(".menu").classList.remove('menu--visible');
             setTimeout(() => {
                 this.props.callOverlay();
             }, 150);
-            document.getElementById("root").classList.remove("fixedRoot"); 
+            document.getElementById("root").classList.remove("fixedRoot");  
         } 
     } 
 

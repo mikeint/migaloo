@@ -1,6 +1,6 @@
 .jobPostingContainer {
     padding: 0px 10px 0px 10px;
-    overflow-y: auto;
+    overflow-y: scroll;
 }
 
 .jobPostingContainer .profileImage{
