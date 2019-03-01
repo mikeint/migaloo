@@ -13,9 +13,11 @@ class ConversationRow extends Component {
     }
     openChat = (d) => {
         this.setState({showChat:true})
+        document.getElementById("root").classList.add("fixedRoot");
     }
     closeChat = (d) => {
         this.setState({showChat:false})
+        document.getElementById("root").classList.remove("fixedRoot");
     }
     render() {
   
