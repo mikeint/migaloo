@@ -117,6 +117,7 @@ class Conversation extends Component {
                 <div className='modal displayBlock'>
                     {
                         <section className='modalMain'>
+                            <div className="rowButton" onClick={this.props.handleClose}>X</div>
                             <div className='contactHeader'>{this.state.contactName}</div>
                             <div className='chatWindow'>
                                 {this.state.showLoader?<Loader/>:''}
@@ -143,8 +144,7 @@ class Conversation extends Component {
                                 }
                             </div>
                             <textarea className="chatInput" placeholder="Message" name='message' type='text' ref={(c) => this.message = c} onChange={this.handleChange} />
-                            <div className="sendButton" onClick={this.sendMessage.bind(this)}>Send</div>
-                            <div className="rowButton" onClick={this.props.handleClose}>Close</div>
+                            <div className="sendButton" onClick={this.sendMessage.bind(this)}>Send</div> 
                         </section>
                     }
                 </div>

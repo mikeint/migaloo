@@ -3,6 +3,7 @@ import './NavBar.css';
 import { NavLink } from 'react-router-dom';  
 import active_icon from '../../files/images/navImages/active_icon.png';
 import post_icon from '../../files/images/navImages/post_icon.png';
+import chat_icon from '../../files/images/navImages/chat_icon.png';
 import profile_icon from '../../files/images/navImages/profile_icon.png';
 import AuthFunctions from '../../AuthFunctions'; 
 
@@ -27,7 +28,7 @@ class NavBar extends React.Component{
                     name:"Candidate List"
                 },
                 {
-                    icon:post_icon,
+                    icon:chat_icon,
                     link:"/recruiter/chat",
                     name:"Chat"
                 },
@@ -49,7 +50,7 @@ class NavBar extends React.Component{
                     name:"Post a Job"
                 },
                 {
-                    icon:post_icon,
+                    icon:chat_icon,
                     link:"/employer/chat",
                     name:"Chat"
                 },
