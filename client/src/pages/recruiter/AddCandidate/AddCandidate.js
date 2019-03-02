@@ -2,7 +2,6 @@ import React from 'react';
 import './AddCandidate.css'; 
 import { Redirect } from 'react-router-dom';
 import AuthFunctions from '../../../AuthFunctions'; 
-//import Notifications from '../../../components/Notifications/Notifications';
 
 import axios from 'axios';
 
@@ -54,8 +53,6 @@ class AddCandidate extends React.Component{
     render(){   
         return (
             <React.Fragment> 
-                {/* <NavBar />
-                <Notifications /> */}
                 {/* this.state.redirect ? <Redirect to='/recruiter/candidateList' /> : '' */}
                 <div className='mainContainer'>
                     <div className="pageHeading">Post a Candidate</div>

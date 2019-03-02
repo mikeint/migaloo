@@ -2,7 +2,6 @@ import React from 'react';
 import './Profile.css';  
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import AuthFunctions from '../../../AuthFunctions';  
-import NavBar from '../../../components/NavBar/NavBar';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import UploadImage from '../../../components/UploadImage/UploadImage'; 
@@ -81,7 +80,6 @@ class Profile extends React.Component{
 
         return (
             <React.Fragment>
-                <NavBar />
                 <div className="mainContainerProfile">
                     <div className='profileContainer'>
                         <div className='profileImageContainer'>

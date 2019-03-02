@@ -4,7 +4,6 @@ import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import bell from '../../files/images/bell.png';
 import axios from 'axios';
 import AuthFunctions from '../../AuthFunctions'; 
-import NavBar from '../NavBar/NavBar';
 import Overlay from '../Overlay/Overlay';
 import BuildNotifications from './BuildNotifications/BuildNotifications';
 
@@ -79,10 +78,8 @@ class Notifications extends React.Component{
     
 
     render(){
-        console.log("dear Cutch, its weird this renders 3x. Thoughts?")
         return (
             <React.Fragment>
-                <NavBar/>
                 <div className="Notifications"> 
                     <div className={scrollY > 5 ? 'alert opacAlert' : 'alert'}>
                         <span className="alertNumber" onClick={() => this.callOverlay()}>{this.state.alertCount}</span>

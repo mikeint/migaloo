@@ -5,7 +5,6 @@ import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions'; 
 import Loader from '../../../components/Loader/Loader';
 import ExpandableRow from './ExpandableRow/ExpandableRow';
-import Notifications from '../../../components/Notifications/Notifications';
 
 import Overlay from '../../../components/Overlay/Overlay';
 import AddCandidate from '../AddCandidate/AddCandidate';
@@ -85,7 +84,6 @@ class CandidateList extends React.Component{
 
         return (
             <React.Fragment>  
-                <Notifications />
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                
                <div className="mainContainer">

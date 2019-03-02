@@ -5,7 +5,6 @@ import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions'; 
 import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
-import Notifications from '../../.../../../components/Notifications/Notifications';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import ReactPaginate from 'react-paginate';
@@ -77,8 +76,7 @@ class ActiveJobs extends React.Component{
         const html = <BuildActiveJobs obj={this.state.jobList[this.state.postId]} removedCallback={this.jobRemoved.bind(this)} />
 
         return (
-            <React.Fragment>  
-                <Notifications />
+            <React.Fragment>
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                
                 <div className='mainContainer activeJobContainer'>

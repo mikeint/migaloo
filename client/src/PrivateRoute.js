@@ -4,24 +4,32 @@ import AuthFunctions from './AuthFunctions';
 
 const Auth = new AuthFunctions();
 
-const PrivateRecruiterRoute = ({ component: Component, ...rest }) => (
-    <Route {...rest} render={(props) => (
-        rest.redirect != null ? 
-            <Redirect to={rest.redirect} /> :
-            (Auth.loggedIn() === true  && Auth.getUser().userType === 1
-                ? <Component {...rest} {...props} />
-                : <Redirect to='/login' />)
-    )} />
-)
-const PrivateEmployerRoute = ({ component: Component, ...rest }) => (
-    <Route {...rest} render={(props) => (
-        rest.redirect != null ? 
-            <Redirect to={rest.redirect} /> :
-            (Auth.loggedIn() === true && Auth.getUser().userType === 2
-                ? <Component {...rest} {...props} />
-                : <Redirect to='/login' />)
-    )} />
-)
+class PrivateRecruiterRoute extends Route {
+    render(){
+        if(this.state.match){
+            return (this.props.redirect != null ? 
+                <Redirect to={this.props.redirect} /> :
+                (Auth.loggedIn() === true && Auth.getUser().userType === 1
+                    ? super.render()
+                    : <Redirect to='/login' />))
+        }else{
+            return null
+        }
+    }
+}
+class PrivateEmployerRoute extends Route {
+    render(){
+        if(this.state.match){
+            return (this.props.redirect != null ? 
+                <Redirect to={this.props.redirect} /> :
+                (Auth.loggedIn() === true && Auth.getUser().userType === 2
+                    ? super.render()
+                    : <Redirect to='/login' />))
+        }else{
+            return null
+        }
+    }
+}
 module.exports = {
     PrivateEmployerRoute:PrivateEmployerRoute,
     PrivateRecruiterRoute:PrivateRecruiterRoute
