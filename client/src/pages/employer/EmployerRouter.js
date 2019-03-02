@@ -17,7 +17,6 @@ function EmployerRouter({ match }) {
                     <Route strict path="/employer/postAJob" component={PostAJob} />
                     <Route strict path="/employer/profile" component={EmployerProfile} />  
                     <Route strict path="/employer/activeJobs" component={ActiveJobs} />
-                    <Route strict path="/employer" redirect="/employer/postAJob" />
                     <Route strict path="/employer/chat" component={Chat} />
                 </Switch>
             </div>

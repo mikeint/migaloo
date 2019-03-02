@@ -19,11 +19,11 @@ class Notifications extends React.Component{
             alertList: [],
         };
         this.Auth = new AuthFunctions();
-        this.handleAlert();
     } 
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll);
+        this.handleAlert();
     } 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll);

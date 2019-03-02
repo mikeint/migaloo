@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, BrowserRouter } from "react-router-dom";
+import { Route, BrowserRouter, Switch } from "react-router-dom";
 import Landing from './layout/Landing/Landing';
 import Login from './pages/Login/Login'; 
 
@@ -15,10 +15,14 @@ class App extends Component {
         return ( 
             <BrowserRouter>
                 <React.Fragment>
-                    <PrivateRecruiterRoute strict path="/recruiter" component={RecruiterRouter} />
-                    <PrivateRecruiterRoute exact path="/recruiter" redirect="/recruiter/jobList" />
-                    <PrivateEmployerRoute strict path="/employer" component={EmployerRouter} />
-                    <PrivateEmployerRoute exact path="/employer" redirect="/recruiter/postAJob" />
+                    <Switch>
+                        <PrivateRecruiterRoute exact path="/recruiter" redirect="/recruiter/jobList" /> { /* Reroute to the first recruiter page */ }
+                        <PrivateRecruiterRoute strict path="/recruiter" component={RecruiterRouter} />
+                    </Switch>
+                    <Switch>
+                        <PrivateEmployerRoute exact path="/employer" redirect="/employer/activeJobs" /> { /* Reroute to the first employer page */ }
+                        <PrivateEmployerRoute strict path="/employer" component={EmployerRouter} />
+                    </Switch>
                     <Route exact path="/" component={Landing} />
                     <Route exact path='/login' render={ () => (<Login />) } />
                 </React.Fragment>
