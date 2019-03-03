@@ -83,9 +83,17 @@ function getJobsForCandidate(req, res){
         return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
     }
     postgresdb.task(t => {
-        return t.one('SELECT first_name, last_name \
+        return t.one('SELECT first_name, last_name, st.salary_type_name, et.experience_type_name, tg.tag_names \
             FROM recruiter_candidate rc \
             INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
+            LEFT JOIN experience_type et ON jp.experience_type_id = et.experience_type_id \
+            LEFT JOIN salary_type st ON jp.salary_type_id = st.salary_type_id \
+            LEFT JOIN ( \
+                SELECT pt.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
+                FROM candidate_tags pt \
+                INNER JOIN tags t ON t.tag_id = pt.tag_id \
+                GROUP BY candidate_id \
+            ) tg ON tg.candidate_id = rc.candidate_id \
             WHERE rc.recruiter_id = $1 AND c.candidate_id = $2', [jwtPayload.id, candidateId])
         .then(candidate_data=>{
             return t.any('\

@@ -1,7 +1,7 @@
 import React from 'react';
 import './CandidateList.css';    
 //import { NavLink } from 'react-router-dom';
-import axios from 'axios';
+import ApiCalls from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import Loader from '../../../components/Loader/Loader';
 import ExpandableRow from './ExpandableRow/ExpandableRow';
@@ -26,9 +26,6 @@ class CandidateList extends React.Component{
             postData: null
         };
         this.Auth = new AuthFunctions();
-        this.axiosConfig = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
     }
 
     componentWillMount = () => {
@@ -62,8 +59,8 @@ class CandidateList extends React.Component{
 
     getCandidateList = () => {
         (this.state.postId?
-            axios.get('/api/candidate/listForJob/'+this.state.postId+"/"+this.state.page, this.axiosConfig):
-            axios.get('/api/candidate/list/'+this.state.page, this.axiosConfig))
+            ApiCalls.get('/api/candidate/listForJob/'+this.state.postId+"/"+this.state.page):
+            ApiCalls.get('/api/candidate/list/'+this.state.page))
         .then((res)=>{
             this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
         }).catch(errors => 
@@ -97,7 +94,7 @@ class CandidateList extends React.Component{
                             this.state.candidateList ?
                                 <div className="candidateList">
                                     {
-                                        this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} obj={item}></ExpandableRow>})
+                                        this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData}></ExpandableRow>})
                                     }
                                     <div className="paginationContainer">
                                         <ReactPaginate
@@ -121,7 +118,7 @@ class CandidateList extends React.Component{
 
                         {this.state.showOverlay && <Overlay
                                                     html={html}  
-                                                    callOverlay={this.callOverlay} 
+                                                    handleClose={this.callOverlay} 
                                                     config={this.state.overlayConfig}
                                                 />}
                     </div>

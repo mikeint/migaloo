@@ -1,4 +1,3 @@
 module.exports = {
-    mongoURI: 'mongodb://localhost:27017/hireranked',
-    secretOrKey: 'secret'
+    secretOrKey: 'ThIs!StH3s3crEtKey'
 }

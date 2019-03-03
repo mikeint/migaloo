@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = keys.secretOrKey;
-const postgresdb = require('./db').postgresdb;
+
 function init(app){
     app.use(passport.initialize())
     passport.use(new JwtStrategy(opts, (jwtPayload, done) => {

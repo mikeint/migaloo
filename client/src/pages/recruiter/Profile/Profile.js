@@ -1,11 +1,12 @@
 import React from 'react';
 import './Profile.css';  
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
+import ApiCalls from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions';  
 import { Redirect } from 'react-router-dom';
-import axios from 'axios';
 import UploadImage from '../../../components/UploadImage/UploadImage'; 
 import coin from '../../../files/images/coin.png'
+import defaultProfileImage from '../../../files/images/profile.png'
 
 class Profile extends React.Component{
 
@@ -17,12 +18,9 @@ class Profile extends React.Component{
             user: {},
             profileInfo: {},
             showUpload:false,
-            profileImage: ''
+            profileImage: defaultProfileImage
         }
         this.Auth = new AuthFunctions();
-        this.axiosConfig = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
     } 
 
     componentWillMount = () => {
@@ -45,7 +43,7 @@ class Profile extends React.Component{
         }) 
     }
     getProfileInfo = () => {
-        axios.get('/api/recruiter/getProfile', this.axiosConfig)
+        ApiCalls.get('/api/recruiter/getProfile')
         .then((res)=>{    
             this.setState({ profileInfo: res.data }) 
         }).catch(errors => 
@@ -53,15 +51,15 @@ class Profile extends React.Component{
         )
     }
     getImage = () => {
-        axios.get('/api/profileImage/view/medium', this.axiosConfig)
+        ApiCalls.get('/api/profileImage/view/medium')
         .then((res)=>{
             if(res.data.success){
                 this.setState({ profileImage: res.data.url }) 
             }else{
-                this.setState({ profileImage: '' })
+                this.setState({ profileImage: defaultProfileImage })
             }
         }).catch(errors => {
-            this.setState({ profileImage: '' })
+            this.setState({ profileImage: defaultProfileImage })
         })
     }
     handleClose = (err, d) => {

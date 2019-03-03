@@ -4,8 +4,9 @@ import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import AuthFunctions from '../../../AuthFunctions';  
 import { Redirect } from 'react-router-dom';
 import Overlay from '../../../components/Overlay/Overlay';
-import axios from 'axios';
+import ApiCalls from '../../../ApiCalls';  
 import UploadImage from '../../../components/UploadImage/UploadImage'; 
+import defaultProfileImage from '../../../files/images/profile.png'
 
 class Profile extends React.Component{
 
@@ -20,12 +21,9 @@ class Profile extends React.Component{
             profile: '',
             profileInfo: {},
             showUpload:false,
-            profileImage: ''
+            profileImage: defaultProfileImage
         }
         this.Auth = new AuthFunctions();
-        this.axiosConfig = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
     } 
 
     componentWillMount = () => {
@@ -55,7 +53,7 @@ class Profile extends React.Component{
         var config = {
             headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
         }
-        axios.get('/api/employer/getProfile', config)
+        ApiCalls.get('/api/employer/getProfile', config)
         .then((res)=>{    
             this.setState({ profileInfo: res.data }) 
         }).catch(errors => 
@@ -67,15 +65,15 @@ class Profile extends React.Component{
         this.getImage();
     }
     getImage = () => {
-        axios.get('/api/profileImage/view/medium', this.axiosConfig)
+        ApiCalls.get('/api/profileImage/view/medium')
         .then((res)=>{
             if(res.data.success){
                 this.setState({ profileImage: res.data.url }) 
             }else{
-                this.setState({ profileImage: '' })
+                this.setState({ profileImage: defaultProfileImage })
             }
         }).catch(errors => {
-            this.setState({ profileImage: '' })
+            this.setState({ profileImage: defaultProfileImage })
         })
     }
     showUpload = () => {
@@ -113,7 +111,7 @@ class Profile extends React.Component{
 
                         {this.state.showOverlay && <Overlay
                                                         html={html}  
-                                                        callOverlay={this.callOverlay} 
+                                                        handleClose={this.callOverlay} 
                                                         config={this.state.overlayConfig}
                                                     />}
                 </div>

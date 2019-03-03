@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 
 import AuthFunctions from '../../../AuthFunctions'; 
 
-import axios from 'axios';
+import ApiCalls from '../../../ApiCalls';  
 import TagSearch from '../../../components/TagSearch/TagSearch';
 
 class PostAJob extends React.Component{
@@ -29,16 +29,12 @@ class PostAJob extends React.Component{
     }
 
     handleSubmit = () => {
-        var config = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
-        axios.post('/api/postings/create', this.state, config)
+        ApiCalls.post('/api/postings/create', this.state)
         .then((res) => { 
             if(res.data.success) {
                 this.setState({ redirect: true })
             }
         })
-
         .catch(error => {
             console.log(error);
             document.getElementById("registration_popup").style.display = "block"

@@ -1,9 +1,8 @@
 import React from 'react';
 import './JobList.css';    
-import axios from 'axios';
-import AuthFunctions from '../../../AuthFunctions'; 
 import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
+import ApiCalls from '../../../ApiCalls';  
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import ReactPaginate from 'react-paginate';
@@ -24,10 +23,6 @@ class JobList extends React.Component{
             candidateId: props.match.params.candidateId,
             candidateData: null
         };
-        this.Auth = new AuthFunctions();
-        this.axiosConfig = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
     }
 
     componentWillMount = () => {
@@ -53,8 +48,8 @@ class JobList extends React.Component{
 
     getJobList = () => {
         (this.state.candidateId?
-            axios.get('/api/jobs/listForCandidate/'+this.state.candidateId, this.axiosConfig):
-            axios.get('/api/jobs/list/'+this.state.page, this.axiosConfig))
+            ApiCalls.get('/api/jobs/listForCandidate/'+this.state.candidateId):
+            ApiCalls.get('/api/jobs/list/'+this.state.page))
         .then((res)=>{
             if(res.data.success){
                 const jobList = res.data.jobList;
@@ -113,7 +108,7 @@ class JobList extends React.Component{
                                     </div>
                                     {this.state.showOverlay && <Overlay
                                                                     html={<BuildActiveJobs obj={this.state.jobList[this.state.postId]} />}  
-                                                                    callOverlay={this.callOverlay} 
+                                                                    handleClose={this.callOverlay} 
                                                                     config={this.state.overlayConfig}
                                                                 />}
                                 </div>

@@ -89,7 +89,7 @@ class Notifications extends React.Component{
 
                 {this.state.showOverlay && <Overlay
                                                 html={<BuildNotifications alertList={this.state.alertList} />}  
-                                                callOverlay={this.callOverlay} 
+                                                handleClose={this.callOverlay} 
                                                 config={this.state.overlayConfig}
                                             />}
 

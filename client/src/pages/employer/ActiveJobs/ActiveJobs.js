@@ -1,7 +1,7 @@
 import React from 'react';
 import './ActiveJobs.css';    
 import { NavLink } from 'react-router-dom';
-import axios from 'axios';
+import ApiCalls from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
@@ -24,9 +24,6 @@ class ActiveJobs extends React.Component{
             pageCount: 1
         };
         this.Auth = new AuthFunctions();
-        this.axiosConfig = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
     }
 
     componentWillMount = () => {
@@ -52,7 +49,7 @@ class ActiveJobs extends React.Component{
 
 
     getJobList = () => {
-        axios.get('/api/postings/list/'+this.state.page, this.axiosConfig)
+        ApiCalls.get('/api/postings/list/'+this.state.page)
         .then((res)=>{    
             this.setState({ jobList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 })
         }).catch(errors => 
@@ -110,7 +107,7 @@ class ActiveJobs extends React.Component{
                                 </div>
                                 {this.state.showOverlay && <Overlay
                                                                 html={html}  
-                                                                callOverlay={this.callOverlay} 
+                                                                handleClose={this.callOverlay} 
                                                                 config={this.state.overlayConfig}
                                                             />}
                             </div>

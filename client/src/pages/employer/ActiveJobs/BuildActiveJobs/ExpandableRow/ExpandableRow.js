@@ -1,6 +1,6 @@
 import React from 'react';
 import './ExpandableRow.css'; 
-import axios from 'axios';
+import ApiCalls from '../../../../../ApiCalls';  
 import AuthFunctions from '../../../../../AuthFunctions'; 
 
 import acceptImg from '../../../../../files/images/accept.png';
@@ -17,9 +17,6 @@ class ExpandableRow extends React.Component{
             rowObj: props.obj,
         };
         this.Auth = new AuthFunctions();
-        this.axiosConfig = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
     }
     
     handleRead = () => {
@@ -28,7 +25,7 @@ class ExpandableRow extends React.Component{
             Object.assign(newRowObj, this.state.rowObj);
             newRowObj.has_seen_post = true;
             this.setState({rowObj:newRowObj});
-            axios.post(`/api/postings/setRead/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {}, this.axiosConfig)
+            ApiCalls.post(`/api/postings/setRead/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {})
             .then((res)=>{
 
             }).catch(errors => 
@@ -43,7 +40,7 @@ class ExpandableRow extends React.Component{
         this.handleRead();
     }
     getResumeURL = () => {
-        axios.get('/api/resume/view/'+this.props.obj.candidate_id, this.axiosConfig)
+        ApiCalls.get('/api/resume/view/'+this.props.obj.candidate_id)
         .then((res)=>{
             if(res.data.success)
                 window.open(res.data.url, '_blank');
@@ -52,7 +49,7 @@ class ExpandableRow extends React.Component{
         )
     }
     handleAccept = () => {
-        axios.post(`/api/postings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:true}, this.axiosConfig)
+        ApiCalls.post(`/api/postings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:true})
         .then((res)=>{
             var newRowObj = {};
             Object.assign(newRowObj, this.state.rowObj);
@@ -64,7 +61,7 @@ class ExpandableRow extends React.Component{
         )
     }
     handleReject = () => {
-        axios.post(`/api/postings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:false}, this.axiosConfig)
+        ApiCalls.post(`/api/postings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:false})
         .then((res)=>{
             var newRowObj = {};
             Object.assign(newRowObj, this.state.rowObj);

@@ -173,8 +173,16 @@ function listCandidatesForJob(req, res){
     
 
     postgresdb.task(t => {
-        return t.one('SELECT jp.title \
+        return t.one('SELECT jp.title, st.salary_type_name, et.experience_type_name, tg.tag_names \
             FROM job_posting jp \
+            LEFT JOIN experience_type et ON jp.experience_type_id = et.experience_type_id \
+            LEFT JOIN salary_type st ON jp.salary_type_id = st.salary_type_id \
+            LEFT JOIN ( \
+                SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
+                FROM posting_tags pt \
+                INNER JOIN tags t ON t.tag_id = pt.tag_id \
+                GROUP BY post_id \
+            ) tg ON tg.post_id = jp.post_id \
             WHERE jp.post_id = $1', [postId])
         .then(job_data=>{
             return t.any(' \

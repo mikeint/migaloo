@@ -2,8 +2,7 @@ import React from 'react';
 import './AddCandidate.css'; 
 import { Redirect } from 'react-router-dom';
 import AuthFunctions from '../../../AuthFunctions'; 
-
-import axios from 'axios';
+import ApiCalls from '../../../ApiCalls';  
 
 class AddCandidate extends React.Component{
     constructor() {
@@ -29,10 +28,7 @@ class AddCandidate extends React.Component{
     }
 
     handleSubmit = () => {
-        var config = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
-        axios.post('/api/candidate/create', this.state, config)
+        ApiCalls.post('/api/candidate/create', this.state)
         .then((res) => {
 
             // THIS IS getting messy, its to shut the overlay after submitting a new candidate.
@@ -55,8 +51,8 @@ class AddCandidate extends React.Component{
             <React.Fragment> 
                 {/* this.state.redirect ? <Redirect to='/recruiter/candidateList' /> : '' */}
                 <div className='mainContainer'>
-                    <div className="pageHeading">Post a Candidate</div>
-                    <div className="postACandidateContainer">
+                    <div className="pageHeading">Add a Candidate</div>
+                    <div className="addCandidateContainer">
                         <div className="formSection">  
                             <div className="input-2">
                                 <div className="i-2 il">

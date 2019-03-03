@@ -1,16 +1,15 @@
-.addCandidateContainer {
+.postACandidateContainer {
     width: 100%;
     float: left; 
     position: relative;  
     padding: 20px;  
     color: #1a2b6d;
 }
-.addCandidateContainer .formSection {
+.postACandidateContainer .formSection {
     margin: auto auto 25px auto;
-    max-width: 1000px;
     position: relative; 
 } 
-.addCandidateContainer input {
+.postACandidateContainer input {
     width: 100%;
     height: 40px; 
     padding: 0px 10px 0px 10px;
@@ -23,7 +22,7 @@
     font-size: 20px; 
     border-radius: 0px;
 }
-.addCandidateContainer select {
+.postACandidateContainer select {
     width: 100%;
     height: 40px;  
     padding-left: 10px;
@@ -79,18 +78,18 @@ select:-moz-focusring {
 
  
 
-.addCandidateContainer .user-input-wrp {
+.postACandidateContainer .user-input-wrp {
     position: relative; 
     margin-bottom: 30px;
 }
-.addCandidateContainer input:focus,
-.addCandidateContainer select:focus,
-.addCandidateContainer textarea:focus  {
+.postACandidateContainer input:focus,
+.postACandidateContainer select:focus,
+.postACandidateContainer textarea:focus  {
     border: 1px solid #1a2b6d;
     border-color: #1a2b6d;
     box-shadow: none;
 }
-.addCandidateContainer .floating-label {
+.postACandidateContainer .floating-label {
 	position: absolute;
 	pointer-events: none;
 	top: 12px;
@@ -112,18 +111,18 @@ select:-moz-focusring {
     font-weight: bold; 
 }  
 
-.addCandidateContainer .input-2 {
+.postACandidateContainer .input-2 {
     width:100%; 
 }
-.addCandidateContainer .i-2 {
+.postACandidateContainer .i-2 {
     width: 47.5%;
     float: left;
 } 
-.addCandidateContainer .il {
+.postACandidateContainer .il {
     margin-right: 5%;
 }
  
-.addCandidateContainer .btn-secondary {
+.postACandidateContainer .btn-secondary {
     width: 100%;
     padding: 10px; 
     cursor: pointer;
@@ -138,7 +137,7 @@ select:-moz-focusring {
     overflow: hidden; 
 }
 
-.addCandidateContainer textarea {
+.postACandidateContainer textarea {
     width: 100%;
     max-width: 100%;
     min-width: 100%;
@@ -150,6 +149,36 @@ select:-moz-focusring {
     overflow: auto;  
     background: #e6e8ef;
     outline: none;
+}
+.postACandidateContainer .matchingScore{
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    position: absolute;
+    border-radius: 50%;
+    top: 10px;
+    right: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #4CAF50;
+    border: 1px solid #615353;
+}
+.postACandidateContainer .matchingScoreText{
+    display: block;
+    position: absolute;
+    top: 40%;
+    right: 0px;
+    left: 0px;
+}
+.postACandidateContainer .candidateJobContainer{
+    display: flex;
+    margin-right: 100px;
+}
+.postACandidateContainer .candidateContainer{
+    flex: 1 1;
+}
+.postACandidateContainer .jobContainer{
+    flex: 1 1;
 }
 
 .submitCandidateBtn {
@@ -165,13 +194,16 @@ select:-moz-focusring {
 }
 
 @media only screen and (max-width: 1000px) {
-    .addCandidateContainer .i-2,
-    .addCandidateContainer .i-4,
-    .addCandidateContainer .i-small,
-    .addCandidateContainer select {
+    .postACandidateContainer .i-2,
+    .postACandidateContainer .i-4,
+    .postACandidateContainer .i-small,
+    .postACandidateContainer select {
         min-width: 100% !important;
     }
-    .addCandidateContainer .btn-secondary {
+    .postACandidateContainer .btn-secondary {
         border-radius: 0px;
     } 
+    .postACandidateContainer .candidateJobContainer{
+        display: block;
+    }
 } 

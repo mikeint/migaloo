@@ -16,11 +16,15 @@ class Overlay extends Component {
         setTimeout(() => {
             this.toggleClassMenu();
         }, 100); 
-        document.getElementById("root").classList.add("fixedRoot"); 
     }
 
+    componentWillMount() {
+        if(!document.getElementById("root").classList.contains("fixedRoot"))
+            document.getElementById("root").classList.add("fixedRoot");  
+    }
     componentWillUnmount() {
-        document.getElementById("root").classList.remove("fixedRoot");  
+        if(document.getElementById("root").classList.contains("fixedRoot"))
+            document.getElementById("root").classList.remove("fixedRoot");  
     }
     onSwipeStart(event) {
         console.log('Start swiping...', event);
@@ -41,7 +45,8 @@ class Overlay extends Component {
         } else {
             document.querySelector(".menu").classList.remove('menu--visible');
             setTimeout(() => {
-                this.props.callOverlay();
+                if(this.props.handleClose)
+                    this.props.handleClose();
             }, 150);
             // document.getElementById("root").classList.remove("fixedRoot");  
         } 

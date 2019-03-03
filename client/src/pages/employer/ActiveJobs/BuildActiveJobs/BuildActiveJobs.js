@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import ApiCalls from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions';  
 import './BuildActiveJobs.css';  
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
@@ -14,13 +14,10 @@ class BuildActiveJobs extends React.Component{
             candidateList: []
         };
         this.Auth = new AuthFunctions();
-        this.axiosConfig = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
         this.getJobList();
     }
     getJobList = () => {
-        axios.get('/api/postings/listCandidates/'+this.state.postId, this.axiosConfig)
+        ApiCalls.get('/api/postings/listCandidates/'+this.state.postId)
         .then((res)=>{
             if(res.data.success){
                 this.setState({ candidateList: res.data.candidateList });
@@ -42,7 +39,7 @@ class BuildActiveJobs extends React.Component{
             cancelButtonText: 'No, keep it'
           }).then((result) => {
             if (result.value) { 
-                axios.post('/api/postings/remove', {postId:this.state.postId}, this.axiosConfig)
+                ApiCalls.post('/api/postings/remove', {postId:this.state.postId})
                 .then((res)=>{
                     if(res.data.success){
                         if(this.props.removedCallback != null){
