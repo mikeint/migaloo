@@ -89,32 +89,30 @@ class Profile extends React.Component{
         const html = "HELLO"
         return (
             <React.Fragment>
-                <div className='mainContainerProfile'>
-                    <div className="profileContainer_employer">
-                        <div className='profileImageContainer'>
-                            <img  className='profileImage' src={this.state.profileImage} alt="" onClick={this.showUpload}/>
-                            <div className="profileType">Employer</div>
-                            <div className="profileName">{this.state.profileInfo.contact_first_name} {this.state.profileInfo.contact_last_name}</div>
-                            <div className="profileEmail">{this.state.user.email} {this.state.profileInfo.contact_phone_number}</div>
-                            <div className="profileName">{this.state.profileInfo.company_name}</div>
-                        </div>
-                        <div className='profileBottom'>
-                            <div className="profileItem" onClick={() => this.callOverlay()}>Employer info</div>
-                            <div className="profileItem" onClick={() => this.callOverlay()}>Account info</div>
-                            <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
-                        </div> 
-                        {this.state.showUpload?<UploadImage 
-                                                    baseUrl={"/api/employer/"}
-                                                    uploadUrl={"uploadImage/"}
-                                                    handleClose={this.handleClose} />:''}                    
-                        </div> 
+                <div className="profileContainer_employer">
+                    <div className='profileImageContainer'>
+                        <img  className='profileImage' src={this.state.profileImage} alt="" onClick={this.showUpload}/>
+                        <div className="profileType">Employer</div>
+                        <div className="profileName">{this.state.profileInfo.contact_first_name} {this.state.profileInfo.contact_last_name}</div>
+                        <div className="profileEmail">{this.state.user.email} {this.state.profileInfo.contact_phone_number}</div>
+                        <div className="profileName">{this.state.profileInfo.company_name}</div>
+                    </div>
+                    <div className='profileBottom'>
+                        <div className="profileItem" onClick={() => this.callOverlay()}>Employer info</div>
+                        <div className="profileItem" onClick={() => this.callOverlay()}>Account info</div>
+                        <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
+                    </div> 
+                    {this.state.showUpload?<UploadImage 
+                                                baseUrl={"/api/employer/"}
+                                                uploadUrl={"uploadImage/"}
+                                                handleClose={this.handleClose} />:''}                    
+                </div> 
 
-                        {this.state.showOverlay && <Overlay
-                                                        html={html}  
-                                                        handleClose={this.callOverlay} 
-                                                        config={this.state.overlayConfig}
-                                                    />}
-                </div>
+                {this.state.showOverlay && <Overlay
+                                                html={html}  
+                                                handleClose={this.callOverlay} 
+                                                config={this.state.overlayConfig}
+                                            />}
             </React.Fragment>
         );
     }

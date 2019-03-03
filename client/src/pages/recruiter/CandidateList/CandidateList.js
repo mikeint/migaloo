@@ -81,13 +81,12 @@ class CandidateList extends React.Component{
     };
 
     render(){
-        const html = <AddCandidate />
+        const html = <AddCandidate handleClose={this.callOverlay} />
 
         return (
             <React.Fragment>  
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                
-               <div className="mainContainer">
                     <div className='candidateListContainer'>
                         <div className="pageHeading">Candidates {this.state.postData?" - For: "+this.state.postData.title:''} <button className="addBtn" onClick={() => this.callOverlay()}>add new</button></div> 
                         {
@@ -122,7 +121,6 @@ class CandidateList extends React.Component{
                                                     config={this.state.overlayConfig}
                                                 />}
                     </div>
-                </div>
             </React.Fragment>
         );
     }

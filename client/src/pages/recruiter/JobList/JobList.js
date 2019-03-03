@@ -77,45 +77,42 @@ class JobList extends React.Component{
         return (
             <React.Fragment>
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
-               
-               <div className="mainContainer">
-                    <div className='jobListClassContainer'>
-                        <div className="pageHeading">Active Jobs Postings {this.state.candidateData?" - For: "+this.state.candidateData.first_name + " " + this.state.candidateData.last_name:''}</div> 
-                        {
-                            this.state.jobList ?
-                                <div className="jobListContainer">
-                                    {this.state.jobList.map((item, i) => {
-                                        return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}>
-                                            <div className="jobInfo">{item.title}</div>
-                                            <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
-                                            {item.tag_score?<span className="score">{parseInt(item.tag_score, 10)+"%"}</span>:''}
-                                        </div>
-                                    })}
-                                    <div className="paginationContainer">
-                                        <ReactPaginate
-                                            previousLabel={'Back'}
-                                            nextLabel={'Next'}
-                                            breakLabel={'...'}
-                                            breakClassName={'break-me'}
-                                            pageCount={this.state.pageCount}
-                                            marginPagesDisplayed={2}
-                                            pageRangeDisplayed={10}
-                                            onPageChange={this.handlePageClick}
-                                            containerClassName={'pagination'}
-                                            subContainerClassName={'pages pagination'}
-                                            activeClassName={'active'}
-                                            />
+                <div className='jobListClassContainer'>
+                    <div className="pageHeading">Active Jobs Postings {this.state.candidateData?" - For: "+this.state.candidateData.first_name + " " + this.state.candidateData.last_name:''}</div> 
+                    {
+                        this.state.jobList ?
+                            <div className="jobListContainer">
+                                {this.state.jobList.map((item, i) => {
+                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}>
+                                        <div className="jobInfo">{item.title}</div>
+                                        <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
+                                        {item.tag_score?<span className="score">{parseInt(item.tag_score, 10)+"%"}</span>:''}
                                     </div>
-                                    {this.state.showOverlay && <Overlay
-                                                                    html={<BuildActiveJobs jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />}  
-                                                                    handleClose={this.callOverlay} 
-                                                                    config={this.state.overlayConfig}
-                                                                />}
+                                })}
+                                <div className="paginationContainer">
+                                    <ReactPaginate
+                                        previousLabel={'Back'}
+                                        nextLabel={'Next'}
+                                        breakLabel={'...'}
+                                        breakClassName={'break-me'}
+                                        pageCount={this.state.pageCount}
+                                        marginPagesDisplayed={2}
+                                        pageRangeDisplayed={10}
+                                        onPageChange={this.handlePageClick}
+                                        containerClassName={'pagination'}
+                                        subContainerClassName={'pages pagination'}
+                                        activeClassName={'active'}
+                                        />
                                 </div>
-                            :
-                            <Loader />
-                        } 
-                    </div>
+                                {this.state.showOverlay && <Overlay
+                                                                html={<BuildActiveJobs jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />}  
+                                                                handleClose={this.callOverlay} 
+                                                                config={this.state.overlayConfig}
+                                                            />}
+                            </div>
+                        :
+                        <Loader />
+                    } 
                 </div>
             </React.Fragment>
         );
