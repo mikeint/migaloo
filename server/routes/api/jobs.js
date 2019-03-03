@@ -86,8 +86,8 @@ function getJobsForCandidate(req, res){
         return t.one('SELECT first_name, last_name, st.salary_type_name, et.experience_type_name, tg.tag_names \
             FROM recruiter_candidate rc \
             INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
-            LEFT JOIN experience_type et ON jp.experience_type_id = et.experience_type_id \
-            LEFT JOIN salary_type st ON jp.salary_type_id = st.salary_type_id \
+            LEFT JOIN experience_type et ON c.experience_type_id = et.experience_type_id \
+            LEFT JOIN salary_type st ON c.salary_type_id = st.salary_type_id \
             LEFT JOIN ( \
                 SELECT pt.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
                 FROM candidate_tags pt \
