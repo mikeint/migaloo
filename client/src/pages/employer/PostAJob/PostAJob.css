@@ -1,14 +1,12 @@
 .postAJobContainer {
-    width: 100%;
-    float: left; 
-    position: relative;  
     padding: 20px;  
     color: #1a2b6d;
+    display: flex;
 }
 .postAJobContainer .formSection {
     margin: auto auto 25px auto;
+    width: 100%;
     max-width: 1000px;
-    position: relative; 
 } 
 .postAJobContainer input {
     width: 100%;
@@ -112,11 +110,11 @@ select:-moz-focusring {
 }  
 
 .postAJobContainer .input-2 {
-    width:100%; 
+    display: flex;
+    flex-wrap: wrap;
 }
 .postAJobContainer .i-2 {
     width: 47.5%;
-    float: left;
 } 
 .postAJobContainer .il {
     margin-right: 5%;

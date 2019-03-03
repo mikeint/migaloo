@@ -1,0 +1,68 @@
+.tagSearchContainer {
+    position: relative;
+    margin-bottom: 30px;
+    outline: 0;
+}
+.tagSearchContainer .potentialTag {
+    padding: 5px;
+    border: 1px solid;
+    max-width: 150px;
+    font-weight: bold;
+    cursor: pointer;
+    flex: 1 0 100%;
+}
+.tagSearchContainer .potentialTag:hover {
+    background-color: lightsalmon;
+}
+.tagSearchContainer .autoCompleteBox {
+    position: absolute;
+    width: 100%;
+    border: 1px solid black;
+    background-color: white;
+    border-radius: 0 0 10px 10px;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    border-top: 0;
+    z-index: 50;
+    min-height: 75px;
+}
+.tagSearchContainer .tagCount {
+    float: right;
+}
+.tagSearchContainer .tag-floating-label{
+    font-size: 13px;
+    color: #1a2b6d;
+    opacity: 0.6;
+    font-weight: bold; 
+    margin-left: 10px;
+}
+.tagSearchContainer .tag{
+    border: 1px grey solid;
+    border-radius: 10px;
+    padding: 3px 7px;
+    background-color: aliceblue;
+    margin-right: 7px;
+    cursor: text;
+}
+.tagSearchContainer .tagX{
+    cursor: pointer;
+    font-weight: bold;
+    margin-left: 7px;
+}
+.tagSearchContainer .user-tag-wrp{
+    border-bottom: 1px solid black;
+    display: flex;
+    overflow: hidden;
+}
+.tagSearchContainer .tag-listing{
+    white-space: nowrap;
+    vertical-align: middle;
+    line-height: 40px;
+}
+.tagSearchContainer .tag-input{
+    border: 0;
+}
+.tagSearchContainer .tag-input:focus{
+    border: 0;
+}

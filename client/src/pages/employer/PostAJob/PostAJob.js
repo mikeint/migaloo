@@ -5,6 +5,7 @@ import { Redirect } from 'react-router-dom';
 import AuthFunctions from '../../../AuthFunctions'; 
 
 import axios from 'axios';
+import TagSearch from '../../../components/TagSearch/TagSearch';
 
 class PostAJob extends React.Component{
     constructor() {
@@ -82,7 +83,7 @@ class PostAJob extends React.Component{
                                     </div>
                                 </div>
                             </div>  
-
+                            <TagSearch onChange={(tags)=>this.setState({tagIds:tags})}/>
                             <div className="input-2">
                                 <div className="i-2 il">
                                     <div className="user-input-wrp">

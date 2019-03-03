@@ -17,23 +17,25 @@ router.get('/experience/:find', passport.authentication, (req, res) => {
             FROM experience_type \
             WHERE lower(experience_type_name) LIKE $1 \
             ORDER BY experience_type_name ASC \
-            LIMIT 10', "%"+req.params.find.toLowerCase()+"%").then(data => {
-        res.json(data);
+            LIMIT 10', "%"+req.params.find.toLowerCase()+"%")
+    .then(data => {
+        res.json({success:true, experienceList: data});
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 router.get('/experience', passport.authentication, (req, res) => {
     postgresdb.any('SELECT experience_type_name, experience_type_id \
             FROM experience_type \
-            ORDER BY experience_type_name ASC').then(data => {
-        res.json(data);
+            ORDER BY experience_type_name ASC')
+    .then(data => {
+        res.json({success:true, experienceList: data});
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 
@@ -46,27 +48,47 @@ router.get('/experience', passport.authentication, (req, res) => {
  * @access Private
  */
 router.get('/tag/:find', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT tag_name, tag_id \
-            FROM tags \
-            WHERE lower(tag_name) LIKE $1 \
-            ORDER BY tag_name ASC \
-            LIMIT 10', "%"+req.params.find.toLowerCase()+"%").then(data => {
-        res.json(data);
+    postgresdb.any('SELECT t.tag_name, t.tag_id, COALESCE(cnt.tag_count, 0) as tag_count \
+            FROM tags t \
+            LEFT JOIN ( \
+                SELECT tag_id, count(1) as tag_count \
+                FROM ( \
+                SELECT tag_id FROM posting_tags \
+                UNION ALL \
+                SELECT tag_id FROM candidate_tags \
+                ) un \
+                GROUP BY tag_id \
+            ) cnt ON cnt.tag_id = t.tag_id \
+            WHERE lower(t.tag_name) LIKE $1 \
+            ORDER BY length(t.tag_name) ASC \
+            LIMIT 10', "%"+req.params.find.toLowerCase()+"%")
+    .then(data => {
+        res.json({success:true, tagList: data});
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 router.get('/tag', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT tag_name, tag_id \
-            FROM tags \
-            ORDER BY tag_name ASC').then(data => {
-        res.json(data);
+    postgresdb.any('SELECT t.tag_name, t.tag_id, COALESCE(cnt.tag_count, 0) as tag_count \
+            FROM tags t \
+            LEFT JOIN ( \
+                SELECT tag_id, count(1) as tag_count \
+                FROM ( \
+                SELECT tag_id FROM posting_tags \
+                UNION ALL \
+                SELECT tag_id FROM candidate_tags \
+                ) un \
+                GROUP BY tag_id \
+            ) cnt ON cnt.tag_id = t.tag_id \
+            ORDER BY length(t.tag_name) ASC')
+    .then(data => {
+        res.json({success:true, tagList: data});
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 
@@ -88,7 +110,7 @@ router.post('/addTag/:tag', passport.authentication, (req, res) => {
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 
@@ -105,23 +127,25 @@ router.get('/salary/:find', passport.authentication, (req, res) => {
             FROM salary_type \
             WHERE lower(salary_type_name) LIKE $1 \
             ORDER BY salary_type_name ASC \
-            LIMIT 10', "%"+req.params.find.toLowerCase()+"%").then(data => {
-        res.json(data);
+            LIMIT 10', "%"+req.params.find.toLowerCase()+"%")
+    .then(data => {
+        res.json({success:true, salaryList: data});
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 router.get('/salary', passport.authentication, (req, res) => {
     postgresdb.any('SELECT salary_type_name, salary_type_id \
             FROM salary_type \
-            ORDER BY salary_type_name ASC').then(data => {
-        res.json(data);
+            ORDER BY salary_type_name ASC')
+    .then(data => {
+        res.json({success:true, salaryList: data});
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 
