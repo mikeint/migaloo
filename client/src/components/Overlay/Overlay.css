@@ -58,7 +58,6 @@
 }
 .menu--visible {
     pointer-events: auto;
-    overflow: auto;
 }
 .app-menu {
     background-color: #fff;
