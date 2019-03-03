@@ -55,6 +55,7 @@ class ExpandableRow extends React.Component{
                 <div className="candidateListItem" onClick={this.toggle.bind(this)}> 
                     {rowObj.coins_spent > 0 ? <div className="coinContainer"><span className="coinAmount">{rowObj.coins_spent}</span></div> : ""}
                     <div className="nameContainer">{rowObj.first_name} {rowObj.last_name}</div>
+                    {rowObj.tag_score?<span className="score">{parseInt(rowObj.tag_score, 10)+"%"}</span>:''}
                     {rowObj.new_accepted_count > 0 ? <div className="acceptedCount" title={rowObj.new_accepted_count+" New Postings Accepted"}>{rowObj.new_accepted_count}</div> : ""}
                     {rowObj.new_not_accepted_count > 0 ? <div className="notAcceptedCount" title={rowObj.new_not_accepted_count+" New Postings Not Accepted"}>{rowObj.new_not_accepted_count}</div> : ""}
                 </div>

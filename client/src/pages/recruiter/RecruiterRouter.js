@@ -16,6 +16,7 @@ function RecruiterRouter({ match }) {
             <div className="mainContainer">
                 <Switch>
                     <Route strict path="/recruiter/profile" component={RecruiterProfile} />
+                    <Route strict path="/recruiter/candidateList/:postId" component={CandidateList} />
                     <Route strict path="/recruiter/candidateList" component={CandidateList} />
                     <Route strict path="/recruiter/addCandidate" component={AddCandidate} />
                     <Route strict path="/recruiter/jobList/:candidateId" component={JobList} />

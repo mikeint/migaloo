@@ -20,8 +20,10 @@ class CandidateList extends React.Component{
             showOverlay: false,
             overlayConfig: {direction: "b-t", swipeLocation: "t"},
             candidateList: null, 
+            postId: props.match.params.postId,
             page: 1,
-            pageCount: 1
+            pageCount: 1,
+            postData: null
         };
         this.Auth = new AuthFunctions();
         this.axiosConfig = {
@@ -59,9 +61,11 @@ class CandidateList extends React.Component{
 
 
     getCandidateList = () => {
-        axios.get('/api/candidate/list/'+this.state.page, this.axiosConfig)
+        (this.state.postId?
+            axios.get('/api/candidate/listForJob/'+this.state.postId+"/"+this.state.page, this.axiosConfig):
+            axios.get('/api/candidate/list/'+this.state.page, this.axiosConfig))
         .then((res)=>{
-            this.setState({ candidateList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
+            this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )
@@ -88,7 +92,7 @@ class CandidateList extends React.Component{
                
                <div className="mainContainer">
                     <div className='candidateListContainer'>
-                        <div className="pageHeading">Candidates<button className="addBtn" onClick={() => this.callOverlay()}>add new</button></div> 
+                        <div className="pageHeading">Candidates {this.state.postData?" - For: "+this.state.postData.title:''} <button className="addBtn" onClick={() => this.callOverlay()}>add new</button></div> 
                         {
                             this.state.candidateList ?
                                 <div className="candidateList">

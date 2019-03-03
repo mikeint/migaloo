@@ -69,6 +69,7 @@ function getJobs(req, res){
  * @access Private
  */
 router.get('/listForCandidate/:candidateId', passport.authentication,  getJobsForCandidate);
+router.get('/listForCandidate/:candidateId/:page', passport.authentication,  getJobsForCandidate);
 function getJobsForCandidate(req, res){
     var page = req.params.page;
     if(page == null)
@@ -88,7 +89,7 @@ function getJobsForCandidate(req, res){
             WHERE rc.recruiter_id = $1 AND c.candidate_id = $2', [jwtPayload.id, candidateId])
         .then(candidate_data=>{
             return t.any('\
-                SELECT title, caption, experience_type_name, salary_type_name, company_name, image_id, j.employer_id, \
+                SELECT j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, j.employer_id, \
                     street_address_1, street_address_2, city, state, country, tag_ids, tag_names, \
                     score, total_score, score/total_score*100.0 as tag_score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
                 FROM job_posting j \
@@ -120,7 +121,7 @@ function getJobsForCandidate(req, res){
                     WHERE ci.candidate_id = $1 \
                     GROUP BY j.post_id \
                 ) jc ON jc.post_id = j.post_id \
-                \
+                WHERE NOT EXISTS (SELECT 1 FROM candidate_posting cp WHERE cp.candidate_id = $1) \
                 ORDER BY tag_score DESC, j.created_on DESC \
                 OFFSET $2 \
                 LIMIT 10', [candidateId, (page-1)*10])

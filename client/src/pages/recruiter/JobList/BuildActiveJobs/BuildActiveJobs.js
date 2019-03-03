@@ -2,6 +2,7 @@ import React from 'react';
 import './BuildActiveJobs.css'; 
 import axios from 'axios';
 import AuthFunctions from '../../../../AuthFunctions'; 
+import {Redirect} from 'react-router-dom';
  
   
 class BuildActiveJobs extends React.Component{
@@ -11,7 +12,8 @@ class BuildActiveJobs extends React.Component{
         this.state={ 
             user: {},
             profileImage: '',
-            jobObj: props.obj
+            jobObj: props.obj,
+            redirectJob: false
         }
         this.Auth = new AuthFunctions();
         this.axiosConfig = {
@@ -36,12 +38,17 @@ class BuildActiveJobs extends React.Component{
             this.setState({ profileImage: '' })
         })
     }
+    searchJobsForCandidates = () => {
+        console.log('/recruiter/candidateList/'+this.props.obj.post_id)
+        this.setState({redirectJob:true})
+    }
     render(){ 
 
         const jobObj = this.props.obj; 
 
         return ( 
             <div className="jobPostingContainer">
+                {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.props.obj.post_id}/> : ''}
                 {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
                 <h2>{jobObj.title}</h2>
                 <p>{jobObj.caption}</p>
@@ -55,7 +62,7 @@ class BuildActiveJobs extends React.Component{
                 <h5>Salary: {jobObj.salary_type_name}</h5> 
                 {jobObj.tag_names?<p>Tags: {jobObj.tag_names.join(", ")}</p>:''}
                 <p>Posted: {jobObj.posted}</p>
-
+                <div className="rowButton" onClick={this.searchJobsForCandidates}>Search Jobs</div>
             </div> 
         )
     }

@@ -116,3 +116,19 @@
         margin: 10px 0px;
     }
 } 
+.expandableRow .score{
+    width: 40px;
+    height: 100%;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 50px;
+    display: inline-block;
+    float: right;
+    top: 0px;
+    right: 0px;
+    font-size: 14px;
+    font-weight: bold; 
+    font-weight: bold;
+    background-color: #4CAF50;
+    border: 1px solid #615353;
+}
