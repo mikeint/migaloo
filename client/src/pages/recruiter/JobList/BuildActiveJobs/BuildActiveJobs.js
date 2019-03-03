@@ -39,7 +39,6 @@ class BuildActiveJobs extends React.Component{
         })
     }
     searchJobsForCandidates = () => {
-        console.log('/recruiter/candidateList/'+this.props.obj.post_id)
         this.setState({redirectJob:true})
     }
     render(){ 

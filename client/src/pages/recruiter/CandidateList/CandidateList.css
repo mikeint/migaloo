@@ -1,6 +1,5 @@
 .candidateListContainer {
     width: 100%;
-    overflow-y: scroll;
 }
 
 .candidateListContainer .addJobButton {

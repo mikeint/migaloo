@@ -33,13 +33,13 @@ class Overlay extends Component {
         document.querySelector(".menu").classList.add("menu--animatable");	
         if(!document.querySelector(".menu").classList.contains("menu--visible")) {
             document.querySelector(".menu").classList.add("menu--visible");
-            document.getElementById("root").classList.add("fixedRoot"); 
+            // document.getElementById("root").classList.add("fixedRoot"); 
         } else {
             document.querySelector(".menu").classList.remove('menu--visible');
             setTimeout(() => {
                 this.props.callOverlay();
             }, 150);
-            document.getElementById("root").classList.remove("fixedRoot");  
+            // document.getElementById("root").classList.remove("fixedRoot");  
         } 
     } 
 
@@ -54,7 +54,7 @@ class Overlay extends Component {
                         {this.state.screenWidth > 1024 ?
                             <Swipe className={"swiper swiper_"+config.swipeLocation} onSwipeEnd={this.toggleClassMenu.bind(this)} onClick={this.toggleClassMenu.bind(this)}></Swipe> 
                         :
-                            <Swipe className={"swiper swiper_"+config.swipeLocation} onSwipeEnd={this.toggleClassMenu.bind(this)}></Swipe> 
+                            <Swipe className={"swiper swiper_"+config.swipeLocation} onSwipeEnd={this.toggleClassMenu.bind(this)} onClick={this.toggleClassMenu.bind(this)}></Swipe> 
                         } 
 
                         {this.props.html}
