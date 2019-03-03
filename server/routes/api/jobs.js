@@ -121,12 +121,11 @@ function getJobsForCandidate(req, res){
                     WHERE ci.candidate_id = $1 \
                     GROUP BY j.post_id \
                 ) jc ON jc.post_id = j.post_id \
-                WHERE NOT EXISTS (SELECT 1 FROM candidate_posting cp WHERE cp.candidate_id = $1) \
                 ORDER BY tag_score DESC, j.created_on DESC \
                 OFFSET $2 \
                 LIMIT 10', [candidateId, (page-1)*10])
                 
-                // WHERE NOT EXISTS (SELECT 1 FROM candidate_posting cp WHERE cp.candidate_id = $1 AND cp.post_id = j.post_id) AND \
+                // WHERE NOT EXISTS (SELECT 1 FROM candidate_posting cp WHERE cp.candidate_id = $1) \
             .then((data) => {
                 // Marshal data
                 data = data.map(m=>{
