@@ -89,7 +89,7 @@ class CandidateList extends React.Component{
                
                <div className="mainContainer">
                     <div className='candidateListContainer'>
-                        <div className="pageHeading">Candidates {this.state.postData?" - For: "+this.state.postData.title:''} <button className="addBtn" onClick={() => this.callOverlay()}>add new</button></div> 
+                        <div className="pageHeading">Candidates {this.state.postData?" - For: "+this.state.postData.title:''} <button className="addBtn" onClick={() => this.callOverlay()}></button></div> 
                         {
                             this.state.candidateList ?
                                 <div className="candidateList">

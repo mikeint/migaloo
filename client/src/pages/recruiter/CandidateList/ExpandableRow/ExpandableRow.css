@@ -1,12 +1,13 @@
 .expandableRow .candidateListItem {   
-    color: #fff;
-    cursor: pointer; 
-    height: 50px;
-    font-size: 15px; 
-    background: #1a2b6d;
-    color: #fff;
+    height: 70px;
+    cursor: pointer;
+    font-size: 15px;
+    background: #ffffff;
+    color: #1a2b6d;
     margin-bottom: 1px;
     position: relative;
+    border-bottom: 1px solid #1a2b6d14;
+    padding: 18px;
 }
 .expandableRow .collapse {
     transition: max-height 0.5s;
@@ -15,75 +16,65 @@
 }
 .expandableRow .collapse.in {
     max-height: 500px;
-}
-
-.expandableRow .nameContainer {
-    float: left;
-    line-height: 50px;
-    padding-left: 10px;
-    text-shadow: -2px -1px #000000;
+} 
+.expandableRow .nameContainer {   
+    font-size: 19px;
+    font-weight: bold;
+    display: inline;
 }
 .expandableRow .coinContainer {
-    width: 55px;
-    float: left;
-    line-height: 50px; 
+    width: 65px; 
+    background-color: #1a2b6d; 
+    color: #fff;
     background-image:url("../../../../files/images/spentCoins.png");
     background-repeat: no-repeat;
     background-size: contain;
-    background-color: #fef1aa75;
-    box-shadow: 0px 0px 2px 0px #fef1ab;
-    border-left: 1px solid #1a2b6d;
-    border-right: 1px solid #1a2b6d;
+    background-position-x: 5px;
+    border-radius: 5px;
+    text-align: center;
+    padding: 5px; 
+    float: right;
 }
 .expandableRow .coinAmount {
-    margin-left: 18px;
+    margin-left: 25px;
     font-weight: bold;
     font-size: 15px;
-    letter-spacing: -2px;
-    color: #1a2b6d;
 }
 .expandableRow .acceptedCount{
-    width: 30px;
-    height: 30px;
-    margin-top: 10px;
-    margin-right: 6px; 
+    width: 20px;
+    height: 20px;
+    display: inline-block;
     text-align: center;
-    line-height: 30px;
-    display: inline-block; 
-    float: right;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: bold;
-    background-color: #4CAF50;
-    box-shadow: 0px 0px 10px 0px #f1d474;
+    margin-left: 5px;   
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold; 
+    background-color: #4CAF50;  
+    color: #fff;
 }
 .expandableRow .notAcceptedCount{
-    width: 30px;
-    height: 30px;
-    margin-top: 10px;
-    margin-right: 6px; 
-    text-align: center;
-    line-height: 30px;
-    display: inline-block; 
-    float: right;
-    border-radius: 30px;
-    font-size: 14px;
-    font-weight: bold;
-    background-color: #de3141;
-    box-shadow: 0px 0px 10px 0px #f1d474;
+    width: 20px;
+    height: 20px; 
+    display: inline-block;
+    margin-left: 5px; 
+    text-align: center;   
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold; 
+    background-color: #de3141;  
+    color: #fff;
 }
-.expandableRow .rowMargin{
-    margin: 5px 0px;
-}
+ 
 .expandableRow .rowButton{
+    width: 100%;
     cursor: pointer;
-    border-radius: 7px;
-    width: 200px;
     background-color: #1a2b6d;
     color: #fff;
     text-align: center;
     padding: 10px 5px;
     margin: 10px 10px;
+    font-size: 20px;
+    font-weight: bold;
 }
 .expandableRow .uploadFile{
     width: 200px;
@@ -105,16 +96,65 @@
 
 
 .expandableRow .flexColumn{
-    flex: 1 0;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: row;
+    flex-direction: row;
+    -webkit-align-items: center;
+    align-items: center; 
+    flex-wrap: wrap; 
 }
+.expandableRow .flex-item {
+    width: 100%;  
+} 
+.expandableRow .info-container{
+    display: inline-block;
+    vertical-align: top;  
+}
+  
+.expandableRow .info-container p {
+    padding: 0;
+    margin: 0 0 15px;
+    padding-left: 30px; 
+    background-repeat: no-repeat; 
+    background-size: contain; 
+}
+
+.expandableRow .info-container .email_icon {
+    background-image: url('../../../../files/images/candidateIcons/email_icon.png'); 
+}
+.expandableRow .info-container .experience_icon {
+    padding: 0px 0px 7px 30px;
+    background-image: url('../../../../files/images/candidateIcons/experience_icon.png'); 
+}
+.expandableRow .info-container .tags_icon {
+    padding: 0px 0px 8px 30px;
+    background-image: url('../../../../files/images/candidateIcons/tags_icon.png'); 
+}
+.expandableRow .info-container .posted_icon {
+    padding: 0px 0px 3px 30px;
+    background-image: url('../../../../files/images/candidateIcons/posted_icon.png'); 
+}
+.expandableRow .info-container .email_icon {
+    background-image: url('../../../../files/images/candidateIcons/email_icon.png'); 
+}
+
+.expandableRow .candidate_image {
+    float: right;
+}
+
+  
+
+
+
+
 @media only screen and (max-width: 600px) {
     .expandableRow .flex {
         border-radius: 0px;
         flex-direction: column;
-    } 
-    .expandableRow .rowMargin{
-        margin: 10px 0px;
-    }
+        background: #1a2b6d08;
+        box-shadow: inset 0px 0px 10px grey;
+    }  
 } 
 .expandableRow .score{
     width: 40px;
