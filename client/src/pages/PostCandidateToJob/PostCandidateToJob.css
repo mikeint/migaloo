@@ -118,6 +118,14 @@ select:-moz-focusring {
     width: 47.5%;
     float: left;
 } 
+.postACandidateContainer .i-1-4 {
+    width: 22.5%;
+    float: left;
+} 
+.postACandidateContainer .i-3-4 {
+    width: 72.5%;
+    float: left;
+} 
 .postACandidateContainer .il {
     margin-right: 5%;
 }
@@ -147,8 +155,9 @@ select:-moz-focusring {
     color: #1a2b6d;
     border:1px solid #fff;
     overflow: auto;  
-    background: #e6e8ef;
+    background: #fff;
     outline: none;
+    resize: none;
 }
 .postACandidateContainer .matchingScore{
     width: 100px;
@@ -196,6 +205,8 @@ select:-moz-focusring {
 @media only screen and (max-width: 1000px) {
     .postACandidateContainer .i-2,
     .postACandidateContainer .i-4,
+    .postACandidateContainer .i-1-4,
+    .postACandidateContainer .i-3-4,
     .postACandidateContainer .i-small,
     .postACandidateContainer select {
         min-width: 100% !important;
@@ -207,3 +218,24 @@ select:-moz-focusring {
         display: block;
     }
 } 
+.postACandidateContainer .numberCircle {
+    position: relative;
+    display: inline-block;
+    color: rgb(70, 69, 69);
+    text-align: center;
+    font: 24px Arial, sans-serif;
+    margin: 5px;
+    width: 60%;
+    padding-top: 20px;
+}
+.postACandidateContainer .number {
+    position: absolute;
+    line-height: 100px;
+    font-weight: bold;
+    left: 0;
+    right: 0;
+}
+.postACandidateContainer .numberCoin {
+    width: 110px;
+    border-radius: 50%;
+}

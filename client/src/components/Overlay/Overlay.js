@@ -8,6 +8,7 @@ class Overlay extends Component {
         super();
         this.state = {
             screenWidth: 0,
+            open: false
         }
     }
 
@@ -38,16 +39,20 @@ class Overlay extends Component {
     }
 
     toggleClassMenu() {
-        document.querySelector(".menu").classList.add("menu--animatable");	
-        if(!document.querySelector(".menu").classList.contains("menu--visible")) {
-            document.querySelector(".menu").classList.add("menu--visible");
+        // document.querySelector(".menu").classList.add("menu--animatable");	
+        if(!this.state.open) {
+            this.setState({open: true})
+            // document.querySelector(".menu").classList.add("menu--visible");
             // document.getElementById("root").classList.add("fixedRoot"); 
         } else {
-            document.querySelector(".menu").classList.remove('menu--visible');
-            setTimeout(() => {
-                if(this.props.handleClose)
-                    this.props.handleClose();
-            }, 150);
+            // document.querySelector(".menu").classList.remove('menu--visible');
+            this.setState({open: false}, () => {
+                setTimeout(()=>{
+                    if(this.props.handleClose)
+                        this.props.handleClose();
+                }, 150)
+            })
+            // , 150);
             // document.getElementById("root").classList.remove("fixedRoot");  
         } 
     } 
@@ -58,7 +63,7 @@ class Overlay extends Component {
 
         return (
             <React.Fragment>
-                <div className="menu"> 
+                <div className={this.state.open?"menu menu--animatable menu--visible":"menu menu--animatable"}> 
                     <div className={"app-menu app-menu_"+config.direction}> 
                         {this.state.screenWidth > 1024 ?
                             <Swipe className={"swiper swiper_"+config.swipeLocation} onSwipeEnd={this.toggleClassMenu.bind(this)} onClick={this.toggleClassMenu.bind(this)}></Swipe> 

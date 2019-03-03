@@ -173,7 +173,7 @@ function listCandidatesForJob(req, res){
     
 
     postgresdb.task(t => {
-        return t.one('SELECT jp.title, st.salary_type_name, et.experience_type_name, tg.tag_names \
+        return t.one('SELECT jp.post_id, jp.title, st.salary_type_name, et.experience_type_name, tg.tag_names \
             FROM job_posting jp \
             LEFT JOIN experience_type et ON jp.experience_type_id = et.experience_type_id \
             LEFT JOIN salary_type st ON jp.salary_type_id = st.salary_type_id \

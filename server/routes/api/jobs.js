@@ -83,7 +83,7 @@ function getJobsForCandidate(req, res){
         return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
     }
     postgresdb.task(t => {
-        return t.one('SELECT first_name, last_name, st.salary_type_name, et.experience_type_name, tg.tag_names \
+        return t.one('SELECT c.candidate_id, first_name, last_name, st.salary_type_name, et.experience_type_name, tg.tag_names \
             FROM recruiter_candidate rc \
             INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
             LEFT JOIN experience_type et ON c.experience_type_id = et.experience_type_id \
@@ -192,8 +192,8 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
         const q1 = t.one('SELECT 1 FROM recruiter_candidate WHERE candidate_id = $1 AND recruiter_id = $2',
                             [body.candidateId, jwtPayload.id])
 
-        const q2 = t.none('INSERT INTO candidate_posting (candidate_id, post_id, recruiter_id, coins) VALUES ($1, $2, $3, $4)',
-                            [body.candidateId, body.postId, jwtPayload.id, body.coins])
+        const q2 = t.none('INSERT INTO candidate_posting (candidate_id, post_id, recruiter_id, coins, comment) VALUES ($1, $2, $3, $4, $5)',
+                            [body.candidateId, body.postId, jwtPayload.id, body.coins, body.comment])
 
         const q3 = t.one('UPDATE recruiter SET coins = coins - $1 WHERE recruiter_id = $2 RETURNING coins',
                             [body.coins, jwtPayload.id])

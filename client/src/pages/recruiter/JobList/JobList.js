@@ -107,7 +107,7 @@ class JobList extends React.Component{
                                             />
                                     </div>
                                     {this.state.showOverlay && <Overlay
-                                                                    html={<BuildActiveJobs obj={this.state.jobList[this.state.postId]} />}  
+                                                                    html={<BuildActiveJobs jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />}  
                                                                     handleClose={this.callOverlay} 
                                                                     config={this.state.overlayConfig}
                                                                 />}

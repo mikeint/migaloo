@@ -83,7 +83,7 @@ class ExpandableRow extends React.Component{
                             </div>
                             {this.props.postData && <div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div>}
                             {this.state.showPostJob && <Overlay
-                                                            html={<PostCandidateToJob candidate={this.props.candidateData} job={this.props.postData} />}  
+                                                            html={<PostCandidateToJob candidate={this.props.candidateData} job={this.props.postData} handleClose={()=>this.setState({showPostJob:false})} />}  
                                                             handleClose={()=>this.setState({showPostJob:false})} 
                                                             config={this.state.overlayConfig}
                                                         />}

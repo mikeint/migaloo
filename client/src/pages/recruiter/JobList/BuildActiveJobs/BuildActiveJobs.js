@@ -3,6 +3,8 @@ import './BuildActiveJobs.css';
 import ApiCalls from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import {Redirect} from 'react-router-dom';
+import Overlay from '../../../../components/Overlay/Overlay';
+import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
  
   
 class BuildActiveJobs extends React.Component{
@@ -12,8 +14,10 @@ class BuildActiveJobs extends React.Component{
         this.state={ 
             user: {},
             profileImage: '',
-            jobObj: props.obj,
-            redirectJob: false
+            jobObj: props.jobData,
+            redirectJob: false,
+            showPostJob: false,
+            overlayConfig: {direction: "b-t", swipeLocation: "t"}
         }
         this.Auth = new AuthFunctions();
     } 
@@ -39,15 +43,15 @@ class BuildActiveJobs extends React.Component{
         this.setState({redirectJob:true})
     }
     postToJob = () =>{
-
+        this.setState({showPostJob: true})
     }
     render(){ 
 
-        const jobObj = this.props.obj; 
+        const jobObj = this.props.jobData; 
 
         return ( 
             <div className="jobPostingContainer">
-                {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.props.obj.post_id}/> : ''}
+                {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.props.jobData.post_id}/> : ''}
                 {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
                 <h2>{jobObj.title}</h2>
                 <p>{jobObj.caption}</p>
@@ -62,7 +66,12 @@ class BuildActiveJobs extends React.Component{
                 {jobObj.tag_names?<p>Tags: {jobObj.tag_names.join(", ")}</p>:''}
                 <p>Posted: {jobObj.posted}</p>
                 <div className="rowButton" onClick={this.searchJobsForCandidates}>Search For Candidates</div>
-                <div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div>
+                {this.props.candidateData && <div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div>}
+                {this.state.showPostJob && <Overlay
+                                                html={<PostCandidateToJob candidate={this.props.candidateData} job={this.props.jobData} handleClose={()=>this.setState({showPostJob:false})} />}  
+                                                handleClose={()=>this.setState({showPostJob:false})} 
+                                                config={this.state.overlayConfig}
+                                            />}
             </div> 
         )
     }

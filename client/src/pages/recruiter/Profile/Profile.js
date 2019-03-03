@@ -74,7 +74,6 @@ class Profile extends React.Component{
         if (this.state.logout) {
             return <Redirect to='/login' />
         }
-        console.log(this.state.user)
 
         return (
             <React.Fragment>
