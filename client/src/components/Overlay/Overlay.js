@@ -16,8 +16,12 @@ class Overlay extends Component {
         setTimeout(() => {
             this.toggleClassMenu();
         }, 100); 
+        document.getElementById("root").classList.add("fixedRoot"); 
     }
 
+    componentWillUnmount() {
+        document.getElementById("root").classList.remove("fixedRoot");  
+    }
     onSwipeStart(event) {
         console.log('Start swiping...', event);
     } 
