@@ -1,7 +1,7 @@
 import React, { Component } from "react"; 
 import "./Chat.css"; 
 import AuthFunctions from '../../AuthFunctions'; 
-import axios from 'axios';
+import ApiCalls from '../../ApiCalls';  
 import ConversationRow from "./ConversationRow/ConversationRow"; 
 import ReactPaginate from 'react-paginate';
 import Loader from "../Loader/Loader";
@@ -16,15 +16,12 @@ class Chat extends Component {
             pageCount: 1
         };
         this.Auth = new AuthFunctions();
-        this.axiosConfig = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
     }
     componentWillMount = () => {
         this.getConversationList();
     }
     getConversationList = () => {
-        axios.get('/api/message/list/'+this.state.page, this.axiosConfig)
+        ApiCalls.get('/api/message/list/'+this.state.page)
         .then((res)=>{
             this.setState({ conversationList: res.data,
                 pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
