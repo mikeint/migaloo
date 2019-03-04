@@ -77,28 +77,26 @@ class Profile extends React.Component{
 
         return (
             <React.Fragment>
-                <div className="mainContainerProfile">
-                    <div className='profileContainer'>
-                        <div className='profileImageContainer'>
-                            <img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>
-                            <div className="profileType">Recruiter</div>
-                            <div className="profileName">{this.state.profileInfo.first_name} {this.state.profileInfo.last_name}</div>
-                            <div className="profileEmail">{this.state.user.email} {this.state.profileInfo.phone_number}</div>
-                            <div className="numberCircle">
-                                <img className="numberCoin" src={coin} alt=""/>
-                                <span className="number">{this.state.profileInfo.coins}</span>
-                            </div>
+                <div className='profileContainer'>
+                    <div className='profileImageContainer'>
+                        <img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>
+                        <div className="profileType">Recruiter</div>
+                        <div className="profileName">{this.state.profileInfo.first_name} {this.state.profileInfo.last_name}</div>
+                        <div className="profileEmail">{this.state.user.email} {this.state.profileInfo.phone_number}</div>
+                        <div className="numberCircle">
+                            <img className="numberCoin" src={coin} alt=""/>
+                            <span className="number">{this.state.profileInfo.coins}</span>
                         </div>
-                        <div className='profileBottom'>
-                            <div className="profileItem">Recruiter info</div>
-                            <div className="profileItem">Account info</div>
-                            <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
-                        </div> 
-                        {this.state.showUpload?<UploadImage 
-                                                    baseUrl={"/api/recruiter/"}
-                                                    uploadUrl={"uploadImage/"}
-                                                    handleClose={this.handleClose} />:''}
                     </div>
+                    <div className='profileBottom'>
+                        <div className="profileItem">Recruiter info</div>
+                        <div className="profileItem">Account info</div>
+                        <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
+                    </div> 
+                    {this.state.showUpload?<UploadImage 
+                                                baseUrl={"/api/recruiter/"}
+                                                uploadUrl={"uploadImage/"}
+                                                handleClose={this.handleClose} />:''}
                 </div>
             </React.Fragment>
         );

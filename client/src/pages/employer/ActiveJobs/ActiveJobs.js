@@ -75,9 +75,9 @@ class ActiveJobs extends React.Component{
         return (
             <React.Fragment>
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
-               
-                <div className='mainContainer activeJobContainer'>
-                    <div className="pageHeading">Active Jobs<NavLink to="/employer/postAJob"><button className="addBtn addJob"></button></NavLink></div> 
+            
+                <div className='activeJobContainer'>
+                    <div className="pageHeading">Active Jobs<NavLink to="/employer/postAJob"><button className="addBtn">add new</button></NavLink></div> 
                     {
                         this.state.jobList ?
                             <div className="jobListContainer">
