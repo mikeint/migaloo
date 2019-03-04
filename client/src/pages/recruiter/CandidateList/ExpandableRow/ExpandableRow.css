@@ -142,11 +142,10 @@
 .expandableRow .candidate_image {
     float: right;
 }
-
-  
-
-
-
+   
+span[class*='MuiPrivateTabIndicator-colorSecondary-'] {
+    background-color: #1a2b6d !important; 
+}
 
 @media only screen and (max-width: 600px) {
     .expandableRow .flex {

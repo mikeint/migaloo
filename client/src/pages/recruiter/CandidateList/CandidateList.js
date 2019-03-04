@@ -5,6 +5,10 @@ import ApiCalls from '../../../ApiCalls';
 import AuthFunctions from '../../../AuthFunctions'; 
 import Loader from '../../../components/Loader/Loader';
 import ExpandableRow from './ExpandableRow/ExpandableRow';
+import SwipeableViews from 'react-swipeable-views';
+
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 import Overlay from '../../../components/Overlay/Overlay';
 import AddCandidate from '../AddCandidate/AddCandidate';
@@ -25,6 +29,7 @@ class CandidateList extends React.Component{
             pageCount: 1,
             postData: null,
             searchTerm:'',
+            index: 0,
         };
         this.Auth = new AuthFunctions();
     }
@@ -77,19 +82,43 @@ class CandidateList extends React.Component{
             this.getCandidateList();
         });
     };
+    
+               
+    handleChange = (event, value) => {
+        this.setState({
+          index: value,
+        });
+      };
+    
+      handleChangeIndex = index => {
+        this.setState({
+          index,
+        });
+      };
 
     render(){
         const html = <AddCandidate handleClose={this.callOverlay} />
 
+ 
+
         return (
             <React.Fragment>  
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
-               
+ 
                     <div className='candidateListContainer'>
+ 
+ 
                         <div className="pageHeading">Candidates {this.state.postData?" - For: "+this.state.postData.title:''} <button className="addBtn" onClick={() => this.callOverlay()}></button></div> 
+                        
+                        <Tabs value={this.state.index} fullWidth onChange={this.handleChange}>
+                            <Tab label="List" />
+                            <Tab label="Favourites" />
+                            <Tab label="Archived" />
+                        </Tabs>
+                        
                         {
-                            this.state.candidateList ?
-                                <div className="candidateList"> 
+                            this.state.candidateList ? 
+                                <React.Fragment>
                                     <input
                                         className="searchCandidateList"
                                         name="searchTerm"
@@ -98,26 +127,32 @@ class CandidateList extends React.Component{
                                         placeholder="Search"
                                         onChange={this.onSearchChange}
                                     /> 
+                                    <SwipeableViews enableMouseEvents index={this.state.index} onChangeIndex={this.handleChangeIndex}>
+                                        <div className="candidateList" style={Object.assign({})}>  
+                                            {
+                                                this.state.candidateList.filter(() => this.isSearched(this.state.searchTerm)).map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData}></ExpandableRow>})
+                                            }
+                                            <div className="paginationContainer">
+                                                <ReactPaginate
+                                                    previousLabel={'Back'}
+                                                    nextLabel={'Next'}
+                                                    breakLabel={'...'}
+                                                    breakClassName={'break-me'}
+                                                    pageCount={this.state.pageCount}
+                                                    marginPagesDisplayed={2}
+                                                    pageRangeDisplayed={10}
+                                                    onPageChange={this.handlePageClick}
+                                                    containerClassName={'pagination'}
+                                                    subContainerClassName={'pages pagination'}
+                                                    activeClassName={'active'}
+                                                    />
+                                            </div>
+                                        </div>
                                     
-                                    {
-                                        this.state.candidateList.filter(() => this.isSearched(this.state.searchTerm)).map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData}></ExpandableRow>})
-                                    }
-                                    <div className="paginationContainer">
-                                        <ReactPaginate
-                                            previousLabel={'Back'}
-                                            nextLabel={'Next'}
-                                            breakLabel={'...'}
-                                            breakClassName={'break-me'}
-                                            pageCount={this.state.pageCount}
-                                            marginPagesDisplayed={2}
-                                            pageRangeDisplayed={10}
-                                            onPageChange={this.handlePageClick}
-                                            containerClassName={'pagination'}
-                                            subContainerClassName={'pages pagination'}
-                                            activeClassName={'active'}
-                                            />
-                                    </div>
-                                </div>
+                                        <div style={Object.assign({})}>slide n°2</div>
+                                        <div style={Object.assign({})}>slide n°3</div>
+                                    </SwipeableViews>
+                                </React.Fragment>
                             :
                             <Loader />
                         }
