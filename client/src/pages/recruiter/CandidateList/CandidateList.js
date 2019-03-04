@@ -68,7 +68,7 @@ class CandidateList extends React.Component{
             ApiCalls.get('/api/candidate/listForJob/'+this.state.postId+"/"+this.state.page+(searchString?`/${searchString}`:'')):
             ApiCalls.get('/api/candidate/list/'+this.state.page+(searchString?`/${searchString}`:'')))
         .then((res)=>{
-            this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
+            this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].page_count, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )
