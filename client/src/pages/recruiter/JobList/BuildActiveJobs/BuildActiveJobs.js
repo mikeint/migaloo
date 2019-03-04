@@ -53,8 +53,8 @@ class BuildActiveJobs extends React.Component{
             <div className="jobPostingContainer">
                 {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.props.jobData.post_id}/> : ''}
                 {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
-                <h2>{jobObj.title}</h2>
-                <p>{jobObj.caption}</p>
+                <div className="jobTitle">{jobObj.title}</div>
+                <div className="jobCaption">{jobObj.caption}</div>
                 <h3>{jobObj.company_name}</h3>
                 <p>
                     {jobObj.street_address_1}<br/>

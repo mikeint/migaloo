@@ -1,19 +1,31 @@
-.jobPostingContainer {
-    padding: 0px 10px 0px 10px;
-}
-
 .jobPostingContainer .profileImage{
     float: right;
     margin: 20px;
     width: 200px;
 }
-.jobPostingContainer .rowButton{
+.jobPostingContainer .rowButton{ 
+    width: 100%;
     cursor: pointer;
-    border-radius: 7px;
-    width: 200px;
     background-color: #1a2b6d;
     color: #fff;
     text-align: center;
     padding: 10px 5px;
-    margin: 10px 10px;
+    font-size: 20px;
+    font-weight: bold;
+
+}
+
+.jobPostingContainer .jobTitle {
+    background: #1a2b6d;
+    color: #fff;
+    padding: 20px;
+    font-size: 22px;
+}
+.jobPostingContainer .jobCaption {
+        padding: 20px;
+}
+
+
+button[class*='MuiButtonBase-root-'] {
+    -webkit-tap-highlight-color:#1a2b6d2e;
 }

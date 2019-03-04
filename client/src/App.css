@@ -67,12 +67,10 @@ a {
 }
 .pageHeading {
     width: 100%; 
-    font-weight: bold;
-    font-size: 14px;
+    font-weight: bold; 
     padding: 10px;
     border-bottom: 1px solid #e2e2e2;
-    position: relative;
-    height: 70px;
+    position: relative; 
     line-height: 50px;
     background: #1a2b6d;
     color: #fff;

@@ -1,7 +1,6 @@
 .expandableRow .candidateListItem {   
-    height: 70px;
-    cursor: pointer;
-    font-size: 15px;
+    height: 60px;
+    cursor: pointer; 
     background: #ffffff;
     color: #1a2b6d;
     margin-bottom: 1px;
@@ -18,7 +17,7 @@
     max-height: 500px;
 } 
 .expandableRow .nameContainer {   
-    font-size: 19px;
+    font-size: 15px;
     font-weight: bold;
     display: inline;
 }
@@ -41,8 +40,8 @@
     font-size: 15px;
 }
 .expandableRow .acceptedCount{
-    width: 15px;
-    height: 15px;
+    width: 10px;
+    height: 10px;
     display: inline-block;
     text-align: center;
     margin-left: 5px;   
@@ -53,8 +52,8 @@
     color: #fff;
 }
 .expandableRow .notAcceptedCount{
-    width: 15px;
-    height: 15px; 
+    width: 10px;
+    height: 10px; 
     display: inline-block;
     margin-left: 5px; 
     text-align: center;   
