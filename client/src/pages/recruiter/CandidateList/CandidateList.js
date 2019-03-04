@@ -6,6 +6,7 @@ import AuthFunctions from '../../../AuthFunctions';
 import Loader from '../../../components/Loader/Loader';
 import ExpandableRow from './ExpandableRow/ExpandableRow';
 import SwipeableViews from 'react-swipeable-views';
+import debounce from 'lodash/debounce';
 
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -28,7 +29,6 @@ class CandidateList extends React.Component{
             page: 1,
             pageCount: 1,
             postData: null,
-            searchTerm:'',
             index: 0,
         };
         this.Auth = new AuthFunctions();
@@ -50,21 +50,23 @@ class CandidateList extends React.Component{
         } 
     }
  
- 
-    isSearched = (searchTerm) => item => { 
-        item.first_name.toLowerCase().includes(searchTerm.toLowerCase());
-    }
-        
- 
     onSearchChange = (event) => { 
-        this.setState({ searchTerm: event.target.value });
+        this.queryForNames(event.target.value);
     }
 
+    queryForNames = debounce((searchString) => {
+        searchString = searchString.trim()
+        if(searchString.length > 0){
+            this.getCandidateList(searchString)
+        }else{
+            this.getCandidateList()
+        }
+    }, 250)
 
-    getCandidateList = () => {
+    getCandidateList = (searchString) => {
         (this.state.postId?
-            ApiCalls.get('/api/candidate/listForJob/'+this.state.postId+"/"+this.state.page):
-            ApiCalls.get('/api/candidate/list/'+this.state.page))
+            ApiCalls.get('/api/candidate/listForJob/'+this.state.postId+"/"+this.state.page+(searchString?`/${searchString}`:'')):
+            ApiCalls.get('/api/candidate/list/'+this.state.page+(searchString?`/${searchString}`:'')))
         .then((res)=>{
             this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
         }).catch(errors => 
@@ -128,14 +130,13 @@ class CandidateList extends React.Component{
                                         className="searchCandidateList"
                                         name="searchTerm"
                                         type="text"
-                                        value={this.state.searchTerm}
                                         placeholder="Search"
                                         onChange={this.onSearchChange}
                                     /> 
                                     <SwipeableViews enableMouseEvents index={this.state.index} onChangeIndex={this.handleChangeIndex}>
                                         <div className="candidateList" style={Object.assign({})}>  
                                             { 
-                                                this.state.candidateList.filter(() => this.isSearched(this.state.searchTerm)).map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData}></ExpandableRow>})
+                                                this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData}></ExpandableRow>})
                                             }
                                             <div className="paginationContainer">
                                                 <ReactPaginate

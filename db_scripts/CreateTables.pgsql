@@ -1,4 +1,6 @@
-Drop VIEW user_master;
+
+DROP TRIGGER IF EXISTS candidate_search_vector_update ON candidate;
+DROP VIEW user_master;
 DROP TABLE rate_employer;
 DROP TABLE rate_recruiter;
 DROP TABLE rate_candidate;
@@ -127,8 +129,16 @@ CREATE TABLE candidate (
     experience_type_id int REFERENCES experience_type(experience_type_id),
     active boolean default true,
     rating float default null,
+    name_search tsvector,
     PRIMARY KEY(candidate_id)
 );
+CREATE INDEX candidate_tsv_idx ON candidate USING gin(name_search);
+CREATE TRIGGER candidate_search_vector_update
+BEFORE INSERT OR UPDATE
+ON candidate
+FOR EACH ROW EXECUTE PROCEDURE
+tsvector_update_trigger (name_search, 'pg_catalog.english', last_name, first_name);
+
 CREATE TABLE rate_candidate (
     candidate_id bigint REFERENCES candidate(candidate_id),
     user_id bigint REFERENCES login(user_id),

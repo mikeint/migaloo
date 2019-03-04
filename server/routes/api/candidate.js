@@ -89,7 +89,9 @@ router.post('/create', passport.authentication,  (req, res) => {
  */
 router.get('/list', passport.authentication, listCandidates);
 router.get('/list/:page', passport.authentication, listCandidates);
+router.get('/list/:page/:search', passport.authentication, listCandidates);
 function listCandidates(req, res){
+    var search = req.params.search;
     var page = req.params.page;
     if(page == null)
         page = 1;
@@ -97,7 +99,9 @@ function listCandidates(req, res){
     if(jwtPayload.userType != 1){
         return res.status(400).json({success:false, error:"Must be an recruiter to look at canidates"})
     }
-
+    var sqlArgs = [jwtPayload.id, (page-1)*10]
+    if(search != null)
+        sqlArgs.push(search.split(' ').map(d=>d+":*").join(" & "))
     postgresdb.any(' \
         SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, et.experience_type_name, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
@@ -127,9 +131,15 @@ function listCandidates(req, res){
             GROUP BY cp.candidate_id \
         ) cpd ON cpd.candidate_id = c.candidate_id\
         WHERE rc.recruiter_id = $1 AND c.active \
-        ORDER BY c.last_name ASC, c.first_name ASC \
+        '+
+        (search ? 
+            'AND (name_search @@ to_tsquery($3)) \
+            ORDER BY ts_rank_cd(name_search, to_tsquery($3)) DESC'
+        :
+            'ORDER BY c.last_name ASC, c.first_name ASC'
+        )+' \
         OFFSET $2 \
-        LIMIT 10', [jwtPayload.id, (page-1)*10])
+        LIMIT 10', sqlArgs)
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
@@ -158,8 +168,9 @@ function listCandidates(req, res){
  * @access Private
  */
 router.get('/listForJob/:postId', passport.authentication, listCandidatesForJob);
-router.get('/listForJob/:postId/:page', passport.authentication, listCandidatesForJob);
+router.get('/listForJob/:postId/:page/:search', passport.authentication, listCandidatesForJob);
 function listCandidatesForJob(req, res){
+    var search = req.params.search;
     var page = req.params.page;
     if(page == null)
         page = 1;
@@ -185,6 +196,9 @@ function listCandidatesForJob(req, res){
             ) tg ON tg.post_id = jp.post_id \
             WHERE jp.post_id = $1', [postId])
         .then(job_data=>{
+            var sqlArgs = [jwtPayload.id, postId, (page-1)*10]
+            if(search != null)
+                sqlArgs.push(search+":*")
             return t.any(' \
                 SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, et.experience_type_name, \
                     coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
@@ -231,9 +245,13 @@ function listCandidatesForJob(req, res){
                     GROUP BY ci.candidate_id \
                 ) jc ON jc.candidate_id = rc.candidate_id \
                 WHERE rc.recruiter_id = $1 AND c.active \
+                '+
+                (search ? 
+                    'AND (name_search @@ to_tsquery($3))'
+                :'')+' \
                 ORDER BY tag_score DESC, c.last_name ASC, c.first_name ASC \
                 OFFSET $3 \
-                LIMIT 10', [jwtPayload.id, postId, (page-1)*10])
+                LIMIT 10', sqlArgs)
             .then((data) => {
                 // Marshal data
                 data = data.map(m=>{
