@@ -41,8 +41,8 @@
     font-size: 15px;
 }
 .expandableRow .acceptedCount{
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     display: inline-block;
     text-align: center;
     margin-left: 5px;   
@@ -53,8 +53,8 @@
     color: #fff;
 }
 .expandableRow .notAcceptedCount{
-    width: 20px;
-    height: 20px; 
+    width: 15px;
+    height: 15px; 
     display: inline-block;
     margin-left: 5px; 
     text-align: center;   
@@ -156,19 +156,15 @@
         box-shadow: inset 0px 0px 10px grey;
     }  
 } 
-.expandableRow .score{
-    width: 40px;
+.expandableRow .score{ 
     height: 100%;
     vertical-align: middle;
-    text-align: center;
-    line-height: 50px;
-    display: inline-block;
-    float: right;
+    text-align: right;
     top: 0px;
-    right: 0px;
-    font-size: 14px;
-    font-weight: bold; 
+    left: 0px;
+    font-size: 10px;
     font-weight: bold;
-    background-color: #4CAF50;
-    border: 1px solid #615353;
+    background-color: #4caf5054;
+    position: absolute;
+    color: #1a2b6d;
 }

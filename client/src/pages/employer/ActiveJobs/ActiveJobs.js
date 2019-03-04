@@ -39,8 +39,7 @@ class ActiveJobs extends React.Component{
                     document.getElementById("fadeOutOverlay").style.display = "none";
                 }
             })
-        }
-        document.querySelector(".addBtn").addEventListener('click', this.animateButton, false); 
+        } 
     } 
     callOverlay = (postId) => {
         this.setState({ showOverlay : !this.state.showOverlay })

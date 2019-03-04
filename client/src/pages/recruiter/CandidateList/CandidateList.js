@@ -42,18 +42,9 @@ class CandidateList extends React.Component{
                     document.getElementById("fadeOutOverlay").style.display = "none";
                 }
             })
-        }
-
-       document.querySelector(".addBtn").addEventListener('click', this.animateButton, false); 
+        } 
     }
-    animateButton = (e) => {
-        e.preventDefault(); 
-        e.target.classList.remove('animate');
-        e.target.classList.add('animate');
-        setTimeout(function(){
-          e.target.classList.remove('animate');
-        },700);
-    };
+ 
  
     isSearched = (searchTerm) => item =>
         item.make.toLowerCase().includes(searchTerm.toLowerCase());
@@ -101,7 +92,7 @@ class CandidateList extends React.Component{
                                 <div className="candidateList"> 
                                     <input
                                         className="searchCandidateList"
-                                        name={name}
+                                        name="searchTerm"
                                         type="text"
                                         value={this.state.searchTerm}
                                         placeholder="Search"
@@ -110,7 +101,6 @@ class CandidateList extends React.Component{
                                     
                                     {
                                         this.state.candidateList.filter(() => this.isSearched(this.state.searchTerm)).map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData}></ExpandableRow>})
-                                         
                                     }
                                     <div className="paginationContainer">
                                         <ReactPaginate

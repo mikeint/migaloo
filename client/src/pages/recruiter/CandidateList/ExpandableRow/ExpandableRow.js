@@ -63,7 +63,9 @@ class ExpandableRow extends React.Component{
                     </div>
                     {rowObj.new_accepted_count > 0 ? <div className="acceptedCount" title={rowObj.new_accepted_count+" New Postings Accepted"}>{/* rowObj.new_accepted_count */}</div> : ""}
                     {rowObj.new_not_accepted_count > 0 ? <div className="notAcceptedCount" title={rowObj.new_not_accepted_count+" New Postings Not Accepted"}>{/* rowObj.new_not_accepted_count */}</div> : ""}
-                    {rowObj.tag_score?<span className="score">{parseInt(rowObj.tag_score, 10)+"%"}</span>:''}
+                    
+                    
+                    {rowObj.tag_score?<span className="score" style={{width: parseInt(rowObj.tag_score, 10)+"%"}}>{parseInt(rowObj.tag_score, 10)+"%"}</span>:''}
                     
                 </div>
                 <div className={"collapse" + (this.state.open ? ' in' : '')}>
@@ -72,8 +74,8 @@ class ExpandableRow extends React.Component{
 
                     <div className="flex">
                         <div className="flexColumn">
-                            <div class="flex-item">
-                                <div class="info-container">
+                            <div className="flex-item">
+                                <div className="info-container">
                                     <p className="email_icon"><span className="heading">Email:</span> {rowObj.email}</p>
                                     <p className="experience_icon"><span className="heading">Created:</span> {rowObj.created}</p>
                                     <p className="tags_icon"><span className="heading">Experience:</span> {rowObj.experience_type_name}</p>
@@ -86,7 +88,7 @@ class ExpandableRow extends React.Component{
                             <div className="rowButton" onClick={this.searchJobsForCandidates}>Search Jobs</div>
                         </div>
                         <div className="flexColumn">
-                            <div class="flex-item"> 
+                            <div className="flex-item"> 
                                     <p><span className="heading">Accepted by Postings:</span> {rowObj.accepted_count} time(s)</p>
                                     <p><span className="heading">Not Accepted by Postings:</span> {rowObj.not_accepted_count} time(s)</p> 
 
@@ -94,7 +96,7 @@ class ExpandableRow extends React.Component{
                                         {rowObj.resume_id != null && <div className="rowButton" onClick={this.getResumeURL}>View Resume</div>}
                                         <div className="rowButton" onClick={this.showUpload}>Upload Resume</div>
                                     </div>
-                                    {this.props.postData && <div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div>}
+                                    {this.props.postData && <div className="resumeButtons"><div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div></div>}
                                     {this.state.showPostJob && <Overlay
                                                                     html={<PostCandidateToJob candidate={this.props.candidateData} job={this.props.postData} handleClose={()=>this.setState({showPostJob:false})} />}  
                                                                     handleClose={()=>this.setState({showPostJob:false})} 
