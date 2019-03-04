@@ -129,6 +129,7 @@ CREATE TABLE candidate (
     experience_type_id int REFERENCES experience_type(experience_type_id),
     active boolean default true,
     rating float default null,
+    address_id bigint REFERENCES address(address_id),
     name_search tsvector,
     PRIMARY KEY(candidate_id)
 );
@@ -237,7 +238,8 @@ INSERT INTO user_type (user_type_name) VALUES
 INSERT INTO experience_type (experience_type_name) VALUES 
     ('Entry Level'),
     ('Mid Level'),
-    ('Senior Level');
+    ('Senior Level'),
+    ('Executive Level');
 INSERT INTO salary_type (salary_type_name) VALUES 
     ('0k - 15k'),
     ('15k - 30k'),
@@ -253,14 +255,32 @@ INSERT INTO salary_type (salary_type_name) VALUES
     ('250k - 300k'),
     ('300k - 350k'),
     ('350k+');
--- FAKE DATA START
 INSERT INTO tags (tag_name) VALUES
     ('SQL'),
+    ('PostgreSQL'),
     ('C++'),
     ('C#'),
     ('C'),
+    ('Java'),
+    ('Scrum'),
+    ('Cobol'),
+    ('Javascript'),
+    ('Python'),
+    ('Analytics'),
+    ('R'),
+    ('RAPID'),
+    ('Scala'),
+    ('Linux'),
+    ('Windows'),
+    ('Excel'),
+    ('Bash'),
+    ('Redhat'),
+    ('.NET'),
+    ('Architecture Design'),
+    ('Project Management'),
     ('Leadership'),
     ('Agile');
+-- FAKE DATA START
 INSERT INTO login (user_id, email, passwordhash, created_on, user_type_id) VALUES 
     (1, 'r1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-17 10:23:54', 1), -- Add Recruiter, pass: test
     (2, 'r2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-11-25 10:23:54', 1), -- Add Recruiter, pass: test
