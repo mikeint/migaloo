@@ -12,7 +12,7 @@
     padding: 10px 5px;
     font-size: 20px;
     font-weight: bold;
-
+    border-top: 1px solid #fff;
 }
 
 .jobPostingContainer .jobTitle {
@@ -27,5 +27,6 @@
 
 
 button[class*='MuiButtonBase-root-'] {
+    width: 33.333%;
     -webkit-tap-highlight-color:#1a2b6d2e;
 }

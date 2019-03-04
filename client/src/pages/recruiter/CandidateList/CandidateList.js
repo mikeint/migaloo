@@ -1,6 +1,6 @@
 import React from 'react';
 import './CandidateList.css';    
-//import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import ApiCalls from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import Loader from '../../../components/Loader/Loader';
@@ -51,8 +51,9 @@ class CandidateList extends React.Component{
     }
  
  
-    isSearched = (searchTerm) => item =>
-        item.make.toLowerCase().includes(searchTerm.toLowerCase());
+    isSearched = (searchTerm) => item => { 
+        item.first_name.toLowerCase().includes(searchTerm.toLowerCase());
+    }
         
  
     onSearchChange = (event) => { 
@@ -98,19 +99,23 @@ class CandidateList extends React.Component{
 
     render(){
         const html = <AddCandidate handleClose={this.callOverlay} />
-
  
-
         return (
             <React.Fragment>  
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
  
                     <div className='candidateListContainer'>
  
- 
-                        <div className="pageHeading">Candidates {this.state.postData?" - For: "+this.state.postData.title:''} <button className="addBtn" onClick={() => this.callOverlay()}></button></div> 
-                        
-                        <Tabs value={this.state.index} fullWidth onChange={this.handleChange}>
+  
+
+                        <div className="pageHeading">
+                            Candidates 
+                            <button className="addBtn" onClick={() => this.callOverlay()}></button> 
+                            {this.state.postData? <NavLink to="/recruiter/jobList/"><div className="jobSearched">{this.state.postData.title}</div></NavLink> : ""} 
+                        </div>
+
+
+                        <Tabs value={this.state.index} onChange={this.handleChange}>
                             <Tab label="List" />
                             <Tab label="Favourites" />
                             <Tab label="Archived" />
@@ -129,7 +134,7 @@ class CandidateList extends React.Component{
                                     /> 
                                     <SwipeableViews enableMouseEvents index={this.state.index} onChangeIndex={this.handleChangeIndex}>
                                         <div className="candidateList" style={Object.assign({})}>  
-                                            {
+                                            { 
                                                 this.state.candidateList.filter(() => this.isSearched(this.state.searchTerm)).map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData}></ExpandableRow>})
                                             }
                                             <div className="paginationContainer">

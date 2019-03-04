@@ -52,14 +52,13 @@ class ExpandableRow extends React.Component{
     }
     render(){ 
 
-        const rowObj = this.props.candidateData;
-        console.log(rowObj)
+        const rowObj = this.props.candidateData; 
         return (
             <div className="expandableRow">
                 {this.state.redirectCandidate && <Redirect to={'/recruiter/jobList/'+this.props.candidateData.candidate_id}/>}
                 <div className="candidateListItem" onClick={this.toggle.bind(this)}>  
+                    {rowObj.coins_spent > 0 && <div className="coinContainer"><span className="coinAmount">{rowObj.coins_spent}</span></div> }
                     <div className="nameContainer">{rowObj.first_name} {rowObj.last_name} 
-                        {rowObj.coins_spent > 0 && <div className="coinContainer"><span className="coinAmount">{rowObj.coins_spent}</span></div> }
                     </div>
                     {rowObj.new_accepted_count > 0 ? <div className="acceptedCount" title={rowObj.new_accepted_count+" New Postings Accepted"}>{/* rowObj.new_accepted_count */}</div> : ""}
                     {rowObj.new_not_accepted_count > 0 ? <div className="notAcceptedCount" title={rowObj.new_not_accepted_count+" New Postings Not Accepted"}>{/* rowObj.new_not_accepted_count */}</div> : ""}
@@ -79,7 +78,7 @@ class ExpandableRow extends React.Component{
                                     <p className="email_icon"><span className="heading">Email:</span> {rowObj.email}</p>
                                     <p className="experience_icon"><span className="heading">Created:</span> {rowObj.created}</p>
                                     <p className="tags_icon"><span className="heading">Experience:</span> {rowObj.experience_type_name}</p>
-                                    <p className="tags_icon">{rowObj.tag_names && <div className="rowMargin"><span className="heading">Tags:</span> {rowObj.tag_names.join(", ")}</div>}</p>
+                                    <p className="tags_icon">{rowObj.tag_names && <span className="rowMargin"><span className="heading">Tags:</span> {rowObj.tag_names.join(", ")}</span>}</p>
                                     <p className="posted_icon"><span className="heading">Posted to Job:</span> {rowObj.posted_count} time(s)</p>
                                 </div>
                                 <img className="candidate_image" src="http://placehold.it/100x100" alt="" />
@@ -89,22 +88,22 @@ class ExpandableRow extends React.Component{
                         </div>
                         <div className="flexColumn">
                             <div className="flex-item"> 
-                                    <p><span className="heading">Accepted by Postings:</span> {rowObj.accepted_count} time(s)</p>
-                                    <p><span className="heading">Not Accepted by Postings:</span> {rowObj.not_accepted_count} time(s)</p> 
+                                <p><span className="heading">Accepted by Postings:</span> {rowObj.accepted_count} time(s)</p>
+                                <p><span className="heading">Not Accepted by Postings:</span> {rowObj.not_accepted_count} time(s)</p> 
 
-                                    <div className="resumeButtons">
-                                        {rowObj.resume_id != null && <div className="rowButton" onClick={this.getResumeURL}>View Resume</div>}
-                                        <div className="rowButton" onClick={this.showUpload}>Upload Resume</div>
-                                    </div>
-                                    {this.props.postData && <div className="resumeButtons"><div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div></div>}
-                                    {this.state.showPostJob && <Overlay
-                                                                    html={<PostCandidateToJob candidate={this.props.candidateData} job={this.props.postData} handleClose={()=>this.setState({showPostJob:false})} />}  
-                                                                    handleClose={()=>this.setState({showPostJob:false})} 
-                                                                    config={this.state.overlayConfig}
-                                                                />}
-                                    
-                                    {this.state.showUpload && <UploadResume id={rowObj.candidate_id} handleClose={this.handleClose} />}
-                                </div> 
+                                <div className="resumeButtons">
+                                    {rowObj.resume_id != null && <div className="rowButton" onClick={this.getResumeURL}>View Resume</div>}
+                                    <div className="rowButton" onClick={this.showUpload}>Upload Resume</div>
+                                </div>
+                                {this.props.postData && <div className="resumeButtons"><div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div></div>}
+                                {this.state.showPostJob && <Overlay
+                                                                html={<PostCandidateToJob candidate={this.props.candidateData} job={this.props.postData} handleClose={()=>this.setState({showPostJob:false})} />}  
+                                                                handleClose={()=>this.setState({showPostJob:false})} 
+                                                                config={this.state.overlayConfig}
+                                                            />}
+                                
+                                {this.state.showUpload && <UploadResume id={rowObj.candidate_id} handleClose={this.handleClose} />}
+                            </div> 
                         </div>
                     </div>
 

@@ -3,6 +3,7 @@ import './JobList.css';
 import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
 import ApiCalls from '../../../ApiCalls';  
+import { NavLink } from 'react-router-dom';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import ReactPaginate from 'react-paginate';
@@ -73,12 +74,12 @@ class JobList extends React.Component{
         });
     };
     
-    render(){
+    render(){ 
         return (
             <React.Fragment>
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
-                <div className='jobListClassContainer'>
-                    <div className="pageHeading">Active Jobs Postings {this.state.candidateData?" - For: "+this.state.candidateData.first_name + " " + this.state.candidateData.last_name:''}</div> 
+                <div className='jobListClassContainer'> 
+                   <div className="pageHeading">Active Jobs Postings {this.state.candidateData? <NavLink to="/recruiter/candidateList/"><div className="candidateSearched">For: {this.state.candidateData.first_name + " " + this.state.candidateData.last_name}</div></NavLink> : ""}</div>
                     {
                         this.state.jobList ?
                             <div className="jobListContainer">
