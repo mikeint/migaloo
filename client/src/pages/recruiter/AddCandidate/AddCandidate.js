@@ -1,6 +1,5 @@
 import React from 'react';
-import './AddCandidate.css'; 
-import { Redirect } from 'react-router-dom';
+import './AddCandidate.css';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import ApiCalls from '../../../ApiCalls';  
 

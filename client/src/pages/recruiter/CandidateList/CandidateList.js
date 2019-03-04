@@ -23,7 +23,8 @@ class CandidateList extends React.Component{
             postId: props.match.params.postId,
             page: 1,
             pageCount: 1,
-            postData: null
+            postData: null,
+            searchTerm:'',
         };
         this.Auth = new AuthFunctions();
     }
@@ -53,8 +54,14 @@ class CandidateList extends React.Component{
           e.target.classList.remove('animate');
         },700);
     };
-      
-
+ 
+    isSearched = (searchTerm) => item =>
+        item.make.toLowerCase().includes(searchTerm.toLowerCase());
+        
+ 
+    onSearchChange = (event) => { 
+        this.setState({ searchTerm: event.target.value });
+    }
 
 
     getCandidateList = () => {
@@ -91,9 +98,19 @@ class CandidateList extends React.Component{
                         <div className="pageHeading">Candidates {this.state.postData?" - For: "+this.state.postData.title:''} <button className="addBtn" onClick={() => this.callOverlay()}></button></div> 
                         {
                             this.state.candidateList ?
-                                <div className="candidateList">
+                                <div className="candidateList"> 
+                                    <input
+                                        className="searchCandidateList"
+                                        name={name}
+                                        type="text"
+                                        value={this.state.searchTerm}
+                                        placeholder="Search"
+                                        onChange={this.onSearchChange}
+                                    /> 
+                                    
                                     {
-                                        this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData}></ExpandableRow>})
+                                        this.state.candidateList.filter(() => this.isSearched(this.state.searchTerm)).map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData}></ExpandableRow>})
+                                         
                                     }
                                     <div className="paginationContainer">
                                         <ReactPaginate

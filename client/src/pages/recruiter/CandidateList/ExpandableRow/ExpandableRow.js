@@ -80,7 +80,7 @@ class ExpandableRow extends React.Component{
                                     <p className="tags_icon">{rowObj.tag_names && <div className="rowMargin"><span className="heading">Tags:</span> {rowObj.tag_names.join(", ")}</div>}</p>
                                     <p className="posted_icon"><span className="heading">Posted to Job:</span> {rowObj.posted_count} time(s)</p>
                                 </div>
-                                <img className="candidate_image" src="http://placehold.it/100x100"/>
+                                <img className="candidate_image" src="http://placehold.it/100x100" alt="" />
                             </div> 
                               
                             <div className="rowButton" onClick={this.searchJobsForCandidates}>Search Jobs</div>
