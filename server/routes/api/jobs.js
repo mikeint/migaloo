@@ -17,7 +17,9 @@ const postgresdb = require('../../config/db').postgresdb
  */
 router.get('/list', passport.authentication, getJobs);
 router.get('/list/:page', passport.authentication, getJobs);
+router.get('/list/:page/:search', passport.authentication, getJobs);
 function getJobs(req, res){
+    var search = req.params.search;
     var page = req.params.page;
     if(page == null)
         page = 1;
@@ -25,6 +27,9 @@ function getJobs(req, res){
     if(jwtPayload.userType != 1){
         return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
     }
+    var sqlArgs = [(page-1)*10]
+    if(search != null)
+        sqlArgs.push(search.split(' ').map(d=>d+":*").join(" & "))
     postgresdb.any('\
         SELECT j.employer_id, j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, \
             street_address_1, street_address_2, city, state, country, tag_ids, \
@@ -40,9 +45,15 @@ function getJobs(req, res){
             INNER JOIN tags t ON t.tag_id = pt.tag_id \
             GROUP BY post_id \
         ) tg ON tg.post_id = j.post_id \
-        ORDER BY j.created_on DESC \
+        '+
+        (search ? 
+            'WHERE (company_name_search @@ to_tsquery(\'simple\', $2)) \
+            ORDER BY ts_rank_cd(company_name_search, to_tsquery(\'simple\', $2)) DESC'
+        :
+            'ORDER BY j.created_on DESC'
+        )+' \
         OFFSET $1 \
-        LIMIT 10', [(page-1)*10])
+        LIMIT 10', sqlArgs)
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
@@ -70,7 +81,9 @@ function getJobs(req, res){
  */
 router.get('/listForCandidate/:candidateId', passport.authentication,  getJobsForCandidate);
 router.get('/listForCandidate/:candidateId/:page', passport.authentication,  getJobsForCandidate);
+router.get('/listForCandidate/:candidateId/:page/:search', passport.authentication,  getJobsForCandidate);
 function getJobsForCandidate(req, res){
+    var search = req.params.search;
     var page = req.params.page;
     if(page == null)
         page = 1;
@@ -96,6 +109,9 @@ function getJobsForCandidate(req, res){
             ) tg ON tg.candidate_id = rc.candidate_id \
             WHERE rc.recruiter_id = $1 AND c.candidate_id = $2', [jwtPayload.id, candidateId])
         .then(candidate_data=>{
+            var sqlArgs = [candidateId, (page-1)*10]
+            if(search != null)
+                sqlArgs.push(search.split(' ').map(d=>d+":*").join(" & "))
             return t.any('\
                 SELECT j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, j.employer_id, \
                     street_address_1, street_address_2, city, state, country, tag_ids, tag_names, \
@@ -129,9 +145,13 @@ function getJobsForCandidate(req, res){
                     WHERE ci.candidate_id = $1 \
                     GROUP BY j.post_id \
                 ) jc ON jc.post_id = j.post_id \
+                '+
+                (search ? 
+                    'WHERE (company_name_search @@ to_tsquery(\'simple\', $3))'
+                :'')+' \
                 ORDER BY tag_score DESC, j.created_on DESC \
                 OFFSET $2 \
-                LIMIT 10', [candidateId, (page-1)*10])
+                LIMIT 10', sqlArgs)
                 
                 // WHERE NOT EXISTS (SELECT 1 FROM candidate_posting cp WHERE cp.candidate_id = $1) \
             .then((data) => {

@@ -31,6 +31,16 @@
     line-height: 30px;
     box-shadow: 0px 0px 0px 1px #fff;
 }
+.jobListClassContainer .searchJobList {
+    width: 100%;
+    height: 45px;
+    font-size: 20px;
+    padding: 10px;
+    border: none; 
+    border-bottom: 1px solid #1a2b6d14;
+    border-radius: 0px;
+    outline:0;
+}
 .jobListClassContainer .jobListItem{ 
     padding: 15px 10px;
     font-size: 15px; 

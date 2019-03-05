@@ -4,6 +4,7 @@ import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
 import ApiCalls from '../../../ApiCalls';  
 import { NavLink } from 'react-router-dom';
+import debounce from 'lodash/debounce';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import ReactPaginate from 'react-paginate';
@@ -47,10 +48,10 @@ class JobList extends React.Component{
     }
 
 
-    getJobList = () => {
+    getJobList = (searchString) => {
         (this.state.candidateId?
-            ApiCalls.get('/api/jobs/listForCandidate/'+this.state.candidateId):
-            ApiCalls.get('/api/jobs/list/'+this.state.page))
+            ApiCalls.get('/api/jobs/listForCandidate/'+this.state.candidateId+'/'+this.state.page+(searchString?`/${searchString}`:'')):
+            ApiCalls.get('/api/jobs/list/'+this.state.page+(searchString?`/${searchString}`:'')))
         .then((res)=>{
             if(res.data.success){
                 const jobList = res.data.jobList;
@@ -65,6 +66,18 @@ class JobList extends React.Component{
         )
     }
 
+    onSearchChange = (event) => { 
+        this.queryForNames(event.target.value);
+    }
+
+    queryForNames = debounce((searchString) => {
+        searchString = searchString.trim()
+        if(searchString.length > 1){
+            this.getJobList(searchString)
+        }else{
+            this.getJobList()
+        }
+    }, 250)
 
     handlePageClick = data => {
         let selected = data.selected+1;
@@ -82,35 +95,44 @@ class JobList extends React.Component{
                    <div className="pageHeading">Active Jobs Postings {this.state.candidateData? <NavLink to="/recruiter/candidateList/"><div className="candidateSearched">For: {this.state.candidateData.first_name + " " + this.state.candidateData.last_name}</div></NavLink> : ""}</div>
                     {
                         this.state.jobList ?
-                            <div className="jobListContainer">
-                                {this.state.jobList.map((item, i) => {
-                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}>
-                                        <div className="jobInfo"><b>{item.company_name}</b> {item.title}</div>
-                                        <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
-                                        {item.tag_score?<span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>{parseInt(item.tag_score, 10)+"%"}</span>:''}
+                            <React.Fragment>
+                                <input
+                                    className="searchJobList"
+                                    name="searchTerm"
+                                    type="text"
+                                    placeholder="Search"
+                                    onChange={this.onSearchChange}
+                                /> 
+                                <div className="jobListContainer">
+                                    {this.state.jobList.map((item, i) => {
+                                        return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}>
+                                            <div className="jobInfo"><b>{item.company_name}</b> {item.title}</div>
+                                            <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
+                                            {item.tag_score?<span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>{parseInt(item.tag_score, 10)+"%"}</span>:''}
+                                        </div>
+                                    })}
+                                    <div className="paginationContainer">
+                                        <ReactPaginate
+                                            previousLabel={'Back'}
+                                            nextLabel={'Next'}
+                                            breakLabel={'...'}
+                                            breakClassName={'break-me'}
+                                            pageCount={this.state.pageCount}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={10}
+                                            onPageChange={this.handlePageClick}
+                                            containerClassName={'pagination'}
+                                            subContainerClassName={'pages pagination'}
+                                            activeClassName={'active'}
+                                            />
                                     </div>
-                                })}
-                                <div className="paginationContainer">
-                                    <ReactPaginate
-                                        previousLabel={'Back'}
-                                        nextLabel={'Next'}
-                                        breakLabel={'...'}
-                                        breakClassName={'break-me'}
-                                        pageCount={this.state.pageCount}
-                                        marginPagesDisplayed={2}
-                                        pageRangeDisplayed={10}
-                                        onPageChange={this.handlePageClick}
-                                        containerClassName={'pagination'}
-                                        subContainerClassName={'pages pagination'}
-                                        activeClassName={'active'}
-                                        />
+                                    {this.state.showOverlay && <Overlay
+                                                                    html={<BuildActiveJobs jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />}  
+                                                                    handleClose={this.callOverlay} 
+                                                                    config={this.state.overlayConfig}
+                                                                />}
                                 </div>
-                                {this.state.showOverlay && <Overlay
-                                                                html={<BuildActiveJobs jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />}  
-                                                                handleClose={this.callOverlay} 
-                                                                config={this.state.overlayConfig}
-                                                            />}
-                            </div>
+                            </React.Fragment>
                         :
                         <Loader />
                     } 

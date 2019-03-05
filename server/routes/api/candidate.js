@@ -198,7 +198,7 @@ function listCandidatesForJob(req, res){
         .then(job_data=>{
             var sqlArgs = [jwtPayload.id, postId, (page-1)*10]
             if(search != null)
-                sqlArgs.push(search+":*")
+                sqlArgs.push(search.split(' ').map(d=>d+":*").join(" & "))
             return t.any(' \
                 SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, et.experience_type_name, \
                     coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
