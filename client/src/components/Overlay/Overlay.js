@@ -1,6 +1,8 @@
 import React, { Component } from "react"; 
 import "./Overlay.css";
 import Swipe from 'react-easy-swipe';
+import {isMobile} from 'react-device-detect';
+
 
 class Overlay extends Component {
 
@@ -66,11 +68,10 @@ class Overlay extends Component {
                 <div className={this.state.open?"menu menu--animatable menu--visible":"menu menu--animatable"}> 
                     <div className={"app-menu app-menu_"+config.direction}> 
 
-                        {/* CUTCH: this fixed mobile animation issue, if you want to leave it because you run the app without the emulator on, then put the onClick on both */}
-                        {this.state.screenWidth > 1024 ?
-                            <Swipe className={"swiper swiper_"+config.swipeLocation} onSwipeEnd={this.toggleClassMenu.bind(this)} onClick={this.toggleClassMenu.bind(this)}></Swipe> 
-                        :
+                        {isMobile ?
                             <Swipe className={"swiper swiper_"+config.swipeLocation} onSwipeEnd={this.toggleClassMenu.bind(this)}></Swipe> 
+                        :
+                            <Swipe className={"swiper swiper_"+config.swipeLocation} onSwipeEnd={this.toggleClassMenu.bind(this)} onClick={this.toggleClassMenu.bind(this)}></Swipe> 
                         } 
 
                         {this.props.html}
