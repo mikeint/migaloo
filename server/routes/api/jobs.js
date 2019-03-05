@@ -114,8 +114,8 @@ function getJobsForCandidate(req, res){
                 \
                 INNER JOIN ( \
                     SELECT j.post_id, (COUNT(1) + \
-                        count(distinct CASE WHEN ci.experience_type_id = j.experience_type_id THEN ci.experience_type_id ELSE null END) + \
-                        greatest(5-abs(least(max(j.salary_type_id - ci.salary_type_id), 0)), 0)/5.0) as score, \
+                        (CASE WHEN count(j.experience_type_id) = 0 OR count(ci.experience_type_id) = 0 THEN 0 ELSE greatest(2-abs(least(max(j.experience_type_id - ci.experience_type_id), 0)), 0)/2.0 END) + \
+                        (CASE WHEN count(j.salary_type_id) = 0 OR count(ci.salary_type_id) = 0 THEN 0 ELSE greatest(5-abs(least(max(j.salary_type_id - ci.salary_type_id), 0)), 0)/5.0 END)) as score, \
                         ( \
                             SELECT COUNT(1)+count(distinct ci.experience_type_id)+count(distinct ci.salary_type_id) \
                             FROM candidate_tags cti \
