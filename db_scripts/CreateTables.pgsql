@@ -138,7 +138,7 @@ CREATE TRIGGER candidate_search_vector_update
 BEFORE INSERT OR UPDATE
 ON candidate
 FOR EACH ROW EXECUTE PROCEDURE
-tsvector_update_trigger (name_search, 'pg_catalog.english', last_name, first_name);
+tsvector_update_trigger (name_search, 'pg_catalog.simple', last_name, first_name);
 
 CREATE TABLE rate_candidate (
     candidate_id bigint REFERENCES candidate(candidate_id),

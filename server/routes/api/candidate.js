@@ -133,8 +133,8 @@ function listCandidates(req, res){
         WHERE rc.recruiter_id = $1 AND c.active \
         '+
         (search ? 
-            'AND (name_search @@ to_tsquery($3)) \
-            ORDER BY ts_rank_cd(name_search, to_tsquery($3)) DESC'
+            'AND (name_search @@ to_tsquery(\'simple\', $3)) \
+            ORDER BY ts_rank_cd(name_search, to_tsquery(\'simple\', $3)) DESC'
         :
             'ORDER BY c.last_name ASC, c.first_name ASC'
         )+' \
@@ -247,7 +247,7 @@ function listCandidatesForJob(req, res){
                 WHERE rc.recruiter_id = $1 AND c.active \
                 '+
                 (search ? 
-                    'AND (name_search @@ to_tsquery($3))'
+                    'AND (name_search @@ to_tsquery(\'simple\', $3))'
                 :'')+' \
                 ORDER BY tag_score DESC, c.last_name ASC, c.first_name ASC \
                 OFFSET $3 \

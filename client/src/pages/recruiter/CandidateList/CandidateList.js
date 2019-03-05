@@ -56,7 +56,7 @@ class CandidateList extends React.Component{
 
     queryForNames = debounce((searchString) => {
         searchString = searchString.trim()
-        if(searchString.length > 0){
+        if(searchString.length > 1){
             this.getCandidateList(searchString)
         }else{
             this.getCandidateList()
@@ -146,7 +146,7 @@ class CandidateList extends React.Component{
                                                     breakClassName={'break-me'}
                                                     pageCount={this.state.pageCount}
                                                     marginPagesDisplayed={2}
-                                                    pageRangeDisplayed={10}
+                                                    pageRangeDisplayed={8}
                                                     onPageChange={this.handlePageClick}
                                                     containerClassName={'pagination'}
                                                     subContainerClassName={'pages pagination'}
