@@ -85,7 +85,7 @@ class JobList extends React.Component{
                             <div className="jobListContainer">
                                 {this.state.jobList.map((item, i) => {
                                     return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}>
-                                        <div className="jobInfo">{item.title}</div>
+                                        <div className="jobInfo"><b>{item.company_name}</b> {item.title}</div>
                                         <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
                                         {item.tag_score?<span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>{parseInt(item.tag_score, 10)+"%"}</span>:''}
                                     </div>
