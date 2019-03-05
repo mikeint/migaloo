@@ -23,8 +23,8 @@ class App extends Component {
                         <PrivateEmployerRoute exact path="/employer" redirect="/employer/activeJobs" /> { /* Reroute to the first employer page */ }
                         <PrivateEmployerRoute strict path="/employer" component={EmployerRouter} />
                     </Switch>
-                    <Route exact path="/" component={Landing} />
                     <Route exact path='/login' render={ () => (<Login />) } />
+                    <Route exact path="/" component={Landing} />
                 </React.Fragment>
             </BrowserRouter> 
         );
