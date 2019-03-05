@@ -111,30 +111,48 @@
     vertical-align: top;  
 }
   
-.expandableRow .info-container p {
-    padding: 0;
-    margin: 0 0 15px;
-    padding-left: 30px; 
-    background-repeat: no-repeat; 
-    background-size: contain; 
+.expandableRow .info-container div {
+    margin: 2.5px;
 }
 
 .expandableRow .info-container .email_icon {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+    background-repeat: round;
     background-image: url('../../../../files/images/candidateIcons/email_icon.png'); 
 }
 .expandableRow .info-container .experience_icon {
-    padding: 0px 0px 7px 30px;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+    background-repeat: round;
     background-image: url('../../../../files/images/candidateIcons/experience_icon.png'); 
 }
 .expandableRow .info-container .tags_icon {
-    padding: 0px 0px 8px 30px;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+    background-repeat: round;
     background-image: url('../../../../files/images/candidateIcons/tags_icon.png'); 
 }
 .expandableRow .info-container .posted_icon {
-    padding: 0px 0px 3px 30px;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+    background-repeat: round;
     background-image: url('../../../../files/images/candidateIcons/posted_icon.png'); 
 }
 .expandableRow .info-container .email_icon {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+    background-repeat: round;
     background-image: url('../../../../files/images/candidateIcons/email_icon.png'); 
 }
 

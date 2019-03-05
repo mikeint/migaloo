@@ -74,11 +74,11 @@ class ExpandableRow extends React.Component{
                         <div className="flexColumn">
                             <div className="flex-item">
                                 <div className="info-container">
-                                    <p className="email_icon"><span className="heading">Email:</span> {rowObj.email}</p>
-                                    <p className="experience_icon"><span className="heading">Created:</span> {rowObj.created}</p>
-                                    <p className="tags_icon"><span className="heading">Experience:</span> {rowObj.experience_type_name}</p>
-                                    <p className="tags_icon">{rowObj.tag_names && <span className="rowMargin"><span className="heading">Tags:</span> {rowObj.tag_names.join(", ")}</span>}</p>
-                                    <p className="posted_icon"><span className="heading">Posted to Job:</span> {rowObj.posted_count} time(s)</p>
+                                    <div><span className="email_icon"></span><span className="heading">Email:</span> {rowObj.email}</div>
+                                    <div><span className="experience_icon"></span><span className="heading">Created:</span> {rowObj.created}</div>
+                                    <div><span className="tags_icon"></span><span className="heading">Experience:</span> {rowObj.experience_type_name}</div>
+                                    <div><span className="tags_icon"></span>{rowObj.tag_names && <span className="rowMargin"><span className="heading">Tags:</span> {rowObj.tag_names.join(", ")}</span>}</div>
+                                    <div><span className="posted_icon"></span><span className="heading">Posted to Job:</span> {rowObj.posted_count} time(s)</div>
                                 </div>
                                 <img className="candidate_image" src="http://placehold.it/100x100" alt="" />
                             </div> 

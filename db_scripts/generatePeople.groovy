@@ -1,7 +1,10 @@
+@Grab( 'commons-lang:commons-lang:2.6' )
+import org.apache.commons.lang.StringEscapeUtils
+
 import groovy.json.JsonSlurper
 def dbscriptsPath = "C:\\Users\\marcuccm\\git\\hireRanked\\db_scripts\\"
 def jobTitles = new JsonSlurper().parseText(new File("${dbscriptsPath}jobTitles.json").text.replaceAll(/'/, "''"))
-def jobDescriptions = new File("${dbscriptsPath}jobDescriptions.txt").readLines().collect{it.replaceAll(/'/, "''")}
+def jobDescriptions = new File("${dbscriptsPath}jobDescriptions.txt").readLines().collect{StringEscapeUtils.unescapeHtml(it.replaceAll(/'/, "''"))}
 def lines = new File("${dbscriptsPath}FakeNames.txt").readLines()
 def out = new File("${dbscriptsPath}fakeData.pgsql")
 def addressQuery = "INSERT INTO address (address_id, street_address_1, city, state, country, lat_lon) VALUES \n\t"
