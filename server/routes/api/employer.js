@@ -99,7 +99,7 @@ router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
     postgresdb.tx(t => {
         var fields = ['company_name'];
         var addressFields = ['street_address_1', 'street_address_2', 'city', 'state', 'country'];
-        return t.one('SELECT employer_id, first_name, last_name, phone_number, company_name, e.address_id, street_address_1, street_address_2, city, state, country \
+        return t.one('SELECT ec.employer_id, first_name, last_name, phone_number, company_name, e.address_id, street_address_1, street_address_2, city, state, country \
                         FROM employer e \
                         INNER JOIN employer_contact ec ON ec.employer_id = e.employer_id AND ec.isAdmin \
                         LEFT JOIN address a ON e.address_id = a.address_id\
@@ -149,6 +149,197 @@ router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
         return res.status(500).json({success: false, error:err})
     });
 });
+
+/**
+ * Add a new contact to an employer
+ * @route POST api/employer/addContactToEmployer
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - An array of user info
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/addContactToEmployer', passport.authentication,  (req, res) => {
+    // const { errors, isValid } = validateEmployerInput(req.body);
+    //check Validation
+    // if(!isValid) {
+    //     return res.status(400).json(errors);
+    // }
+    /**
+     * Input: Must be admin
+     * userId or email
+     * firstName
+     * lastName
+     * phoneNumber
+     * isAdmin (Optional)
+     */
+    var bodyData = req.body;
+    var jwtPayload = bodyData.jwtPayload;
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an employer for this"})
+    }
+
+    postgresdb.tx(t => {
+        return t.one('SELECT ec.employer_id \
+                        FROM employer_contact ec ON ec.employer_id \
+                        WHERE ec.employer_contact_id = $1 AND ec.employerId = $2 AND ec.isAdmin', [jwtPayload.id, jwtPayload.employerId])
+            .then(()=>{
+                // creating a sequence of transaction queries:
+                return t.one('INSERT INTO login (email, user_type_id) VALUES ($1, $2) RETURNING user_id',
+                    [body.email, 2])
+                .then((login_ret)=>{
+                    console.log(login_ret)
+                    return t.none('INSERT INTO employer_contact (employer_contact_id, employer_id, first_name, last_name, phone_number, isAdmin) VALUES ($1, $2, $3, $4, $5, $6)',
+                        [login_ret.user_id, jwtPayload.employerId, body.firstName, body.lastName, body.phoneNumber, body.isAdmin?true:false])
+                    .then(()=>{
+                        // TODO: send request email to contact to make a password
+                        res.status(200).json({success: true})
+                        return []
+                    })
+                    .catch(err => {
+                        console.log(err)
+                        res.status(400).json({success: false, error:err})
+                    });
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.status(400).json({success: false, error:err})
+                });
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).json({success: false, error:"Either not with this employer, or not an admin"})
+            });
+    })
+    .then(() => {
+        console.log("Done TX")
+    }).catch((err)=>{
+        console.log(err) // Not an admin
+        return res.status(500).json({success: false, error:err})
+    });
+});
+
+/**
+ * Change contact's admin status
+ * @route POST api/employer/setContactAdmin
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - An array of user info
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/setContactAdmin', passport.authentication,  (req, res) => {
+    // const { errors, isValid } = validateEmployerInput(req.body);
+    //check Validation
+    // if(!isValid) {
+    //     return res.status(400).json(errors);
+    // }
+    /**
+     * Input: Must be admin
+     * userId
+     * isAdmin
+     */
+    var bodyData = req.body;
+    var jwtPayload = bodyData.jwtPayload;
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an employer for this"})
+    }
+    
+    var userId = req.body.userId
+    if(userId == null)
+        return res.status(400).json({success:false, error:"Missing userId field"})
+    var isAdmin = req.body.isAdmin
+    if(isAdmin == null)
+        return res.status(400).json({success:false, error:"Mssing isAdmin field"})
+
+    postgresdb.tx(t => {
+        return t.one('SELECT ec.employer_id \
+                        FROM employer_contact ec ON ec.employer_id \
+                        WHERE ec.employer_contact_id = $1 AND ec.employerId = $2 AND ec.isAdmin', [jwtPayload.id, jwtPayload.employerId])
+            .then(()=>{
+                return t.none('UPDATE employer_contact SET isAdmin=$1 WHERE employer_contact_id = $2',
+                    [isAdmin, userId])
+                .then(()=>{
+                    // TODO: send request email to contact to make a password
+                    res.status(200).json({success: true})
+                    return []
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.status(400).json({success: false, error:err})
+                });
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).json({success: false, error:"Either not with this employer, or not an admin"})
+            });
+    })
+    .then(() => {
+        console.log("Done TX")
+    }).catch((err)=>{
+        console.log(err) // Not an admin
+        return res.status(500).json({success: false, error:err})
+    });
+});
+
+/**
+ * Get employer contact list
+ * @route GET api/employer/getEmployerContactList
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - A list of contacts
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/getEmployerContactList', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an employer for this"})
+    }
+    
+    postgresdb.tx(t => {
+        return t.one('SELECT ec.employer_id \
+                        FROM employer_contact ec ON ec.employer_id \
+                        WHERE ec.employer_contact_id = $1 AND ec.employerId = $2 AND ec.isAdmin', [jwtPayload.id, jwtPayload.employerId])
+            .then(()=>{
+                return t.any('\
+                    SELECT ec.email, ec.first_name, ec.last_name, \
+                        ec.phone_number, ec.image_id, l.created_on, \
+                        a.street_address_1, a.street_address_2, a.city, a.state, a.country, ec.isAdmin, \
+                        (CASE WHEN l.passwordhash IS NULL THEN false ELSE true END) as account_active \
+                    FROM employer e \
+                    INNER JOIN employer_contact ec ON ec.employer_id = e.employer_id \
+                    INNER JOIN login l ON l.user_id = ec.employer_contact_id \
+                    LEFT JOIN address a ON a.address_id = e.address_id \
+                    WHERE e.employer_id = $1', [jwtPayload.employerId])
+                .then((data) => {
+                    // Marshal data
+                    data = data.map(m=>{
+                        var timestamp = moment(m.created_on);
+                        var ms = timestamp.diff(moment());
+                        m.created = moment.duration(ms).humanize() + " ago";
+                        m.created_on = timestamp.format("x");
+                        return m
+                    })
+                    res.status(400).json({success: true, contactList:data})
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.status(400).json({success: false, error:err})
+                });
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).json({success: false, error:"Either not with this employer, or not an admin"})
+            });
+    })
+    .then((data) => { })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json({success: false, error:err})
+    });
+});
+
 /**
  * Set employer profile information
  * @route POST api/employer/setProfile
