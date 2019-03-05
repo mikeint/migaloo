@@ -62,11 +62,19 @@ CREATE TABLE employer (
     employer_id bigserial REFERENCES login(user_id),
     address_id bigint REFERENCES address(address_id),
     company_name  varchar(128) NULL,
+    company_name_search tsvector,
     image_id varchar(128),
     active boolean default true,
     rating float default null,
     PRIMARY KEY(employer_id)
 );
+CREATE INDEX employer_tsv_idx ON employer USING gin(company_name_search);
+CREATE TRIGGER employer_search_vector_update
+BEFORE INSERT OR UPDATE
+ON employer
+FOR EACH ROW EXECUTE PROCEDURE
+tsvector_update_trigger (company_name_search, 'pg_catalog.simple', company_name);
+
 CREATE TABLE rate_employer (
     employer_id bigint REFERENCES employer(employer_id),
     user_id bigint REFERENCES login(user_id),
