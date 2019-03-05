@@ -10,8 +10,8 @@ const handleErrors = (errors) => {
         case 404: // Not found
             console.log(`Route ${errors.response.config.url} does not exist`);
             // Until webpack is used this also means we were logged out
-            if(errors.response.data.indexOf("GET /login"))
-                window.open("/login")
+            if(errors.response.data.indexOf("GET /login") !== -1)
+                window.location.assign("/login")
             break;
         default:
     }
