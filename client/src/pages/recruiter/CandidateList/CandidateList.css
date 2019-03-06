@@ -21,7 +21,6 @@
 }
 .candidateListContainer .candidateList {
     width: 100%;
-    float: left;
     position: relative;
     padding-bottom: 60px;
 }

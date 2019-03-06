@@ -95,7 +95,7 @@ class JobList extends React.Component{
         this.setState({index: value});
     };
     handleChangeIndexTab = index => {
-        this.setState({index});
+        this.setState({index:index, page:1});
     };
     /* end FOR CHANGING TABS */
     
@@ -123,8 +123,68 @@ class JobList extends React.Component{
                                     onChange={this.onSearchChange}
                                 /> 
                                 <div className="jobListContainer">
-                                    </div>
-                                            />
+                                    <SwipeableViews enableMouseEvents index={this.state.index} onChangeIndex={this.handleChangeIndexTab}> 
+                                        <React.Fragment> 
+                                            {
+                                                this.state.jobList.map((item, i) => {
+                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}> 
+                                                        <div className="jobInfo"> 
+                                                            <b>{item.company_name}</b>  
+                                                            <div className="jobShortDesc">{item.title}</div> 
+                                                            {
+                                                                item.tag_score &&
+                                                                    <span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>
+                                                                        {parseInt(item.tag_score, 10)+"%"}
+                                                                    </span>
+                                                            }
+                                                            <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
+                                                        </div> 
+                                                    </div> 
+                                                })
+                                            }
+                                        </React.Fragment>
+                                        <React.Fragment> 
+                                            {
+                                                this.state.jobList.map((item, i) => {
+                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}> 
+                                                        <div className="jobInfo"> 
+                                                            <b>{item.company_name}</b>  
+                                                            <div className="jobShortDesc">{item.title}</div> 
+                                                            {
+                                                                item.tag_score &&
+                                                                    <span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>
+                                                                        {parseInt(item.tag_score, 10)+"%"}
+                                                                    </span>
+                                                            }
+                                                            <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
+                                                        </div> 
+                                                    </div> 
+                                                })
+                                            }
+                                        </React.Fragment>
+                                        
+                                        <React.Fragment> 
+                                            {
+                                                this.state.jobList.map((item, i) => {
+                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}> 
+                                                        <div className="jobInfo"> 
+                                                            <b>{item.company_name}</b>  
+                                                            <div className="jobShortDesc">{item.title}</div> 
+                                                            {
+                                                                item.tag_score &&
+                                                                    <span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>
+                                                                        {parseInt(item.tag_score, 10)+"%"}
+                                                                    </span>
+                                                            }
+                                                            <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
+                                                        </div> 
+                                                    </div> 
+                                                })
+                                            }
+                                        </React.Fragment>
+                                    </SwipeableViews>
+                                    <div className="paginationContainer"> 
+                                        <Pagination
                                             activeClass={'active'}
                                             innerClass={'pagination'}
                                             onChange={this.handlePageClick}
@@ -136,32 +196,14 @@ class JobList extends React.Component{
                                             firstPageText={'First'}
                                             nextPageText={'Next'}
                                             prevPageText={'Back'}
-                                        <Pagination
-                                    <div className="paginationContainer">
-                                            })} 
-                                                </div>
-                                                    {item.tag_score?<span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>{parseInt(item.tag_score, 10)+"%"}</span>:''}
-                                                    <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
-                                                    </div>
-                                                        <div className="jobShortDesc">{item.title}</div>
-                                                        <b>{item.company_name}</b> 
-                                                    <div className="jobInfo">
-                                                return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}>
-                                            {this.state.jobList.map((item, i) => {
-                                        <React.Fragment>
-                                    <SwipeableViews enableMouseEvents index={this.state.index} onChangeIndex={this.handleChangeIndexTab}>
-
-                                        </React.Fragment>
-
-                                        <div style={Object.assign({})}>slide n°2</div>
-                                        <div style={Object.assign({})}>slide n°3</div>
-                                    </SwipeableViews>
-                                    {this.state.showOverlay && <Overlay
-                                                                    html={<BuildActiveJobs jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />}  
-                                                                    handleClose={this.callOverlay} 
-                                                                    config={this.state.overlayConfig}
-                                                                />}
+                                        />
+                                    </div>
                                 </div>
+                                {this.state.showOverlay && <Overlay
+                                                                html={<BuildActiveJobs jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />}  
+                                                                handleClose={this.callOverlay} 
+                                                                config={this.state.overlayConfig}
+                                                            />}
                             </React.Fragment>
                         :
                         <Loader />

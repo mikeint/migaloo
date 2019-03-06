@@ -99,9 +99,6 @@ class CandidateList extends React.Component{
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
  
                     <div className='candidateListContainer'>
- 
-  
-
                         <div className="pageHeading">
                             Candidates 
                             <button className="addBtn" onClick={() => this.callOverlay()}></button> 
@@ -116,29 +113,27 @@ class CandidateList extends React.Component{
                                         name="searchTerm"
                                         type="text"
                                         placeholder="Search"
-                                        onChange={this.onSearchChange}
-                                            </div>
-                                            <div className="paginationContainer">
-                                                    />
-                                                    activeClass={'active'}
-                                                    innerClass={'pagination'}
-                                                    onChange={this.handlePageClick}
-                                                    pageRangeDisplayed={10}
-                                                    marginPagesDisplayed={0}
-                                                    activePage={this.state.page}
-                                                    totalItemsCount={this.state.pageCount*10}
-                                                    lastPageText={'Last'}
-                                                    firstPageText={'First'}
-                                                    nextPageText={'Next'}
-                                                    prevPageText={'Back'}
-                                                <Pagination
-                                        }
-                                            this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData} candidateId={this.state.candidateId}></ExpandableRow>})
-                                        { 
+                                        onChange={this.onSearchChange}/>
                                     <div className="candidateList" style={Object.assign({})}>  
-                                    />  
-                                        </div>
+                                    {
+                                        this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData} candidateId={this.state.candidateId}></ExpandableRow>})
+                                    }
                                     </div> 
+                                    <div className="paginationContainer">
+                                        <Pagination
+                                            activeClass={'active'}
+                                            innerClass={'pagination'}
+                                            onChange={this.handlePageClick}
+                                            pageRangeDisplayed={10}
+                                            marginPagesDisplayed={0}
+                                            activePage={this.state.page}
+                                            totalItemsCount={this.state.pageCount*10}
+                                            lastPageText={'Last'}
+                                            firstPageText={'First'}
+                                            nextPageText={'Next'}
+                                            prevPageText={'Back'}
+                                            />
+                                    </div>
                                 </React.Fragment>
                             :
                             <Loader />
