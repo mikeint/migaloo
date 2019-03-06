@@ -136,7 +136,7 @@ function listCandidates(req, res){
         ) cpd ON cpd.candidate_id = c.candidate_id\
         WHERE rc.recruiter_id = $1 AND c.active \
         '+
-        (candidateId ? 'AND c.candidate_id = $3' :
+        (candidateId ? 'ORDER BY (CASE WHEN c.candidate_id = $3 THEN 1 ELSE 0 END) DESC, c.last_name ASC, c.first_name ASC' :
         (search ? 
             'AND (name_search @@ to_tsquery(\'simple\', $3)) \
             ORDER BY ts_rank_cd(name_search, to_tsquery(\'simple\', $3)) DESC'
