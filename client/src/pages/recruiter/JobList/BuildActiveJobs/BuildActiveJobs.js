@@ -50,7 +50,7 @@ class BuildActiveJobs extends React.Component{
 
     setFavourite = () => { 
         var element = document.getElementById("card-object");  
-        if (element.classList === "favourite-flip" || element.classList === "favourite-flip flip-back") { 
+        if (element.classList == "favourite-flip" || element.classList == "favourite-flip flip-back") { 
             element.classList.remove("flip-back"); 
             element.classList.add("favourite-flip-scale"); 
         } else { 
