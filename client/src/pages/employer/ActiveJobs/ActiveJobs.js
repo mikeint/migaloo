@@ -7,7 +7,7 @@ import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
-import ReactPaginate from 'react-paginate';
+import Pagination from "react-js-pagination";
 import '../../../constants/AnimateHROverlay'; 
 
 class ActiveJobs extends React.Component{
@@ -60,9 +60,7 @@ class ActiveJobs extends React.Component{
         this.getJobList();
     }
 
-    handlePageClick = data => {
-        let selected = data.selected+1;
-    
+    handlePageClick = selected => {
         this.setState({ page: selected }, () => {
             this.getJobList();
         });
@@ -90,18 +88,18 @@ class ActiveJobs extends React.Component{
                                     })
                                 }
                                 <div className="paginationContainer">
-                                    <ReactPaginate
-                                        previousLabel={'Back'}
-                                        nextLabel={'Next'}
-                                        breakLabel={'...'}
-                                        breakClassName={'break-me'}
-                                        pageCount={this.state.pageCount}
-                                        marginPagesDisplayed={2}
+                                    <Pagination
+                                        prevPageText={'Back'}
+                                        nextPageText={'Next'}
+                                        firstPageText={'First'}
+                                        lastPageText={'Last'}
+                                        activePage={this.state.page}
+                                        totalItemsCount={this.state.pageCount*10}
+                                        marginPagesDisplayed={0}
                                         pageRangeDisplayed={10}
-                                        onPageChange={this.handlePageClick}
-                                        containerClassName={'pagination'}
-                                        subContainerClassName={'pages pagination'}
-                                        activeClassName={'active'}
+                                        onChange={this.handlePageClick}
+                                        innerClass={'pagination'}
+                                        activeClass={'active'}
                                         />
                                 </div>
                                 {this.state.showOverlay && <Overlay

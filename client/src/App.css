@@ -210,11 +210,14 @@ a {
 .paginationContainer a {
     display: inline-block;
     padding: 15px 15px;
+    min-width: 48px;
     cursor: pointer;
     outline: 0;
+    color: black;
 }
 .paginationContainer a:hover {
     background-color: #3b5fff;
+    color: black;
 }
 .paginationContainer .active {
     background-color: #1a2b6d2e;

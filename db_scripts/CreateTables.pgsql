@@ -1,5 +1,3 @@
-
-DROP TRIGGER IF EXISTS candidate_search_vector_update ON candidate;
 DROP VIEW user_master;
 DROP TABLE rate_employer;
 DROP TABLE rate_recruiter;
@@ -68,6 +66,7 @@ CREATE TABLE employer (
     rating float default null,
     PRIMARY KEY(employer_id)
 );
+CREATE INDEX employer_active_idx ON employer(active);
 CREATE INDEX employer_tsv_idx ON employer USING gin(company_name_search);
 CREATE TRIGGER employer_search_vector_update
 BEFORE INSERT OR UPDATE
@@ -90,8 +89,17 @@ CREATE TABLE employer_contact (
     image_id varchar(128),
     active boolean default true,
     isAdmin boolean default false,
+    name_search tsvector,
     PRIMARY KEY(employer_contact_id)
 );
+CREATE INDEX employer_contact_order_idx ON employer_contact(last_name ASC, first_name ASC);
+CREATE INDEX employer_contact_active_idx ON employer_contact(active);
+CREATE INDEX employer_contact_tsv_idx ON employer_contact USING gin(name_search);
+CREATE TRIGGER employer_contact_search_vector_update
+BEFORE INSERT OR UPDATE
+ON employer_contact
+FOR EACH ROW EXECUTE PROCEDURE
+tsvector_update_trigger (name_search, 'pg_catalog.simple', last_name, first_name);
 
 CREATE TABLE recruiter (
     recruiter_id bigint REFERENCES login(user_id),
@@ -122,6 +130,7 @@ CREATE TABLE job_posting (
     active boolean default true,
     PRIMARY KEY(post_id)
 );
+CREATE INDEX job_posting_active_idx ON job_posting(active);
 CREATE TABLE job_posting_contact (
     post_id bigint REFERENCES job_posting(post_id),
     employer_contact_id bigint REFERENCES employer_contact(employer_contact_id),
@@ -141,6 +150,8 @@ CREATE TABLE candidate (
     name_search tsvector,
     PRIMARY KEY(candidate_id)
 );
+CREATE INDEX candidate_order_idx ON candidate(last_name ASC, first_name ASC);
+CREATE INDEX candidate_active_idx ON candidate(active);
 CREATE INDEX candidate_tsv_idx ON candidate USING gin(name_search);
 CREATE TRIGGER candidate_search_vector_update
 BEFORE INSERT OR UPDATE
@@ -295,6 +306,11 @@ INSERT INTO login (user_id, email, passwordhash, created_on, user_type_id) VALUE
     (3, 'r3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-12-25 10:23:54', 1), -- Add Recruiter, pass: test
     (100, 'e1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-01-21 10:23:54', 2), -- Add Employer, pass: test
     (101, 'e2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
+    (102, 'e3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
+    (103, 'e4@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
+    (104, 'e5@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
+    (105, 'e6@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
+    (106, 'e7@test.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
     (500, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4), -- Dummy Employer, pass: test
     (501, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4); -- Dummy Employer, pass: test
 INSERT INTO login (user_id, email, created_on, user_type_id) VALUES 
@@ -316,7 +332,12 @@ INSERT INTO employer (employer_id, company_name, address_id) VALUES
     (501, 'Microsoft Inc.', 2);
 INSERT INTO employer_contact (employer_contact_id, employer_id, first_name, last_name, phone_number, isAdmin) VALUES
     (100, 500, 'Steve', 'Smith', '905-555-8942', true), 
-    (101, 501, 'Jerry', 'McGuire', '905-555-0425', true);
+    (101, 501, 'Jerry', 'McGuire', '905-555-0425', true),
+    (102, 500, 'Tom', 'McInly', '905-555-7624', false),
+    (103, 500, 'Arnold', 'Stone', '905-555-0786', false),
+    (104, 500, 'Adam', 'Steal', '905-555-9782', false),
+    (105, 500, 'Kelly', 'Rogers', '905-555-6456', false),
+    (106, 500, 'Rebecca', 'Brown', NULL, false);
 INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, coins, address_id) VALUES
     (1, 'John', 'Macabee', '443-555-8234', 25, 3),
     (2, 'Milton', 'Walker', '443-555-6456', 50, 4),

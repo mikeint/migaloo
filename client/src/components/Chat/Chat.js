@@ -3,7 +3,7 @@ import "./Chat.css";
 import AuthFunctions from '../../AuthFunctions'; 
 import ApiCalls from '../../ApiCalls';  
 import ConversationRow from "./ConversationRow/ConversationRow"; 
-import ReactPaginate from 'react-paginate';
+import Pagination from "react-js-pagination";
 import Loader from "../Loader/Loader";
 
 class Chat extends Component {
@@ -29,9 +29,7 @@ class Chat extends Component {
             console.log(errors.response.data)
         )
     }
-    handlePageClick = data => {
-        let selected = data.selected+1;
-    
+    handlePageClick = selected => {
         this.setState({ page: selected }, () => {
             this.getConversationList();
         });
@@ -50,18 +48,18 @@ class Chat extends Component {
                         : <Loader/>
                     }
                     <div className="paginationContainer">
-                        <ReactPaginate
-                            previousLabel={'Back'}
-                            nextLabel={'Next'}
-                            breakLabel={'...'}
-                            breakClassName={'break-me'}
-                            pageCount={this.state.pageCount}
-                            marginPagesDisplayed={2}
+                        <Pagination
+                            prevPageText={'Back'}
+                            nextPageText={'Next'}
+                            firstPageText={'First'}
+                            lastPageText={'Last'}
+                            activePage={this.state.page}
+                            totalItemsCount={this.state.pageCount*10}
+                            marginPagesDisplayed={0}
                             pageRangeDisplayed={10}
-                            onPageChange={this.handlePageClick}
-                            containerClassName={'pagination'}
-                            subContainerClassName={'pages pagination'}
-                            activeClassName={'active'}
+                            onChange={this.handlePageClick}
+                            innerClass={'pagination'}
+                            activeClass={'active'}
                             />
                     </div>
                 </div>

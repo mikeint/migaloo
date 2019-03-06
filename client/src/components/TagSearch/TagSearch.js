@@ -2,7 +2,7 @@ import React from 'react';
 import AuthFunctions from '../../AuthFunctions'; 
 import './TagSearch.css';    
 import debounce from 'lodash/debounce';
-import axios from 'axios';
+import ApiCalls from '../../ApiCalls';  
 import Loader from '../Loader/Loader'; 
 
 class TagSearch extends React.Component{ 
@@ -21,9 +21,6 @@ class TagSearch extends React.Component{
         this.textInput = React.createRef();
         this.tagListBox = React.createRef();
         this.Auth = new AuthFunctions();
-        this.axiosConfig = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
         this.inputPlaceholder = "Ex. Leadership, Agile, Project Management"
         
     }
@@ -39,7 +36,7 @@ class TagSearch extends React.Component{
     queryForTags = debounce((searchString) => {
         if(searchString.trim().length > 0){
             const lowerSearchString = searchString.toLowerCase()
-            axios.get('/api/autocomplete/tag/'+lowerSearchString, this.axiosConfig)
+            ApiCalls.get('/api/autocomplete/tag/'+lowerSearchString)
             .then((res) => { 
                 if(res.data.success) {
                     if(!res.data.tagList.find(tag=>

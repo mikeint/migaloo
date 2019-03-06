@@ -9,7 +9,7 @@ import debounce from 'lodash/debounce';
 
 import Overlay from '../../../components/Overlay/Overlay';
 import AddCandidate from '../AddCandidate/AddCandidate';
-import ReactPaginate from 'react-paginate';
+import Pagination from "react-js-pagination";
 import '../../../constants/AnimateHROverlay'; 
 
 class CandidateList extends React.Component{
@@ -84,9 +84,7 @@ class CandidateList extends React.Component{
     }
 
 
-    handlePageClick = data => {
-        let selected = data.selected+1;
-    
+    handlePageClick = selected => {
         this.setState({ page: selected }, () => {
             this.getCandidateList();
         });
@@ -119,25 +117,26 @@ class CandidateList extends React.Component{
                                         type="text"
                                         placeholder="Search"
                                         onChange={this.onSearchChange}
-                                    />  
-                                    <div className="candidateList" style={Object.assign({})}>  
-                                        { 
-                                            this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData} candidateId={this.state.candidateId}></ExpandableRow>})
+                                            </div>
+                                            <div className="paginationContainer">
+                                                    />
+                                                    activeClass={'active'}
+                                                    innerClass={'pagination'}
+                                                    onChange={this.handlePageClick}
+                                                    pageRangeDisplayed={10}
+                                                    marginPagesDisplayed={0}
+                                                    activePage={this.state.page}
+                                                    totalItemsCount={this.state.pageCount*10}
+                                                    lastPageText={'Last'}
+                                                    firstPageText={'First'}
+                                                    nextPageText={'Next'}
+                                                    prevPageText={'Back'}
+                                                <Pagination
                                         }
-                                        <div className="paginationContainer">
-                                            <ReactPaginate
-                                                previousLabel={'Back'}
-                                                nextLabel={'Next'}
-                                                breakLabel={'...'}
-                                                breakClassName={'break-me'}
-                                                pageCount={this.state.pageCount}
-                                                marginPagesDisplayed={2}
-                                                pageRangeDisplayed={8}
-                                                onPageChange={this.handlePageClick}
-                                                containerClassName={'pagination'}
-                                                subContainerClassName={'pages pagination'}
-                                                activeClassName={'active'}
-                                                />
+                                            this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData} candidateId={this.state.candidateId}></ExpandableRow>})
+                                        { 
+                                    <div className="candidateList" style={Object.assign({})}>  
+                                    />  
                                         </div>
                                     </div> 
                                 </React.Fragment>

@@ -11,7 +11,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
-import ReactPaginate from 'react-paginate';
+import Pagination from "react-js-pagination";
 import '../../../constants/AnimateHROverlay'; 
 
 class JobList extends React.Component{
@@ -64,7 +64,7 @@ class JobList extends React.Component{
                 this.setState({
                     jobList: jobList,
                     candidateData: candidateData,
-                    pageCount: (res.data&&jobList.length>0)?parseInt(jobList[0].page_count, 10):1 }) 
+                    pageCount: jobList.length>0?parseInt(jobList[0].page_count, 10):1 }) 
             }
         }).catch(errors => 
             console.log(errors.response.data)
@@ -84,9 +84,7 @@ class JobList extends React.Component{
         }
     }, 250)
 
-    handlePageClick = data => {
-        let selected = data.selected+1;
-    
+    handlePageClick = selected => {
         this.setState({ page: selected }, () => {
             this.getJobList();
         });
@@ -125,41 +123,39 @@ class JobList extends React.Component{
                                     onChange={this.onSearchChange}
                                 /> 
                                 <div className="jobListContainer">
-
-                                    <SwipeableViews enableMouseEvents index={this.state.index} onChangeIndex={this.handleChangeIndexTab}>
-                                        <React.Fragment>
-                                            {this.state.jobList.map((item, i) => {
-                                                return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}>
-                                                    <div className="jobInfo">
-                                                        <b>{item.company_name}</b> 
-                                                        <div className="jobShortDesc">{item.title}</div>
-                                                    </div>
-                                                    <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
-                                                    {item.tag_score?<span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>{parseInt(item.tag_score, 10)+"%"}</span>:''}
-                                                </div>
+                                    </div>
+                                            />
+                                            activeClass={'active'}
+                                            innerClass={'pagination'}
+                                            onChange={this.handlePageClick}
+                                            pageRangeDisplayed={10}
+                                            totalItemsCount={this.state.pageCount*10}
+                                            marginPagesDisplayed={0}
+                                            activePage={this.state.page}
+                                            lastPageText={'Last'}
+                                            firstPageText={'First'}
+                                            nextPageText={'Next'}
+                                            prevPageText={'Back'}
+                                        <Pagination
+                                    <div className="paginationContainer">
                                             })} 
-                                            <div className="paginationContainer">
-                                                <ReactPaginate
-                                                    previousLabel={'Back'}
-                                                    nextLabel={'Next'}
-                                                    breakLabel={'...'}
-                                                    breakClassName={'break-me'}
-                                                    pageCount={this.state.pageCount}
-                                                    marginPagesDisplayed={2}
-                                                    pageRangeDisplayed={10}
-                                                    onPageChange={this.handlePageClick}
-                                                    containerClassName={'pagination'}
-                                                    subContainerClassName={'pages pagination'}
-                                                    activeClassName={'active'}
-                                                    />
-                                            </div>
+                                                </div>
+                                                    {item.tag_score?<span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>{parseInt(item.tag_score, 10)+"%"}</span>:''}
+                                                    <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
+                                                    </div>
+                                                        <div className="jobShortDesc">{item.title}</div>
+                                                        <b>{item.company_name}</b> 
+                                                    <div className="jobInfo">
+                                                return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}>
+                                            {this.state.jobList.map((item, i) => {
+                                        <React.Fragment>
+                                    <SwipeableViews enableMouseEvents index={this.state.index} onChangeIndex={this.handleChangeIndexTab}>
+
                                         </React.Fragment>
 
                                         <div style={Object.assign({})}>slide n°2</div>
                                         <div style={Object.assign({})}>slide n°3</div>
                                     </SwipeableViews>
-
-
                                     {this.state.showOverlay && <Overlay
                                                                     html={<BuildActiveJobs jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />}  
                                                                     handleClose={this.callOverlay} 
