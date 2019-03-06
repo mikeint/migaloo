@@ -13,8 +13,7 @@
     font-size: 20px;
     font-weight: bold;
     border-top: 1px solid #fff;
-}
-
+} 
 .jobPostingContainer .jobTitle {
     background: #1a2b6d;
     color: #fff;
@@ -23,10 +22,137 @@
 }
 .jobPostingContainer .jobCaption {
         padding: 20px;
-}
-
-
+} 
 button[class*='MuiButtonBase-root-'] {
     width: 33.333%;
     -webkit-tap-highlight-color:#1a2b6d2e;
 }
+
+
+
+
+
+
+
+
+
+/**
+* ----------------------------------------
+* animation flip-scale-up-hor
+* ----------------------------------------
+*/
+.jobPostingContainer .favourite-flip {
+    width: 40px;
+    height: 40px;
+    top: 52px;
+    left: 0px; 
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden; 
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+}   
+.jobPostingContainer .favourite-flip-scale {
+	-webkit-animation: flip-scale-up-hor 0.5s linear both;
+            animation: flip-scale-up-hor 0.5s linear both; 
+    display: block;
+    z-index: 905;
+}  
+.jobPostingContainer .flip-back {
+	-webkit-animation: flip-back 0.5s linear both;
+            animation: flip-back 0.5s linear both; 
+    display: block;
+    z-index: 905;
+}  
+.jobPostingContainer .front,
+.jobPostingContainer .back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden; 
+    text-align: center;
+}
+.jobPostingContainer .back {
+    -webkit-transform: rotateX(180deg);
+    transform: rotateX(180deg);
+}
+.jobPostingContainer .front .text,
+.jobPostingContainer .back .text {
+    color: #fff; 
+    line-height: 40px;
+    text-align: center;
+    display: inline;
+} 
+.jobPostingContainer .front { 
+    z-index: 20;
+}
+.jobPostingContainer .back { 
+    z-index: 10;
+} 
+.jobPostingContainer .front img, 
+.jobPostingContainer .back img {
+   width: 35px;
+} 
+@-webkit-keyframes flip-scale-up-hor {
+    0% {
+      -webkit-transform: scale(1) rotateX(0);
+              transform: scale(1) rotateX(0);
+    }
+    50% {
+      -webkit-transform: scale(2.5) rotateX(-90deg);
+              transform: scale(2.5) rotateX(-90deg);
+    }
+    100% {
+      -webkit-transform: scale(1) rotateX(-180deg);
+              transform: scale(1) rotateX(-180deg);
+    }
+}
+@keyframes flip-scale-up-hor {
+    0% {
+      -webkit-transform: scale(1) rotateX(0);
+              transform: scale(1) rotateX(0);
+    }
+    50% {
+      -webkit-transform: scale(2.5) rotateX(-90deg);
+              transform: scale(2.5) rotateX(-90deg);
+    }
+    100% {
+      -webkit-transform: scale(1) rotateX(-180deg);
+              transform: scale(1) rotateX(-180deg);
+    }
+} 
+@-webkit-keyframes flip-back {
+    0% {
+      -webkit-transform: scale(1) rotateX(0);
+              transform: scale(1) rotateX(0);
+    }
+    50% {
+      -webkit-transform: scale(2.5) rotateX(-90deg);
+              transform: scale(2.5) rotateX(-90deg);
+    }
+    100% {
+      -webkit-transform: scale(1) rotateX(-180deg);
+              transform: scale(1) rotateX(-180deg);
+    }
+}
+@keyframes flip-back {
+    0% {
+      -webkit-transform: scale(1) rotateX(-180deg);
+              transform: scale(1) rotateX(-180deg);
+    }
+    50% {
+      -webkit-transform: scale(2.5) rotateX(-90deg);
+              transform: scale(2.5) rotateX(-90deg);
+    }
+    100% {
+      -webkit-transform: scale(1) rotateX(0);
+              transform: scale(1) rotateX(0);
+    }
+}
+/**
+* ----------------------------------------
+* end animation flip-scale-up-hor
+* ----------------------------------------
+*/  

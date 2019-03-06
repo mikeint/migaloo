@@ -9,11 +9,11 @@ import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
 
 class ExpandableRow extends React.Component{
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         // Initial state
         this.state = { 
-            open: false,
+            open: props.candidateId === props.candidateData.candidate_id,
             showUpload: false,
             resumeId: null,
             files: [],
@@ -66,7 +66,7 @@ class ExpandableRow extends React.Component{
                     {rowObj.tag_score?<span className="score" style={{width: parseInt(rowObj.tag_score, 10)+"%"}}>{parseInt(rowObj.tag_score, 10)+"%"}</span>:''}
                     
                 </div>
-                <div className={"collapse" + (this.state.open ? ' in' : '')}>
+                <div className={this.state.open ? "collapse in": "collapse" + (this.state.open ? ' in' : '') }>
 
 
 

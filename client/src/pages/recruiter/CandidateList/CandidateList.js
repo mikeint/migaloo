@@ -4,12 +4,8 @@ import { NavLink } from 'react-router-dom';
 import ApiCalls from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import Loader from '../../../components/Loader/Loader';
-import ExpandableRow from './ExpandableRow/ExpandableRow';
-import SwipeableViews from 'react-swipeable-views';
-import debounce from 'lodash/debounce';
-
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+import ExpandableRow from './ExpandableRow/ExpandableRow'; 
+import debounce from 'lodash/debounce'; 
 
 import Overlay from '../../../components/Overlay/Overlay';
 import AddCandidate from '../AddCandidate/AddCandidate';
@@ -26,6 +22,7 @@ class CandidateList extends React.Component{
             overlayConfig: {direction: "b-t", swipeLocation: "t"},
             candidateList: null, 
             postId: props.match.params.postId,
+            candidateId: props.match.params.candidateId,
             page: 1,
             pageCount: 1,
             postData: null,
@@ -36,8 +33,15 @@ class CandidateList extends React.Component{
 
     componentWillMount = () => {
         this.setState({ HROverlay: sessionStorage.getItem("HROverlay") });
-        sessionStorage.removeItem('HROverlay');
-        this.getCandidateList();
+        sessionStorage.removeItem('HROverlay'); 
+    }
+
+
+    openCandidateTop = (candidateId) => { 
+        ApiCalls.get(`/api/candidate/getCandidate/${candidateId}`)
+        .then((res) => {
+            this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].page_count, 10):1 }) 
+        });
     }
 
     componentDidMount = () => {
@@ -47,7 +51,9 @@ class CandidateList extends React.Component{
                     document.getElementById("fadeOutOverlay").style.display = "none";
                 }
             })
-        } 
+        }  
+        if (this.state.candidateId) {this.openCandidateTop(this.state.candidateId); console.log(this.state.candidateId); }
+        else this.getCandidateList();
     }
  
     onSearchChange = (event) => { 
@@ -85,19 +91,7 @@ class CandidateList extends React.Component{
             this.getCandidateList();
         });
     };
-    
-               
-    handleChange = (event, value) => {
-        this.setState({
-          index: value,
-        });
-      };
-    
-      handleChangeIndex = index => {
-        this.setState({
-          index,
-        });
-      };
+
 
     render(){
         const html = <AddCandidate handleClose={this.callOverlay} />
@@ -115,14 +109,7 @@ class CandidateList extends React.Component{
                             <button className="addBtn" onClick={() => this.callOverlay()}></button> 
                             {this.state.postData? <NavLink to="/recruiter/jobList/"><div className="jobSearched">{this.state.postData.title}</div></NavLink> : ""} 
                         </div>
-
-
-                        <Tabs value={this.state.index} onChange={this.handleChange}>
-                            <Tab label="List" />
-                            <Tab label="Favourites" />
-                            <Tab label="Archived" />
-                        </Tabs>
-                        
+ 
                         {
                             this.state.candidateList ? 
                                 <React.Fragment>
@@ -132,32 +119,27 @@ class CandidateList extends React.Component{
                                         type="text"
                                         placeholder="Search"
                                         onChange={this.onSearchChange}
-                                    /> 
-                                    <SwipeableViews enableMouseEvents index={this.state.index} onChangeIndex={this.handleChangeIndex}>
-                                        <div className="candidateList" style={Object.assign({})}>  
-                                            { 
-                                                this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData}></ExpandableRow>})
-                                            }
-                                            <div className="paginationContainer">
-                                                <ReactPaginate
-                                                    previousLabel={'Back'}
-                                                    nextLabel={'Next'}
-                                                    breakLabel={'...'}
-                                                    breakClassName={'break-me'}
-                                                    pageCount={this.state.pageCount}
-                                                    marginPagesDisplayed={2}
-                                                    pageRangeDisplayed={8}
-                                                    onPageChange={this.handlePageClick}
-                                                    containerClassName={'pagination'}
-                                                    subContainerClassName={'pages pagination'}
-                                                    activeClassName={'active'}
-                                                    />
-                                            </div>
+                                    />  
+                                    <div className="candidateList" style={Object.assign({})}>  
+                                        { 
+                                            this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData} candidateId={this.state.candidateId}></ExpandableRow>})
+                                        }
+                                        <div className="paginationContainer">
+                                            <ReactPaginate
+                                                previousLabel={'Back'}
+                                                nextLabel={'Next'}
+                                                breakLabel={'...'}
+                                                breakClassName={'break-me'}
+                                                pageCount={this.state.pageCount}
+                                                marginPagesDisplayed={2}
+                                                pageRangeDisplayed={8}
+                                                onPageChange={this.handlePageClick}
+                                                containerClassName={'pagination'}
+                                                subContainerClassName={'pages pagination'}
+                                                activeClassName={'active'}
+                                                />
                                         </div>
-                                    
-                                        <div style={Object.assign({})}>slide n°2</div>
-                                        <div style={Object.assign({})}>slide n°3</div>
-                                    </SwipeableViews>
+                                    </div> 
                                 </React.Fragment>
                             :
                             <Loader />

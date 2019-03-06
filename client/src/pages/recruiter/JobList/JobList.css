@@ -10,6 +10,13 @@
     margin: auto;
     margin-top: 30px; 
 }
+.jobListClassContainer .jobShortDesc{
+    padding-bottom: 10px;
+}
+.jobListClassContainer .createdTime{
+    float: right;
+}
+
 .jobListClassContainer .noJobsText {
     text-align: center;
     font-size: 10px;

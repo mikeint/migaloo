@@ -5,7 +5,9 @@ import AuthFunctions from '../../../../AuthFunctions';
 import {Redirect} from 'react-router-dom';
 import Overlay from '../../../../components/Overlay/Overlay';
 import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
- 
+
+import goldStar from '../../../../files/images/star_gold.png';
+import blackStar from '../../../../files/images/star_black.png';
   
 class BuildActiveJobs extends React.Component{
 
@@ -45,6 +47,19 @@ class BuildActiveJobs extends React.Component{
     postToJob = () =>{
         this.setState({showPostJob: true})
     }
+
+    setFavourite = () => { 
+        var element = document.getElementById("card-object");  
+        if (element.classList == "favourite-flip" || element.classList == "favourite-flip flip-back") { 
+            element.classList.remove("flip-back"); 
+            element.classList.add("favourite-flip-scale"); 
+        } else { 
+            element.classList.remove("favourite-flip-scale");
+            element.classList.add("flip-back");  
+        }
+    }
+
+
     render(){ 
 
         const jobObj = this.props.jobData; 
@@ -53,7 +68,20 @@ class BuildActiveJobs extends React.Component{
             <div className="jobPostingContainer">
                 {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.props.jobData.post_id}/> : ''}
                 {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
-                <div className="jobTitle">{jobObj.title}</div>
+                <div className="jobTitle" onClick={this.setFavourite}>{jobObj.title} 
+                
+                 
+                <div className="favourite-flip" id="card-object">
+                    <div className="front face">
+                        <div className="text"><img src={blackStar} alt="" /></div>
+                    </div>
+                    <div className="back face">
+                        <div className="text"><img src={goldStar} alt="" /></div>
+                    </div>
+                </div>
+                
+                
+                </div>
                 <div className="jobCaption">{jobObj.caption}</div>
                 <h3>{jobObj.company_name}</h3>
                 <p>

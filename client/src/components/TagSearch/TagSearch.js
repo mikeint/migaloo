@@ -125,7 +125,7 @@ class TagSearch extends React.Component{
                             ref={this.textInput}
                             required/>
                     </div>
-                    {this.state.focus && this.state.potentialTagList.length > 0 ?
+                    {/* this.state.focus && this.state.potentialTagList.length > 0 ? */
                         <div className="autoCompleteBox">
                             {!this.state.searching?this.state.potentialTagList.map((tag, i)=>
                                 <div className="potentialTag" key={i} onClick={()=>this.addTag(tag)}>
@@ -133,7 +133,7 @@ class TagSearch extends React.Component{
                                 </div>
                             ):<div className="loadingTags"><Loader/></div>}
                         </div>
-                    :''}
+                    /* :'' */}
                 </div> 
             </React.Fragment>
         );

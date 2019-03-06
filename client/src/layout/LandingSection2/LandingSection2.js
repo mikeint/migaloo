@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './LandingSection2.css';
-import ScrollAnimation from 'react-animate-on-scroll';
+//import ScrollAnimation from 'react-animate-on-scroll';
 import Slider from 'react-slick';
 
 import carouselImg1 from '../../files/images/landingPage/carousel-1.png';
@@ -38,36 +38,36 @@ class LandingSection2 extends Component {
         var settings = {
             dots: true,
             infinite: true, 
-            speed: 1000, 
+            speed: 500, 
             slidesToShow: slidesToShow,
 			slidesToScroll: 1,
 			/* autoplay: true,
-			autoplayspeed: 1000 */
+			autoplayspeed: 5000 */
         };
         return (
         <div className="landingSection2">  
             <Slider {...settings}>
-				<ScrollAnimation animateIn='bounceInLeft' duration={2} animateOnce={true}>
+				{/* <ScrollAnimation animateIn='bounceInLeft' duration={2} animateOnce={true}> */}
                     <div>
                         <img src={carouselImg1} alt="" />
                         <h1 className="mc_4_text">Real Recruitment Platform</h1>
                         <p>The first and only platform connecting employers directly to third-party recruiters.</p>
                     </div>
-                </ScrollAnimation>
-				<ScrollAnimation animateIn='flipInY' duration={2} animateOnce={true}>
+                {/* </ScrollAnimation> */}
+				{/* <ScrollAnimation animateIn='flipInY' duration={2} animateOnce={true}> */}
                     <div>
                         <img src={carouselImg2} alt="" />
                         <h1 className="mc_4_text">Top Quality Candidates</h1>
                         <p>Recruiters have the opportunity to showcase their best candidates, and employers get a ranked list of top talent to choose from.</p>
                     </div>
-                </ScrollAnimation>
-				<ScrollAnimation animateIn='bounceInRight' duration={2} animateOnce={true}>
+                {/* </ScrollAnimation> */}
+				{/* <ScrollAnimation animateIn='bounceInRight' duration={2} animateOnce={true}> */}
                     <div>
                         <img src={carouselImg3} alt="" />
                         <h1 className="mc_4_text">Effiecient</h1>
                         <p>Employers will only view qualified candidates. Recruiters get the right information upfront so they can assess their candidate pool to see if they have a match.  </p>
                     </div>
-                </ScrollAnimation> 
+                {/* </ScrollAnimation> */} 
                 <div>
                     <img src={carouselImg4} alt="" />
                     <h1 className="mc_4_text">Credit-Based System</h1>
