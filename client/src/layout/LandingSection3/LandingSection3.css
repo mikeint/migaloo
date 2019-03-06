@@ -29,12 +29,16 @@
     justify-content: center;
 } 
 .animated,
+.animated_third,
 .animated_half {
-    width: 50%;
+    width: 33.3333%;
     position: relative;
     float: left;
     flex: 25% 1; 
-} 
+}
+.animated_half {
+    width: 50%;
+}
 .module_content {
     width: 70%;
     height: 100%;
@@ -64,6 +68,7 @@
         display: inline-block;
     }
     .animated,
+    .animated_third,
     .animated_half {
         width: 100%;
     } 

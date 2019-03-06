@@ -48,11 +48,11 @@ class LandingSection2 extends Component {
         <div className="landingSection2">  
             <Slider {...settings}>
 				{/* <ScrollAnimation animateIn='bounceInLeft' duration={2} animateOnce={true}> */}
-                    <div>
+                   {/*  <div>
                         <img src={carouselImg1} alt="" />
                         <h1 className="mc_4_text">Real Recruitment Platform</h1>
                         <p>The first and only platform connecting employers directly to third-party recruiters.</p>
-                    </div>
+                    </div> */}
                 {/* </ScrollAnimation> */}
 				{/* <ScrollAnimation animateIn='flipInY' duration={2} animateOnce={true}> */}
                     <div>
@@ -64,7 +64,7 @@ class LandingSection2 extends Component {
 				{/* <ScrollAnimation animateIn='bounceInRight' duration={2} animateOnce={true}> */}
                     <div>
                         <img src={carouselImg3} alt="" />
-                        <h1 className="mc_4_text">Effiecient</h1>
+                        <h1 className="mc_4_text">Efficient</h1>
                         <p>Employers will only view qualified candidates. Recruiters get the right information upfront so they can assess their candidate pool to see if they have a match.  </p>
                     </div>
                 {/* </ScrollAnimation> */} 
@@ -76,12 +76,12 @@ class LandingSection2 extends Component {
                 <div>
                     <img src={carouselImg5} alt="" />
                     <h1 className="mc_4_text">Transparency</h1>
-                    <p>Each submission has recruiters' terms and conditions included allowing employers to make informed decisions on which recruiter(s) they choose to engage. </p>
+                    <p>An unbiased, universal agreement that takes into consideration the thoughts and opinions from top recruiters and employers make for an efficient process.</p>
                 </div> 
                 <div>
                     <img src={carouselImg6} alt="" />
                     <h1 className="mc_4_text">Confidentiality</h1>
-                    <p>Both employer and candidate details are confidential. Only when successful matches have been made are details divulged.</p>
+                    <p>Candidates can take comfort knowing that they remain entirely anonymous until they wish to move forward in a given hiring process.</p>
                 </div> 
             </Slider>
           </div>
