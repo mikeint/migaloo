@@ -2,6 +2,7 @@ import React from 'react';
 import './AddCandidate.css';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import ApiCalls from '../../../ApiCalls';  
+import TagSearch from '../../../components/TagSearch/TagSearch';  
 
 class AddCandidate extends React.Component{
     constructor() {
@@ -12,7 +13,7 @@ class AddCandidate extends React.Component{
             email:'',
             salary:'',
             experience:'',
-            tags:[],
+            tagIds:[],
             redirect: false
         }
         this.Auth = new AuthFunctions();
@@ -115,16 +116,7 @@ class AddCandidate extends React.Component{
                                 </div>
                             </div>
                             <div className="i-2 il">
-                                <div className="user-input-wrp">
-                                    <input
-                                        id="tags"
-                                        type="text"
-                                        name="tags"
-                                        onChange={this.handleChange}
-                                        value={this.state.tags}
-                                    />
-                                    <span className="floating-label">Tags</span>
-                                </div>
+                                <TagSearch onChange={(tags)=>this.setState({tagIds:tags})}/>
                             </div>
                         </div>
                         <div className="submitCandidateBtn" onClick={this.handleSubmit}>Add Candidate</div>

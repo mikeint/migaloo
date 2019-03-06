@@ -110,7 +110,7 @@ class RegisterEmployerForm extends Component {
 					<input type="password" className={this.state.errorList.password2 ? "formControl error" : "formControl"} placeholder="Confirm Password" name="password2" value={password2} onChange={this.onChange} required />
 				</div> 
  
-				<input onClick={this.register} type="submit" value="register" className="loginBtn" />
+				<input onClick={this.register} type="submit" value="Register" className="loginBtn" />
 			{/* </form> */}
 		</div> 
     );

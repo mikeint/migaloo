@@ -50,10 +50,7 @@ class Profile extends React.Component{
     }
 
     getProfileInfo = () => {
-        var config = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
-        ApiCalls.get('/api/employer/getProfile', config)
+        ApiCalls.get('/api/employer/getProfile')
         .then((res)=>{    
             this.setState({ profileInfo: res.data }) 
         }).catch(errors => 
@@ -92,10 +89,13 @@ class Profile extends React.Component{
                 <div className="profileContainer_employer">
                     <div className='profileImageContainer'>
                         <img  className='profileImage' src={this.state.profileImage} alt="" onClick={this.showUpload}/>
-                        <div className="profileType">Employer</div>
-                        <div className="profileName">{this.state.profileInfo.contact_first_name} {this.state.profileInfo.contact_last_name}</div>
-                        <div className="profileEmail">{this.state.user.email} {this.state.profileInfo.contact_phone_number}</div>
-                        <div className="profileName">{this.state.profileInfo.company_name}</div>
+                        <div className="profileType">{this.state.profileInfo.company_name}</div>
+                        <div className="profileName">{this.state.profileInfo.first_name} {this.state.profileInfo.last_name}</div>
+                        <div className="profileEmail">{this.state.user.email}<br/>{this.state.profileInfo.phone_number}</div>
+                        <div className="profileEmail">
+                        {[this.state.profileInfo.street_address_1, this.state.profileInfo.city, this.state.profileInfo.state, this.state.profileInfo.country].filter(d=>d).join(", ")}
+                        </div>
+                        <div className="profileName"></div>
                     </div>
                     <div className='profileBottom'>
                         <div className="profileItem" onClick={() => this.callOverlay()}>Employer info</div>

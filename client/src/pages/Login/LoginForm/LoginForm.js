@@ -1,7 +1,7 @@
 import React, { Component } from 'react';  
-import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions';
 import { Redirect, NavLink } from 'react-router-dom';
+import ApiCalls from '../../../ApiCalls';  
 
 import './LoginForm.css';
 
@@ -28,7 +28,7 @@ class LoginForm extends Component {
     }
 
     login = () => {
-        axios.post('/api/users/login', {
+        ApiCalls.post('/api/users/login', {
             email: this.state.email,
             password: this.state.password
         })
@@ -41,12 +41,10 @@ class LoginForm extends Component {
             this.Auth.setUser(res.data.user, () => {
                 this.setState({ user: res.data.user })
             }) 
-        }).catch(errors => 
-            this.showErrors(errors)
-            )
-        };
+        }).catch(this.showErrors)
+    };
 
-        showErrors = (errors) => { 
+    showErrors = (errors) => { 
             this.setState({ errorList: errors.response.data }); 
         };
 
