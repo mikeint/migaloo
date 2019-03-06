@@ -47,4 +47,9 @@
     font-size: 14px; 
     color: #000;
     border-bottom: 1px solid #5a6592;
+    cursor: pointer;
+} 
+
+.profileContainer_employer .profileItem:hover {  
+    background-color: #5a6592;
 } 
