@@ -90,8 +90,10 @@ router.post('/create', passport.authentication,  (req, res) => {
 router.get('/list', passport.authentication, listCandidates);
 router.get('/list/:page', passport.authentication, listCandidates);
 router.get('/list/:page/:search', passport.authentication, listCandidates);
+router.get('/getCandidate/:candidateId', passport.authentication, listCandidates);
 function listCandidates(req, res){
     var search = req.params.search;
+    var candidateId = req.params.candidateId;
     var page = req.params.page;
     if(page == null)
         page = 1;
@@ -102,6 +104,8 @@ function listCandidates(req, res){
     var sqlArgs = [jwtPayload.id, (page-1)*10]
     if(search != null)
         sqlArgs.push(search.split(' ').map(d=>d+":*").join(" & "))
+    if(candidateId != null)
+        sqlArgs.push(candidateId)
     postgresdb.any(' \
         SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, et.experience_type_name, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
@@ -132,12 +136,13 @@ function listCandidates(req, res){
         ) cpd ON cpd.candidate_id = c.candidate_id\
         WHERE rc.recruiter_id = $1 AND c.active \
         '+
+        (candidateId ? 'AND c.candidate_id = $3' :
         (search ? 
             'AND (name_search @@ to_tsquery(\'simple\', $3)) \
             ORDER BY ts_rank_cd(name_search, to_tsquery(\'simple\', $3)) DESC'
         :
             'ORDER BY c.last_name ASC, c.first_name ASC'
-        )+' \
+        ))+' \
         OFFSET $2 \
         LIMIT 10', sqlArgs)
     .then((data) => {
