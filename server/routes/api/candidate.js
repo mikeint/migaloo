@@ -173,6 +173,7 @@ function listCandidates(req, res){
  * @access Private
  */
 router.get('/listForJob/:postId', passport.authentication, listCandidatesForJob);
+router.get('/listForJob/:postId/:page', passport.authentication, listCandidatesForJob);
 router.get('/listForJob/:postId/:page/:search', passport.authentication, listCandidatesForJob);
 function listCandidatesForJob(req, res){
     var search = req.params.search;
