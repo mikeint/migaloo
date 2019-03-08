@@ -48,14 +48,14 @@ class BuildActiveJobs extends React.Component{
         this.setState({showPostJob: true})
     }
 
-    setFavourite = () => { 
-        var element = document.getElementById("card-object");  
-        if (element.classList === "favourite-flip" || element.classList === "favourite-flip flip-back") { 
+    setFavourite = () => {
+        var element = document.getElementById("card-object");
+        if (element.classList[0] === "favourite-flip" && element.classList[1] === "flip-back") { 
             element.classList.remove("flip-back"); 
             element.classList.add("favourite-flip-scale"); 
         } else { 
+            element.classList.add("flip-back");
             element.classList.remove("favourite-flip-scale");
-            element.classList.add("flip-back");  
         }
     }
 

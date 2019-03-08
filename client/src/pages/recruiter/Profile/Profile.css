@@ -64,7 +64,4 @@
 .profileContainer .numberCoin {
     width: 110px;
     border-radius: 50%;
-}
-.profileContainer .profileItem:hover {  
-    background-color: #5a6592;
 } 

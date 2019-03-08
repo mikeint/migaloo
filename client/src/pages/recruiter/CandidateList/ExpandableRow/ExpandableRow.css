@@ -14,7 +14,7 @@
     max-height: 0px;
 }
 .expandableRow .collapse.in {
-    max-height: 500px;
+    max-height: 700px;
 } 
 .expandableRow .nameContainer {   
     font-size: 15px;
@@ -111,8 +111,8 @@
     vertical-align: top;  
 }
   
-.expandableRow .info-container div {
-    margin: 2.5px;
+.expandableRow .info-container div { 
+    height: 50px;
 }
 
 .expandableRow .info-container .email_icon {
