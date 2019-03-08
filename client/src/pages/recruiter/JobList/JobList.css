@@ -23,6 +23,7 @@
 }
 .jobListClassContainer .jobListContainer {
     width: 100%;
+    padding-bottom: 60px;
 }
 .jobListClassContainer .candidateSearched {
     width: 100%;
@@ -69,4 +70,8 @@
     background-color: #4caf5054;
     position: absolute;
     color: #1a2b6d;
+}
+
+.jobListClassContainer .loaderContainer {
+    min-height: 75px;
 }

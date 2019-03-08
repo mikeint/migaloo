@@ -3,7 +3,7 @@ import './LandingSection2.css';
 //import ScrollAnimation from 'react-animate-on-scroll';
 import Slider from 'react-slick';
 
-import carouselImg1 from '../../files/images/landingPage/carousel-1.png';
+//import carouselImg1 from '../../files/images/landingPage/carousel-1.png';
 import carouselImg2 from '../../files/images/landingPage/carousel-2.png';
 import carouselImg3 from '../../files/images/landingPage/carousel-3.png';
 import carouselImg4 from '../../files/images/landingPage/carousel-4.png';
