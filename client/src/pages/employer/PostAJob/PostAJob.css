@@ -1,5 +1,6 @@
 .postAJobContainer {
-    padding: 20px;  
+    padding: 20px;
+    padding-bottom: 60px;  
     color: #1a2b6d;
     display: flex;
 }

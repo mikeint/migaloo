@@ -17,12 +17,13 @@
 }
 .activeJobContainer .jobListContainer {
     width: 100%;
+    padding-bottom: 60px;
 }
 .activeJobContainer .jobListItem{ 
     padding: 10px 10px;
     font-size: 15px; 
-    background: #1a2b6d;
-    color: #fff;
+    background: #fff;
+    color: #1a2b6d;
 }
 .activeJobContainer .newPostingCount{
     width: 32px;
@@ -33,7 +34,7 @@
     line-height: 30px;
     display: inline-block;
     border-radius: 50%;
-    background-color: rgb(61, 59, 165);
+    background-color: rgb(255, 255, 255);
     border: 2px solid rgb(97, 83, 83);
 }
 .activeJobContainer .createdTime{

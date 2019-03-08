@@ -13,11 +13,14 @@ class BuildNotifications extends React.Component{
     render(){ 
  
         return ( 
-            <div className='alertList'>
-                {this.props.alertList.map((item, i) => {
-                    return <AlertItem key={i} alert={item}/>
-                })}
-            </div>
+            <React.Fragment>
+                <div className="alertTitle">Notifications</div>
+                <div className='alertList'>
+                    {this.props.alertList.map((item, i) => {
+                        return <AlertItem key={i} alert={item}/>
+                    })}
+                </div>
+            </React.Fragment>
         )
     }
 }

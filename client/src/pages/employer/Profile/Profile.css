@@ -3,6 +3,10 @@
     padding-top: 20px;
     padding-bottom: 60px;
 }
+.profileContainer_employer{
+    width: 100%;
+    padding-top:20px;
+}
 .profileContainer_employer .profileImageContainer {
     text-align: center;
 }
