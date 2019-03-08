@@ -11,5 +11,5 @@
 .alertList {
     padding: 10px;
     height: 75%;
-    overflow: scroll;
+    overflow-y: scroll;
 }

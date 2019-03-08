@@ -3,6 +3,9 @@
     text-align: left;
     padding: 10px 15px;
     overflow: hidden;
+    background: #1a2b6d0a;
+    border-radius: 10px;
+    margin-bottom: 10px;
 }
 .alertTimeRow{
     font-size: 10px;
