@@ -8,10 +8,12 @@ import Notifications from '../../components/Notifications/Notifications';
 import Chat from '../../components/Chat/Chat';
 
 function EmployerRouter({ match }) {
+
+    console.log(window.location.pathname)
     return ( 
         <React.Fragment>
             <NavBar />
-            <Notifications />
+            {window.location.pathname !== "/recruiter/profile" ? <Notifications/> : ""}
             <div className="mainContainer">
                 <Switch>
                     <Route strict path="/employer/postAJob" component={PostAJob} />
