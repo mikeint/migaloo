@@ -71,7 +71,8 @@ class PostCandidateToJob extends React.Component{
                 <div className="pageHeading">Post a Candidate</div>
                 <div className="postACandidateContainer">
                     {this.state.candidate.tag_score?<span className="matchingScore">
-                        <span className="matchingScoreText">Match Score<br/>{parseInt(this.state.candidate.tag_score, 10)+"%"}</span>
+                        <span className="matchingScoreText">Match Score</span>
+                        <span className="matchingScoreValue">{parseInt(this.state.candidate.tag_score, 10)+"%"}</span> 
                     </span>:''}
                     <div className="candidateJobContainer">
                         <div className="candidateContainer">
