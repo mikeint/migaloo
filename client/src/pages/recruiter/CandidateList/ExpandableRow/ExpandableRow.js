@@ -73,28 +73,46 @@ class ExpandableRow extends React.Component{
                     <div className="flex">
                         <div className="flexColumn">
                             <div className="flex-item">
-                                <div className="info-container">
+                                <div>
+                                    <div className="created-info-item"> 
+                                        <span className="heading">Created:</span> 
+                                        <span className="headingInfo">{rowObj.created}</span>
+                                    </div>
+                                </div>
+                                <div className="info-container"> 
                                     <div>
                                         <span className="email_icon"></span>
-                                        <span className="heading">Email:</span> {rowObj.email}
-                                    </div>
+                                        <div className="candidate-info-item">
+                                            <span className="heading">Email:</span> 
+                                            <span className="headingInfo">{rowObj.email}</span>
+                                        </div>
+                                    </div> 
                                     <div>
                                         <span className="experience_icon"></span>
-                                        <span className="heading">Created:</span> {rowObj.created}
+                                        <div className="candidate-info-item">
+                                            <span className="heading">Experience:</span> 
+                                            <span className="headingInfo">{rowObj.experience_type_name}</span>
+                                        </div>
                                     </div>
                                     <div>
                                         <span className="tags_icon"></span>
-                                        <span className="heading">Experience:</span> {rowObj.experience_type_name}
+                                        <div className="candidate-info-item">
+                                            <span className="headingInfo">
+                                                {rowObj.tag_names && <span className="rowMargin">
+                                                <span className="heading">Tags:</span> {rowObj.tag_names.join(", ")}</span>}
+                                            </span>
+                                        </div>
                                     </div>
                                     <div>
-                                        <span className="tags_icon"></span>{rowObj.tag_names && <span className="rowMargin"><span className="heading">Tags:</span> {rowObj.tag_names.join(", ")}</span>}
-                                    </div>
-                                    <div>
-                                        <span className="posted_icon"></span><span className="heading">Posted to Job:</span> {rowObj.posted_count} time(s)
+                                        <span className="posted_icon"></span>
+                                        <div className="candidate-info-item">
+                                            <span className="heading">Posted to Job:</span> 
+                                            <span className="headingInfo">{rowObj.posted_count} time(s)</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <img className="candidate_image" src="http://placehold.it/100x100" alt="" />
                             </div> 
+                            <img className="candidate_image" src="http://placehold.it/100x100" alt="" />
                               
                             <div className="rowButton" onClick={this.searchJobsForCandidates}>Search Jobs</div>
                         </div>

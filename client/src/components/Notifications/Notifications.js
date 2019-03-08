@@ -1,7 +1,7 @@
 import React from 'react';
 import './Notifications.css';    
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
-import bell from '../../files/images/bell.png';
+import bell from '../../files/images/bellW.png';
 import axios from 'axios';
 import AuthFunctions from '../../AuthFunctions'; 
 import Overlay from '../Overlay/Overlay';
@@ -83,7 +83,7 @@ class Notifications extends React.Component{
                 <div className="Notifications"> 
                     <div className={scrollY > 5 ? 'alert opacAlert' : 'alert'}>
                         <span className="alertNumber" onClick={() => this.callOverlay()}>{this.state.alertCount}</span>
-                        <img src={bell} onClick={() => this.callOverlay()} alt=""/>
+                        <img className="bellNotificationImg" src={bell} onClick={() => this.callOverlay()} alt=""/>
                     </div>
                 </div> 
 
