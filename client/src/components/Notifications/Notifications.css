@@ -4,7 +4,7 @@
     position: fixed;
     right: 0px;
     top: 0px;
-    margin-top: 5px;
+    margin-top: 15px;
     margin-right: 5px;
     background: white;
     border-radius: 30px;
@@ -16,8 +16,8 @@
     opacity: 0.4;
 }
 .alert img{
-    width: 48px;
-    height: 48px;
+    width: 22px;
+    height: 22px;
     display: inline-block;
     vertical-align: middle;
 }
@@ -25,17 +25,18 @@
     background-color: #de3141;
     color: white;
     cursor: pointer;
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
     display: inline-block;
     padding: 4px;
     text-align: center;
     border-radius: 50%;
     vertical-align: middle;
-    line-height: 14px;
+    line-height: 11px;
     position: absolute;
-    margin-top: 10px;
-    margin-left: 16px;
+    margin-top: -10px;
+    font-size: 12px;
+    margin-left: -10px;
 }
  
 @media only screen and (max-width: 1024px) {   
