@@ -49,10 +49,11 @@ class BuildActiveJobs extends React.Component{
     }
 
     setFavourite = () => {
-        var element = document.getElementById("card-object");
-        if (element.classList[0] === "favourite-flip" && element.classList[1] === "flip-back") { 
-            element.classList.remove("flip-back"); 
+        var element = document.getElementById("card-object"); 
+        if ((element.classList[0] === "favourite-flip" && element.classList[1] === undefined ) || 
+            (element.classList[0] === "favourite-flip" && element.classList[1] === "flip-back")) {  
             element.classList.add("favourite-flip-scale"); 
+            element.classList.remove("flip-back");
         } else { 
             element.classList.add("flip-back");
             element.classList.remove("favourite-flip-scale");

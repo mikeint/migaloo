@@ -74,11 +74,24 @@ class ExpandableRow extends React.Component{
                         <div className="flexColumn">
                             <div className="flex-item">
                                 <div className="info-container">
-                                    <div><span className="email_icon"></span><span className="heading">Email:</span> {rowObj.email}</div>
-                                    <div><span className="experience_icon"></span><span className="heading">Created:</span> {rowObj.created}</div>
-                                    <div><span className="tags_icon"></span><span className="heading">Experience:</span> {rowObj.experience_type_name}</div>
-                                    <div><span className="tags_icon"></span>{rowObj.tag_names && <span className="rowMargin"><span className="heading">Tags:</span> {rowObj.tag_names.join(", ")}</span>}</div>
-                                    <div><span className="posted_icon"></span><span className="heading">Posted to Job:</span> {rowObj.posted_count} time(s)</div>
+                                    <div>
+                                        <span className="email_icon"></span>
+                                        <span className="heading">Email:</span> {rowObj.email}
+                                    </div>
+                                    <div>
+                                        <span className="experience_icon"></span>
+                                        <span className="heading">Created:</span> {rowObj.created}
+                                    </div>
+                                    <div>
+                                        <span className="tags_icon"></span>
+                                        <span className="heading">Experience:</span> {rowObj.experience_type_name}
+                                    </div>
+                                    <div>
+                                        <span className="tags_icon"></span>{rowObj.tag_names && <span className="rowMargin"><span className="heading">Tags:</span> {rowObj.tag_names.join(", ")}</span>}
+                                    </div>
+                                    <div>
+                                        <span className="posted_icon"></span><span className="heading">Posted to Job:</span> {rowObj.posted_count} time(s)
+                                    </div>
                                 </div>
                                 <img className="candidate_image" src="http://placehold.it/100x100" alt="" />
                             </div> 
@@ -87,8 +100,8 @@ class ExpandableRow extends React.Component{
                         </div>
                         <div className="flexColumn">
                             <div className="flex-item"> 
-                                <p><span className="heading">Accepted by Postings:</span> {rowObj.accepted_count} time(s)</p>
-                                <p><span className="heading">Not Accepted by Postings:</span> {rowObj.not_accepted_count} time(s)</p> 
+                                <p><span className="accepted_icon"></span><span className="heading">Accepted by Postings:</span> {rowObj.accepted_count} time(s)</p>
+                                <p><span className="not_accepted_icon"></span><span className="heading">Not Accepted by Postings:</span> {rowObj.not_accepted_count} time(s)</p> 
 
                                 <div className="resumeButtons">
                                     {rowObj.resume_id != null && <div className="rowButton" onClick={this.getResumeURL}>View Resume</div>}
