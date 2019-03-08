@@ -40,16 +40,16 @@
 }
 .tagSearchContainer .tag{
     display: inline-block;
-    border: 1px solid #1a2b6d ; 
-    border-radius: 4px; 
+    border: 1px solid #1a2b6d;
+    border-radius: 3px;
     background-color: #b1b9db3b;
     color: #1a2b6d;
-    font-weight: bold;
+    font-size: 17px;
     cursor: text;
-    padding: 0px 10px;
-    margin: 10px 5px 5px 5px;
+    padding: 0px 5px;
+    margin: 6px 5px 5px 5px;
     text-align: center;
-    box-shadow:  0px 0px 5px 1px rgba(26, 43, 109, 0.5);
+    box-shadow: 0px 0px 5px 1px rgba(26, 43, 109, 0.5);
 }
 .tagSearchContainer .tagX{
     cursor: pointer;
