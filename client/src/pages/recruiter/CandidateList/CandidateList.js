@@ -10,7 +10,7 @@ import debounce from 'lodash/debounce';
 import Overlay from '../../../components/Overlay/Overlay';
 import AddCandidate from '../AddCandidate/AddCandidate';
 import Pagination from "react-js-pagination";
-import '../../../constants/AnimateHROverlay'; 
+import '../../../constants/AnimateHROverlay';  
 
 class CandidateList extends React.Component{
 
@@ -27,6 +27,7 @@ class CandidateList extends React.Component{
             pageCount: 1,
             postData: null,
             index: 0,
+            enterSlide:"page-enter"
         };
         this.Auth = new AuthFunctions();
     }
@@ -36,6 +37,9 @@ class CandidateList extends React.Component{
         sessionStorage.removeItem('HROverlay'); 
     }
 
+    componentWillUnmount = () => {
+        this.setState({enterSlide:"page-exit"})
+    }
 
     openCandidateTop = (candidateId) => { 
         ApiCalls.get(`/api/candidate/getCandidate/${candidateId}`)
@@ -98,7 +102,7 @@ class CandidateList extends React.Component{
             <React.Fragment>  
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
  
-                    <div className='candidateListContainer'>
+                    <div className={'candidateListContainer '+this.state.enterSlide}>
                         <div className="pageHeading">
                             Candidates 
                             <button className="addBtn" onClick={() => this.callOverlay()}></button> 
@@ -114,11 +118,13 @@ class CandidateList extends React.Component{
                                         type="text"
                                         placeholder="Search"
                                         onChange={this.onSearchChange}/>
+
+ 
                                     <div className="candidateList" style={Object.assign({})}>  
                                     {
                                         this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData} candidateId={this.state.candidateId}></ExpandableRow>})
                                     }
-                                    </div> 
+                                    </div>  
                                     <div className="paginationContainer">
                                         <Pagination
                                             activeClass={'active'}

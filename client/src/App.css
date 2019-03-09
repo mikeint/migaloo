@@ -223,3 +223,74 @@ a {
     background-color: #1a2b6d2e;
 }
 /* Pagination End */
+
+
+
+
+
+/* SLIDER ANIMATION */ 
+
+.mainContainer { 
+  overflow: hidden;
+}
+ 
+
+ 
+.jobListContainer.page-enter {
+  animation: slideInLeft 0.4s forwards;
+}
+.jobListContainer.page-exit {
+  animation: slideOutLeft 0.4s forwards;
+}
+.candidateListContainer.page-enter {
+  animation: slideInRight 0.4s forwards;
+}
+.candidateListContainer.page-exit {
+  animation: slideOutRight 0.4s forwards;
+}
+
+ 
+
+@keyframes slideInLeft {
+  from {
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+    visibility: visible;
+  }
+  to {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes slideOutLeft {
+  from {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    visibility: hidden;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translate3d(100%, 0, 0);
+    visibility: visible;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes slideOutRight {
+  from {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    visibility: hidden;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+}
