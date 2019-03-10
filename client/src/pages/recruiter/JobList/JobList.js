@@ -3,7 +3,7 @@ import './JobList.css';
 import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
 import ApiCalls from '../../../ApiCalls';  
-import { NavLink } from 'react-router-dom';
+import { NavLink, Route } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 
 import SwipeableViews from 'react-swipeable-views';
@@ -54,8 +54,10 @@ class JobList extends React.Component{
         }
     } 
     callOverlay = (postId) => {
-        this.setState({ showOverlay : !this.state.showOverlay })
-        this.setState({ postId : postId })
+        //this.setState({ showOverlay : !this.state.showOverlay })
+        //this.setState({ postId : postId })
+
+        return <Route to={"/recruiter/jobList/"+this.state.postId} jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />
     }
 
 
