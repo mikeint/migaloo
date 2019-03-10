@@ -12,6 +12,7 @@ function RecruiterRouter({ match }) {
     return ( 
         <React.Fragment>
             <NavBar/> 
+            <div className="pageHeadingStatic"></div>
             {window.location.pathname !== "/recruiter/profile" ? <Notifications/> : ""}
             <div className="mainContainer">
                 <Switch>

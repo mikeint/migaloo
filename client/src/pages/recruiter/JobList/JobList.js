@@ -12,7 +12,7 @@ import Tab from '@material-ui/core/Tab';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import Pagination from "react-js-pagination";
-import '../../../constants/AnimateHROverlay'; 
+import '../../../constants/AnimateHROverlay';  
 
 class JobList extends React.Component{
 
@@ -28,7 +28,8 @@ class JobList extends React.Component{
             page: 1,
             pageCount: 1,
             candidateId: props.match.params.candidateId,
-            candidateData: null
+            candidateData: null,
+            enterSlide:"page-enter"
         };
     }
 
@@ -38,6 +39,11 @@ class JobList extends React.Component{
         this.getJobList();
     }
 
+    componentWillUnmount = () => {
+        this.setState({enterSlide:"page-exit"})
+    }
+
+    
     componentDidMount = () => {
         if(this.state.HROverlay) {
             window.FX.fadeOut(document.getElementById('fadeOutOverlay'), {
@@ -122,7 +128,8 @@ class JobList extends React.Component{
                                     placeholder="Search"
                                     onChange={this.onSearchChange}
                                 /> 
-                                <div className="jobListContainer">
+ 
+                                <div className={"jobListContainer "+this.state.enterSlide}>
                                     <SwipeableViews enableMouseEvents index={this.state.index} onChangeIndex={this.handleChangeIndexTab}> 
                                         <React.Fragment> 
                                             {
@@ -198,7 +205,7 @@ class JobList extends React.Component{
                                             prevPageText={'Back'}
                                         />
                                     </div>
-                                </div>
+                                </div> 
                                 {this.state.showOverlay && <Overlay
                                                                 html={<BuildActiveJobs jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />}  
                                                                 handleClose={this.callOverlay} 
