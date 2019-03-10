@@ -100,15 +100,14 @@ class CandidateList extends React.Component{
  
         return (
             <React.Fragment>  
-                { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
+                    { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
  
-                    <div className={'candidateListContainer '+this.state.enterSlide}>
-                        <div className="pageHeading">
-                            Candidates 
-                            <button className="addBtn" onClick={() => this.callOverlay()}></button> 
-                            {this.state.postData? <NavLink to="/recruiter/jobList/"><div className="jobSearched">{this.state.postData.title}</div></NavLink> : ""} 
-                        </div>
- 
+                    <div className="pageHeading">
+                        Candidates 
+                        <button className="addBtn" onClick={() => this.callOverlay()}></button> 
+                        {this.state.postData? <NavLink to="/recruiter/jobList/"><div className="candidateListJobSearched">{this.state.postData.title}</div></NavLink> : ""} 
+                    </div>
+                    <div className={'candidateListContainer '+this.state.enterSlide}> 
                         {
                             this.state.candidateList ? 
                                 <React.Fragment>
@@ -144,13 +143,14 @@ class CandidateList extends React.Component{
                             :
                             <Loader />
                         }
+                        </div>
 
                         {this.state.showOverlay && <Overlay
                                                     html={html}  
                                                     handleClose={this.callOverlay} 
                                                     config={this.state.overlayConfig}
                                                 />}
-                    </div>
+                    
             </React.Fragment>
         );
     }

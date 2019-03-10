@@ -11,8 +11,7 @@ import Chat from '../../components/Chat/Chat';
 function RecruiterRouter({ match }) {
     return ( 
         <React.Fragment>
-            <NavBar/> 
-            <div className="pageHeadingStatic"></div>
+            <NavBar/>  
             {window.location.pathname !== "/recruiter/profile" ? <Notifications/> : ""}
             <div className="mainContainer">
                 <Switch>

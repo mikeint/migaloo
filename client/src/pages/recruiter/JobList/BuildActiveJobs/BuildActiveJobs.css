@@ -22,6 +22,7 @@
 }
 .jobPostingContainer .jobCaption {
         padding: 20px;
+        overflow: hidden;
 } 
 button[class*='MuiButtonBase-root-'] {
     width: 33.333%;

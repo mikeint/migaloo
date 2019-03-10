@@ -4,7 +4,7 @@ import AuthFunctions from '../../AuthFunctions';
 import ApiCalls from '../../ApiCalls';  
 import ConversationRow from "./ConversationRow/ConversationRow"; 
 import Pagination from "react-js-pagination";
-import Loader from "../Loader/Loader";
+import Loader from "../Loader/Loader"; 
 
 class Chat extends Component {
 
@@ -13,12 +13,16 @@ class Chat extends Component {
 		this.state = {
             conversationList: null,
             page: 1,
-            pageCount: 1
+            pageCount: 1,
+            enterSlide:"page-enter"
         };
         this.Auth = new AuthFunctions();
     }
     componentWillMount = () => {
         this.getConversationList();
+    }
+    componentWillUnmount = () => {
+        this.setState({enterSlide:"page-exit"})
     }
     getConversationList = () => {
         ApiCalls.get('/api/message/list/'+this.state.page)
@@ -38,8 +42,8 @@ class Chat extends Component {
   
         return (
             <React.Fragment>
-                <div className="chatContainer">
-                    <div className="pageHeading">Conversations</div>
+                <div className="pageHeading">Conversations</div>
+                <div className={"chatContainer "+this.state.enterSlide}>
                     {
                         this.state.conversationList != null ?
                             this.state.conversationList.map((conv, i)=>{

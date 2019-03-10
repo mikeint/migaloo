@@ -16,7 +16,8 @@
 	font-size: 18px;
 	background: none;
 	border-bottom: 1px solid #fff;
-	color: #fff; 
+    color: #fff; 
+    border-radius: 0px;
 }
 .formItem .error { 
     border-bottom: 1px solid #E50000; 
@@ -50,6 +51,7 @@
     .formItem input{
         border-bottom: 1px solid #eaeaea;
         color: #1a2b6d; 
+        border-radius: 0px;
     }
     .formItem input::placeholder {
         color: #1a2b6d; 

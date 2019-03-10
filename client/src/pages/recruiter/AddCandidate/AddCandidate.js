@@ -62,7 +62,7 @@ class AddCandidate extends React.Component{
                                         onChange={this.handleChange}
                                         value={this.state.firstName}
                                     />
-                                    <span className="floating-label">First Name</span>
+                                    <span className="floating-label">First Name*</span>
                                 </div>
                             </div>
                             <div className="i-2 il">
@@ -75,7 +75,7 @@ class AddCandidate extends React.Component{
                                         onChange={this.handleChange}
                                         value={this.state.lastName}
                                     />
-                                    <span className="floating-label">Last Name</span>
+                                    <span className="floating-label">Last Name*</span>
                                 </div>
                             </div>
                             <div className="i-2 il">
@@ -88,7 +88,7 @@ class AddCandidate extends React.Component{
                                         onChange={this.handleChange}
                                         value={this.state.email}
                                     />
-                                    <span className="floating-label">Email</span>
+                                    <span className="floating-label">Email*</span>
                                 </div>
                             </div>
                             <div className="i-2 il">
