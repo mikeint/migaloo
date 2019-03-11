@@ -24,7 +24,6 @@ function RecruiterRouter({ match }) {
                     <Route strict path="/recruiter/jobList" component={JobList} />
                     <Route strict path="/recruiter/jobList/:jobId" component={JobList} />
                     <Route strict path="/recruiter/chat" component={Chat} />
-                    
                 </Switch>
             </div>
         </React.Fragment>

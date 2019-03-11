@@ -75,3 +75,7 @@
 .jobListClassContainer .loaderContainer {
     min-height: 75px;
 }
+ 
+.jobListClassContainer span[class*='MuiTouchRipple-rippleVisible-']  { 
+    color: #1a2b6d; 
+} 

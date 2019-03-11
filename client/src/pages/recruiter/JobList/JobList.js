@@ -3,7 +3,7 @@ import './JobList.css';
 import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
 import ApiCalls from '../../../ApiCalls';  
-import { NavLink, Route } from 'react-router-dom';
+import { NavLink, Redirect } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 
 import SwipeableViews from 'react-swipeable-views';
@@ -57,7 +57,7 @@ class JobList extends React.Component{
         //this.setState({ showOverlay : !this.state.showOverlay })
         //this.setState({ postId : postId })
 
-        return <Route to={"/recruiter/jobList/"+this.state.postId} jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />
+        return <Redirect to={"/recruiter/jobList/"+postId} jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />
     }
 
 
@@ -119,7 +119,7 @@ class JobList extends React.Component{
 
                                 <Tabs value={this.state.index} onChange={this.changeTab}>
                                     <Tab label="Job List" />
-                                    <Tab label="New Posts" />
+                                    <Tab label="Sponsered" />
                                     <Tab label="Favourite" />
                                 </Tabs>
                                 
