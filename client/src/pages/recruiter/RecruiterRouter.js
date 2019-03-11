@@ -1,6 +1,7 @@
 import React from "react";
 import { Switch, Route, Link } from "react-router-dom";
 import RecruiterProfile from '../../pages/recruiter/Profile/Profile'; 
+import BuildActiveJobs from '../../pages/recruiter/JobList/BuildActiveJobs/BuildActiveJobs';
 import JobList from '../../pages/recruiter/JobList/JobList';
 import CandidateList from '../../pages/recruiter/CandidateList/CandidateList';
 import AddCandidate from '../../pages/recruiter/AddCandidate/AddCandidate';
@@ -22,7 +23,8 @@ function RecruiterRouter({ match }) {
                     <Route strict path="/recruiter/candidate/:candidateId" component={CandidateList} />
                     <Route strict path="/recruiter/candidateList" component={CandidateList} />
                     <Route strict path="/recruiter/addCandidate" component={AddCandidate} />
-                    <Route strict path="/recruiter/jobList/:candidateId" component={JobList} />
+                    <Route strict path="/recruiter/job/:jobId/:candidateId" component={BuildActiveJobs} />
+                    <Route strict path="/recruiter/job/:jobId" component={BuildActiveJobs} />
                     <Route strict path="/recruiter/jobList" component={JobList} />
                     <Route strict path="/recruiter/jobList/:jobId/:candidateId" component={BuildActiveJobs} />
                     <Route strict path="/recruiter/chat" component={Chat} />

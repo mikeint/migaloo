@@ -22,11 +22,12 @@ class JobList extends React.Component{
             HROverlay: false, 
             showOverlay: false,
             index:0,
-            postId: '',
+            postId: null,
             overlayConfig: {direction: "l-r", swipeLocation: "r"},
             jobList: null, 
             page: 1,
             pageCount: 1,
+            openJob: false,
             candidateId: props.match.params.candidateId,
             candidateData: null,
             enterSlide:"page-enter"
@@ -56,8 +57,7 @@ class JobList extends React.Component{
     callOverlay = (postId) => {
         //this.setState({ showOverlay : !this.state.showOverlay })
         //this.setState({ postId : postId })
-        
-        return <Redirect to={"/recruiter/jobList/"+this.state.postId+"/"+this.state.candidateData.candidate_id} />
+        this.setState({postId : postId, openJob:true})
     }
 
 
@@ -110,6 +110,7 @@ class JobList extends React.Component{
     render(){ 
         return (
             <React.Fragment>
+                { this.state.openJob && <Redirect to={"/recruiter/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidate_id:'')} />}
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                 <div className='jobListClassContainer'> 
                    <div className="pageHeading">
@@ -140,7 +141,7 @@ class JobList extends React.Component{
                                         <React.Fragment> 
                                             {
                                                 this.state.jobList.map((item, i) => {
-                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}> 
+                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(item.post_id)}> 
                                                         <div className="jobInfo"> 
                                                             <b>{item.company_name}</b>  
                                                             <div className="jobShortDesc">{item.title}</div> 
@@ -159,7 +160,7 @@ class JobList extends React.Component{
                                         <React.Fragment> 
                                             {
                                                 this.state.jobList.map((item, i) => {
-                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}> 
+                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(item.post_id)}> 
                                                         <div className="jobInfo"> 
                                                             <b>{item.company_name}</b>  
                                                             <div className="jobShortDesc">{item.title}</div> 
@@ -179,7 +180,7 @@ class JobList extends React.Component{
                                         <React.Fragment> 
                                             {
                                                 this.state.jobList.map((item, i) => {
-                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}> 
+                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(item.post_id)}> 
                                                         <div className="jobInfo"> 
                                                             <b>{item.company_name}</b>  
                                                             <div className="jobShortDesc">{item.title}</div> 
@@ -212,11 +213,11 @@ class JobList extends React.Component{
                                         />
                                     </div>
                                 </div> 
-                                {this.state.showOverlay && <Overlay
+                                {/* {this.state.showOverlay && <Overlay
                                                                 html={<BuildActiveJobs jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />}  
                                                                 handleClose={this.callOverlay} 
                                                                 config={this.state.overlayConfig}
-                                                            />}
+                                                            />} */}
                             </React.Fragment>
                         :
                         <div className="loaderContainer"><Loader /></div>

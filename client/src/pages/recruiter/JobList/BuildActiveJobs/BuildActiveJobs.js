@@ -16,7 +16,9 @@ class BuildActiveJobs extends React.Component{
         this.state={ 
             user: {},
             profileImage: '',
-            jobObj: props.jobData,
+            candidateId: props.match.params.candidateId,
+            jobId: props.match.params.jobId,
+            jobObj: {},
             redirectJob: false,
             showPostJob: false,
             overlayConfig: {direction: "b-t", swipeLocation: "t"}
@@ -27,6 +29,24 @@ class BuildActiveJobs extends React.Component{
         this.setState({ user: this.Auth.getUser() }, ()=>{
             this.getImage();
         });
+        this.getJobData();
+    }
+    getJobData = () => {
+        (this.state.candidateId?
+            ApiCalls.get('/api/jobs/getCandidateForJob/'+this.state.candidateId+'/'+this.state.jobId):
+            ApiCalls.get('/api/jobs/get/'+this.state.jobId))
+        .then((res)=>{
+            if(res.data.success){
+                console.log(res.data)
+                const jobList = res.data.jobList;
+                const candidateData = res.data.candidate;
+                this.setState({
+                    jobObj: jobList[0],
+                    candidateData: candidateData }) 
+            }
+        }).catch(errors => 
+            console.log(errors.response.data)
+        )
     }
 
     getImage = () => {
@@ -61,15 +81,15 @@ class BuildActiveJobs extends React.Component{
     }
 
 
-    render(){ 
-
-        const jobObj = this.props.jobData; 
-
+    render(){
+        if(this.state.jobObj == null){
+            return <div>Job can not be found.</div>
+        }else
         return ( 
             <div className="jobPostingContainer">
-                {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.props.jobData.post_id}/> : ''}
+                {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobData.post_id}/> : ''}
                 {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
-                <div className="jobTitle" onClick={this.setFavourite}>{jobObj.title} 
+                <div className="jobTitle" onClick={this.setFavourite}>{this.state.jobObj.title} 
                 
                  
                 <div className="favourite-flip" id="card-object">
@@ -83,21 +103,21 @@ class BuildActiveJobs extends React.Component{
                 
                 
                 </div>
-                <div className="jobCaption">{jobObj.caption}</div>
-                <h3>{jobObj.company_name}</h3>
+                <div className="jobCaption">{this.state.jobObj.caption}</div>
+                <h3>{this.state.jobObj.company_name}</h3>
                 <p>
-                    {jobObj.street_address_1}<br/>
-                    {jobObj.street_address_2}<br/>
-                    {jobObj.city+", "+jobObj.state+", "+jobObj.country}
+                    {this.state.jobObj.street_address_1}<br/>
+                    {this.state.jobObj.street_address_2}<br/>
+                    {this.state.jobObj.city+", "+this.state.jobObj.state+", "+this.state.jobObj.country}
                 </p>
-                <h5>Experience: {jobObj.experience_type_name}</h5> 
-                <h5>Salary: {jobObj.salary_type_name}</h5> 
-                {jobObj.tag_names?<p>Tags: {jobObj.tag_names.join(", ")}</p>:''}
-                <p>Posted: {jobObj.posted}</p>
+                <h5>Experience: {this.state.jobObj.experience_type_name}</h5> 
+                <h5>Salary: {this.state.jobObj.salary_type_name}</h5> 
+                {this.state.jobObj.tag_names?<p>Tags: {this.state.jobObj.tag_names.join(", ")}</p>:''}
+                <p>Posted: {this.state.jobObj.posted}</p>
                 <div className="rowButton" onClick={this.searchJobsForCandidates}>Search For Candidates</div>
-                {this.props.candidateData && <div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div>}
+                {this.state.candidateData && <div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div>}
                 {this.state.showPostJob && <Overlay
-                                                html={<PostCandidateToJob candidate={this.props.candidateData} job={this.props.jobData} handleClose={()=>this.setState({showPostJob:false})} />}  
+                                                html={<PostCandidateToJob candidate={this.state.candidateData} job={this.state.jobData} handleClose={()=>this.setState({showPostJob:false})} />}  
                                                 handleClose={()=>this.setState({showPostJob:false})} 
                                                 config={this.state.overlayConfig}
                                             />}

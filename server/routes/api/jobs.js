@@ -18,9 +18,11 @@ const postgresdb = require('../../config/db').postgresdb
 router.get('/list', passport.authentication, getJobs);
 router.get('/list/:page', passport.authentication, getJobs);
 router.get('/list/:page/:search', passport.authentication, getJobs);
+router.get('/get/:jobId', passport.authentication, getJobs);
 function getJobs(req, res){
     var search = req.params.search;
     var page = req.params.page;
+    var jobId = req.params.jobId;
     if(page == null)
         page = 1;
     var jwtPayload = req.body.jwtPayload;
@@ -30,6 +32,8 @@ function getJobs(req, res){
     var sqlArgs = [(page-1)*10]
     if(search != null)
         sqlArgs.push(search.split(' ').map(d=>d+":*").join(" & "))
+    if(jobId != null)
+        sqlArgs.push(jobId)
     postgresdb.any('\
         SELECT j.employer_id, j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, \
             street_address_1, street_address_2, city, state, country, tag_ids, \
@@ -46,12 +50,15 @@ function getJobs(req, res){
             GROUP BY post_id \
         ) tg ON tg.post_id = j.post_id \
         '+
+        (jobId != null ?
+           'WHERE j.post_id = $2'
+        :
         (search ? 
             'WHERE (company_name_search @@ to_tsquery(\'simple\', $2)) \
             ORDER BY ts_rank_cd(company_name_search, to_tsquery(\'simple\', $2)) DESC'
         :
             'ORDER BY j.created_on DESC'
-        )+' \
+        ))+' \
         OFFSET $1 \
         LIMIT 10', sqlArgs)
     .then((data) => {
@@ -82,6 +89,7 @@ function getJobs(req, res){
 router.get('/listForCandidate/:candidateId', passport.authentication,  getJobsForCandidate);
 router.get('/listForCandidate/:candidateId/:page', passport.authentication,  getJobsForCandidate);
 router.get('/listForCandidate/:candidateId/:page/:search', passport.authentication,  getJobsForCandidate);
+router.get('/getCandidateForJob/:candidateId/:jobId', passport.authentication,  getJobsForCandidate);
 function getJobsForCandidate(req, res){
     var search = req.params.search;
     var page = req.params.page;
@@ -112,6 +120,8 @@ function getJobsForCandidate(req, res){
             var sqlArgs = [candidateId, (page-1)*10]
             if(search != null)
                 sqlArgs.push(search.split(' ').map(d=>d+":*").join(" & "))
+            if(jobId != null)
+                sqlArgs.push(jobId)
             return t.any('\
                 SELECT j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, j.employer_id, \
                     street_address_1, street_address_2, city, state, country, tag_ids, tag_names, \
@@ -146,9 +156,13 @@ function getJobsForCandidate(req, res){
                     GROUP BY j.post_id \
                 ) jc ON jc.post_id = j.post_id \
                 '+
+                (jobId?
+                    'WHERE j.post_id = $3'
+                :
                 (search ? 
                     'WHERE (company_name_search @@ to_tsquery(\'simple\', $3))'
-                :'')+' \
+                :'')
+                )+' \
                 ORDER BY tag_score DESC, j.created_on DESC \
                 OFFSET $2 \
                 LIMIT 10', sqlArgs)
