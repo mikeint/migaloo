@@ -283,7 +283,7 @@ a {
     animation: slideOutLeft 0.4s forwards;
 }
 .jobPostingContainer.page-enter {
-    animation: slideInLeft 0.4s forwards;
+    animation: slideInRight 0.4s forwards;
 }
 .jobPostingContainer.page-exit {
     animation: slideOutLeft 0.4s forwards;

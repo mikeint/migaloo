@@ -3,6 +3,19 @@
     margin: 20px;
     width: 200px;
 }
+.fixedjobPostingContainer {
+    background-color: #1a2b6d;
+    position: absolute;
+    height: 120px;
+    width: 100%;
+}
+.jobPostingContainer .jobTitle {
+    width: calc(100% - 30px);
+    font-weight: bold;
+}
+.jobPostingContainer .jobSalary {
+    font-size: 14px;
+}
 .jobPostingContainer .rowButton{ 
     width: 100%;
     cursor: pointer;
@@ -14,12 +27,23 @@
     font-weight: bold;
     border-top: 1px solid #fff;
 } 
-.jobPostingContainer .jobTitle {
+.jobPostingContainer .jobPostingHeader {
+    height: 120px;
     background: #1a2b6d;
     color: #fff;
     padding: 20px;
     font-size: 22px;
 }
+.jobPostingContainer .jobPostingContent {    
+    font-size: 16px;
+    padding-bottom: 60px;
+} 
+.jobPostingContainer .favContainer{
+    display: inline-block;
+    margin-left: 10px;
+    position: absolute; 
+}
+
 .jobPostingContainer .jobCaption {
         padding: 20px;
         overflow: hidden;
@@ -45,9 +69,7 @@ button[class*='MuiButtonBase-root-'] {
 */
 .jobPostingContainer .favourite-flip {
     width: 40px;
-    height: 40px;
-    top: 52px;
-    left: 0px; 
+    height: 40px; 
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
     -webkit-backface-visibility: hidden;

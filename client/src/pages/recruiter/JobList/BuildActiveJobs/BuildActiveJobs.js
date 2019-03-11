@@ -97,44 +97,59 @@ class BuildActiveJobs extends React.Component{
 
         if (this.state.openJobPageState) return <Redirect to='/recruiter/jobList'/>
 
-        return ( 
-            <div className={"jobPostingContainer "+this.state.enterSlide}>
-                {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobData.post_id}/> : ''}
-                {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
-                <div className="jobTitle" onClick={this.setFavourite}>{this.state.jobObj.title} 
-                <div className="backButton" onClick={() => this.closeJobPage()}></div>
-                
-                 
-                <div className="favourite-flip" id="card-object">
-                    <div className="front face">
-                        <div className="text"><img src={blackStar} alt="" /></div>
-                    </div>
-                    <div className="back face">
-                        <div className="text"><img src={goldStar} alt="" /></div>
+        return (
+            <React.Fragment>
+                <div className="fixedjobPostingContainer"></div>
+                <div className={"jobPostingContainer "+this.state.enterSlide}> 
+
+                    <div className="jobPostingContent">
+                        <div className="jobPostingHeader">
+                            {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobData.post_id}/> : ''}
+                            {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
+                            <div className="jobTitle">
+                                {this.state.jobObj.title}
+                                <div className="favContainer" onClick={() => this.setFavourite()}>
+                                    <div className="favourite-flip" id="card-object" >
+                                        <div className="front face">
+                                            <div className="text"><img src={blackStar} alt="" /></div>
+                                        </div>
+                                        <div className="back face">
+                                            <div className="text"><img src={goldStar} alt="" /></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="backButton" onClick={() => this.closeJobPage()}></div>
+                            <span className="jobSalary">Salary: {this.state.jobObj.salary_type_name}</span> 
+                         
+                            
+                        </div> 
+
+                        <h3>Description</h3>
+                        <div className="jobCaption">{this.state.jobObj.caption}</div>
+                        <h3>{this.state.jobObj.company_name}</h3>
+                        <p>
+                            {this.state.jobObj.street_address_1}<br/>
+                            {this.state.jobObj.street_address_2}<br/>
+                            {this.state.jobObj.city+", "+this.state.jobObj.state+", "+this.state.jobObj.country}
+                        </p>
+                        <h5>Experience: {this.state.jobObj.experience_type_name}</h5>
+                        <span className="jobSalary">Salary: {this.state.jobObj.salary_type_name}</span> 
+                        {this.state.jobObj.tag_names?<p>Tags: {this.state.jobObj.tag_names.join(", ")}</p>:''}
+                        <p>Posted: {this.state.jobObj.posted}</p>
+                        <div className="rowButton" onClick={this.searchJobsForCandidates}>Search For Candidates</div>
+                        {this.state.candidateData && <div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div>}
                     </div>
                 </div>
-                
-                
-                </div>
-                <div className="jobCaption">{this.state.jobObj.caption}</div>
-                <h3>{this.state.jobObj.company_name}</h3>
-                <p>
-                    {this.state.jobObj.street_address_1}<br/>
-                    {this.state.jobObj.street_address_2}<br/>
-                    {this.state.jobObj.city+", "+this.state.jobObj.state+", "+this.state.jobObj.country}
-                </p>
-                <h5>Experience: {this.state.jobObj.experience_type_name}</h5> 
-                <h5>Salary: {this.state.jobObj.salary_type_name}</h5> 
-                {this.state.jobObj.tag_names?<p>Tags: {this.state.jobObj.tag_names.join(", ")}</p>:''}
-                <p>Posted: {this.state.jobObj.posted}</p>
-                <div className="rowButton" onClick={this.searchJobsForCandidates}>Search For Candidates</div>
-                {this.state.candidateData && <div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div>}
+
+ 
+
                 {this.state.showPostJob && <Overlay
                                                 html={<PostCandidateToJob candidate={this.state.candidateData} job={this.state.jobData} handleClose={()=>this.setState({showPostJob:false})} />}  
                                                 handleClose={()=>this.setState({showPostJob:false})} 
                                                 config={this.state.overlayConfig}
                                             />}
-            </div> 
+            </React.Fragment>
         )
     }
 }
