@@ -56,8 +56,8 @@ class JobList extends React.Component{
     callOverlay = (postId) => {
         //this.setState({ showOverlay : !this.state.showOverlay })
         //this.setState({ postId : postId })
-
-        return <Redirect to={"/recruiter/jobList/"+postId} jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />
+        
+        return <Redirect to={"/recruiter/jobList/"+this.state.postId+"/"+this.state.candidateData.candidate_id} />
     }
 
 
@@ -112,7 +112,11 @@ class JobList extends React.Component{
             <React.Fragment>
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                 <div className='jobListClassContainer'> 
-                   <div className="pageHeading">Active Jobs Postings {this.state.candidateData? <NavLink to={"/recruiter/candidate/"+this.state.candidateData.candidate_id}><div className="candidateSearched">For: {this.state.candidateData.first_name + " " + this.state.candidateData.last_name}</div></NavLink> : ""}</div>
+                   <div className="pageHeading">
+                        Active Jobs Postings 
+                        <button className="addBtn addFilter"></button>
+                        {this.state.candidateData ? <NavLink to={"/recruiter/candidate/"+this.state.candidateData.candidate_id}><div className="candidateSearched">For: {this.state.candidateData.first_name + " " + this.state.candidateData.last_name}</div></NavLink> : ""}
+                   </div>
                     {
                         this.state.jobList ?
                             <React.Fragment>

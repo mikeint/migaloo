@@ -15,7 +15,8 @@ class PostCandidateToJob extends React.Component{
             postId: props.job.post_id,
             comment: '',
             coins:1,
-            profileInfo: {}
+            profileInfo: {},
+            candidateSubmitted: false,
         }
         this.getProfileInfo();
     }
@@ -39,7 +40,7 @@ class PostCandidateToJob extends React.Component{
             if(res.data.success) {
                 document.querySelector(".menu").classList.add("menu--animatable");	 
                 document.querySelector(".menu").classList.remove('menu--visible');
-                return <Redirect to='/candidateList' /> // why cant i do this...?
+                this.setState({candidateSubmitted: true})
             }
         })
         .catch(error => {
@@ -64,7 +65,10 @@ class PostCandidateToJob extends React.Component{
         )
     }
 
-    render(){   
+    render(){
+
+        if (this.state.candidateSubmitted) return <Redirect to='/candidateList' /> 
+
         return (
             <React.Fragment> 
                 {/* this.state.redirect ? <Redirect to='/recruiter/candidateList' /> : '' */}

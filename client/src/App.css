@@ -167,9 +167,16 @@ a {
 }
 /* end HR Overlay */
 
-
-
-
+.backButton {
+    width: 40px;
+    height: 40px;
+    outline: 0;
+    background-image: url("./files/images/backBtn.png");
+    background-size: 25px;
+    background-repeat: no-repeat;
+    background-position: center; 
+}
+ 
 
 /* ADD BUTTON */ 
 .addBtn{  
@@ -194,6 +201,11 @@ a {
 .addJob {
     background-image: url("./files/images/addJob_icon.png");
     background-size: 28px;
+}
+.addFilter {
+    background-image: url("./files/images/filter_icon.png");
+    background-size: 23px; 
+    background-position-y: 8px;
 }
 /* end ADD BUTTON */ 
 
