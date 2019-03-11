@@ -21,7 +21,9 @@ class BuildActiveJobs extends React.Component{
             jobObj: {},
             redirectJob: false,
             showPostJob: false,
-            overlayConfig: {direction: "b-t", swipeLocation: "t"}
+            overlayConfig: {direction: "b-t", swipeLocation: "t"},
+            enterSlide:"page-enter",
+            openJobPageState: false,
         }
         this.Auth = new AuthFunctions();
     } 
@@ -30,6 +32,9 @@ class BuildActiveJobs extends React.Component{
             this.getImage();
         });
         this.getJobData();
+    }
+    componentWillUnmount = () => {
+        this.setState({enterSlide:"page-exit"})
     }
     getJobData = () => {
         (this.state.candidateId?
@@ -79,17 +84,25 @@ class BuildActiveJobs extends React.Component{
             element.classList.remove("favourite-flip-scale");
         }
     }
+    closeJobPage = () => {
+        this.setState({openJobPageState: true}) 
+    }
 
 
     render(){
         if(this.state.jobObj == null){
             return <div>Job can not be found.</div>
         }else
+
+
+        if (this.state.openJobPageState) return <Redirect to='/recruiter/jobList'/>
+
         return ( 
-            <div className="jobPostingContainer">
+            <div className={"jobPostingContainer "+this.state.enterSlide}>
                 {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobData.post_id}/> : ''}
                 {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
                 <div className="jobTitle" onClick={this.setFavourite}>{this.state.jobObj.title} 
+                <div className="backButton" onClick={() => this.closeJobPage()}></div>
                 
                  
                 <div className="favourite-flip" id="card-object">

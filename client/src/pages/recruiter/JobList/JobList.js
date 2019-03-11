@@ -10,7 +10,7 @@ import SwipeableViews from 'react-swipeable-views';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
+import BuildFilterOverlay from './BuildFilterOverlay/BuildFilterOverlay';
 import Pagination from "react-js-pagination";
 import '../../../constants/AnimateHROverlay';  
 
@@ -20,7 +20,7 @@ class JobList extends React.Component{
         super(props);
 		this.state = {
             HROverlay: false, 
-            showOverlay: false,
+            showFilterOverlay: false,
             index:0,
             postId: null,
             overlayConfig: {direction: "l-r", swipeLocation: "r"},
@@ -54,10 +54,12 @@ class JobList extends React.Component{
             })
         }
     } 
-    callOverlay = (postId) => {
-        //this.setState({ showOverlay : !this.state.showOverlay })
-        //this.setState({ postId : postId })
-        this.setState({postId : postId, openJob:true})
+    callFilterOverlay = () => { 
+        this.setState({ showFilterOverlay : !this.state.showFilterOverlay }) 
+    }
+
+    callNewJobPage = (postId) => {
+        this.setState({postId : postId, openJob:true}) 
     }
 
 
@@ -115,7 +117,7 @@ class JobList extends React.Component{
                 <div className='jobListClassContainer'> 
                    <div className="pageHeading">
                         Active Jobs Postings 
-                        <button className="addBtn addFilter"></button>
+                        <button className="addBtn addFilter" onClick={() => this.callFilterOverlay()}></button>
                         {this.state.candidateData ? <NavLink to={"/recruiter/candidate/"+this.state.candidateData.candidate_id}><div className="candidateSearched">For: {this.state.candidateData.first_name + " " + this.state.candidateData.last_name}</div></NavLink> : ""}
                    </div>
                     {
@@ -141,7 +143,7 @@ class JobList extends React.Component{
                                         <React.Fragment> 
                                             {
                                                 this.state.jobList.map((item, i) => {
-                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(item.post_id)}> 
+                                                    return <div className="jobListItem" key={i} onClick={() => this.callNewJobPage(item.post_id)}> 
                                                         <div className="jobInfo"> 
                                                             <b>{item.company_name}</b>  
                                                             <div className="jobShortDesc">{item.title}</div> 
@@ -160,7 +162,7 @@ class JobList extends React.Component{
                                         <React.Fragment> 
                                             {
                                                 this.state.jobList.map((item, i) => {
-                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(item.post_id)}> 
+                                                    return <div className="jobListItem" key={i} onClick={() => this.callNewJobPage(item.post_id)}> 
                                                         <div className="jobInfo"> 
                                                             <b>{item.company_name}</b>  
                                                             <div className="jobShortDesc">{item.title}</div> 
@@ -180,7 +182,7 @@ class JobList extends React.Component{
                                         <React.Fragment> 
                                             {
                                                 this.state.jobList.map((item, i) => {
-                                                    return <div className="jobListItem" key={i} onClick={() => this.callOverlay(item.post_id)}> 
+                                                    return <div className="jobListItem" key={i} onClick={() => this.callNewJobPage(item.post_id)}> 
                                                         <div className="jobInfo"> 
                                                             <b>{item.company_name}</b>  
                                                             <div className="jobShortDesc">{item.title}</div> 
@@ -213,11 +215,11 @@ class JobList extends React.Component{
                                         />
                                     </div>
                                 </div> 
-                                {/* {this.state.showOverlay && <Overlay
-                                                                html={<BuildActiveJobs jobData={this.state.jobList[this.state.postId]} candidateData={this.state.candidateData} />}  
-                                                                handleClose={this.callOverlay} 
+                                {this.state.showFilterOverlay && <Overlay
+                                                                html={<BuildFilterOverlay  />}  
+                                                                handleClose={this.callFilterOverlay} 
                                                                 config={this.state.overlayConfig}
-                                                            />} */}
+                                                            />}
                             </React.Fragment>
                         :
                         <div className="loaderContainer"><Loader /></div>

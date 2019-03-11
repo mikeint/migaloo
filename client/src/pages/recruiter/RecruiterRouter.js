@@ -1,7 +1,6 @@
 import React from "react";
-import { Switch, Route, Link } from "react-router-dom";
-import RecruiterProfile from '../../pages/recruiter/Profile/Profile'; 
-import BuildActiveJobs from '../../pages/recruiter/JobList/BuildActiveJobs/BuildActiveJobs';
+import { Switch, Route } from "react-router-dom";
+import RecruiterProfile from '../../pages/recruiter/Profile/Profile';  
 import JobList from '../../pages/recruiter/JobList/JobList';
 import CandidateList from '../../pages/recruiter/CandidateList/CandidateList';
 import AddCandidate from '../../pages/recruiter/AddCandidate/AddCandidate';
@@ -14,8 +13,12 @@ function RecruiterRouter({ match }) {
     return ( 
         <React.Fragment>
             <NavBar/>  
-            {window.location.pathname !== "/recruiter/profile" ? <Notifications/> : ""}
-            {window.location.pathname.indexOf("/recruiter/profile") === 0 ? <Link to="recruiter/jobList"><div className="backButton"></div></Link> : ""}
+            {window.location.pathname !== "/recruiter/profile" ? 
+                window.location.pathname.indexOf("/recruiter/job/") !== 0 ?
+                    <Notifications/> 
+                    :"" 
+                :""
+            } 
             <div className="mainContainer">
                 <Switch>
                     <Route strict path="/recruiter/profile" component={RecruiterProfile} />

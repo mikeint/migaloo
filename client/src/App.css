@@ -168,13 +168,16 @@ a {
 /* end HR Overlay */
 
 .backButton {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     outline: 0;
-    background-image: url("./files/images/backBtn.png");
-    background-size: 25px;
+    background-image: url("./files/images/x_icon.png");
+    background-size: 40px;
     background-repeat: no-repeat;
-    background-position: center; 
+    background-position: center;
+    position: absolute;
+    right: 0px;
+    top: 0px;
 }
  
 
@@ -277,6 +280,12 @@ a {
     animation: slideInLeft 0.4s forwards;
 }
 .chatContainer.page-exit {
+    animation: slideOutLeft 0.4s forwards;
+}
+.jobPostingContainer.page-enter {
+    animation: slideInLeft 0.4s forwards;
+}
+.jobPostingContainer.page-exit {
     animation: slideOutLeft 0.4s forwards;
 }
  
