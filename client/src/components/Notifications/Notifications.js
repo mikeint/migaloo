@@ -14,28 +14,16 @@ class Notifications extends React.Component{
 		this.state = {
             showOverlay: false,
             overlayConfig: {direction: "t-b", swipeLocation: "b"}, 
-            scrollY,
+            /* scrollY, */
             alertCount: 0,
             alertList: [],
         };
         this.Auth = new AuthFunctions();
     } 
 
-    componentDidMount() {
-        window.addEventListener('scroll', this.handleScroll);
+     componentDidMount() {
         this.handleAlert();
     } 
-    componentWillUnmount() {
-        window.removeEventListener('scroll', this.handleScroll);
-    } 
-    handleScroll = (e) => {
-        let scrollTop = event.srcElement.body.scrollTop,
-            itemTranslate = Math.min(0, scrollTop/3 - 60);
-    
-        this.setState({
-            scrollY: itemTranslate
-        });
-    }
 
     callOverlay = (postId) => {
         if (this.state.alertCount === 0) {
@@ -81,7 +69,7 @@ class Notifications extends React.Component{
         return (
             <React.Fragment>
                 <div className="Notifications"> 
-                    <div className={scrollY > 5 ? 'alert opacAlert' : 'alert'}>
+                    <div className='alert'>
                         <span className="alertNumber" onClick={() => this.callOverlay()}>{this.state.alertCount}</span>
                         <img className="bellNotificationImg" src={bell} onClick={() => this.callOverlay()} alt=""/>
                     </div>

@@ -8,10 +8,11 @@
     background: rgba(0, 0, 0, 0.6);
 }
 .conversationModal .modalMain {
-    position: fixed;
-    background: white;
     width: 95%;
     height: 95%;
+    max-width: 1000px;
+    position: fixed;
+    background: white;
     top: 50%;
     left: 50%;
     -ms-transform: translate(-50%,-50%);
@@ -81,8 +82,7 @@
 .messageRow.mine{
     text-align: right;
 }
-.messageRow.theirs{
-}
+
 .messageContainer.mine{
     background-color: #147efb /* #1a2b6d; */
 }
