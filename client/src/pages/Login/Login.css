@@ -37,7 +37,7 @@
     margin-bottom: 20px;
     
     outline: none;
-    color: #1a2b6d;
+    color: #263c54;
 }
 
 .tabContainer {
@@ -89,7 +89,7 @@
 @media only screen and (max-width: 677px) {
     .loginContent {
         background: #fff;
-        color: #1a2b6d; 
+        color: #263c54; 
         height: calc(100% - 50px); 
         position: absolute;
     }
@@ -100,11 +100,11 @@
 		background-color: #fff;
     }
     .loginHR {
-        color: #1a2b6d;
+        color: #263c54;
     }
     .loginHR div { 
-        border: 4px solid #1a2b6d;
-        color: #1a2b6d;
+        border: 4px solid #263c54;
+        color: #263c54;
     }
     
 	.tabContainer {

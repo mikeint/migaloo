@@ -19,7 +19,7 @@
     width: 100%; 
     height: 50%;
     background-color: #ffffff;
-    color: #1a2b6d;
+    color: #263c54;
     cursor: pointer;
     display: table; 
     font-size: 40px;
@@ -29,7 +29,7 @@
     justify-content: center;
 } 
 .tab-button-top {
-    background-color: #1a2b6d;
+    background-color: #263c54;
     color: #fff;
 } 
 

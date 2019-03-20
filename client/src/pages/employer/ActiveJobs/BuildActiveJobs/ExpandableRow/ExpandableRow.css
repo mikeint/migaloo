@@ -3,7 +3,7 @@
     cursor: pointer; 
     padding: 15px 10px;
     font-size: 15px; 
-    background: #1a2b6d;
+    background: #263c54;
     color: #fff;
 }
 .expandableJobRow .coins{
@@ -26,7 +26,7 @@
     margin: 5px 0px;
 }
 .expandableJobRow .rowMargin a{ 
-    color: #1a2b6d;
+    color: #263c54;
 }
 .expandableJobRow .rowButton {
     width: 100px;  
@@ -69,7 +69,7 @@
     flex-direction: row;
     font-size:14px;
     background: #8891b652;
-    color: #1a2b6d;
+    color: #263c54;
 }
 .expandableJobRow .flexColumn{
     flex: 1 0;

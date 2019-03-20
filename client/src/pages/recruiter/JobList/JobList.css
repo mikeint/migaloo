@@ -51,7 +51,7 @@
     padding: 15px 10px;
     font-size: 15px; 
     background: #ffffff;
-    color: #1a2b6d;
+    color: #263c54;
     cursor: pointer;
     position: relative;
     border-bottom: 1px solid #1a2b6d14;
@@ -69,7 +69,7 @@
     font-weight: bold;
     background-color: #4caf5054;
     position: absolute;
-    color: #1a2b6d;
+    color: #263c54;
 }
 
 .jobListClassContainer .loaderContainer {
@@ -77,5 +77,5 @@
 }
  
 .jobListClassContainer span[class*='MuiTouchRipple-rippleVisible-']  { 
-    color: #1a2b6d; 
+    color: #263c54; 
 } 

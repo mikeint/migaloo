@@ -33,17 +33,17 @@
 }
 .tagSearchContainer .tag-floating-label{
     font-size: 13px;
-    color: #1a2b6d;
+    color: #263c54;
     opacity: 0.6;
     font-weight: bold; 
     margin-left: 10px;
 }
 .tagSearchContainer .tag{
     display: inline-block;
-    border: 1px solid #1a2b6d;
+    border: 1px solid #263c54;
     border-radius: 3px;
     background-color: #b1b9db3b;
-    color: #1a2b6d;
+    color: #263c54;
     font-size: 17px;
     cursor: text;
     padding: 0px 5px;

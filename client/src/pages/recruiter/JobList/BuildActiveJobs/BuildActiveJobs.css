@@ -4,7 +4,7 @@
     width: 200px;
 }
 .fixedjobPostingContainer {
-    background-color: #1a2b6d;
+    background-color: #263c54;
     position: absolute;
     height: 120px;
     width: 100%;
@@ -19,7 +19,7 @@
 .jobPostingContainer .rowButton{ 
     width: 100%;
     cursor: pointer;
-    background-color: #1a2b6d;
+    background-color: #263c54;
     color: #fff;
     text-align: center;
     padding: 10px 5px;
@@ -29,7 +29,7 @@
 } 
 .jobPostingContainer .jobPostingHeader {
     height: 120px;
-    background: #1a2b6d;
+    background: #263c54;
     color: #fff;
     padding: 20px;
     font-size: 22px;

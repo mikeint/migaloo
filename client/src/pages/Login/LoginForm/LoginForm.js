@@ -63,7 +63,16 @@ class LoginForm extends Component {
     return (
        
         <React.Fragment>   
-            <div className="loginHR"><NavLink to='/'><div>HR</div></NavLink></div>
+            <NavLink to='/'>
+                <div className="mainLogoContainer">
+                    <div className="logoCircleDiv div1"></div>
+                    <div className="logoCircleDiv div2"></div>
+                    <div className="logoCircleDiv div3"></div>
+                    <div className="logoCircleDiv div4"></div>
+                    <div className="logoText"></div>
+                </div>
+            </NavLink>
+
             <div className="formItem"> 
                 <input className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name='email' type='text' onChange={this.handleChange} value={email} required />
             </div>

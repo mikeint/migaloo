@@ -40,7 +40,7 @@ a {
 }
 
 .loginContainer {
-	background-image: linear-gradient(120deg, #5159ab 0%, #1a2b6d 100%); /* #e0c3fc #8ec5fc  */
+	background-image: linear-gradient(120deg, #5159ab 0%, #263c54 100%); /* #e0c3fc #8ec5fc  */
 	background-size: 400% 400%;
 	-webkit-animation: Gradient 7s ease infinite;
 	-moz-animation: Gradient 7s ease infinite;
@@ -73,7 +73,7 @@ a {
     border-bottom: 1px solid #e2e2e2;
     position: relative; 
     line-height: 40px;
-    background: #1a2b6d;
+    background: #263c54;
     color: #fff;
 }
 .pageHeadingStatic {
@@ -84,7 +84,7 @@ a {
   border-bottom: 1px solid #e2e2e2;
   position: relative; 
   line-height: 40px;
-  background: #1a2b6d;
+  background: #263c54;
   color: #fff;
   position: fixed;
 }
@@ -143,7 +143,7 @@ a {
     width: 100%;
     height: 100%;
     position: fixed;
-    background: #1a2b6d;
+    background: #263c54;
     z-index: 99999;   
 }
 .middleOverlay {
@@ -160,7 +160,7 @@ a {
     text-align: center;
     line-height: 90px;
     color: #fff;
-    background: #1a2b6d;
+    background: #263c54;
     border: 5px solid #fff;
     font-weight: bold;
 }
@@ -186,7 +186,7 @@ a {
     margin-left: 10px; 
     -webkit-appearance: none; 
     background-color: #fff;
-    color: #1a2b6d;
+    color: #263c54;
     border-radius: 30px; 
     border: none;
     cursor: pointer;  
@@ -233,7 +233,7 @@ a {
 .paginationContainer li {
     display: inline-block;
     font-weight: bold;
-    color: #1a2b6d;
+    color: #263c54;
 }
 .paginationContainer a {
     display: inline-block;

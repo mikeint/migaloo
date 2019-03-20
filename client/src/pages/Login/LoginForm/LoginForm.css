@@ -46,15 +46,15 @@
 		top: 0px;
     } 
     .tab-item.active {
-        color: #1a2b6d;
+        color: #263c54;
     } 
     .formItem input{
         border-bottom: 1px solid #eaeaea;
-        color: #1a2b6d; 
+        color: #263c54; 
         border-radius: 0px;
     }
     .formItem input::placeholder {
-        color: #1a2b6d; 
+        color: #263c54; 
     }
 	.loginMiddle { 
 		height: 100%;

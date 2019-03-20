@@ -2,7 +2,7 @@
     height: 65px;
     cursor: pointer; 
     background: #ffffff;
-    color: #1a2b6d;
+    color: #263c54;
     margin-bottom: 1px;
     position: relative;
     border-bottom: 1px solid #1a2b6d14;
@@ -16,7 +16,7 @@
 }
 .expandableRow .collapse.in {
     max-height: 700px;
-    border-bottom: 2px solid #1a2b6d;
+    border-bottom: 2px solid #263c54;
 } 
 .expandableRow .nameContainer {   
     font-size: 23px;
@@ -25,7 +25,7 @@
 }
 .expandableRow .coinContainer {
     width: 65px; 
-    background-color: #1a2b6d; 
+    background-color: #263c54; 
     color: #fff;
     background-image:url("../../../../files/images/spentCoins.png");
     background-repeat: no-repeat;
@@ -70,7 +70,7 @@
 .expandableRow .rowButton{
     width: 100%;
     cursor: pointer;
-    background-color: #1a2b6d;
+    background-color: #263c54;
     color: #fff;
     text-align: center;
     padding: 10px 5px;
@@ -168,7 +168,7 @@
 .expandableRow .created-info-item {
     position: absolute;
     margin: auto;
-    background: #1a2b6d;
+    background: #263c54;
     color: #fff;
     font-size: 10px;
     padding: 5px;
@@ -225,13 +225,13 @@
 
 .expandableRow .candidateListItem.true {
     background-color: #1a2b6d21;
-    border-top: 2px solid #1a2b6d;
+    border-top: 2px solid #263c54;
     box-shadow: inset 0 3px 2px #696d7b;
 }
 
    
 span[class*='MuiPrivateTabIndicator-colorSecondary-'] {
-    background-color: #1a2b6d !important; 
+    background-color: #263c54 !important; 
 }
 
 @media only screen and (max-width: 600px) {
@@ -252,5 +252,5 @@ span[class*='MuiPrivateTabIndicator-colorSecondary-'] {
     font-weight: bold;
     background-color: #4caf5054;
     position: absolute;
-    color: #1a2b6d;
+    color: #263c54;
 }

@@ -11,9 +11,9 @@ class AboutSection extends Component {
                     <div className="content_container"> 
                         <div id="f1_container">
                             <div id="f1_card" className="shadow">
-                                <div className="front face img1"> 
+                                <div className="front teamFace img1"> 
                                 </div>
-                                <div className="back face center">
+                                <div className="back teamFace center">
                                 </div>
                             </div>
                         </div>
@@ -25,9 +25,9 @@ class AboutSection extends Component {
                     <div className="content_container">   
                         <div id="f1_container">
                             <div id="f1_card" className="shadow">
-                                <div className="front face img2"> 
+                                <div className="front teamFace img2"> 
                                 </div>
-                                <div className="back face center"> 
+                                <div className="back teamFace center"> 
                                 </div>
                             </div>
                         </div>
@@ -39,9 +39,9 @@ class AboutSection extends Component {
                     <div className="content_container">   
                         <div id="f1_container">
                             <div id="f1_card" className="shadow">
-                                <div className="front face img3">  
+                                <div className="front teamFace img3">  
                                 </div>
-                                <div className="back face center"> 
+                                <div className="back teamFace center"> 
                                 </div>
                             </div>
                         </div>
