@@ -58,10 +58,10 @@
     height: 400px;
     background-size: cover;
 }
-.module_img1 {background-image: url('../../images/landingPage/landing1.jpg')}
-.module_img2 {background-image: url('../../images/landingPage/landing2.jpg')}
-.module_img3 {background-image: url('../../images/landingPage/landing3.jpg')}
-.module_img4 {background-image: url('../../images/landingPage/landing4.jpg')}
+.module_img1 {background-image: url('../../files/images/landingPage/landing1.jpg')}
+.module_img2 {background-image: url('../../files/images/landingPage/landing2.jpg')}
+.module_img3 {background-image: url('../../files/images/landingPage/landing3.jpg')}
+.module_img4 {background-image: url('../../files/images/landingPage/landing4.jpg')}
 
  
 

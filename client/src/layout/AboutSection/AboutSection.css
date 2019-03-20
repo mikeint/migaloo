@@ -56,19 +56,19 @@
     border: 3px solid white;
 }
 .img1 {
-    background-image:url('../../images/team/sansone.png');
+    background-image:url('../../files/images/landingPage/team/sansone.png');
     background-repeat: no-repeat;
     background-size: cover;
 
 }
 .img2 {
-    background-image:url('../../images/team/nasser.png');
+    background-image:url('../../files/images/landingPage/team/nasser.png');
     background-repeat: no-repeat;
     background-size: cover;
     
 }
 .img3 {
-    background-image:url('../../images/team/marcucci.png');
+    background-image:url('../../files/images/landingPage/team/marcucci.png');
     background-repeat: no-repeat;
     background-size: cover;
     

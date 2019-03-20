@@ -1,8 +1,8 @@
 import React, {Component} from "react";
 import './SocialSide.css';
 
-import linkedInLogo from '../../images/linkedin.png' ;
-import slackLogo from '../../images/slack.png' ;
+import linkedInLogo from '../../files/images/landingPage/linkedin.png' ;
+import slackLogo from '../../files/images/landingPage/slack.png' ;
 
 class SocialSide extends Component {
     render() { 

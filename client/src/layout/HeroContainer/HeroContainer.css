@@ -17,18 +17,18 @@
 }
 
 #heroLayer0{
-    background-image: url("../../images/layer0.png"); 
+    background-image: url("../../files/images/landingPage/layer0.png"); 
 }
 #heroLayer1{
-    background-image: url("../../images/layer1.png");
+    background-image: url("../../files/images/landingPage/layer1.png");
     background-position-y: 100px;
 }
 #heroLayer2{
-    background-image: url("../../images/layer2.png");
+    background-image: url("../../files/images/landingPage/layer2.png");
     background-position-y: 260px;
 }
 #heroLayer3{
-    background-image: url("../../images/layer3.png");
+    background-image: url("../../files/images/landingPage/layer3.png");
     background-position-y: 100px;
 }
 

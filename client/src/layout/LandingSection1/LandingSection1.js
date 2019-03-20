@@ -1,9 +1,9 @@
 import React, { Component } from "react";  
 import './LandingSection1.css'; 
 
-import currStateImg from '../../images/landingPage/the-current-state-icon.png';  
-import problemImg from '../../images/landingPage/the-problem-icon.png';  
-import realityImg from '../../images/landingPage/the-reality-icon.png';  
+import currStateImg from '../../files/images/landingPage/the-current-state-icon.png';  
+import problemImg from '../../files/images/landingPage/the-problem-icon.png';  
+import realityImg from '../../files/images/landingPage/the-reality-icon.png';  
 
 class LandingSection1 extends Component {
   

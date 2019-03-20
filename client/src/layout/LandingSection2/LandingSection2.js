@@ -3,11 +3,11 @@ import './LandingSection2.css';
 //import ScrollAnimation from 'react-animate-on-scroll';
 import Slider from 'react-slick';
  
-import carouselImg2 from '../../images/landingPage/carousel-2.png';
-import carouselImg3 from '../../images/landingPage/carousel-3.png';
-import carouselImg4 from '../../images/landingPage/carousel-4.png';
-import carouselImg5 from '../../images/landingPage/carousel-5.png';
-import carouselImg6 from '../../images/landingPage/carousel-6.png';
+import carouselImg2 from '../../files/images/landingPage/carousel-2.png';
+import carouselImg3 from '../../files/images/landingPage/carousel-3.png';
+import carouselImg4 from '../../files/images/landingPage/carousel-4.png';
+import carouselImg5 from '../../files/images/landingPage/carousel-5.png';
+import carouselImg6 from '../../files/images/landingPage/carousel-6.png';
 
 
 class LandingSection2 extends Component {

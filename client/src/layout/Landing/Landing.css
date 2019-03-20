@@ -62,16 +62,16 @@
     position: relative; 
     background: #abacc0;
 }
-.heroContainer .heroHome{
+/* .heroContainer .heroHome{
     width: 100%; 
     height: 600px;
     position: relative;
     background: #fafafa no-repeat;
-    background-image: url("../../images/landingPage/hero_2.jpg");
+    background-image: url("../../files/images/landingPage/");
     background-position: center center;
     background-size: cover; 
     transition: 0.3s;
-}
+} */
 .heroText {
     width: 100%;  
     font-size: 50px;
@@ -361,7 +361,7 @@
     margin-top: -2px;
     position: absolute;
     border: 1px solid #20307042;
-    background-image: url("../../images/landingPage/strain.png");
+    background-image: url("../../files/images/landingPage/strain.png");
     background: #fafafa no-repeat;
     background-repeat:repeat;
     background-size: 2px;
