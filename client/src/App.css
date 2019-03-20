@@ -226,7 +226,7 @@ a {
 .paginationContainer ul {
     width: 100%;
     text-align: center;
-    background-color: #b1b9db;
+    background-color: #96b4be;
     padding: 5px 5px;
 }
 
@@ -244,11 +244,11 @@ a {
     color: black;
 }
 .paginationContainer a:hover {
-    background-color: #3b5fff;
-    color: black;
+    background-color: #263c54;
+    color: #fff;
 }
 .paginationContainer .active {
-    background-color: #1a2b6d2e;
+    background-color: #263c542e;
 }
 /* Pagination End */
 
