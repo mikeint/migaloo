@@ -102,29 +102,29 @@ a {
 
 
 .mc_1 {
-    background-color: #b1b9db;
+    background-color: #96b4be;
 }
 .mc_2 {
-    background-color: #8891b6;
+    background-color: #6f90a1;
 }
 .mc_3 {
-    background-color: #5a6592;
+    background-color: #546f82;
 }
 .mc_4 {
-    background-color: #1a2b6d;
+    background-color: #263c54;
     color: #fff;
 } 
 .mc_1_text {
-    color: #b1b9db;
+    color: #96b4be;
 }
 .mc_2_text {
-    color: #8891b6;
+    color: #6f90a1;
 }
 .mc_3_text {
-    color: #5a6592;
+    color: #546f82;
 }
 .mc_4_text {
-    color: #1a2b6d;
+    color: #263c54;
 }
  
 
@@ -137,7 +137,6 @@ a {
 .centerText {
     text-align: center;
 }
-
 
 /* HR Overlay */
 .HROverlay {  

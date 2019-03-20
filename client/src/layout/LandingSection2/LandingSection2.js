@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import './LandingSection2.css';
 //import ScrollAnimation from 'react-animate-on-scroll';
 import Slider from 'react-slick';
-
-//import carouselImg1 from '../../files/images/landingPage/carousel-1.png';
-import carouselImg2 from '../../files/images/landingPage/carousel-2.png';
-import carouselImg3 from '../../files/images/landingPage/carousel-3.png';
-import carouselImg4 from '../../files/images/landingPage/carousel-4.png';
-import carouselImg5 from '../../files/images/landingPage/carousel-5.png';
-import carouselImg6 from '../../files/images/landingPage/carousel-6.png';
+ 
+import carouselImg2 from '../../images/landingPage/carousel-2.png';
+import carouselImg3 from '../../images/landingPage/carousel-3.png';
+import carouselImg4 from '../../images/landingPage/carousel-4.png';
+import carouselImg5 from '../../images/landingPage/carousel-5.png';
+import carouselImg6 from '../../images/landingPage/carousel-6.png';
 
 
 class LandingSection2 extends Component {
@@ -58,30 +57,30 @@ class LandingSection2 extends Component {
                     <div>
                         <img src={carouselImg2} alt="" />
                         <h1 className="mc_4_text">Top Quality Candidates</h1>
-                        <p>Recruiters have the opportunity to showcase their best candidates, and employers get a ranked list of top talent to choose from.</p>
+                        <p>Recruiters have the opportunity to showcase their best candidates, and employers get a ranked list of top talent to choose&nbsp;from.</p>
                     </div>
                 {/* </ScrollAnimation> */}
 				{/* <ScrollAnimation animateIn='bounceInRight' duration={2} animateOnce={true}> */}
                     <div>
                         <img src={carouselImg3} alt="" />
                         <h1 className="mc_4_text">Efficient</h1>
-                        <p>Employers will only view qualified candidates. Recruiters get the right information upfront so they can assess their candidate pool to see if they have a match.  </p>
+                        <p>Employers will only view qualified candidates. Recruiters get the right information upfront so they can assess their candidate pool to see if they have a&nbsp;match.</p>
                     </div>
                 {/* </ScrollAnimation> */} 
                 <div>
                     <img src={carouselImg4} alt="" />
                     <h1 className="mc_4_text">Credit-Based System</h1>
-                    <p>Recruiters can rank ahead of their competition based on the confidence in their ability to fill the opening.  Employers get an organized list of qualified candidates.</p>
+                    <p>Recruiters can rank ahead of their competition based on the confidence in their ability to fill the opening.  Employers get an organized list of qualified&nbsp;candidates.</p>
                 </div> 
                 <div>
                     <img src={carouselImg5} alt="" />
                     <h1 className="mc_4_text">Transparency</h1>
-                    <p>An unbiased, universal agreement that takes into consideration the thoughts and opinions from top recruiters and employers make for an efficient process.</p>
+                    <p>An unbiased, universal agreement that takes into consideration the thoughts and opinions from top recruiters and employers make for an efficient&nbsp;process.</p>
                 </div> 
                 <div>
                     <img src={carouselImg6} alt="" />
                     <h1 className="mc_4_text">Confidentiality</h1>
-                    <p>Candidates can take comfort knowing that they remain entirely anonymous until they wish to move forward in a given hiring process.</p>
+                    <p>Candidates can take comfort knowing that they remain entirely anonymous until they wish to move forward in a given hiring&nbsp;process.</p>
                 </div> 
             </Slider>
           </div>

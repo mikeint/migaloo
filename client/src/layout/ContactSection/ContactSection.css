@@ -1,5 +1,5 @@
 .contactUsContainer {
-    background: #1a2b6d;
+    background: #263c54;
     padding: 30px;
     font-weight: bold; 
  
@@ -8,7 +8,7 @@
     position: relative;
     overflow: hidden;
     float: left;
-    width: 100%;
+    width: 100%; 
 }
 .formBackground {
     width: 100%;
@@ -37,7 +37,7 @@
     padding: 10px 0px 10px 10px; 
     margin-bottom: 20px;
     transition: 0.3s;  
-    background: #1a2b6d;
+    background: #263c54;
     color: #ffffff;
     border-bottom:1px solid #b1b9db;
     border-top: none;
@@ -92,7 +92,7 @@
     letter-spacing: 3px;
     font-weight: bold;
     color: #ffffff;
-    background: #1a2b6d;
+    background: #263c54;
     border: none;  
     transition: 0.3s;
     overflow: hidden; 
@@ -123,10 +123,11 @@
     width: 100%;
     max-width: 100%;
     min-width: 100%;
+    min-height: 200px;
     height: 140px;
     font: 400 13.3333px Arial;
     padding: 10px;  
-    background: #1a2b6d;
+    background: #263c54;
     color: #ffffff;
     overflow: auto;  
     border-bottom:1px solid #b1b9db;

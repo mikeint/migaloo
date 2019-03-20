@@ -37,7 +37,7 @@ class ContactSection extends Component {
         document.getElementById("theForm").reset();
         e.preventDefault()
         const { firstname, email, message} = this.state
-        axios.post('/api/mailto', {
+        axios.post('http://ec2-3-89-115-26.compute-1.amazonaws.com:5000/api/mailto', {
             firstname, 
             email, 
             message

@@ -1,8 +1,8 @@
 import React, { Component } from 'react'; 
-import { Link } from 'react-router-dom';
+//import { Link } from 'react-router-dom';
 import './Landing.css';
-//import heroHome from '../../files/images/landingPage/hero_2.jpg'; 
-//import HRlogoblack from '../../files/images/landingPage/HR-logo-black.png'; 
+//import heroHome from './images/landingPage/hero_2.jpg'; 
+//import HRlogoblack from './images/landingPage/HR-logo-black.png'; 
 import ScrollAnimation from 'react-animate-on-scroll';
 import ScrollableAnchor from 'react-scrollable-anchor'
 import SocialSide from "../SocialSide/SocialSide"; 
@@ -11,6 +11,8 @@ import ContactSection from "../ContactSection/ContactSection";
 import LandingSection1 from "../LandingSection1/LandingSection1"; 
 import LandingSection2 from "../LandingSection2/LandingSection2"; 
 import LandingSection3 from "../LandingSection3/LandingSection3"; 
+import AboutSection from "../AboutSection/AboutSection"; 
+import HeroContainer from "../HeroContainer/HeroContainer"; 
 
 class Landing extends Component {
    
@@ -44,12 +46,25 @@ class Landing extends Component {
 			<React.Fragment>
 				<SocialSide />
 				<div id="header" className={this.state.smallHeader ? "smallHeader" : ""}>
-					<div id="logoContainer"><div className="logo">HR</div><div className="hrLogoText">HireRanked</div></div>
+
+                    <div id="logoContainer">
+                        <div className="mainLogoContainer">
+                            <div className="logoCircleDiv div1"></div>
+                            <div className="logoCircleDiv div2"></div>
+                            <div className="logoCircleDiv div3"></div>
+                            <div className="logoCircleDiv div4"></div>
+                            <div className="logoText"></div>
+                        </div>
+                        <div className="hrLogoText">Sivi</div>
+                    </div>
+
 					<div id="navBar"> 
 						<a href="#landingSection2"><li className="navBarA">Overview</li></a>
 						<a href="#landingSection3"><li className="navBarA">How it Works</li></a>
 						<a href="#contactSection"><li className="navBarA">Contact</li></a>
-						<Link to="/login"><li className="navBarA">Login</li></Link>
+						<a href="#aboutSection"><li className="navBarA">About</li></a>
+						{/* <Link to="/login"><li className="navBarA">Login</li></Link> */}
+						{/* <li className="navBarA">Login</li> */}
 					</div>
 
 					<div id="navBarMobile">
@@ -62,24 +77,34 @@ class Landing extends Component {
 							<a href="#landingSection2" onClick={this.toggleMobileMenu}><li>Overview</li></a>
 							<a href="#landingSection3" onClick={this.toggleMobileMenu}><li>How it Works</li></a>
 							<a href="#contactSection" onClick={this.toggleMobileMenu}><li>Contact Us</li></a>
-							<Link to="/login"><li>Login</li></Link>
+                            <a href="#aboutSection" onClick={this.toggleMobileMenu}><li>About</li></a>
+							{/* <Link to="/login"><li>Login</li></Link> */}
+							{/* <li>Login</li> */}
 						</div>
 					</div>
 				</div>
 
-				<div className="heroContainer">
-                    {/* <img src={heroHome} alt="" /> */}
+				{/* <div className="heroContainer"> 
                     <div className="heroHome"></div>
 					<div className="heroText"> 
 					<ScrollAnimation className="heroTxtFull" animateIn='bounceInLeft' initiallyVisible={true} animateOnce={true}> 
 						A platform where EMPLOYERS<br/>post jobs to RECRUITERS. 
 					</ScrollAnimation>
 					</div>
+                </div>  */}
+                
+                <div className="heroText"> 
+					<ScrollAnimation className="heroTxtFull" animateIn='bounceInLeft' initiallyVisible={true} animateOnce={true}> 
+						A platform where EMPLOYERS<br/>post jobs to RECRUITERS. 
+					</ScrollAnimation>
 				</div> 
+
+                <HeroContainer />
 
 				<LandingSection1 />
 				<ScrollableAnchor id={'landingSection2'}><LandingSection2 /></ScrollableAnchor>
 				<ScrollableAnchor id={'landingSection3'}><LandingSection3 /></ScrollableAnchor>
+                <ScrollableAnchor id={'aboutSection'}><AboutSection /></ScrollableAnchor>
 				<ScrollableAnchor id={'contactSection'}><ContactSection /></ScrollableAnchor>
                 
  

@@ -1,9 +1,21 @@
 import React, { Component } from "react";  
 import './LandingSection3.css';
-import { NavLink } from 'react-router-dom';
+//import { NavLink } from 'react-router-dom';
 import ScrollAnimation from 'react-animate-on-scroll';  
 
 class LandingSection3 extends Component {
+
+    constructor() {
+        super();
+		this.state = {
+            showEmailInput: false,
+        }; 
+    }
+
+
+    showEmailSignUp = () => { 
+        this.setState = ({ showEmailInput: !this.state.showEmailInput })
+    }
   
     render() { 
 
@@ -67,7 +79,8 @@ class LandingSection3 extends Component {
                             </div>
                         </div>
                         <div className="animated_half"> 
-                            <NavLink to='/login'><div className="signUpBtnHome">Sign Up</div></NavLink> 
+                            {/* <NavLink to='/login'><div className="signUpBtnHome">Sign Up</div></NavLink>  */}
+                            <div className="signUpBtnHome" onClick={this.showEmailSignUp}>Sign Up</div>
                         </div>
                     </div>
                 </div>
@@ -132,7 +145,8 @@ class LandingSection3 extends Component {
                         </div>
                         <div className="animated_half">
                             <div className="module_content">
-                                <NavLink to='/login'><div className="signUpBtnHome">Sign Up</div></NavLink>
+                                {/* <NavLink to='/login'><div className="signUpBtnHome">Sign Up</div></NavLink> */}
+                                <div className="signUpBtnHome" onClick={this.showEmailSignUp}>Sign Up</div>
                             </div>
                         </div>
                     </div>

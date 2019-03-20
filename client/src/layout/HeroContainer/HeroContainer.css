@@ -1,0 +1,60 @@
+.heroContainer {
+    width: 100%; 
+    height: 670px; 
+    background-color: #cecece;
+}
+
+.heroImg { 
+    width: 100%;
+}
+
+.heroLayer {  
+    height: 770px; 
+    background-repeat: no-repeat;
+    background-size: inherit;
+    position: absolute;
+    width: 100%; 
+}
+
+#heroLayer0{
+    background-image: url("../../images/layer0.png"); 
+}
+#heroLayer1{
+    background-image: url("../../images/layer1.png");
+    background-position-y: 100px;
+}
+#heroLayer2{
+    background-image: url("../../images/layer2.png");
+    background-position-y: 260px;
+}
+#heroLayer3{
+    background-image: url("../../images/layer3.png");
+    background-position-y: 100px;
+}
+
+
+@media only screen and (max-width: 1024px) { 
+    .heroContainer { 
+        height: 430px; 
+    }
+    .heroImg { 
+        width: 100%;
+        height: 430px;
+    }
+    .heroLayer {  
+        height: 430px; 
+        background-size: 1024px;
+    } 
+    #heroLayer0{ 
+        background-size: cover;
+    }
+    #heroLayer1{ 
+        background-position-y: 260px;
+    }
+    #heroLayer2{ 
+        background-position-y: 270px;
+    }
+    #heroLayer3{ 
+        background-position-y: 260px;
+    }
+}

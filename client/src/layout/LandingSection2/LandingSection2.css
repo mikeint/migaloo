@@ -2,6 +2,7 @@
     width: 100%;
     float: left;
     overflow: hidden;
+    padding-top: 40px;
 }
 
 .slideImg { 
@@ -27,7 +28,7 @@
 .slick-next:before,
 .slick-prev:before {
     font-size: 40px;
-    color: #1a2b6d;
+    color: #263c54;
 }
 
 .slick-dots li button:before {
@@ -55,6 +56,9 @@
     opacity: 0.3;
 } 
 
+.slick-slider {
+    padding-bottom:40px;
+}
 
 
 @media only screen and (max-width: 1024px) { 
