@@ -14,7 +14,11 @@ class LandingSection3 extends Component {
 
 
     showEmailSignUp = () => { 
-        this.setState = ({ showEmailInput: !this.state.showEmailInput })
+        this.setState({ showEmailInput: !this.state.showEmailInput })
+    }
+
+    handleChange = e => {
+        this.setState({ [e.target.name]: e.target.value })
     }
   
     render() { 
@@ -80,7 +84,27 @@ class LandingSection3 extends Component {
                         </div>
                         <div className="animated_half"> 
                             {/* <NavLink to='/login'><div className="signUpBtnHome">Sign Up</div></NavLink>  */}
-                            <div className="signUpBtnHome" onClick={this.showEmailSignUp}>Sign Up</div>
+                            {!this.state.showEmailInput ? 
+                                <div className="signUpBtnHome" onClick={this.showEmailSignUp}>Sign Up</div>
+                            : 
+
+                            <React.Fragment>
+                                <h3 className="emailAnimatedTitle">Send us your email or contact below</h3>
+                                <div className="sendEmailContainer">
+                                    <input
+                                        id="email"
+                                        className="emailSignUpInput"
+                                        type="text"
+                                        name="email"
+                                        placeholder="email"
+                                        required
+                                        onChange={this.handleChange}
+                                    />
+                                    <div className="submitEmail">send</div>
+                                </div>
+                            </React.Fragment>
+                             }
+                            
                         </div>
                     </div>
                 </div>
@@ -146,7 +170,26 @@ class LandingSection3 extends Component {
                         <div className="animated_half">
                             <div className="module_content">
                                 {/* <NavLink to='/login'><div className="signUpBtnHome">Sign Up</div></NavLink> */}
-                                <div className="signUpBtnHome" onClick={this.showEmailSignUp}>Sign Up</div>
+                                {!this.state.showEmailInput ? 
+                                    <div className="signUpBtnHome" onClick={this.showEmailSignUp}>Sign Up</div>
+                                : 
+
+                                <React.Fragment>
+                                    <h3 className="emailAnimatedTitle">Send us your email or contact below</h3>
+                                    <div className="sendEmailContainer">
+                                        <input
+                                            id="email"
+                                            className="emailSignUpInput"
+                                            type="text"
+                                            name="email"
+                                            placeholder="email"
+                                            required
+                                            onChange={this.handleChange}
+                                        />
+                                        <div className="submitEmail">send</div>
+                                    </div>
+                                </React.Fragment>
+                                }
                             </div>
                         </div>
                     </div>

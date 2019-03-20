@@ -13,10 +13,52 @@
     cursor: pointer;
 }
 
+.sendEmailContainer {
+    width:100%;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
 
+.submitEmail {
+    display: flex;
+    height: 58px;
+    background: #263c54;
+    color: #fff;
+    line-height: 58px;
+    padding: 0px 30px;
+}
 
+.emailSignUpInput {
+    width: 70%;
+    display: flex;
+    height: 60px; 
+    padding: 10px 0px 10px 10px; 
+    transition: 0.3s;  
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    outline: none;
+    font-size: 22px;    
 
+    animation-name: openEmail;
+    animation-duration: 2s;
+}
 
+@keyframes openEmail {
+    0%   {width: 15%;}
+    25%  {width: 70%;}
+    50%  {width: 70%;}
+    100% {width: 70%;}
+}
+.emailAnimatedTitle {
+    text-align: center;
+}
 
 .module_wrapper {
     width: 100%;
