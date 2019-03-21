@@ -11,7 +11,7 @@ body {
     height:100%;
 	padding: 0;
 	margin: 0px;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: siteFont;
     
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -21,8 +21,16 @@ body {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome and Opera */
 }
+@font-face {
+    font-family: siteFont;
+    src: url("./files/font/TwCenMT.ttf");
+  }
+
 a {
     text-decoration: none;
+}
+p {
+    font-size: 18px;
 }
 #root {
     height: 100%;
@@ -132,7 +140,7 @@ a {
     background: #fff;
 }
 .greyBG {
-    background: #f2f2f2;
+    background: #263c542e;
 }
 .centerText {
     text-align: center;
@@ -332,3 +340,5 @@ a {
     transform: translate3d(100%, 0, 0);
   }
 }
+
+ 

@@ -18,9 +18,9 @@ class HeroContainer extends Component {
     handleScroll = () => {
         lastScrollY = window.scrollY;
         if (lastScrollY >= 0 && lastScrollY <= 500 && window.innerWidth > 1024) {
-            document.getElementById("heroLayer1").style.backgroundPositionY = (lastScrollY*0.85+100)+"px";
-            document.getElementById("heroLayer2").style.backgroundPositionY = (lastScrollY*0.65+260)+"px";
-            document.getElementById("heroLayer3").style.backgroundPositionY = (lastScrollY*0.5+100)+"px";
+            document.getElementById("heroLayer1").style.backgroundPositionY = (lastScrollY*0.89+20)+"px";
+            document.getElementById("heroLayer2").style.backgroundPositionY = (lastScrollY*0.69+120)+"px";
+            document.getElementById("heroLayer3").style.backgroundPositionY = (lastScrollY*0.59+60)+"px";
         }   
         else if (lastScrollY >= 0 && lastScrollY <= 500) {
             document.getElementById("heroLayer1").style.backgroundPositionY = (lastScrollY*0.85+260)+"px";

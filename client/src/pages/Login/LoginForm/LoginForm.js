@@ -1,7 +1,7 @@
 import React, { Component } from 'react';  
 import AuthFunctions from '../../../AuthFunctions';
-import { Redirect, NavLink } from 'react-router-dom';
-import ApiCalls from '../../../ApiCalls';  
+import { Redirect } from 'react-router-dom';
+import ApiCalls from '../../../ApiCalls';   
 
 import './LoginForm.css';
 
@@ -62,16 +62,7 @@ class LoginForm extends Component {
     
     return (
        
-        <React.Fragment>   
-            <NavLink to='/'>
-                <div className="mainLogoContainer">
-                    <div className="logoCircleDiv div1"></div>
-                    <div className="logoCircleDiv div2"></div>
-                    <div className="logoCircleDiv div3"></div>
-                    <div className="logoCircleDiv div4"></div>
-                    <div className="logoText"></div>
-                </div>
-            </NavLink>
+        <React.Fragment>
 
             <div className="formItem"> 
                 <input className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name='email' type='text' onChange={this.handleChange} value={email} required />

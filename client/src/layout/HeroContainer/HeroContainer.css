@@ -1,6 +1,6 @@
 .heroContainer {
     width: 100%; 
-    height: 670px; 
+    height: 500px; 
     background-color: #cecece;
 }
 
@@ -9,7 +9,7 @@
 }
 
 .heroLayer {  
-    height: 770px; 
+    height: 600px; 
     background-repeat: no-repeat;
     background-size: inherit;
     position: absolute;
@@ -21,15 +21,15 @@
 }
 #heroLayer1{
     background-image: url("../../files/images/landingPage/layer1.png");
-    background-position-y: 100px;
+    background-position-y: 20px;
 }
 #heroLayer2{
     background-image: url("../../files/images/landingPage/layer2.png");
-    background-position-y: 260px;
+    background-position-y: 120px;
 }
 #heroLayer3{
     background-image: url("../../files/images/landingPage/layer3.png");
-    background-position-y: 100px;
+    background-position-y: 60px;
 }
 
 

@@ -17,7 +17,7 @@
     background: #fff !important;
 }
 .smallHeader li {
-    line-height: 50px !important;
+    line-height: 50px !important; 
 }
 .smallHeader#header {
     border-bottom: 1px solid #263c54;
@@ -54,6 +54,7 @@
     line-height: 50px;
     font-size: 30px;
     color: #1b2c6e; 
+    padding-left: 130px;
 }
 
 
@@ -84,20 +85,21 @@
     transition: 0.3s;
 }
 .animated.heroTxtFull {
-    width: 100%;
+    width: 100%; 
 }
 
 #logoContainer {  
     float: left;     
 }
 .hrLogoText {
-    float: left;
-    color: white;      
-    line-height: 95px;
-    font-size: 50px; 
+    float: left; 
+    line-height: 135px;
+    letter-spacing: 5px;
+    font-size: 50px;
     font-weight: bold;
-    padding-left: 10px;
+    padding-left: 260px;
     transition: 0.3s;
+    color: #fff;
 }
 
 .logo {
@@ -117,14 +119,13 @@
     float: right;
 }
 #navBar li {
-    position: relative; 
+    position: relative;
     line-height: 100px;
     transition: 0.3s;
-    font-weight: bold; 
-    font-size: 21px;
+    font-size: 28px;
     list-style-type: none;
-    float: left; 
-    padding: 0px 10px;
+    float: left;
+    padding: 0px 15px;
 } 
 
 #navBar li:hover { 
@@ -342,12 +343,46 @@
 
 
 
+/* WHAlE LOGO */
+
+
+.whaleContainer {
+    background-image: url("../../files/images/landingPage/whaleWs.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 340px;
+    height: 100px;
+    position: absolute;
+    z-index: 1;
+    margin-top: 5px;
+    margin-left: 20px;
+    transition: 0.3s;
+}
+.whaleContainer span {
+    text-decoration: none;
+    color: #1b2c6e;
+}
+.smallHeader .whaleContainer { 
+    background-image: url("../../files/images/landingPage/whaleBs.png");
+    width: 100px;  
+    height: 50px;
+}
+.migalooLogoText {
+    display: none;
+}
+.smallHeader .migalooLogoText { 
+    display: block;
+}
+
+/* end WHAlE LOGO */
+
+
 
 
 
 /* ------ logoCircleDiv ------ */
 
-.mainLogoContainer{
+/* .mainLogoContainer{
     margin-left: 10px;
     margin-top: 25px;
     width: 50px;
@@ -436,6 +471,6 @@
     margin-left: 4px;
     margin-top: 2px;
 }
-
+ */
 
 /* ------ end logoCircleDiv ------ */
