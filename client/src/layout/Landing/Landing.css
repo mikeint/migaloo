@@ -374,6 +374,18 @@
     display: block;
 }
 
+@media only screen and (max-width: 600px) {
+    .whaleContainer {
+        width: 260px;
+        margin-top: 10px;
+        margin-left: 0px;
+    }
+    .smallHeader .whaleContainer {  
+        margin-top: 5px;
+        margin-left: 20px;
+    }
+}
+
 /* end WHAlE LOGO */
 
 
