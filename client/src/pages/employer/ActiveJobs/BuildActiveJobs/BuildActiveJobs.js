@@ -17,7 +17,7 @@ class BuildActiveJobs extends React.Component{
         this.getJobList();
     }
     getJobList = () => {
-        ApiCalls.get('/api/postings/listCandidates/'+this.state.postId)
+        ApiCalls.get('/api/employerPostings/listCandidates/'+this.state.postId)
         .then((res)=>{
             if(res.data.success){
                 this.setState({ candidateList: res.data.candidateList });
@@ -39,7 +39,7 @@ class BuildActiveJobs extends React.Component{
             cancelButtonText: 'No, keep it'
           }).then((result) => {
             if (result.value) { 
-                ApiCalls.post('/api/postings/remove', {postId:this.state.postId})
+                ApiCalls.post('/api/employerPostings/remove', {postId:this.state.postId})
                 .then((res)=>{
                     if(res.data.success){
                         if(this.props.removedCallback != null){

@@ -38,8 +38,8 @@ class BuildActiveJobs extends React.Component{
     }
     getJobData = () => {
         (this.state.candidateId?
-            ApiCalls.get('/api/jobs/getCandidateForJob/'+this.state.candidateId+'/'+this.state.jobId):
-            ApiCalls.get('/api/jobs/get/'+this.state.jobId))
+            ApiCalls.get('/api/recruiterJobs/getCandidateForJob/'+this.state.candidateId+'/'+this.state.jobId):
+            ApiCalls.get('/api/recruiterJobs/get/'+this.state.jobId))
         .then((res)=>{
             if(res.data.success){
                 console.log(res.data)

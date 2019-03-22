@@ -7,9 +7,11 @@ const validateMessageInput = require('../../validation/message');
 const db = require('../../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
-const messagesInsertHelper = new pgp.helpers.ColumnSet(['user_id_1', 'user_id_2', 'to_id', 'subject_user_id', 'post_id', 'subject', 'message'], {table: 'messages'});
+const messagesInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'message'], {table: 'messages'});
+const calendarInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'date_offer', 'minute_length'], {table: 'messages'});
+const subjectInsertHelper = new pgp.helpers.ColumnSet(['user_id_1', 'user_id_2', 'message_subject_id', 'post_id'], {table: 'messages'});
 /**
- * Create a new message conversation
+ * Create a new message in a conversation, or calendar invite
  * @route POST api/message/create
  * @group message - Chat Messages
  * @param {Object} body.optional
@@ -20,11 +22,11 @@ const messagesInsertHelper = new pgp.helpers.ColumnSet(['user_id_1', 'user_id_2'
 router.post('/create', passport.authentication,  (req, res) => {
     /**
      * Inputs Body:
-     * subject
-     * message
-     * postId
-     * subjectUserId
      * toId
+     * messageSubjectId
+     * message
+     * dateOffer
+     * minuteLength
      */
     var body = req.body
     const { errors, isValid } = validateMessageInput(body);
@@ -41,27 +43,32 @@ router.post('/create', passport.authentication,  (req, res) => {
         userId1 = userId2;
         userId2 = t;
     }
+    var messageType = null;
+    if(body.message){ // Chat Message
+        messageType = 1;
+    }
+    if(body.dateOffer){ // Calander Invite
+        messageType = 2;
+    }
     postgresdb.tx(t => {
         // Get basic data, and ensure they can message, candidate posting must be accepted
         return t.one('\
-            SELECT cp.candidate_id, cp.post_id \
-            FROM candidate_posting cp \
-            INNER JOIN job_posting jp ON cp.post_id = jp.post_id \
-            INNER JOIN job_posting_contact jpc ON cp.post_id = jpc.post_id \
-            INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
-            WHERE cp.accepted AND jpc.post_id = $1 AND cp.candidate_id = $2 AND (ec.employer_contact_id = $3 OR cp.recruiter_id = $3)', [body.postId, body.subjectUserId, jwtPayload.id])
+            SELECT 1 \
+            FROM messages m \
+            WHERE (m.user_id_1 = $1 OR m.user_id_2 = $1) AND m.message_subject_id = $2 \
+            LIMIT 1 \
+            ', [jwtPayload.id, body.messageSubjectId])
         .then((data) => {
             // Ensure the person is in this chain
             const makeMessage = {
-                user_id_1:userId1,
-                user_id_2:userId2,
                 to_id:body.toId,
-                subject_user_id:body.subjectUserId,
-                post_id:body.postId,
-                subject:body.subject,
-                message:body.message
+                message_subject_id:body.messageSubjectId,
+                message_type_id: messageType,
+                message:body.message,
+                data_offer:body.dateOffer,
+                minute_length: body.minuteLength
             }
-            const query = pgp.helpers.insert(makeMessage, messagesInsertHelper);
+            const query = pgp.helpers.insert(makeMessage, messageType===1?messagesInsertHelper:calendarInsertHelper);
 
             return t.none(query).then(() => {
                 res.json({success: true})
@@ -81,9 +88,120 @@ router.post('/create', passport.authentication,  (req, res) => {
         return res.status(500).json({success: false, error:err})
     });
 });
-// @route       GET api/message/list
-// @desc        List all messages for a user
-// @access      Private
+/**
+* Create a new message conversation subject
+* @route POST api/message/createSubject
+* @group message - Chat Messages
+* @param {Object} body.optional
+* @returns {object} 200 - Success Message
+* @returns {Error}  default - Unexpected error
+* @access Private
+*/
+router.post('/createSubject', passport.authentication,  (req, res) => {
+   /**
+    * Inputs Body:
+    * postId
+    * subjectUserId
+    */
+   var body = req.body
+   const { errors, isValid } = validateMessageInput(body);
+   //check Validation
+   if(!isValid) {
+       return res.status(400).json(errors);
+   }
+   var jwtPayload = body.jwtPayload;
+   var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
+   var userId1 = userId;
+   var userId2 = body.toId;
+   if(userId1 > userId2){
+       var t = userId1;
+       userId1 = userId2;
+       userId2 = t;
+   }
+   postgresdb.tx(t => {
+       // Get basic data, and ensure they can message, candidate posting must be accepted
+       return t.one('\
+           SELECT cp.candidate_id, cp.post_id \
+           FROM candidate_posting cp \
+           INNER JOIN job_posting jp ON cp.post_id = jp.post_id \
+           INNER JOIN job_posting_contact jpc ON cp.post_id = jpc.post_id \
+           INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
+           INNER JOIN message_subject ms ON ms.subject_user_id = cp.candidate_id AND ms.post_id = cp.post_id \
+           WHERE cp.accepted AND jpc.post_id = $1 AND cp.candidate_id = $2 AND (ec.employer_contact_id = $3 OR cp.recruiter_id = $3)', [body.postId, body.subjectUserId, jwtPayload.id])
+       .then((data) => {
+           // Ensure the person is in this chain
+           const makeMessage = {
+               user_id_1:userId1,
+               user_id_2:userId2,
+               message_subject_id:body.messageSubjectId,
+               post_id:body.postId,
+           }
+           const query = pgp.helpers.insert(makeMessage, subjectInsertHelper);
+
+           return t.none(query).then(() => {
+               res.json({success: true})
+           }).catch((err)=>{
+               console.log(err)
+               return res.status(500).json({success: false, error:err})
+           });
+       }).catch((err)=>{
+           console.log(err)
+           return res.status(500).json({success: false, error:err})
+       });
+   })
+   .then(() => {
+       
+   }).catch((err)=>{
+       console.log(err) // Not an admin
+       return res.status(500).json({success: false, error:err})
+   });
+});
+/**
+ * Set posting to be considered accepted or not accepted
+ * @route POST api/message/setAcceptedState/:postId/:candidateId
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/setResponse', passport.authentication,  (req, res) => {
+    const jwtPayload = req.body.jwtPayload;
+    const messageId = req.body.messageId;
+    let response = req.body.response;
+    if(response !== 1 && response !== 2)
+        return res.status(400).json({success:false, error:"Invalid response"})
+
+    const userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
+    postgresdb.one('\
+        SELECT 1 \
+        FROM messages m \
+        WHERE (m.user_id_1 = $1 OR m.user_id_2 = $1) AND m.message_id = $2 \
+        LIMIT 1', [userId, messageId])
+    .then(d=>{ 
+        postgresdb.none('UPDATE messages_calander SET response = $1 WHERE message_id_calander = $2', [response, messageId])
+        .then((data) => {
+            res.json({success:true})
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).json(err)
+        });
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
+/**
+ * List all messages for a user
+ * @route POST api/message/list
+ * @group message - Chat Messages
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.get('/list', passport.authentication, listMessages);
 router.get('/list/:page', passport.authentication, listMessages);
 function listMessages(req, res){
@@ -94,35 +212,58 @@ function listMessages(req, res){
     
     var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
     postgresdb.any('\
-        SELECT m.post_id, m.to_id, m.created_on, \
-            m.subject, m.message, m.has_seen, \
-            um.user_type_id as subject_user_type_id, um.user_type_name  as subject_user_type_name, \
-            um.user_id as subject_user_id, um.first_name as subject_first_name, \
-            m.user_id_1, um1.first_name as user_1_first_name, um1.last_name as user_1_first_name, um1.company_name as user_1_company_name, \
-            m.user_id_2, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
-            (count(1) OVER())/10+1 AS page_count, message_count \
-        FROM ( \
-            SELECT m.user_id_1, m.user_id_2, m.subject_user_id, max(m.message_id) as message_id, count(1) as message_count \
-            FROM messages m \
-            WHERE m.user_id_1 = $1 OR m.user_id_2 = $1 \
-            GROUP BY m.user_id_1, m.user_id_2, m.subject_user_id \
-            ORDER BY max(m.created_on) DESC \
-            OFFSET $2 \
-            LIMIT 10 \
-        ) ml \
-        INNER JOIN messages m ON m.message_id = ml.message_id \
-        INNER JOIN user_master um ON um.user_id = ml.subject_user_id \
-        INNER JOIN user_master um1 ON um1.user_id = ml.user_id_1 \
-        INNER JOIN user_master um2 ON um2.user_id = ml.user_id_2 \
+        SELECT ms.post_id, jp.title as job_post_title, m.to_id, m.created_on, ms.created_on as subject_created_on, \
+            m.message, m.response, m.date_offer, m.has_seen, m.message_id, ms.message_subject_id, \
+            um.user_type_id as subject_user_type_id, um.user_type_name as subject_user_type_name, \
+            um.user_id as subject_user_id, um.first_name as subject_first_name, um.last_name as subject_last_name, \
+            ms.user_id_1, um1.user_type_name as user_1_type_name, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
+            ms.user_id_2, um2.user_type_name as user_2_type_name, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
+            (count(1) OVER())/10+1 AS page_count \
+        FROM messages_subject ms \
+        LEFT JOIN ( \
+            SELECT mo.* \
+            FROM ( \
+                SELECT ml.message_id, ml.message_subject_id, ml.message, ml.response, ml.date_offer, ml.has_seen, ml.created_on, ml.to_id, \
+                ROW_NUMBER() OVER (PARTITION BY message_subject_id, user_id_1, user_id_2 \
+                                    ORDER BY created_on DESC) AS rn \
+                FROM messages ml \
+                WHERE ml.user_id_1 = $1 OR ml.user_id_2 = $1 \
+            ) mo \
+            WHERE mo.rn = 1 \
+            ORDER BY mo.created_on DESC \
+        ) m ON ms.message_subject_id = m.message_subject_id \
+        INNER JOIN job_posting jp ON jp.post_id = ms.post_id \
+        INNER JOIN user_master um ON um.user_id = ms.subject_user_id \
+        LEFT JOIN user_master um1 ON um1.user_id = ms.user_id_1 \
+        LEFT JOIN user_master um2 ON um2.user_id = ms.user_id_2 \
+        WHERE ms.user_id_1 = $1 OR ms.user_id_2 = $1 \
+        OFFSET $2 \
+        LIMIT 10 \
         ', [userId, (page-1)*10])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
             m.toMe = m.to_id == userId;
-            var timestamp = moment(m.created_on);
-            var ms = timestamp.diff(moment());
-            m.created = moment.duration(ms).humanize() + " ago";
-            m.created_on = timestamp.format("x");
+            let contactName = userId === m.user_id_1?
+                (m.user_2_company_name?m.user_2_company_name:(m.user_2_first_name+" "+m.user_2_last_name)):
+                (m.user_1_company_name?m.user_1_company_name:(m.user_1_first_name+" "+m.user_1_last_name));
+            m.contactName = contactName;
+
+            var dateOfferTimestamp = moment(m.date_offer);
+            m.date_offer_str = dateOfferTimestamp.format("LLL");
+            timestamp = moment(m.subject_created_on);
+            ms = timestamp.diff(moment());
+            m.subject_created = moment.duration(ms).humanize() + " ago";
+            m.subject_created_on = timestamp.format("x");
+            if(m.created_on == null){
+                m.created = m.subject_created;
+                m.created_on = m.subject_created_on;
+            }else{
+                var timestamp = moment(m.created_on);
+                var ms = timestamp.diff(moment());
+                m.created = moment.duration(ms).humanize() + " ago";
+                m.created_on = timestamp.format("x");
+            }
             return m
         })
         res.json(data)
@@ -132,9 +273,16 @@ function listMessages(req, res){
         res.status(400).json(err)
     });
 }
-// @route       GET api/message/listChain/:chainId
-// @desc        List all messages for a message chain
-// @access      Private
+
+/**
+ * List all messages for a message chain
+ * @route POST api/message/listChain/:chainId
+ * @group message - Chat Messages
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.get('/listConversationMessages/:user_id_1/:user_id_2/:subject_user_id', passport.authentication, listConversationMessages);
 router.get('/listConversationMessages/:user_id_1/:user_id_2/:subject_user_id/:page', passport.authentication, listConversationMessages);
 function listConversationMessages(req, res){
@@ -167,18 +315,19 @@ function listConversationMessages(req, res){
         page = 1;
 
     postgresdb.any('\
-        SELECT m.message_id, m.post_id, m.to_id, m.created_on, \
-            m.subject, m.message, m.has_seen, \
+        SELECT m.message_id, ms.post_id, m.to_id, m.created_on, m.responded, \
+            m.message, m.has_seen, m.date_offer, m.response, m.minute_length, m.location_type_name, \
             um.user_type_id as subject_user_type_id, um.user_type_name as subject_user_type_name, \
-            um.user_id as subject_user_id, um.first_name as subject_first_name, \
+            m.message_subject_id, um.first_name as subject_first_name, m.message_type_id, \
             m.user_id_1, um1.user_type_name as user_1_type_name, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
             m.user_id_2, um2.user_type_name as user_2_type_name, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
             (count(1) OVER())/10+1 AS page_count \
         FROM messages m \
-        INNER JOIN user_master um ON um.user_id = m.subject_user_id \
+        INNER JOIN messages_subject ms ON ms.message_subject_id = m.message_subject_id \
+        INNER JOIN user_master um ON um.user_id = ms.subject_user_id \
         INNER JOIN user_master um1 ON um1.user_id = m.user_id_1 \
         INNER JOIN user_master um2 ON um2.user_id = m.user_id_2 \
-        WHERE m.user_id_1 = $1 AND m.user_id_2 = $2 AND m.subject_user_id = $3 \
+        WHERE m.user_id_1 = $1 AND m.user_id_2 = $2 AND ms.subject_user_id = $3 \
         ORDER BY m.created_on DESC \
         OFFSET $4 \
         LIMIT 10 \
@@ -187,6 +336,8 @@ function listConversationMessages(req, res){
         // Marshal data
         data = data.map(m=>{
             m.toMe = m.to_id == userId;
+            var dateOfferTimestamp = moment(m.date_offer);
+            m.date_offer_str = dateOfferTimestamp.format("LLL");
             var timestamp = moment(m.created_on);
             var ms = timestamp.diff(moment());
             m.created = moment.duration(ms).humanize() + " ago";

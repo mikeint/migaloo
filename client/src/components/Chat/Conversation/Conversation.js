@@ -1,84 +1,70 @@
 import React, { Component } from "react"; 
 import "./Conversation.css"; 
-import AuthFunctions from '../../../AuthFunctions'; 
 import Loader from '../../Loader/Loader'; 
-import axios from 'axios';
+import ApiCalls from '../../../ApiCalls';  
 
 class Conversation extends Component {
 
     constructor(props) {
         super(props);
+        var toId = !props.conversation.toMe?props.conversation.to_id:(props.conversation.to_id===props.conversation.user_id_1?props.conversation.user_id_2:props.conversation.user_id_1);
 		this.state = {
             conversation: props.conversation,
             messageList: [],
-            contactName: '',
+            contactName: props.conversation.contactName,
             pageCount: -1,
             pageNumber: 1,
-            lastMessage: null,
-            toId: null,
+            toId: toId,
             showLoader: true
         };
-        this.Auth = new AuthFunctions();
-        this.axiosConfig = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
     }
     componentWillMount = () => {
         this.getMessageList();
     }
     getMessageList = () => {
         if(this.state.pageNumber <= this.state.pageCount || this.state.pageCount === -1){
-            axios.get(`/api/message/listConversationMessages/${this.state.conversation.user_id_1}/${this.state.conversation.user_id_2}/${this.state.conversation.subject_user_id}/${this.state.pageNumber}`, this.axiosConfig)
+            ApiCalls.get(`/api/message/listConversationMessages/${this.state.conversation.user_id_1}/${this.state.conversation.user_id_2}/${this.state.conversation.subject_user_id}/${this.state.pageNumber}`)
             .then((res)=>{
                 this.setState({showLoader:false})
                 if(res.data && res.data.length > 0){
-                    if(this.state.lastMessage == null){
-                        var firstMessage = res.data[0];
-                        var contactName = firstMessage.toMe?(
-                                firstMessage.to_id===firstMessage.user_id_1?
-                                firstMessage.user_2_type_name+" "+(firstMessage.user_2_company_name?firstMessage.user_2_company_name:(firstMessage.user_2_first_name+" "+firstMessage.user_2_last_name)):
-                                firstMessage.user_1_type_name+" "+(firstMessage.user_1_company_name?firstMessage.user_1_company_name:(firstMessage.user_1_first_name+" "+firstMessage.user_1_last_name))
-                            ):(
-                                firstMessage.to_id!==firstMessage.user_id_1?
-                                firstMessage.user_2_type_name+" "+(firstMessage.user_2_company_name?firstMessage.user_2_company_name:(firstMessage.user_2_first_name+" "+firstMessage.user_2_last_name)):
-                                firstMessage.user_1_type_name+" "+(firstMessage.user_1_company_name?firstMessage.user_1_company_name:(firstMessage.user_1_first_name+" "+firstMessage.user_1_last_name))
-                            );
-                        this.setState({
-                            lastMessage: firstMessage,
-                            contactName: contactName,
-                            toId: !firstMessage.toMe?firstMessage.to_id:(firstMessage.to_id===firstMessage.user_id_1?firstMessage.user_id_2:firstMessage.user_id_1),
-                        })
-                    }
-                    var subjectList = []; // Temp variable
                     var oldMessageList = this.state.messageList; // Get the previous page
                     var messageList = [];
                     var pageCount = (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1
-                    oldMessageList.pop() // Remove the load button from the previous page
-                    // Check if the subject exists in the above message
-                    if(oldMessageList.length > 0 && oldMessageList[oldMessageList.length - 1].text === res.data[0].subject)
-                        oldMessageList.pop() // If so remove it from the previous page
+                    oldMessageList.pop() // Remove the load div from the previous page
                     res.data.reverse().forEach((d, i)=>{
                         if(i === 0){ // Get contact name
-    
                             if(this.state.pageNumber < pageCount)
                                 messageList.unshift({type:'load'})
                             else
                                 messageList.unshift({type:'loadnomore'})
-    
                         }
-                        if(!subjectList.includes(d.subject)){ // Write a subject line if its a new subject
-                            subjectList.unshift(d.subject)
-                            messageList.unshift({type:'subject', text:d.subject, date:d.created})
+                        if(d.message_type_id === 1){ // Is a chat message
+                            // Write the message text
+                            messageList.unshift({type:'message', mine:!d.toMe, text:d.message, date:d.created})
+                        }else if(d.message_type_id === 2){ // Is a meeting request
+                            messageList.unshift({type:'calendar', mine:!d.toMe, dateOffer:d.date_offer_str,
+                                length:d.minute_length >= 60?((d.minute_length/60).toString()+" hour"+(d.minute_length === 60?'':'s')):(d.minute_length+" minutes"),
+                                responded: d.responded,
+                                response:d.response,
+                                messageId: d.message_id,
+                                date:d.created, locationType: d.location_type_name})
+                            if(d.response !== 0){
+                                messageList.unshift({type:'calendar_response', mine:d.toMe, dateOffer:d.date_offer_str,
+                                    length:d.minute_length >= 60?((d.minute_length/60).toString()+" hour"+(d.minute_length === 60?'':'s')):(d.minute_length+" minutes"),
+                                    response:d.response,
+                                    date:d.created, locationType: d.location_type_name})
+                            }
                         }
-                        // Write the message text
-                        messageList.unshift({type:'message', mine:!d.toMe, text:d.message, date:d.created})
                     })
                     this.setState({ 
                         messageList: oldMessageList.concat(messageList),
                         pageNumber: this.state.pageNumber + 1,
                         pageCount: pageCount
                     }) 
-                }
+                }else
+                    this.setState({ 
+                        messageList: [{type:'loadnomore'}]
+                    })
             }).catch(errors => {
                 this.setState({showLoader:false})
                 console.log(errors.response.data)
@@ -87,15 +73,18 @@ class Conversation extends Component {
     }
     sendMessage = () => {
         var message = this.message.value;
-        if(message && message !== ""){
+        var dateOffer = null;//this.dateOffer.value;
+        var minuteLength = null;//this.dateOffer.value;
+        if((message && message !== "") || dateOffer){
             var data = {
-                subject: this.state.lastMessage.subject,
-                message: message,
-                postId: this.state.lastMessage.post_id,
-                subjectUserId: this.state.lastMessage.subject_user_id,
+                messageSubjectId: this.state.conversation.message_subject_id,
                 toId: this.state.toId,
+                messageType: this.state.conversation.message_type_id,
+                message:message,
+                dateOffer:dateOffer,
+                minuteLength: minuteLength
             }
-            axios.post(`/api/message/create`, data, this.axiosConfig)
+            ApiCalls.post(`/api/message/create`, data)
             .then((res)=>{
                 // Reset messages and repull
                 this.message.value = ""
@@ -109,6 +98,24 @@ class Conversation extends Component {
             })
         }
     }
+    setCalendarResponse = (row, response) => {
+        var data = {
+            messageSubjectId: this.state.conversation.message_subject_id,
+            response: response,
+            messageId: row.messageId
+        }
+        ApiCalls.post(`/api/message/setResponse`, data)
+        .then((res)=>{
+            // Reset messages and repull
+            this.setState({
+                pageNumber: 1,
+                pageCount: -1,
+                messageList: []
+            }, this.getMessageList)
+        }).catch(errors => {
+            console.log(errors.response.data)
+        })
+    }
     render() {
   
         return (
@@ -117,28 +124,45 @@ class Conversation extends Component {
                 <div className='modal displayBlock'>
                     {
                         <section className='modalMain'>
-                            <div className="rowButton" onClick={this.props.handleClose}>X</div>
+                            <div className="rowdiv" onClick={this.props.handleClose}><div className="closeModal">X</div></div>
                             <div className='contactHeader'>{this.state.contactName}</div>
+                            <div className='contactHeader2'>{this.state.conversation.subject}</div>
                             <div className='chatWindow'>
                                 {this.state.showLoader?<Loader/>:''}
                                 {
                                     this.state.messageList.map((d, i)=>{
-                                        return <div className={d.type === 'message'?(d.mine?"messageRow mine":"messageRow theirs"):"messageRow"} key={i}>
+                                        return <div className={d.mine?"messageRow mine":"messageRow theirs"} key={i}>
                                             {d.type === 'load'?<div className="loadMore more" onClick={this.getMessageList.bind(this)}>
                                                 Load More
                                             </div>:''}
                                             {d.type === 'loadnomore'?<div className="loadMore">
                                                 No More Messages
                                             </div>:''}
-                                            {d.type === 'subject'?<div className="heading">
-                                                {d.text}
-                                                <hr/>
-                                            </div>:''}
-                                            {d.type === 'message'?
+                                            {d.type === 'calendar' &&
+                                            <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
+                                                <div>{d.locationType}</div>
+                                                <div>{d.dateOffer}</div>
+                                                <div>{d.length}</div>
+                                                {d.response === 0 && <div className="responseContainer">
+                                                    <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 1)}>Accept</div>
+                                                    <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 2)}>Reject</div>
+                                                </div>}
+                                                <div className="date">{d.date}</div>
+                                            </div>}
+                                            {d.type === 'calendar_response' &&
+                                            <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
+                                                <div>
+                                                    {d.locationType} Meeting has been {d.response === 1?"Accepted":"Rejected"}
+                                                </div>
+                                                {d.response === 1 && <div>
+                                                    At {d.dateOffer} for {d.length}
+                                                </div>}
+                                            </div>}
+                                            {d.type === 'message' &&
                                             <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
                                                 <div className="message">{d.text}</div>
                                                 <div className="date">{d.date}</div>
-                                            </div>:''}
+                                            </div>}
                                         </div>
                                     })
                                 }

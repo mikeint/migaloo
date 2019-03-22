@@ -25,7 +25,7 @@ class ExpandableRow extends React.Component{
             Object.assign(newRowObj, this.state.rowObj);
             newRowObj.has_seen_post = true;
             this.setState({rowObj:newRowObj});
-            ApiCalls.post(`/api/postings/setRead/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {})
+            ApiCalls.post(`/api/employerPostings/setRead/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {})
             .then((res)=>{
 
             }).catch(errors => 
@@ -49,7 +49,7 @@ class ExpandableRow extends React.Component{
         )
     }
     handleAccept = () => {
-        ApiCalls.post(`/api/postings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:true})
+        ApiCalls.post(`/api/employerPostings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:true})
         .then((res)=>{
             var newRowObj = {};
             Object.assign(newRowObj, this.state.rowObj);
@@ -61,7 +61,7 @@ class ExpandableRow extends React.Component{
         )
     }
     handleReject = () => {
-        ApiCalls.post(`/api/postings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:false})
+        ApiCalls.post(`/api/employerPostings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:false})
         .then((res)=>{
             var newRowObj = {};
             Object.assign(newRowObj, this.state.rowObj);

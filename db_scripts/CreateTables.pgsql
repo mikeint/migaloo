@@ -1,25 +1,32 @@
-DROP VIEW user_master;
-DROP TABLE rate_employer;
-DROP TABLE rate_recruiter;
-DROP TABLE rate_candidate;
-DROP TABLE messages;
-DROP TABLE transactions;
-DROP TABLE posting_tags;
-DROP TABLE candidate_tags;
-DROP TABLE recruiter_candidate;
-DROP TABLE candidate_posting;
-DROP TABLE job_posting_contact;
-DROP TABLE job_posting;
-DROP TABLE recruiter;
-DROP TABLE candidate;
-DROP TABLE employer_contact;
-DROP TABLE employer;
-DROP TABLE address;
-DROP TABLE login;
-DROP TABLE user_type;
-DROP TABLE salary_type;
-DROP TABLE experience_type;
-DROP TABLE tags;
+DROP VIEW IF EXISTS user_master;
+DROP TABLE IF EXISTS rate_employer;
+DROP TABLE IF EXISTS rate_recruiter;
+DROP TABLE IF EXISTS rate_candidate;
+DROP VIEW IF EXISTS messages;
+DROP FUNCTION IF EXISTS messages_InsteadOfInsert_pr;
+DROP TABLE IF EXISTS messages_chat;
+DROP TABLE IF EXISTS messages_calander;
+DROP TABLE IF EXISTS messages_base;
+DROP TABLE IF EXISTS messages_subject;
+DROP TABLE IF EXISTS messages_type;
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS posting_tags;
+DROP TABLE IF EXISTS candidate_tags;
+DROP TABLE IF EXISTS recruiter_candidate;
+DROP TABLE IF EXISTS candidate_posting;
+DROP TABLE IF EXISTS job_posting_contact;
+DROP TABLE IF EXISTS job_posting;
+DROP TABLE IF EXISTS recruiter;
+DROP TABLE IF EXISTS candidate;
+DROP TABLE IF EXISTS employer_contact;
+DROP TABLE IF EXISTS employer;
+DROP TABLE IF EXISTS address;
+DROP TABLE IF EXISTS login;
+DROP TABLE IF EXISTS user_type;
+DROP TABLE IF EXISTS salary_type;
+DROP TABLE IF EXISTS experience_type;
+DROP TABLE IF EXISTS tags;
+DROP TABLE IF EXISTS location_type;
 
 CREATE TABLE user_type (
     user_type_id serial,
@@ -187,22 +194,114 @@ CREATE TABLE candidate_posting (
 );
 CREATE INDEX candidate_posting_idx ON candidate_posting(post_id, recruiter_id);
 CREATE INDEX candidate_posting_cdt_idx ON candidate_posting(candidate_id);
-CREATE TABLE messages (
-    message_id bigserial,
-    user_id_1 bigint REFERENCES login(user_id),
-    user_id_2 bigint REFERENCES login(user_id),
+CREATE TABLE messages_type (
+    message_type_id serial,
+    message_type_name varchar(50) NOT NULL,
+    PRIMARY KEY(message_type_id)
+);
+CREATE TABLE location_type (
+    location_type_id serial,
+    location_type_name varchar(50) NOT NULL,
+    PRIMARY KEY(location_type_id)
+);
+CREATE TABLE messages_subject (
+    message_subject_id bigserial,
+    user_id_1 bigint REFERENCES login(user_id) NOT NULL,
+    user_id_2 bigint REFERENCES login(user_id) NOT NULL,
+    created_on timestamp default NOW(),
     subject_user_id bigint REFERENCES login(user_id),
-    to_id bigint REFERENCES login(user_id),
     post_id bigint REFERENCES job_posting(post_id),
-    subject varchar(128) NOT NULL,
-    message text NOT NULL,
+    PRIMARY KEY(message_subject_id)
+);
+CREATE TABLE messages_base (
+    message_id bigserial,
+    message_type_id int REFERENCES messages_type(message_type_id) NOT NULL,
+    message_subject_id bigint REFERENCES messages_subject(message_subject_id) NOT NULL,
+    to_id bigint REFERENCES login(user_id) NOT NULL,
     created_on timestamp default NOW(),
     has_seen boolean default false,
     PRIMARY KEY(message_id)
 );
-CREATE INDEX message_chain_idx ON messages(user_id_1, user_id_2);
-CREATE INDEX message_chain_subject_idx ON messages(user_id_1, user_id_2, subject_user_id);
-CREATE INDEX message_to_idx ON messages(to_id);
+CREATE TABLE messages_chat (
+    message_id_chat bigint references messages_base(message_id) not null,
+    message text NOT NULL,
+    PRIMARY KEY(message_id_chat)
+);
+CREATE TABLE messages_calander (
+    message_id_calander bigint references messages_base(message_id) not null,
+    date_offer timestamp not null,
+    minute_length smallint not null,
+    location_type integer references location_type(location_type_id) not null,
+    responded boolean default false,
+    response smallint default 0,
+    PRIMARY KEY(message_id_calander)
+);
+CREATE VIEW messages AS 
+SELECT mb.*, ct.*, cl.*, lt.*, ms.user_id_1, ms.user_id_2, ms.post_id, ms.subject_user_id
+FROM messages_base mb
+LEFT JOIN messages_chat ct ON ct.message_id_chat = mb.message_id
+LEFT JOIN messages_calander cl ON cl.message_id_calander = mb.message_id
+LEFT JOIN location_type lt ON cl.location_type = lt.location_type_id
+LEFT JOIN messages_subject ms ON ms.message_subject_id = mb.message_subject_id;
+
+CREATE FUNCTION messages_InsteadOfInsert_pr() RETURNS trigger AS $$
+DECLARE 
+    MessageID bigint;
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        IF (NEW.created_on is NULL) THEN
+            NEW.created_on = CURRENT_DATE;
+        END IF;
+        Insert into messages_base(message_type_id, to_id, message_subject_id, created_on) VALUES (
+            NEW.message_type_id,
+            NEW.to_id, NEW.message_subject_id, NEW.created_on)
+        RETURNING message_id into MessageID;
+
+        IF (NEW.message_type_id = 1) THEN -- Chat
+            Insert into messages_chat(message_id_chat, message)
+            VALUES (MessageID, NEW.message);
+        ELSIF (NEW.message_type_id = 2) THEN -- Calander
+            Insert into messages_calander(message_id_calander, date_offer, minute_length, location_type)
+            VALUES (MessageID, NEW.date_offer, NEW.minute_length, NEW.location_type);
+        END IF;
+        RETURN NEW;
+    ELSIF (TG_OP = 'UPDATE') THEN
+        IF (NEW.has_seen is not null) THEN -- Chat
+            UPDATE messages_base SET has_seen = NEW.has_seen WHERE message_id = NEW.message_id;
+        END IF;
+        
+        IF (NEW.message_type_id = 2 AND NEW.response is not null) THEN -- Calander
+            UPDATE messages_calander
+            SET responded = true, response = NEW.response
+            WHERE message_id_calander = NEW.message_id;
+
+            Insert into messages_base(message_type_id, to_id, message_subject_id, created_on)
+                SELECT message_type_id, to_id, message_subject_id, created_on - interval '1' second as created_on
+                FROM messages_base
+                WHERE message_id = NEW.message_id
+            RETURNING message_id into MessageID;
+
+            Insert into messages_calander(message_id_calander, date_offer, minute_length, location_type, response)
+                SELECT MessageID, date_offer, minute_length, location_type, NEW.response
+                FROM messages_calander
+                WHERE message_id_calander = NEW.message_id;
+        END IF;
+        RETURN NEW;
+    END IF;
+END;
+$$ LANGUAGE PLPGSQL;
+
+Create trigger messages_InsteadOfInsert_pr
+Instead Of Insert or Update
+on messages
+FOR EACH ROW
+EXECUTE PROCEDURE messages_InsteadOfInsert_pr();
+
+CREATE INDEX message_chain_idx ON messages_subject(user_id_1, user_id_2);
+CREATE INDEX message_chain_subject_idx ON messages_subject(user_id_1, user_id_2, message_subject_id);
+CREATE INDEX message_to_idx ON messages_base(to_id);
+
+
 CREATE TABLE transactions (
     transaction_id bigserial,
     created_on timestamp default NOW(),
@@ -249,6 +348,12 @@ LEFT JOIN employer_contact ec ON ec.employer_contact_id = l.user_id
 LEFT JOIN employer eec ON eec.employer_id = ec.employer_id;
 
 -- DATA START
+INSERT INTO messages_type (message_type_id, message_type_name) VALUES
+    (1, 'Chat'),
+    (2, 'Calander');
+INSERT INTO location_type (location_type_id, location_type_name) VALUES
+    (1, 'Phone'),
+    (2, 'In-Person');
 INSERT INTO user_type (user_type_name) VALUES
     ('Recruiter'),
     ('Employer Contact'),
@@ -428,24 +533,34 @@ INSERT INTO candidate_tags (candidate_id, tag_id) VALUES
     (1007, 3),
     (1007, 4),
     (1007, 5);
-INSERT INTO messages (user_id_1, user_id_2, to_id, subject_user_id, post_id, subject, message, created_on) VALUES
-    (1, 500, 1, 1000, 1, 'Sarah Sounds Great!', 'We would like to hear more about sarah.', current_date - interval '6' day),
-    (1, 500, 500, 1000, 1, 'Sarah Sounds Great!', 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', current_date - interval '5' day),
-    (1, 500, 1, 1000, 1, 'Sarah Sounds Great!', 'That sounds great please send me a call at 3pm on tuesday for a follow-up.', current_date - interval '4' day),
-    (1, 500, 500, 1000, 1, 'Sarah Sounds Great!', '3PM that sounds perfect!', current_date - interval '3' day),
-    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '10' day),
-    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '9' day),
-    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '8' day),
-    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '7' day),
-    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '6' day),
-    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '5' day),
-    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '4' day),
-    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '3' day),
-    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '2' day),
-    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '1' day),
-    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '12' hour),
-    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '11' hour),
-    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '10' hour),
-    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '9' hour),
-    (3, 500, 3, 1006, 3, 'Moving forward with Stephanie', 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '8' hour),
-    (3, 500, 500, 1006, 3, 'Moving forward with Stephanie', 'Yes that works, I look forward to hearing from you.', current_date - interval '7' hour);
+INSERT INTO messages_subject(message_subject_id, user_id_1, user_id_2, subject_user_id, post_id, created_on) VALUES
+    (1, 1, 500, 1000, 1, current_date - interval '7' day),
+    (2, 3, 500, 1006, 3, current_date - interval '11' day),
+    (3, 1, 500, 1001, 1, current_date - interval '1' day);
+INSERT INTO messages (message_type_id, to_id, message_subject_id, message, created_on) VALUES
+    (1, 1, 1, 'We would like to hear more about sarah.', current_date - interval '6' day),
+    (1, 500, 1, 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', current_date - interval '5' day),
+    (1, 1, 1, 'That sounds great lets have a call tommorow for a follow-up, I will send two meeting requests, let me know what works.', current_date - interval '4' day),
+    (1, 1, 1, 'One more follow up.', current_date - interval '2.2' day),
+    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '10' day),
+    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '9' day),
+    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '8' day),
+    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', current_date - interval '7' day),
+    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '6' day),
+    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '5' day),
+    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '4' day),
+    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', current_date - interval '3' day),
+    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '2' day),
+    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '1' day),
+    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '12' hour),
+    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', current_date - interval '11' hour),
+    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '10' hour),
+    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '9' hour),
+    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '8' hour),
+    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', current_date - interval '7' hour);
+INSERT INTO messages (message_type_id, user_id_1, user_id_2, to_id, message_subject_id, date_offer, minute_length, location_type, created_on) VALUES
+    (2, 1, 500, 1, 1, current_date - interval '63' hour, 30, 1, current_date - interval '72' hour),
+    (2, 1, 500, 1, 1, current_date - interval '60' hour, 30, 1, current_date - interval '72' hour),
+    (2, 1, 500, 1, 1, current_date + interval '12' hour, 60, 1, current_date - interval '48' hour);
+UPDATE messages SET response = 1 WHERE message_id = 21;
+UPDATE messages SET response = 2 WHERE message_id = 22;
