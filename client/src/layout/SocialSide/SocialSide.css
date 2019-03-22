@@ -4,7 +4,7 @@
 	-ms-transform: translateY(-50%);
 	transform: translateY(-50%);
 	transition: 0.3s;
-	left: 0;
+	right: 0;
 	z-index: 999;
 	top: 300px;
 } 

@@ -1,9 +1,8 @@
 .aboutSection {
-    width: 100%;
-    float: left;
-    overflow: hidden;
-    padding: 40px 0px;
+    width: 100%; 
+    overflow: hidden; 
     background: #263c5421;
+    margin-top: -50px;
     box-shadow: inset 0 -2px 15px 3px #9a9a9a
 }
 
@@ -43,8 +42,8 @@
     transition: all 0.3s linear;
 }
 #f1_container:hover #f1_card {
-    /* transform: rotateY(180deg); 
-    border-radius: 50%; */
+    transform: rotateY(180deg); 
+    border-radius: 50%; 
 }
 .teamFace {
     position: absolute;
@@ -52,35 +51,50 @@
     height: 100%;
     backface-visibility: hidden; 
     border-radius: 50%;
-    box-shadow: 0px 0px 40px 5px #9a9a9a;
-    border: 3px solid white;
+    box-shadow: 0px 0px 10px 5px #263c54;
+    border: 4px solid #95b3be;
 }
-.img1 {
+.teamMember1 {
     background-image:url('../../files/images/landingPage/team/sansone.png');
     background-repeat: no-repeat;
     background-size: cover;
-
 }
-.img2 {
+.teamMember2 {
     background-image:url('../../files/images/landingPage/team/nasser.png');
     background-repeat: no-repeat;
     background-size: cover;
     
 }
-.img3 {
+.teamMember3 {
     background-image:url('../../files/images/landingPage/team/marcucci.png');
     background-repeat: no-repeat;
-    background-size: cover;
-    
+    background-size: cover;  
 }
+.whaleMember1 {
+    background-image:url('../../files/images/landingPage/tail.png');
+    background-repeat: no-repeat;
+    background-size: contain; 
+    background-position-y: 13px;
+    background-position-x: -1px;
+}
+.whaleMember2 { 
+    line-height: 210px;
+    font-size: 62px;
+}
+.whaleMember3 {
+    background-image:url('../../files/images/landingPage/whaleface.png');
+    background-repeat: no-repeat;
+    background-size: contain;  
+}
+
 .teamFace.back {
     display: block;
     transform: rotateY(180deg);
     box-sizing: border-box;
     padding: 10px;
     color: white;
-    text-align: center;
-    background-color: #263c54; 
+    text-align: center;    
+    background-color: #6f90a1;
     border-radius: 50%;
 }
 
@@ -105,10 +119,20 @@
     .aboutCircle {
         padding: 20px 0px;
     }
+    .aboutSection {
+        margin-top:-30px;
+    }
+    .whaleMember2 { 
+        line-height: 120px;
+        font-size: 32px;
+    }
 } 
 
 @media only screen and (max-width: 768px) { 
     .aboutSection .third {
         width: 100%;
     } 
+    .aboutSection {
+        margin-top:70px;
+    }
 }

@@ -11,9 +11,9 @@ class AboutSection extends Component {
                     <div className="content_container"> 
                         <div id="f1_container">
                             <div id="f1_card" className="shadow">
-                                <div className="front teamFace img1"> 
+                                <div className="front teamFace teamMember1"> 
                                 </div>
-                                <div className="back teamFace center">
+                                <div className="back teamFace center whaleMember1">
                                 </div>
                             </div>
                         </div>
@@ -25,9 +25,10 @@ class AboutSection extends Component {
                     <div className="content_container">   
                         <div id="f1_container">
                             <div id="f1_card" className="shadow">
-                                <div className="front teamFace img2"> 
+                                <div className="front teamFace teamMember2"> 
                                 </div>
-                                <div className="back teamFace center"> 
+                                <div className="back teamFace center whaleMember2">
+                                    Migaloo
                                 </div>
                             </div>
                         </div>
@@ -39,9 +40,9 @@ class AboutSection extends Component {
                     <div className="content_container">   
                         <div id="f1_container">
                             <div id="f1_card" className="shadow">
-                                <div className="front teamFace img3">  
+                                <div className="front teamFace teamMember3">  
                                 </div>
-                                <div className="back teamFace center"> 
+                                <div className="back teamFace center whaleMember3"> 
                                 </div>
                             </div>
                         </div>

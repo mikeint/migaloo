@@ -1,77 +1,76 @@
-/* Loader - SPIN CUBE */
-.loadingContainer{
-    height: 60px;
-}
-.loadContainer {
-    margin-top:10px;
-    position: absolute; 
-    left: 50%;
-    -webkit-transform: translate(-50%,-50%);
-        -ms-transform: translate(-50%,-50%);
-            transform: translate(-50%,-50%); 
-}
-@-webkit-keyframes loader {
-    0% { left: -100px }
-    100% { left: 110%; }
-}
-@keyframes loader {
-    0% { left: -100px }
-    100% { left: 110%; }
-}
-.load-box {
-    width: 30px;
-    height: 30px;
-    background: #b1b9db; 
-    -webkit-animation: animate .5s linear infinite;
-            animation: animate .5s linear infinite; 
-    top: 0;
-    left: 0;
-    border-radius: 3px;
-}
-@-webkit-keyframes animate {
-    17% { border-bottom-right-radius: 3px; }
-    25% { -webkit-transform: translateY(9px) rotate(22.5deg); transform: translateY(9px) rotate(22.5deg); }
-    50% {
-    -webkit-transform: translateY(18px) scale(1,.9) rotate(45deg) ;
-            transform: translateY(18px) scale(1,.9) rotate(45deg) ;
-    border-bottom-right-radius: 40px;
-    }
-    75% { -webkit-transform: translateY(9px) rotate(67.5deg); transform: translateY(9px) rotate(67.5deg); }
-    100% { -webkit-transform: translateY(0) rotate(90deg); transform: translateY(0) rotate(90deg); }
-}
-@keyframes animate {
-    17% { border-bottom-right-radius: 3px; }
-    25% { -webkit-transform: translateY(9px) rotate(22.5deg); transform: translateY(9px) rotate(22.5deg); }
-    50% {
-    -webkit-transform: translateY(18px) scale(1,.9) rotate(45deg) ;
-            transform: translateY(18px) scale(1,.9) rotate(45deg) ;
-    border-bottom-right-radius: 20px;
-    }
-    75% { -webkit-transform: translateY(9px) rotate(67.5deg); transform: translateY(9px) rotate(67.5deg); }
-    100% { -webkit-transform: translateY(0) rotate(90deg); transform: translateY(0) rotate(90deg); }
-} 
-.load-shadow { 
-    width: 30px;
-    height: 5px;
-    background: #092437;
-    opacity: 0.5; 
-    top: 45px; 
-    position: absolute;
-    left: 0px;
-    border-radius: 50%;
-    -webkit-animation: shadow .5s linear infinite;
-            animation: shadow .5s linear infinite;
-}
-@-webkit-keyframes shadow {
-  50% {
-    -webkit-transform: scale(1.2,1);
-            transform: scale(1.2,1);
+.whaleWater {
+    transform-origin: top left;
+    transform: scale(1.8);
   }
-}
-@keyframes shadow {
-  50% {
-    -webkit-transform: scale(1.2,1);
-            transform: scale(1.2,1);
+  
+  /* Spray Streams */
+  .sprays path { 
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-out;
   }
-}
-/* end SPIN CUBE */
+  .spray-1 {
+      stroke-dasharray: 19.57;
+      stroke-dashoffset: 58.7125;
+      animation: spray-1 4s infinite;
+  }
+  .spray-2 {
+      stroke-dasharray: 48.2;
+      stroke-dashoffset: 144.6033;
+      animation: spray-2 4s infinite;
+  }
+  .spray-3 {
+      stroke-dasharray: 29.06;
+      stroke-dashoffset: 87.1881;
+      animation: spray-3 4s infinite;
+  }
+  .spray-4 {
+      stroke-dasharray: 34.79;
+      stroke-dashoffset: 104.382;
+      animation: spray-4 4s infinite;
+  }
+  .spray-5 {
+      stroke-dasharray: 37.06;
+      stroke-dashoffset: 111.1851;
+      animation: spray-5 4s infinite;
+  }
+  .spray-6 {
+      stroke-dasharray: 22.19;
+      stroke-dashoffset: 66.5985;
+      animation: spray-6 4s infinite;
+  }
+  .spray-7 {
+      stroke-dasharray: 14.57;
+      stroke-dashoffset: 43.7218;
+      animation: spray-7 4s infinite;
+  }
+   
+  
+  /* Spray Streams */
+  @keyframes spray-1 {  
+      0% { stroke-dashoffset: 58.7125; }
+      100% { stroke-dashoffset: 0; }   
+  }
+  @keyframes spray-2 {  
+      0% { stroke-dashoffset: 144.6033; }
+      100% { stroke-dashoffset: 0; }  
+  }
+  @keyframes spray-3 {  
+      0% { stroke-dashoffset: 87.1881; }
+      100% { stroke-dashoffset: 0; }  
+  }
+  @keyframes spray-4 { 
+      0% { stroke-dashoffset: 104.382; }
+      100% { stroke-dashoffset: 0; }  
+  }
+  @keyframes spray-5 { 
+      0% { stroke-dashoffset: 111.19; }
+      100% { stroke-dashoffset: 0; }  
+  }
+  @keyframes spray-6 { 
+      0% { stroke-dashoffset: 66.599; }
+      100% { stroke-dashoffset: 0; }  
+  }
+  @keyframes spray-7 { 
+      0% { stroke-dashoffset: 43.7218; }
+      100% { stroke-dashoffset: 0; }  
+  }
