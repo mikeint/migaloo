@@ -14,7 +14,7 @@
     background-size: inherit;
     position: absolute;
     width: 100%;  
-    animation: moveHeroDesktop 100s infinite;
+    animation: moveHeroDesktop 270s infinite;
 }
 @keyframes moveHeroDesktop { 
     0% { background-position-x: 0; }
