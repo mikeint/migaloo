@@ -56,26 +56,26 @@ class LandingSection2 extends Component {
 				{/* <ScrollAnimation animateIn='flipInY' duration={2} animateOnce={true}> */}
                     <div>
                         <img src={carouselImg2} alt="" />
-                        <h1 className="mc_4_text">Top Quality Candidates</h1>
-                        <p>Recruiters have the opportunity to showcase their best candidates, and employers get a ranked list of top talent to choose&nbsp;from.</p>
+                        <h1 className="mc_4_text">Top Talent</h1>
+                        <p>Recruiters have the opportunity to showcase their most qualified candidates. Employers get a shortlist of vetted candidates from migaloo within 72&nbsp;hours.</p>
                     </div>
                 {/* </ScrollAnimation> */}
 				{/* <ScrollAnimation animateIn='bounceInRight' duration={2} animateOnce={true}> */}
                     <div>
                         <img src={carouselImg3} alt="" />
                         <h1 className="mc_4_text">Efficient</h1>
-                        <p>Employers will only view qualified candidates. Recruiters get the right information upfront so they can assess their candidate pool to see if they have a&nbsp;match.</p>
+                        <p>Employers only view top talent that they would otherwise not have access to. Moreover, the shortlist is further distilled by migaloo ensuring that the employer is left with a tough hiring&nsbp;decision.</p>
                     </div>
                 {/* </ScrollAnimation> */} 
                 <div>
                     <img src={carouselImg4} alt="" />
-                    <h1 className="mc_4_text">Credit-Based System</h1>
-                    <p>Recruiters can rank ahead of their competition based on the confidence in their ability to fill the opening.  Employers get an organized list of qualified&nbsp;candidates.</p>
+                    <h1 className="mc_4_text">Concierge Service</h1>
+                    <p>Dedicated account managers with outstanding track records are always available to make everyone's lives&nbsp;easier.</p>
                 </div> 
                 <div>
                     <img src={carouselImg5} alt="" />
                     <h1 className="mc_4_text">Transparency</h1>
-                    <p>An unbiased, universal agreement that takes into consideration the thoughts and opinions from top recruiters and employers make for an efficient&nbsp;process.</p>
+                    <p>An unbiased agreement that takes into consideration the thoughts and opinions from top recruiters and employers makes for an efficient&nbsp;process.</p>
                 </div> 
                 <div>
                     <img src={carouselImg6} alt="" />

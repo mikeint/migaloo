@@ -16,28 +16,31 @@ class LandingSection1 extends Component {
                     <div className="animated_third centerText">
                         <div className="module_content header_module_content">
                             <ScrollAnimation className="heroTxtFull" animateIn='bounceInLeft' initiallyVisible={true} animateOnce={true}> 
-                                <div className="csImg"><img src={currStateImg} alt="" /></div> 
-                            </ScrollAnimation>  
-                            <h2 className="ls_text">The Current State</h2> 
-                            <p className="maxTextW">There are way more job openings than there are qualified candidates on the market.  Employers are beginning to realize that they need to rethink their approach if they want to win the war for&nbsp;talent.</p>
+                                <div className="csImg csImg_desktop"><img src={currStateImg} alt="" /></div> 
+                            </ScrollAnimation> 
+                            <div className="csImg csImg_mobile"><img src={currStateImg} alt="" /></div> 
+                            <h2 className="ls_text">Current State</h2> 
+                            <p className="maxTextW">There are more job openings than there are qualified candidates on the market.  Employers are beginning to realize that they need to rethink their approach to hiring if they want to win the war for&nbsp;talent.</p>
                         </div>
                     </div>
                     <div className="animated_third centerText">
                         <div className="module_content header_module_content">
                             <ScrollAnimation className="heroTxtFull" animateIn='bounce' initiallyVisible={true} animateOnce={true}> 
-                                <div className="csImg"><img src={realityImg} alt="" /></div> 
+                                <div className="csImg csImg_desktop"><img src={realityImg} alt="" /></div> 
                             </ScrollAnimation> 
-                            <h2 className="ls_text">The Reality</h2> 
-                            <p className="maxTextW">The best candidates are in the driver's seat, gainfully employed, and are not actively looking for a new job.  Third party recruiters spend their days getting to know and gaining the trust of these candidates and should be considered for important&nbsp;searches.</p>
+                            <div className="csImg csImg_mobile"><img src={realityImg} alt="" /></div> 
+                            <h2 className="ls_text">Reality</h2> 
+                            <p className="maxTextW">The best candidates are gainfully employed, and are not actively searching for a new job.  Recruiters spend their days getting to know these candidates and should be considered for important&nbsp;searches.</p>
                         </div>
                     </div>
                     <div className="animated_third centerText">
                         <div className="module_content header_module_content">
                             <ScrollAnimation className="heroTxtFull" animateIn='bounceInRight' initiallyVisible={true} animateOnce={true}> 
-                                <div className="csImg"><img src={problemImg} alt="" /></div> 
+                                <div className="csImg csImg_desktop"><img src={problemImg} alt="" /></div> 
                             </ScrollAnimation> 
-                            <h2 className="ls_text">The Problem</h2>
-                            <p className="maxTextW">For employers, navigating the world of recruiters can be cumbersome, but necessary for hard to fill roles. Out of all the recruiters who have reached out to me, who do they choose? What price can they pay for the right candidate? Where can they fit the time for these new&nbsp;relationships?</p>
+                            <div className="csImg csImg_mobile"><img src={realityImg} alt="" /></div> 
+                            <h2 className="ls_text">Problem</h2>
+                            <p className="maxTextW">Navigating the world of recruiters can be cumbersome for employers, but necessary for hard-to-fill roles. How does an employer pick the right recruiter to engage? How many different agreements do they have to sign? How do they fit time for these new&nbsp;relationships?</p>
                         </div>
                     </div>
                 </div> 

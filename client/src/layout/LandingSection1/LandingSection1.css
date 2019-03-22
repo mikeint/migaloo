@@ -24,8 +24,13 @@
     transition: 0.3s;
 }
 
+.csImg_desktop{display: block;}
+.csImg_mobile{display: none;}
 
-@media only screen and (max-width: 1024px) {  
+
+@media only screen and (max-width: 1024px) {
+    .csImg_desktop{display: none;}
+    .csImg_mobile{display: block;}  
 }
 @media only screen and (max-width: 768px) { 
 }

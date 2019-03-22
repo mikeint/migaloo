@@ -105,7 +105,7 @@ class ContactSection extends Component {
                             buttonSpot
                             }
                         </div>
-                        <div className="copyRight">© 2019 by HireRanked.</div>
+                        <div className="copyRight">© 2019 by Migaloo.</div>
                     </div>
                 </Form>
             </div>

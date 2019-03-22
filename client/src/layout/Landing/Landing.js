@@ -1,9 +1,9 @@
 import React, { Component } from 'react'; 
-//import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './Landing.css';
 //import heroHome from './images/landingPage/hero_2.jpg'; 
 //import HRlogoblack from './images/landingPage/HR-logo-black.png'; 
-//import ScrollAnimation from 'react-animate-on-scroll';
+import ScrollAnimation from 'react-animate-on-scroll';
 import ScrollableAnchor from 'react-scrollable-anchor'
 import SocialSide from "../SocialSide/SocialSide"; 
 import ContactSection from "../ContactSection/ContactSection"; 
@@ -12,6 +12,8 @@ import LandingSection1 from "../LandingSection1/LandingSection1";
 import LandingSection2 from "../LandingSection2/LandingSection2"; 
 import LandingSection3 from "../LandingSection3/LandingSection3";  
 import HeroContainer from "../HeroContainer/HeroContainer"; 
+import AboutSection from '../AboutSection/AboutSection';
+
 
 class Landing extends Component {
    
@@ -60,6 +62,7 @@ class Landing extends Component {
 						<a href="#landingSection2"><li className="navBarA">Overview</li></a>
 						<a href="#landingSection3"><li className="navBarA">How it Works</li></a>
 						<a href="#contactSection"><li className="navBarA">Contact</li></a> 
+                        <Link to='/about'><li className="navBarA">About</li></Link>
 						{/* <Link to="/login"><li className="navBarA">Login</li></Link> */}
 						{/* <li className="navBarA">Login</li> */}
 					</div>
@@ -73,6 +76,7 @@ class Landing extends Component {
 						<div id="side-menu" className={this.state.menuOpen ? "side-menu active-side-menu" : "side-menu"}> 
 							<a href="#landingSection2" onClick={this.toggleMobileMenu}><li>Overview</li></a>
 							<a href="#landingSection3" onClick={this.toggleMobileMenu}><li>How it Works</li></a>
+                            <Link to='/about' onClick={this.toggleMobileMenu}><li>About</li></Link>
 							<a href="#contactSection" onClick={this.toggleMobileMenu}><li>Contact Us</li></a> 
 							{/* <Link to="/login"><li>Login</li></Link> */}
 							{/* <li>Login</li> */}
@@ -83,20 +87,21 @@ class Landing extends Component {
                     </a>
 				</div>
   
-                {/* <div className="heroText"> 
+                <div className="heroText"> 
 					<ScrollAnimation className="heroTxtFull" animateIn='bounceInLeft' initiallyVisible={true} animateOnce={true}> 
-						A platform where EMPLOYERS<br/>post jobs to RECRUITERS. 
+						For A managed marketplace<br/>Join the whales of recruitment.
 					</ScrollAnimation>
-				</div> */} 
+				</div>
 
                 <HeroContainer />
 
 				
                 <ScrollableAnchor id={'header'}><LandingSection1 /></ScrollableAnchor>
 				<ScrollableAnchor id={'landingSection2'}><LandingSection2 /></ScrollableAnchor>
-				<ScrollableAnchor id={'landingSection3'}><LandingSection3 /></ScrollableAnchor> 
+				<ScrollableAnchor id={'landingSection3'}><LandingSection3 /></ScrollableAnchor>
+                <AboutSection />
 				<ScrollableAnchor id={'contactSection'}><ContactSection /></ScrollableAnchor>
-                
+                 
  
 
 			</React.Fragment>

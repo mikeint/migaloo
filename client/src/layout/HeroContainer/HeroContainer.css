@@ -13,7 +13,13 @@
     background-repeat: no-repeat;
     background-size: inherit;
     position: absolute;
-    width: 100%; 
+    width: 100%;  
+    animation: moveHeroDesktop 100s infinite;
+}
+@keyframes moveHeroDesktop { 
+    0% { background-position-x: 0; }
+    50% { background-position-x: -2560px; }
+    100% { background-position-x: 0; }   
 }
 
 #heroLayer0{
@@ -35,7 +41,7 @@
 
 @media only screen and (max-width: 1024px) { 
     .heroContainer { 
-        height: 430px; 
+        height: 360px;
     }
     .heroImg { 
         width: 100%;
@@ -43,18 +49,24 @@
     }
     .heroLayer {  
         height: 430px; 
-        background-size: 1024px;
+        background-size: 2000px;
+        animation: moveHeroMobile 60s infinite;
     } 
+    @keyframes moveHeroMobile { 
+        0% { background-position-x: 1000; }
+        50% { background-position-x: -1000px; }
+        100% { background-position-x: 1000; }   
+    }
     #heroLayer0{ 
         background-size: cover;
     }
     #heroLayer1{ 
-        background-position-y: 260px;
+        background-position-y: 200px;
     }
     #heroLayer2{ 
-        background-position-y: 270px;
+        background-position-y: 210px;
     }
     #heroLayer3{ 
-        background-position-y: 260px;
+        background-position-y: 200px;
     }
 }

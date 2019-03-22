@@ -6,6 +6,7 @@ import Login from './pages/Login/Login';
 import { PrivateEmployerRoute, PrivateRecruiterRoute } from './PrivateRoute';
 import RecruiterRouter from './pages/recruiter/RecruiterRouter';
 import EmployerRouter from './pages/employer/EmployerRouter';
+import AboutTeamPage from './layout/AboutTeamPage/AboutTeam';
 
 import './App.css';
 
@@ -25,6 +26,7 @@ class App extends Component {
                     </Switch>
                     <Route exact path='/login' render={ () => (<Login />) } />
                     <Route exact path="/" component={Landing} />
+                    <Route exact path="/about" component={AboutTeamPage} />
                 </React.Fragment>
             </BrowserRouter> 
         );
