@@ -8,5 +8,12 @@
     text-align: center;
     z-index: 9;
     transition: 0.3s;
-    text-shadow: -2px 3px 5px #263c54;
+    text-shadow: -1px 1px 0px #263c54; 
+}
+
+@media only screen and (max-width: 768px) {
+    .theWhalesText {
+        top: 190px;
+        font-size: 60px;
+    }
 }
