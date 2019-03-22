@@ -83,7 +83,7 @@
     top: 100px; 
     z-index: 9;
     transition: 0.3s;
-    text-shadow: 0px 10px 25px #263c54;
+    text-shadow: -1px 1px 0px #263c54;
 }
 .animated.heroTxtFull {
     width: 100%; 
@@ -318,23 +318,14 @@
         text-align: center;
     } 
     .heroText { 
-        font-size: 21px; 
+        font-size: 22px; 
         line-height: 40px;
     }
     .hrLogoText { 
         font-size: 25px;
     }
 
-}
-@media only screen and (max-width: 500px) {
-    .heroText { 
-        font-size: 20px;
-        line-height: 40px;
-    } 
-}
-
-
-
+} 
  
 
 
@@ -372,6 +363,7 @@
     position: absolute;
     margin-left: 215px;
     margin-top: 8px; 
+    transition: 0.3s;
 }
 .smallHeader .whaleSprayNavBar {
     display: none;
@@ -386,6 +378,10 @@
     .smallHeader .whaleContainer {  
         margin-top: 5px;
         margin-left: 20px;
+    }
+    .whaleSprayNavBar { 
+        margin-left: 125px;
+        margin-top: 2px;
     }
 }
 

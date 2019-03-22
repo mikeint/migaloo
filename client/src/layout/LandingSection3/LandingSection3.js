@@ -164,7 +164,7 @@ class LandingSection3 extends Component {
                         <div className="animated_half">
                             <div className="module_content"> 
                                 <h1>Ready to find out more?</h1>
-                                <p>We are currently working towards finishing our plat- Sign Up form. Please sign up below to get word about when our FREE version&nbsp;launches. </p>
+                                <p>We are currently working towards finishing our platform. Please sign up below to get word about when our FREE version&nbsp;launches. </p>
                             </div>
                         </div>
                         <div className="animated_half">
