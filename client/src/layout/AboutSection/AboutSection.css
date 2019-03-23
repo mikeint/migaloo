@@ -139,6 +139,7 @@
     .aboutTeamParagraph {
         padding: 60px;
     }
+    
 } 
 
 @media only screen and (max-width: 768px) { 
@@ -148,4 +149,10 @@
     .aboutSection {
         margin-top:70px;
     }
+    .aboutTeamParagraph { 
+        padding: 20px;
+    }
+    .aboutTeamParagraph p {
+        font-size: 18px;
+    }  
 }
