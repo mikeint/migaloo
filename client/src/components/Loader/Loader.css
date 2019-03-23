@@ -1,6 +1,5 @@
-.whaleWater {
-    transform-origin: top left;
-    transform: scale(1.8);
+.whaleWater { 
+    transform: scale(5);
   }
   
   /* Spray Streams */

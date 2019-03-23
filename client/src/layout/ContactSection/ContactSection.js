@@ -107,7 +107,7 @@ class ContactSection extends Component {
                         </div> 
                         <div className="submitContainer">
                             {this.state.sending ?
-                               <Loader />
+                               <Loader sprayColor="#fff" />
                             :
                             buttonSpot
                             }
