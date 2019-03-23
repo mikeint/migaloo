@@ -3,6 +3,8 @@ import axios from 'axios';
 import AuthFunctions from '../../../AuthFunctions';
 import { Redirect } from 'react-router-dom';
 
+import Whale from '../../../components/Whale/Whale';
+
 import './RegisterRecruiterForm.css';
 
 class RegisterRecruiterForm extends Component {
@@ -78,7 +80,7 @@ class RegisterRecruiterForm extends Component {
     return (
        
         <div className="container">
-			<div className="loginHR"><div>HR</div></div>
+			<Whale />
 			{/* <form onSubmit={this.register}> */} 
             <div className="formItem"> 
                 <input type="text" className={this.state.errorList.firstName ? "formControl error" : "formControl"} placeholder="First Name" name="firstName" value={firstName} onChange={this.onChange} required />

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';  
 import AuthFunctions from '../../../AuthFunctions';
 import { Redirect } from 'react-router-dom';
+import Whale from '../../../components/Whale/Whale';
 import ApiCalls from '../../../ApiCalls';   
 
 import './LoginForm.css';
@@ -64,6 +65,7 @@ class LoginForm extends Component {
        
         <React.Fragment>
 
+            <Whale />
             <div className="formItem"> 
                 <input className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name='email' type='text' onChange={this.handleChange} value={email} required />
             </div>

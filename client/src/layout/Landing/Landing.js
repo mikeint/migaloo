@@ -23,7 +23,7 @@ class Landing extends Component {
   
                 <div className="heroText"> 
 					<ScrollAnimation className="heroTxtFull" animateIn='fadeIn' initiallyVisible={true} animateOnce={true}> 
-                        join the whales,<br/>of recruitment
+						Find your White Whale
 					</ScrollAnimation>
 				</div>
 

@@ -6,14 +6,12 @@
     background-repeat: no-repeat;
     background-size: contain; 
     height: 93px; 
-    z-index: 1;
-    margin-top: 5px;
-    margin-left: 20px;
+    z-index: 1; 
     transition: 0.3s;
 }
 .whaleContainer span {
     text-decoration: none;
-    color: #1b2c6e;
+    color: #fff;
 }
 
 .migalooLogoText {
