@@ -7,7 +7,7 @@ class Loader extends React.Component{
         return (
             <React.Fragment>  
                 <svg className="whaleWater" xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80" version="1.1">
-                    <g className="whale-container" fill="none" stroke="#263c54" strokeLinecap="round" strokeLinejoin="round"> 
+                    <g className="whale-container" fill="none" stroke={this.props.sprayColor} strokeLinecap="round" strokeLinejoin="round"> 
                         <g className="sprays">
                             <path className="spray-1" d="M54 27C53 21 51 16.5 46.5 16.5 42.9 16.5 42.5 19.5 42.5 19.5"/>
                             <path className="spray-2" d="M53.5 27.5L53.5 18C53.5 8.5 51.5 4 47 4 44 4 42.5 6.5 42.5 8.5 42.5 10 43.5 12.5 46 12.5 48 12.5 48.5 11 48.5 10 48.5 7.5 46 7.5 45.5 8.5"/>

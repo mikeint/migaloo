@@ -14,7 +14,7 @@
     background-size: inherit;
     position: absolute;
     width: 100%;  
-    animation: moveHeroDesktop 270s infinite;
+    animation: moveHeroDesktop 500s infinite;
 }
 @keyframes moveHeroDesktop { 
     0% { background-position-x: 0; }
@@ -50,7 +50,7 @@
     .heroLayer {  
         height: 430px; 
         background-size: 2000px;
-        animation: moveHeroMobile 60s infinite;
+        animation: moveHeroMobile 120s infinite;
     } 
     @keyframes moveHeroMobile { 
         0% { background-position-x: 1000; }
@@ -61,12 +61,12 @@
         background-size: cover;
     }
     #heroLayer1{ 
-        background-position-y: 200px;
+        background-position-y: 180px;
     }
     #heroLayer2{ 
-        background-position-y: 210px;
+        background-position-y: 200px;
     }
     #heroLayer3{ 
-        background-position-y: 200px;
+        background-position-y: 190px;
     }
 }

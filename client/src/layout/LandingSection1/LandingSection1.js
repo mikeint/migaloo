@@ -20,7 +20,7 @@ class LandingSection1 extends Component {
                             </ScrollAnimation> 
                             <div className="csImg csImg_mobile"><img src={currStateImg} alt="" /></div> 
                             <h2 className="ls_text">Current State</h2> 
-                            <p className="maxTextW">There are more job openings than there are qualified candidates on the market.  Employers are beginning to realize that they need to rethink their approach to hiring if they want to win the war for&nbsp;talent.</p>
+                            <p className="maxTextW">There are more job openings than there are qualified candidates on the&nbsp;market</p>
                         </div>
                     </div>
                     <div className="animated_third centerText">
@@ -30,7 +30,7 @@ class LandingSection1 extends Component {
                             </ScrollAnimation> 
                             <div className="csImg csImg_mobile"><img src={realityImg} alt="" /></div> 
                             <h2 className="ls_text">Reality</h2> 
-                            <p className="maxTextW">The best candidates are gainfully employed, and are not actively searching for a new job.  Recruiters spend their days getting to know these candidates and should be considered for important&nbsp;searches.</p>
+                            <p className="maxTextW">The best candidates are gainfully employed, and are not actively searching for a new&nbsp;job.</p>
                         </div>
                     </div>
                     <div className="animated_third centerText">
@@ -40,7 +40,7 @@ class LandingSection1 extends Component {
                             </ScrollAnimation> 
                             <div className="csImg csImg_mobile"><img src={realityImg} alt="" /></div> 
                             <h2 className="ls_text">Problem</h2>
-                            <p className="maxTextW">Navigating the world of recruiters can be cumbersome for employers, but necessary for hard-to-fill roles. How does an employer pick the right recruiter to engage? How many different agreements do they have to sign? How do they fit time for these new&nbsp;relationships?</p>
+                            <p className="maxTextW">Navigating the world of recruiters can be cumbersome for employers, but necessary for hard-to-fill&nbsp;roles.</p>
                         </div>
                     </div>
                 </div> 

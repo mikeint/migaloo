@@ -144,8 +144,8 @@
         width: 100%;
     }
     .header_module_content {
-        padding-top: 20px;
-        height: 100%;
+        min-height: 200px;
+        padding-top: 20px; 
     }
 } 
 

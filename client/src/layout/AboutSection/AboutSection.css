@@ -1,3 +1,4 @@
+
 .aboutSection {
     width: 100%; 
     overflow: hidden; 
@@ -42,8 +43,8 @@
     transition: all 0.3s linear;
 }
 #f1_container:hover #f1_card {
-    transform: rotateY(180deg); 
-    border-radius: 50%; 
+/*     transform: rotateY(180deg); 
+    border-radius: 50%;  */
 }
 .teamFace {
     position: absolute;
@@ -110,6 +111,15 @@
     font-size: 18px; 
 }
 
+.aboutTeamParagraph {
+    max-width: 1400px;
+    margin: auto;
+    font-size: 20px;
+    padding: 120px;
+}
+.aboutTeamParagraph p {
+    font-size: 25px;
+}  
 
 @media only screen and (max-width: 1024px) { 
     #f1_container {
@@ -125,6 +135,9 @@
     .whaleMember2 { 
         line-height: 120px;
         font-size: 32px;
+    }
+    .aboutTeamParagraph {
+        padding: 60px;
     }
 } 
 

@@ -31,11 +31,17 @@
     margin-left: 5px;
     color: #263c54;
 }
+.smallHeader #nav-icon1 { 
+    margin-top: -2px;
+}
+.smallHeader #nav-icon1 span {
+    width: 40px;
+}
 .smallHeader #nav-icon1 span:nth-child(1) {
-    top: -20px;
+    top: -15px;
 }
 .smallHeader #nav-icon1 span:nth-child(2) {
-    top: -6px;
+    top: -3px;
 }
 .smallHeader #nav-icon1 span:nth-child(3) {
     top: 9px;
@@ -74,19 +80,21 @@
     transition: 0.3s;
 } */
 .heroText {
-    width: 100%;  
-    font-size: 50px;
+    width: 100%;
+    text-align: center;
+    font-size: 80px;
     color: #ffffff;
     font-weight: bold; 
     padding: 20px; 
-    position: absolute;
-    top: 100px; 
+    position: absolute; 
     z-index: 9;
     transition: 0.3s;
+    padding-top: 210px;
     text-shadow: -1px 1px 0px #263c54;
 }
 .animated.heroTxtFull {
     width: 100%; 
+    overflow: hidden;
 }
 
 #logoContainer {  
@@ -209,9 +217,9 @@
     text-decoration: none;  
 } 
 #nav-icon1 {
-    width: 60px;
+    width: 50px;
     height: 75px;
-    position: relative;
+    position: absolute;
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
     -o-transform: rotate(0deg);
@@ -220,19 +228,20 @@
     -moz-transition: .5s ease-in-out;
     -o-transition: .5s ease-in-out;
     transition: .5s ease-in-out; 
-    float: right;	
+    right: 0;
+    padding-right: 10px;
     z-index: 10;
 }
 
 #nav-icon1 span {
     display: block;
     position: absolute;
-    height: 9px;
-    width: 100%;
+    height: 6px;
+    width: 50px;
     background: #fff;
     border-radius: 9px;
     left: -15px;
-    margin-top: 25px;
+    margin-top: 27px;
     opacity:1;
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
@@ -290,6 +299,19 @@
 
 
 
+.smallHeader .whaleContainer { 
+    background-image: url("../../../files/images/landingPage/whaleBs.png");
+    width: 100px;  
+    height: 50px;
+}
+.smallHeader .migalooLogoText { 
+    display: block;
+}
+.smallHeader .whaleSpray {
+    display: none;
+}
+
+
 
 @media only screen and (max-width: 1024px) {
     .heroContainer .heroHome {
@@ -299,10 +321,20 @@
         display: none;
     }
     #navBarMobile {
-        display: block;
+        display: block; 
+        width: 100px;
+        height: 100px;
+        right: 0;
+        position: absolute; 
+    }
+    .smallHeader #navBarMobile { 
+        width: 90px;
+        height: 50px; 
     }
     .heroText {
-        font-size: 40px;
+        font-size: 60px; 
+        padding-top: 160px;
+        text-shadow: 0px 1px 0px #263c54;
     } 
     .hrLogoText { 
         font-size: 35px;
@@ -318,8 +350,7 @@
         text-align: center;
     } 
     .heroText { 
-        font-size: 22px; 
-        line-height: 40px;
+        font-size: 51px;  
     }
     .hrLogoText { 
         font-size: 25px;
@@ -327,62 +358,10 @@
 
 } 
  
-
-
-/* ----- WHAlE LOGO */
- 
-.whaleContainer {
-    background-image: url("../../../files/images/landingPage/whaleWs.png");
-    background-repeat: no-repeat;
-    background-size: contain;
-    width: 340px;
-    height: 100px;
-    position: absolute;
-    z-index: 1;
-    margin-top: 5px;
-    margin-left: 20px;
-    transition: 0.3s;
-}
-.whaleContainer span {
-    text-decoration: none;
-    color: #1b2c6e;
-}
-.smallHeader .whaleContainer { 
-    background-image: url("../../../files/images/landingPage/whaleBs.png");
-    width: 100px;  
-    height: 50px;
-}
-.migalooLogoText {
-    display: none;
-}
-.smallHeader .migalooLogoText { 
-    display: block;
-}
-
-.whaleSprayNavBar {
-    position: absolute;
-    margin-left: 215px;
-    margin-top: 8px; 
-    transition: 0.3s;
-}
-.smallHeader .whaleSprayNavBar {
-    display: none;
-}
-
-@media only screen and (max-width: 600px) {
-    .whaleContainer {
-        width: 260px;
-        margin-top: 10px;
-        margin-left: 0px;
-    }
+@media only screen and (max-width: 600px) { 
     .smallHeader .whaleContainer {  
-        margin-top: 5px;
+        margin-top: -108px;
         margin-left: 20px;
-    }
-    .whaleSprayNavBar { 
-        margin-left: 125px;
-        margin-top: 2px;
-    }
+    } 
 }
 
-/* ----- end WHAlE LOGO */

@@ -23,9 +23,9 @@ class HeroContainer extends Component {
             document.getElementById("heroLayer3").style.backgroundPositionY = (lastScrollY*0.59+60)+"px";
         }   
         else if (lastScrollY >= 0 && lastScrollY <= 500) {
-            document.getElementById("heroLayer1").style.backgroundPositionY = (lastScrollY*0.85+200)+"px";
-            document.getElementById("heroLayer2").style.backgroundPositionY = (lastScrollY*0.65+210)+"px";
-            document.getElementById("heroLayer3").style.backgroundPositionY = (lastScrollY*0.5+200)+"px";
+            document.getElementById("heroLayer1").style.backgroundPositionY = (lastScrollY*0.85+180)+"px";
+            document.getElementById("heroLayer2").style.backgroundPositionY = (lastScrollY*0.65+200)+"px";
+            document.getElementById("heroLayer3").style.backgroundPositionY = (lastScrollY*0.5+190)+"px";
         }
     } 
 

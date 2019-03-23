@@ -149,6 +149,11 @@
     color: #fff; 
 }
 
+.whaleContactContainer{
+    padding-bottom: 40px;
+}
+
+
 @media only screen and (max-width: 768px) {
     .i-2, 
     .contactUsContainer select {

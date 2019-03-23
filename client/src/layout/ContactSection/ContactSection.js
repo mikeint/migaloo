@@ -1,6 +1,7 @@
 import React, { Component } from "react"; 
 import { Button, Form } from 'reactstrap';
 import axios from 'axios';
+import Whale from '../../components/Whale/Whale';
 
 import Loader from '../../components/Loader/Loader';
 
@@ -50,6 +51,7 @@ class ContactSection extends Component {
 
 
     render() {
+        const whaleOptions={whaleImg:'whaleBs.png', sprayColor:'#fff'};
 
         const buttonSpot = this.state.buttonState ?
             (<div id='formSubmitText'> Thank you for filling out the form.< br />  Your information has been successfully sent!</div>)
@@ -58,9 +60,14 @@ class ContactSection extends Component {
 
 
         return (
-            <div className="formBackground"> 
+            <div className="formBackground">  
+
                 <Form onSubmit={this.handleSubmit} id="theForm">
                     <div className="contactUsContainer"> 
+                        <div className="whaleContactContainer">
+                            <Whale {...whaleOptions}/>
+                        </div>
+                        
                         <h1>Contact Us</h1>
                         <div className="layerBackground"></div>
                         <div className="formSection">  

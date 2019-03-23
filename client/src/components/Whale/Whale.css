@@ -1,0 +1,44 @@
+
+/* ----- WHAlE LOGO */
+ 
+.whaleContainer {
+    background-image: url("../../files/images/landingPage/whaleWs.png");
+    background-repeat: no-repeat;
+    background-size: contain; 
+    height: 93px; 
+    z-index: 1;
+    margin-top: 5px;
+    margin-left: 20px;
+    transition: 0.3s;
+}
+.whaleContainer span {
+    text-decoration: none;
+    color: #1b2c6e;
+}
+
+.migalooLogoText {
+    display: none;
+}
+
+.whaleSpray {
+    position: absolute;
+    margin-left: 223px;
+    margin-top: -89px;
+    transition: 0.3s;
+    z-index: 1;
+}
+
+
+@media only screen and (max-width: 600px) {
+    .whaleContainer {
+        width: 260px;
+        margin-top: 10px;
+        margin-left: 0px;
+    } 
+    .whaleSpray { 
+        margin-left: 125px;
+        margin-top: -108px;
+    }
+}
+
+/* ----- end WHAlE LOGO */

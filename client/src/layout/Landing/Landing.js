@@ -22,8 +22,8 @@ class Landing extends Component {
                 <NavBar page="home" />
   
                 <div className="heroText"> 
-					<ScrollAnimation className="heroTxtFull" animateIn='bounceInLeft' initiallyVisible={true} animateOnce={true}> 
-						For A managed marketplace<br/>Join the whales of recruitment.
+					<ScrollAnimation className="heroTxtFull" animateIn='fadeIn' initiallyVisible={true} animateOnce={true}> 
+                        join the whales,<br/>of recruitment
 					</ScrollAnimation>
 				</div>
 

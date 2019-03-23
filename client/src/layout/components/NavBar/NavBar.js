@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import './NavBar.css';
 
-import WhaleSpray from '../../../components/Loader/Loader';
+import Whale from '../../../components/Whale/Whale';
 
 class NavBar extends Component {
    
@@ -32,6 +32,8 @@ class NavBar extends Component {
     }
 
 	render() {
+        const whaleOptions={whaleImg:'whaleWs.png', sprayColor:'#546f82'};
+
 		return (
 			<React.Fragment>
                 <div id="header" className={this.state.smallHeader ? "smallHeader" : ""}>
@@ -49,8 +51,8 @@ class NavBar extends Component {
                     }
                 </div>
 
-                <div id="navBarMobile">
-                    <div id="nav-icon1" onClick={this.toggleLandingMenu} className={this.state.menuOpen ? "open" : ""}>
+                <div id="navBarMobile" onClick={this.toggleLandingMenu}>
+                    <div id="nav-icon1" className={this.state.menuOpen ? "open" : ""}>
                         <span className="hmbSpanA"></span>
                         <span className="hmbSpanA"></span>
                         <span className="hmbSpanA"></span> 
@@ -69,7 +71,7 @@ class NavBar extends Component {
                     </div>
                 </div>
                 
-                <Link to='/'><div className="whaleContainer"><span className="migalooLogoText">Migaloo</span></div><span className="whaleSprayNavBar"><WhaleSpray/></span></Link>
+                <Link to='/'><Whale {...whaleOptions}/></Link>
             </div>
         </React.Fragment>
         ) 
