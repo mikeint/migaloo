@@ -33,7 +33,7 @@ class PostCandidateToJob extends React.Component{
     }
 
     handleSubmit = () => {
-        ApiCalls.post('/api/jobs/postCandidate', this.state)
+        ApiCalls.post('/api/recruiterJobs/postCandidate', this.state)
         .then((res) => {
             // THIS IS getting messy, its to shut the overlay after submitting a new candidate.
             // TO-DO (not here) show the added candidate behind overlay

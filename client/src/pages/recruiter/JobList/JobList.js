@@ -65,8 +65,8 @@ class JobList extends React.Component{
 
     getJobList = (searchString) => {
         (this.state.candidateId?
-            ApiCalls.get('/api/jobs/listForCandidate/'+this.state.candidateId+'/'+this.state.page+(searchString?`/${searchString}`:'')):
-            ApiCalls.get('/api/jobs/list/'+this.state.page+(searchString?`/${searchString}`:'')))
+            ApiCalls.get('/api/recruiterJobs/listForCandidate/'+this.state.candidateId+'/'+this.state.page+(searchString?`/${searchString}`:'')):
+            ApiCalls.get('/api/recruiterJobs/list/'+this.state.page+(searchString?`/${searchString}`:'')))
         .then((res)=>{
             if(res.data.success){
                 const jobList = res.data.jobList;

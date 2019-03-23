@@ -7,6 +7,16 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
 }
+.conversationModal .closeModal{
+    cursor: pointer;
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid black;
+    line-height: 25px;
+    margin-left: auto;
+}
 .conversationModal .modalMain {
     width: 95%;
     height: 95%;
@@ -48,6 +58,15 @@
     white-space: nowrap;
     margin-bottom: 20px;
 }
+.conversationModal .contactHeader2{
+    width: 100%;  
+    font-weight: bold;
+    font-size: 1.1em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-bottom: 20px;
+}
 .conversationModal .chatWindow{
     padding: 0.75em;  
     overflow-y: scroll;
@@ -65,6 +84,26 @@
     color: white;
     text-align: center;
     font-weight: bold;
+}
+.conversationModal .responseContainer{
+    display: flex;
+    flex-direction: row;
+    font-size: 0.8em;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+.conversationModal .responseButton{
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px 0px;
+    background-color: #1a2b6d;
+    width: 75px;
+    margin: 5px 10px;
+    cursor: pointer;
+}
+.conversationModal .responseButton:hover{
+    background-color: #394ea3;
 }
 .conversationModal .more{
     cursor: pointer;

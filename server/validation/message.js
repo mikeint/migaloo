@@ -3,19 +3,15 @@ const isEmpty = require('./isEmpty');
 
 module.exports = function validateMessageInput(data) {
     let errors = {};
-
-    // Need: given_name, family_name, phone_number
-    if (Validator.isEmpty(data.subject)) {
-        errors.subject = 'Subject field is required';
+    if (Validator.isEmpty(data.messageSubjectId)) {
+        errors.messageSubjectId = 'Subject field is required';
     }
-    if (Validator.isEmpty(data.message)) {
+    if (Validator.isEmpty(data.message) && Validator.isEmpty(data.dateOffer)) {
         errors.message = 'Message field is required';
-    }
-    if (Validator.isEmpty(data.postId)) {
-        errors.postId = 'Post Id field is required';
-    }
-    if (Validator.isEmpty(data.subjectUserId)) {
-        errors.subjectUserId = 'Subject User Id field is required';
+        errors.dateOffer = 'Date Offer field is required';
+        if(!Validator.isEmpty(data.minuteLength)){
+            errors.minuteLength = 'Minute Length field is required';
+        }
     }
     if (Validator.isEmpty(data.toId)) {
         errors.toId = 'To Id field is required';
