@@ -48,7 +48,7 @@ p {
 }
 
 .loginContainer {
-	background-image: linear-gradient(120deg, #5159ab 0%, #263c54 100%); /* #e0c3fc #8ec5fc  */
+	background-image: linear-gradient(120deg, #96b4be 0%, #263c54 100%); 
 	background-size: 400% 400%;
 	-webkit-animation: Gradient 7s ease infinite;
 	-moz-animation: Gradient 7s ease infinite;
@@ -224,9 +224,7 @@ p {
 
 
 @media only screen and (max-width: 677px) {
-    .loginContainer {
-        background-image: none; 
-        animation: none;
+    .loginContainer {  
     }  
 }
 

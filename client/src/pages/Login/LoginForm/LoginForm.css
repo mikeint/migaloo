@@ -49,13 +49,9 @@
         color: #263c54;
     } 
     .formItem input{
-        border-bottom: 1px solid #eaeaea;
-        color: #263c54; 
+        border-bottom: 1px solid #eaeaea; 
         border-radius: 0px;
-    }
-    .formItem input::placeholder {
-        color: #263c54; 
-    }
+    } 
 	.loginMiddle { 
 		height: 100%;
 		position: relative;

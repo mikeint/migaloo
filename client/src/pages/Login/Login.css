@@ -50,10 +50,10 @@
     height: 100%;
     float: left;
     text-align: center;
-    line-height: 50px;    
-    background: #1a2b6d42;
-    color: #94949473;
-    font-size: 12px;
+    line-height: 50px;     
+    color: #263c54;
+    background: #eaeaea; 
+    font-size: 20px; 
 }
 .tab-item.active { 
 	background-color: #ffffff00;
@@ -66,45 +66,23 @@
     opacity: 1;
     transition: 0.3s;
     font-size: 20px;
-}
-
-.loginHR {
-    width: 100%;
-    text-align: center;
-    padding: 40px 10px;
-    color: #fff;
-}
-
-.loginHR div {
-    padding: 20px;
-    font-weight: bold;
-    font-size: 20px;
-    display:inline-block;
-    border: 4px solid #fff;
-    color: #fff;
-}
-
-
+} 
 
 @media only screen and (max-width: 677px) {
-    .loginContent {
-        background: #fff;
-        color: #263c54; 
+    .loginContent { 
+        color: #fff; 
         height: calc(100% - 50px); 
         position: absolute;
     }
 	.loginContainer {
 		min-height: 100%;
-	}
-	.tab-item.active { 
-		background-color: #fff;
-    }
-    .loginHR {
-        color: #263c54;
-    }
+    } 
+	.tab-item.active {  
+        color: #fff !important;
+    } 
     .loginHR div { 
-        border: 4px solid #263c54;
-        color: #263c54;
+        border: 4px solid #fff;
+        color: #fff;
     }
     
 	.tabContainer {
@@ -113,7 +91,7 @@
 		width: 100%;
 	}
     .tab-item {    
-        background: #eaeaea;
-        color: #bdbdbd;
+        box-shadow: inset 0 5px 5px grey;
+        background: #eaeaea; 
     }
 }
