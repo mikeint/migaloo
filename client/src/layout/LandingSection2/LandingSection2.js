@@ -64,7 +64,7 @@ class LandingSection2 extends Component {
                     <div>
                         <img src={carouselImg3} alt="" />
                         <h1 className="mc_4_text">Efficient</h1>
-                        <p>Employers only view top talent that they would otherwise not have access to. Moreover, the shortlist is further distilled by migaloo ensuring that the employer is left with a tough hiring&nsbp;decision.</p>
+                        <p>Employers only view top talent that they would otherwise not have access to. Moreover, the shortlist is further distilled by migaloo ensuring that the employer is left with a tough hiring&nbsp;decision.</p>
                     </div>
                 {/* </ScrollAnimation> */} 
                 <div>

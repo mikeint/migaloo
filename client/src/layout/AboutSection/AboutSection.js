@@ -1,5 +1,6 @@
 import React, { Component } from "react";  
 import './AboutSection.css';  
+import ScrollAnimation from 'react-animate-on-scroll';
 
 class AboutSection extends Component {
 
@@ -14,43 +15,49 @@ class AboutSection extends Component {
                     <div className="aboutSection">  
                         <div className="third">
                             <div className="content_container"> 
-                                <div id="f1_container">
-                                    <div id="f1_card" className="shadow">
-                                        <div className="front teamFace teamMember1"> 
-                                        </div>
-                                        <div className="back teamFace center whaleMember1">
+                                <ScrollAnimation className="heroTxtFull" animateIn='flipInY' initiallyVisible={false} animateOnce={true}> 
+                                    <div id="f1_container">
+                                        <div id="f1_card" className="shadow">
+                                            <div className="front teamFace teamMember1"> 
+                                            </div>
+                                            <div className="back teamFace center whaleMember1">
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </ScrollAnimation>
                                 <div className="name">Michael Sansone</div>
                                 <div className="title">CTO</div>
                             </div>
                         </div>
                         <div className="third">
-                            <div className="content_container">   
-                                <div id="f1_container">
-                                    <div id="f1_card" className="shadow">
-                                        <div className="front teamFace teamMember2"> 
-                                        </div>
-                                        <div className="back teamFace center whaleMember2">
-                                            Migaloo
+                            <div className="content_container">
+                                <ScrollAnimation className="heroTxtFull" animateIn='flipInY' initiallyVisible={false} animateOnce={true} delay={500}> 
+                                    <div id="f1_container">
+                                        <div id="f1_card" className="shadow">
+                                            <div className="front teamFace teamMember2"> 
+                                            </div>
+                                            <div className="back teamFace center whaleMember2">
+                                                Migaloo
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </ScrollAnimation>
                                 <div className="name">Michael Nasser</div>
                                 <div className="title">CEO</div>
                             </div>
                         </div>
                         <div className="third">
-                            <div className="content_container">   
-                                <div id="f1_container">
-                                    <div id="f1_card" className="shadow">
-                                        <div className="front teamFace teamMember3">  
-                                        </div>
-                                        <div className="back teamFace center whaleMember3"> 
+                            <div className="content_container">
+                                <ScrollAnimation className="heroTxtFull" animateIn='flipInY' initiallyVisible={false} animateOnce={true} delay={1000}> 
+                                    <div id="f1_container">
+                                        <div id="f1_card" className="shadow">
+                                            <div className="front teamFace teamMember3">  
+                                            </div>
+                                            <div className="back teamFace center whaleMember3"> 
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </ScrollAnimation>
                                 <div className="name">Michael Marcucci</div>
                                 <div className="title">CTO</div>
                             </div>

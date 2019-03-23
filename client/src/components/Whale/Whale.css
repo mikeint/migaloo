@@ -6,8 +6,10 @@
     background-repeat: no-repeat;
     background-size: contain; 
     height: 93px; 
+    width: 350px;
     z-index: 1; 
     transition: 0.3s;
+    position: relative;
 }
 .whaleContainer span {
     text-decoration: none;

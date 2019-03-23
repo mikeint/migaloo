@@ -17,7 +17,7 @@ class AboutTeam extends Component {
                 <SocialSide />
                 <NavBar page="AboutPage" />
                 <div className="theWhalesText"> 
-					<ScrollAnimation className="heroTxtFull" animateIn='fadeIn' initiallyVisible={true} animateOnce={true}> 
+					<ScrollAnimation className="heroTxtFull" animateIn='fadeIn' initiallyVisible={false} animateOnce={true}> 
 						The whales
 					</ScrollAnimation>
 				</div>
