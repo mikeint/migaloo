@@ -19,7 +19,6 @@
 }
 .conversationModal .modalMain {
     width: 95%;
-    height: 95%;
     max-width: 1000px;
     position: fixed;
     background: white;

@@ -1,19 +1,29 @@
 import React from 'react';
 import './Notifications.css';    
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
-import bell from '../../files/images/bellW.png';
-import axios from 'axios';
 import AuthFunctions from '../../AuthFunctions'; 
-import Overlay from '../Overlay/Overlay';
+import ApiCalls from '../../ApiCalls';  
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import Badge from '@material-ui/core/Badge';
 import BuildNotifications from './BuildNotifications/BuildNotifications';
+import IconButton from '@material-ui/core/IconButton';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import { withStyles } from '@material-ui/core/styles';
 
+const styles = theme => ({
+    drawer:{
+        width: "80%",
+        minWidth: "300px",
+        maxHeight: "20px",
+        position: "relative"
+    }
+})
 class Notifications extends React.Component{ 
 
     constructor(props) {
         super(props);
 		this.state = {
             showOverlay: false,
-            overlayConfig: {direction: "t-b", swipeLocation: "b"}, 
             /* scrollY, */
             alertCount: 0,
             alertList: [],
@@ -21,11 +31,11 @@ class Notifications extends React.Component{
         this.Auth = new AuthFunctions();
     } 
 
-     componentDidMount() {
+    componentDidMount() {
         this.handleAlert();
     } 
 
-    callOverlay = (postId) => {
+    openNotifications = (postId) => {
         if (this.state.alertCount === 0) {
             Swal.fire({
                 position: 'top-end',
@@ -42,11 +52,8 @@ class Notifications extends React.Component{
 
     handleAlert = () => {
         
-        var config = {
-            headers: {'Authorization': 'Bearer ' + this.Auth.getToken(), 'Content-Type': 'application/json' }
-        }
         var userType = this.Auth.getUser().userType;
-        axios.get(userType===1?'/api/recruiter/alerts':'/api/employer/alerts', config)
+        ApiCalls.get(userType===1?'/api/recruiter/alerts':'/api/employer/alerts')
         .then((res) => {
             if(res.data.success) {
                 var count = (res.data.alertList.length === 0 ? 0 : 
@@ -66,24 +73,27 @@ class Notifications extends React.Component{
     
 
     render(){
+        const { classes } = this.props;
         return (
             <React.Fragment>
-                <div className="Notifications"> 
-                    <div className='alert'>
-                        <span className="alertNumber" onClick={() => this.callOverlay()}>{this.state.alertCount}</span>
-                        <img className="bellNotificationImg" src={bell} onClick={() => this.callOverlay()} alt=""/>
-                    </div>
-                </div> 
-
-                {this.state.showOverlay && <Overlay
-                                                html={<BuildNotifications alertList={this.state.alertList} />}  
-                                                handleClose={this.callOverlay} 
-                                                config={this.state.overlayConfig}
-                                            />}
+                <IconButton color="inherit" onClick={() => this.openNotifications()}>
+                    <Badge badgeContent={this.state.alertCount} color="error">
+                        <NotificationsIcon />
+                    </Badge>
+                </IconButton>
+                <SwipeableDrawer
+                    anchor="top"
+                    className={classes.drawer}
+                    open={this.state.showOverlay}
+                    onClose={()=>this.setState({"showOverlay":false})}
+                    onOpen={()=>this.setState({"showOverlay":true})}
+                    >
+                    <BuildNotifications close={()=>this.setState({"showOverlay":false})} alertList={this.state.alertList} />
+                </SwipeableDrawer>
 
             </React.Fragment>
         );
     }
 };
 
-export default Notifications;
+export default withStyles(styles)(Notifications);

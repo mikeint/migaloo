@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
 import App from "./App"; 
- 
-ReactDOM.render(<BrowserRouter><App /></BrowserRouter>, document.getElementById("root"));
+ReactDOM.render(
+    <React.Fragment>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+        <App />
+    </React.Fragment>, document.getElementById("root"));

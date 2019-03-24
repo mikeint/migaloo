@@ -4,7 +4,6 @@ import ActiveJobs from '../../pages/employer/ActiveJobs/ActiveJobs';
 import PostAJob from '../../pages/employer/PostAJob/PostAJob';
 import EmployerProfile from '../../pages/employer/Profile/Profile';
 import NavBar from '../../components/NavBar/NavBar';
-import Notifications from '../../components/Notifications/Notifications';
 import Chat from '../../components/Chat/Chat';
 
 function EmployerRouter({ match }) {
@@ -13,7 +12,6 @@ function EmployerRouter({ match }) {
     return ( 
         <React.Fragment>
             <NavBar />
-            {window.location.pathname !== "/recruiter/profile" ? <Notifications/> : ""}
             <div className="mainContainer">
                 <Switch>
                     <Route strict path="/employer/postAJob" component={PostAJob} />

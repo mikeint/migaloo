@@ -48,7 +48,7 @@
         padding: 20px;
         overflow: hidden;
 } 
-button[class*='MuiButtonBase-root-'] {
+.jobPostingContainer button[class*='MuiButtonBase-root-'] {
     width: 33.333%;
 /*     -webkit-tap-highlight-color:#1a2b6d2e;
     background-color: #ffffff; */

@@ -6,8 +6,20 @@ import post_icon from '../../files/images/navImages/post_icon_30.png';
 import chat_icon from '../../files/images/navImages/chat_icon_30.png';
 import profile_icon from '../../files/images/navImages/profile_icon_30.png';
 import AuthFunctions from '../../AuthFunctions'; 
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import AppBar from '@material-ui/core/AppBar';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import Notifications from '../Notifications/Notifications';
+import { withStyles } from '@material-ui/core/styles';
 
-
+const styles = theme => ({
+    navBtn:{
+        padding: "10px",
+        marginRight: "10px"
+    }
+})
 class NavBar extends React.Component{
     constructor(){
         super();
@@ -31,11 +43,6 @@ class NavBar extends React.Component{
                     icon:chat_icon,
                     link:"/recruiter/chat",
                     name:"Chat"
-                },
-                {
-                    icon:profile_icon,
-                    link:"/recruiter/profile",
-                    name:"Profile"
                 }
             ],
             2:[ // Employer
@@ -53,13 +60,24 @@ class NavBar extends React.Component{
                     icon:chat_icon,
                     link:"/employer/chat",
                     name:"Chat"
-                },
-                {
-                    icon:profile_icon,
-                    link:"/employer/profile",
-                    name:"Profile"
                 }
             ]
+        }
+        this.profileMapping = {
+            1: // Recruiter
+            {
+                icon:profile_icon,
+                link:"/recruiter/profile",
+                name:"Profile"
+            }
+            ,
+            2: // Employer
+            {
+                icon:profile_icon,
+                link:"/employer/profile",
+                name:"Profile"
+            }
+            
         }
     } 
 
@@ -67,27 +85,26 @@ class NavBar extends React.Component{
         this.setState({ user: this.Auth.getUser() });
     }
     render(){
+        const { classes } = this.props;
         return (
             <React.Fragment> 
-
-                <div id="navBar_admin"> 
-                    <div className="navbar_employer"> 
+                <AppBar position="static" color="primary">
+                    <Toolbar>
                         {
                             this.navMappings[this.state.user.userType].map((d, i)=>{
-                                return <NavLink key={i} to={d.link}>
-                                    <div className="navBtn">
-                                        <img src={d.icon} alt="" />
-                                        <div className="navText">{d.name}</div>
-                                    </div>
-                                </NavLink> 
-
+                                return <Button className={classes.navBtn} key={i} component={NavLink} to={d.link} color="inherit">{d.name}</Button>
                             })
                         }
-                    </div>
-                </div>  
+                        <div style={{flexGrow: 1}}></div>
+                        <Notifications/>
+                        <IconButton component={NavLink} to={this.profileMapping[this.state.user.userType].link} color="inherit">
+                            <AccountCircle />
+                        </IconButton>
+                    </Toolbar>
+                </AppBar>
             </React.Fragment>
         );
     }
 };
 
-export default NavBar;
+export default withStyles(styles)(NavBar);

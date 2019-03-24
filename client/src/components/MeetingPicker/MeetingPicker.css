@@ -1,0 +1,19 @@
+.timeInputsContainer{
+    display: flex;
+    align-content: space-between;
+    margin-top: 2px;
+    width: 350px;
+    max-width: 100%;
+}
+.timeInput{
+    flex: 1 1;
+}
+.timeInput input[type="time"]::-webkit-clear-button {
+    display: none;
+}
+.calendarContainer{
+    padding: 10px;
+}
+.error{
+    color: red;
+}
