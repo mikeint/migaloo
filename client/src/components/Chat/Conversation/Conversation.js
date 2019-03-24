@@ -2,7 +2,19 @@ import React, { Component } from "react";
 import "./Conversation.css"; 
 import Loader from '../../Loader/Loader'; 
 import ApiCalls from '../../../ApiCalls';  
+import CalendarToday from '@material-ui/icons/CalendarToday';
+import Close from '@material-ui/icons/Close';
+import MeetingPicker from "../../MeetingPicker/MeetingPicker";
+import IconButton from '@material-ui/core/IconButton';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
+import { withStyles } from '@material-ui/core/styles';
 
+const styles = theme => ({
+    closeBtn:{
+        marginLeft: "auto"
+    }
+})
 class Conversation extends Component {
 
     constructor(props) {
@@ -15,7 +27,8 @@ class Conversation extends Component {
             pageCount: -1,
             pageNumber: 1,
             toId: toId,
-            showLoader: true
+            showLoader: true,
+            meetingDialogOpen: false
         };
     }
     componentWillMount = () => {
@@ -116,66 +129,92 @@ class Conversation extends Component {
             console.log(errors.response.data)
         })
     }
-    render() {
-  
+    handleMeetingDialogOpen = () => {
+        this.setState({
+          meetingDialogOpen: true,
+        });
+    };
+
+    handleMeetingDialogClose = (event) => {
+        if(event.response === 1)
+            this.setState({ meetingTime: event.value, meetingDialogOpen: false });
+        else
+            this.setState({ meetingDialogOpen: false });
+    };
+    handleChatDialogClose = () => {
+        this.props.onClose();
+    };
+
+    render(){  
+        const { classes, onClose, ...other } = this.props;
         return (
             <React.Fragment>
-            <div className='conversationModal'>
-                <div className='modal displayBlock'>
-                    {
-                        <section className='modalMain'>
-                            <div className="rowdiv" onClick={this.props.handleClose}><div className="closeModal">X</div></div>
-                            <div className='contactHeader'>{this.state.contactName}</div>
-                            <div className='contactHeader2'>{this.state.conversation.subject}</div>
-                            <div className='chatWindow'>
-                                {this.state.showLoader?<Loader/>:''}
-                                {
-                                    this.state.messageList.map((d, i)=>{
-                                        return <div className={d.mine?"messageRow mine":"messageRow theirs"} key={i}>
-                                            {d.type === 'load'?<div className="loadMore more" onClick={this.getMessageList.bind(this)}>
-                                                Load More
-                                            </div>:''}
-                                            {d.type === 'loadnomore'?<div className="loadMore">
-                                                No More Messages
-                                            </div>:''}
-                                            {d.type === 'calendar' &&
-                                            <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
-                                                <div>{d.locationType}</div>
-                                                <div>{d.dateOffer}</div>
-                                                <div>{d.length}</div>
-                                                {d.response === 0 && <div className="responseContainer">
-                                                    <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 1)}>Accept</div>
-                                                    <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 2)}>Reject</div>
-                                                </div>}
-                                                <div className="date">{d.date}</div>
+                <Dialog
+                        maxWidth="xl"
+                        fullWidth={true}
+                        onClose={this.handleChatDialogClose}
+                        aria-labelledby="dialog-title"
+                        open={other.open}> 
+                    <DialogTitle id="dialog-title">Conversation - {this.state.contactName}
+                        <IconButton color="inherit" onClick={this.handleChatDialogClose} className={classes.closeBtn}>
+                            <Close color="primary"/>
+                        </IconButton>
+                    </DialogTitle>
+                    <div className='conversationModal'>
+                        {/* <div className='contactHeader2'>{this.state.conversation.subject}</div> */}
+                        <IconButton color="inherit" onClick={this.handleMeetingDialogOpen}>
+                            <CalendarToday color="primary"/>
+                        </IconButton>
+                        <MeetingPicker
+                            open={this.state.meetingDialogOpen}
+                            onClose={this.handleMeetingDialogClose} />
+                        <div className='chatWindow'>
+                            {this.state.showLoader?<Loader/>:''}
+                            {
+                                this.state.messageList.map((d, i)=>{
+                                    return <div className={d.mine?"messageRow mine":"messageRow theirs"} key={i}>
+                                        {d.type === 'load'?<div className="loadMore more" onClick={this.getMessageList.bind(this)}>
+                                            Load More
+                                        </div>:''}
+                                        {d.type === 'loadnomore'?<div className="loadMore">
+                                            No More Messages
+                                        </div>:''}
+                                        {d.type === 'calendar' &&
+                                        <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
+                                            <div>{d.locationType}</div>
+                                            <div>{d.dateOffer}</div>
+                                            <div>{d.length}</div>
+                                            {d.response === 0 && <div className="responseContainer">
+                                                <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 1)}>Accept</div>
+                                                <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 2)}>Reject</div>
                                             </div>}
-                                            {d.type === 'calendar_response' &&
-                                            <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
-                                                <div>
-                                                    {d.locationType} Meeting has been {d.response === 1?"Accepted":"Rejected"}
-                                                </div>
-                                                {d.response === 1 && <div>
-                                                    At {d.dateOffer} for {d.length}
-                                                </div>}
+                                            <div className="date">{d.date}</div>
+                                        </div>}
+                                        {d.type === 'calendar_response' &&
+                                        <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
+                                            <div>
+                                                {d.locationType} Meeting has been {d.response === 1?"Accepted":"Rejected"}
+                                            </div>
+                                            {d.response === 1 && <div>
+                                                At {d.dateOffer} for {d.length}
                                             </div>}
-                                            {d.type === 'message' &&
-                                            <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
-                                                <div className="message">{d.text}</div>
-                                                <div className="date">{d.date}</div>
-                                            </div>}
-                                        </div>
-                                    })
-                                }
-                            </div>
-                            <textarea className="chatInput" placeholder="Message" name='message' type='text' ref={(c) => this.message = c} onChange={this.handleChange} />
-                            <div className="sendButton" onClick={this.sendMessage.bind(this)}>Send</div> 
-                        </section>
-                    }
-                </div>
-            </div>
+                                        </div>}
+                                        {d.type === 'message' &&
+                                        <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
+                                            <div className="message">{d.text}</div>
+                                            <div className="date">{d.date}</div>
+                                        </div>}
+                                    </div>
+                                })
+                            }
+                        </div>
+                        <textarea className="chatInput" placeholder="Message" name='message' type='text' ref={(c) => this.message = c} onChange={this.handleChange} />
+                        <div className="sendButton" onClick={this.sendMessage.bind(this)}>Send</div> 
+                    </div>
+                </Dialog>
             </React.Fragment>
         );
     }
 }
- 
-export default Conversation;
+
+export default withStyles(styles)(Conversation);

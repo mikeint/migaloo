@@ -124,7 +124,7 @@ class JobList extends React.Component{
                         this.state.jobList ?
                             <React.Fragment>
 
-                                <Tabs value={this.state.index} onChange={this.changeTab}>
+                                <Tabs variant="fullWidth" value={this.state.index} onChange={this.changeTab}>
                                     <Tab label="Job List" />
                                     <Tab label="Sponsered" />
                                     <Tab label="Favourite" />

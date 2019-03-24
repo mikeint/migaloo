@@ -5,6 +5,9 @@ import Calendar from 'react-calendar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
+
 const styles = theme => ({
     container: {
       display: 'flex',
@@ -19,6 +22,26 @@ const styles = theme => ({
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
         width: 200,
+    },
+    modal: {
+        zIndex: 9999,
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width:"100%",
+        height: "100%",
+        background: "rgba(0, 0, 0, 0.6)"
+    },
+    modalMain: {
+        width: "95%",
+        maxWidth: "1000px",
+        position: "fixed",
+        background: "white",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%,-50%)",
+        padding: "5px",
+        boxShadow: "0px 0px 1px 1px #263c54"
     }
 });
 class MeetingPicker extends React.Component{ 
@@ -82,44 +105,59 @@ class MeetingPicker extends React.Component{
                     
         return ret.join(" ");
     }
+    handleClose = (event, value) => {
+        this.props.onClose({response: event, value: value});
+    };
 
     render(){  
-        const { classes } = this.props;
+        const { classes, onClose, ...other } = this.props;
         return (
             <React.Fragment>
-                <form className="calendarContainer">
-                    <TextField
-                        id="subject"
-                        label="Subject"
-                        className={classes.textField}
-                        value={this.state.subject}
-                        required
-                        onChange={this.handleChange}
-                        margin="normal"
-                    />
-                    <Calendar
-                        onChange={(v)=>this.setState({day:v}, this.validateTime)}
-                        minDate={new Date()}
-                        minDetail={"year"}
-                        prev2Label={null}
-                        next2Label={null}
-                    />
-                    <div className="timeInputsContainer">
-                        <div className="timeInput">Start <input type="time" step="900"
-                            defaultValue={this.state.startTime} ref={this.inputStartDate} onChange={this.onStartTimeChange} /></div>
-                        <div className="timeInput">End <input type="time" step="900"
-                            defaultValue={this.state.endTime} ref={this.inputEndDate} onChange={this.onEndTimeChange} /></div>    
+                <Dialog 
+                        maxWidth="lg"
+                        fullWidth={true}
+                        onClose={this.handleClose}
+                        aria-labelledby="dialog-title"
+                        open={other.open}> 
+                    <DialogTitle id="dialog-title">Create a Meeting</DialogTitle>
+                    <div>
+                        <form className="calendarContainer">
+                            <TextField
+                                id="subject"
+                                label="Subject"
+                                className={classes.textField}
+                                value={this.state.subject}
+                                required
+                                onChange={this.handleChange}
+                                margin="normal"
+                            />
+                            <Calendar
+                                onChange={(v)=>this.setState({day:v}, this.validateTime)}
+                                minDate={new Date()}
+                                minDetail={"year"}
+                                prev2Label={null}
+                                next2Label={null}
+                            />
+                            <div className="timeInputsContainer">
+                                <div className="timeInput">Start <input type="time" step="900"
+                                    defaultValue={this.state.startTime} ref={this.inputStartDate} onChange={this.onStartTimeChange} /></div>
+                                <div className="timeInput">End <input type="time" step="900"
+                                    defaultValue={this.state.endTime} ref={this.inputEndDate} onChange={this.onEndTimeChange} /></div>    
+                            </div>
+                            {this.state.error != null && <div className="error">{this.state.error}</div>}
+                            {this.state.error == null && <div>Length: {this.fullHumanize(this.state.length)}</div>}
+                        </form>
+                        <Button
+                            className={classes.button}
+                            variant="contained"
+                            onClick={()=>this.handleClose(0, null)}>Cancel</Button>
+                        <Button
+                            className={classes.button}
+                            variant="contained"
+                            color="secondary"
+                            onClick={()=>this.handleClose(1, this.state)}>Create</Button>
                     </div>
-                    {this.state.error != null && <div className="error">{this.state.error}</div>}
-                    {this.state.error == null && <div>Length: {this.fullHumanize(this.state.length)}</div>}
-                </form>
-                <Button
-                    className={classes.button}
-                    variant="contained">Cancel</Button>
-                <Button
-                    className={classes.button}
-                    variant="contained"
-                    color="secondary">Create</Button>
+                </Dialog>
             </React.Fragment>
         );
     }

@@ -17,11 +17,20 @@ import Tab from '@material-ui/core/Tab';
 
 function LinkTab(props) {
     return <Tab component={NavLink} {...props} />;
-  }
+}
 const styles = theme => ({
-    navBtn:{
-        padding: "10px",
-        marginRight: "10px"
+    tabsContainer:{
+        width: "100%"
+    },
+    linkButton:{
+        maxWidth: "200px"
+    },
+    profileButton:{
+        width: "50px",
+        minWidth: "50px",
+        maxWidth: "50px",
+        padding: 0,
+        marginLeft: "auto"
     }
 })
 class NavBar extends React.Component{
@@ -98,18 +107,15 @@ class NavBar extends React.Component{
             <React.Fragment> 
                 <AppBar position="static" color="primary">
                     <Toolbar>
-                        <Tabs variant="fullWidth" value={this.state.page} onChange={this.handleChange}>
-                        {
-                            this.navMappings[this.state.user.userType].map((d, i)=>{
-                                return <LinkTab className={classes.navBtn} label={d.name} key={i} to={d.link} />
-                            })
-                        }
+                        <Tabs variant="fullWidth" value={this.state.page} className={classes.tabsContainer} onChange={this.handleChange}>
+                            {
+                                this.navMappings[this.state.user.userType].map((d, i)=>{
+                                    return <LinkTab className={classes.linkButton} label={d.name} key={i} to={d.link} />
+                                })
+                            }
+                            <LinkTab className={classes.profileButton} to={this.profileMapping[this.state.user.userType].link} icon={<AccountCircle />} color="inherit" />
+                            <Notifications/>
                         </Tabs>
-                        <div style={{flexGrow: 1}}></div>
-                        <Notifications/>
-                        <IconButton component={NavLink} to={this.profileMapping[this.state.user.userType].link} color="inherit">
-                            <AccountCircle />
-                        </IconButton>
                     </Toolbar>
                 </AppBar>
             </React.Fragment>

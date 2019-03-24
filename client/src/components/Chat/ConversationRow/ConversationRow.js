@@ -13,11 +13,11 @@ class ConversationRow extends Component {
     }
     openChat = (d) => {
         this.setState({showChat:true})
-        document.getElementById("root").classList.add("fixedRoot");
+        // document.getElementById("root").classList.add("fixedRoot");
     }
     closeChat = (d) => {
         this.setState({showChat:false})
-        document.getElementById("root").classList.remove("fixedRoot");
+        // document.getElementById("root").classList.remove("fixedRoot");
     }
     render() {
   
@@ -38,7 +38,7 @@ class ConversationRow extends Component {
                         <div>{this.state.conversation.created}</div> 
                     </div>
                 </div>
-                {this.state.showChat?<Conversation conversation={this.state.conversation} handleClose={this.closeChat}/>:''}
+                <Conversation conversation={this.state.conversation} open={this.state.showChat} onClose={this.closeChat}/>
             </React.Fragment>
         );
     }

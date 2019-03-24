@@ -5,7 +5,6 @@ import ApiCalls from '../../ApiCalls';
 import ConversationRow from "./ConversationRow/ConversationRow"; 
 import Pagination from "react-js-pagination";
 import Loader from "../Loader/Loader"; 
-import MeetingPicker from "../MeetingPicker/MeetingPicker";
 
 class Chat extends Component {
 
@@ -68,7 +67,6 @@ class Chat extends Component {
                             />
                     </div>
                 </div>
-                {/* <MeetingPicker/> */}
             </React.Fragment>
         );
     }
