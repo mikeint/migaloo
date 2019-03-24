@@ -7,7 +7,6 @@ import chat_icon from '../../files/images/navImages/chat_icon_30.png';
 import profile_icon from '../../files/images/navImages/profile_icon_30.png';
 import AuthFunctions from '../../AuthFunctions'; 
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import AppBar from '@material-ui/core/AppBar';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Notifications from '../Notifications/Notifications';
@@ -33,66 +32,81 @@ const styles = theme => ({
         marginLeft: "auto"
     }
 })
+const navMappings = {
+    1:[ // Recruiter
+        {
+            icon:active_icon,
+            link:"/recruiter/jobList",
+            name:"Job Search"
+        },
+        {
+            icon:post_icon,
+            link:"/recruiter/candidateList",
+            name:"Candidate List"
+        },
+        {
+            icon:chat_icon,
+            link:"/recruiter/chat",
+            name:"Chat"
+        }
+    ],
+    2:[ // Employer
+        {
+            icon:active_icon,
+            link:"/employer/activeJobs",
+            name:"Active Jobs"
+        },
+        {
+            icon:post_icon,
+            link:"/employer/postAJob",
+            name:"Post a Job"
+        },
+        {
+            icon:chat_icon,
+            link:"/employer/chat",
+            name:"Chat"
+        }
+    ]
+}
+const profileMapping = {
+    1: // Recruiter
+    {
+        icon:profile_icon,
+        link:"/recruiter/profile",
+        name:"Profile"
+    }
+    ,
+    2: // Employer
+    {
+        icon:profile_icon,
+        link:"/employer/profile",
+        name:"Profile"
+    }
+    
+}
 class NavBar extends React.Component{
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
+        this.Auth = new AuthFunctions();
+        const userType = this.Auth.getUser().userType;
+        const path = window.location.pathname;
+        let page = 0;
+        let i = 0
+        for(; i < navMappings[userType].length; i++){
+            if(navMappings[userType][i].link.startsWith(path)){
+                page = i;
+                break;
+            }
+        }
+        if(profileMapping[userType].link.startsWith(path)){
+            page = i;
+        }
+
         this.state={
-            page: 0,
+            page: page,
             user: {}
         }
-        this.Auth = new AuthFunctions();
-        this.navMappings = {
-            1:[ // Recruiter
-                {
-                    icon:active_icon,
-                    link:"/recruiter/jobList",
-                    name:"Job Search"
-                },
-                {
-                    icon:post_icon,
-                    link:"/recruiter/candidateList",
-                    name:"Candidate List"
-                },
-                {
-                    icon:chat_icon,
-                    link:"/recruiter/chat",
-                    name:"Chat"
-                }
-            ],
-            2:[ // Employer
-                {
-                    icon:active_icon,
-                    link:"/employer/activeJobs",
-                    name:"Active Jobs"
-                },
-                {
-                    icon:post_icon,
-                    link:"/employer/postAJob",
-                    name:"Post a Job"
-                },
-                {
-                    icon:chat_icon,
-                    link:"/employer/chat",
-                    name:"Chat"
-                }
-            ]
-        }
-        this.profileMapping = {
-            1: // Recruiter
-            {
-                icon:profile_icon,
-                link:"/recruiter/profile",
-                name:"Profile"
-            }
-            ,
-            2: // Employer
-            {
-                icon:profile_icon,
-                link:"/employer/profile",
-                name:"Profile"
-            }
-            
-        }
+
     } 
     handleChange = (event, value) => {
         this.setState({ page:value });
@@ -109,11 +123,11 @@ class NavBar extends React.Component{
                     <Toolbar>
                         <Tabs variant="fullWidth" value={this.state.page} className={classes.tabsContainer} onChange={this.handleChange}>
                             {
-                                this.navMappings[this.state.user.userType].map((d, i)=>{
+                                navMappings[this.state.user.userType].map((d, i)=>{
                                     return <LinkTab className={classes.linkButton} label={d.name} key={i} to={d.link} />
                                 })
                             }
-                            <LinkTab className={classes.profileButton} to={this.profileMapping[this.state.user.userType].link} icon={<AccountCircle />} color="inherit" />
+                            <LinkTab className={classes.profileButton} to={profileMapping[this.state.user.userType].link} icon={<AccountCircle />} color="inherit" />
                             <Notifications/>
                         </Tabs>
                     </Toolbar>

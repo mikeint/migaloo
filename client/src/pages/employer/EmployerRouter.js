@@ -8,7 +8,6 @@ import Chat from '../../components/Chat/Chat';
 
 function EmployerRouter({ match }) {
 
-    console.log(window.location.pathname)
     return ( 
         <React.Fragment>
             <NavBar />
