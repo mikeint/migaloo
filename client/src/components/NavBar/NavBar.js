@@ -8,12 +8,16 @@ import profile_icon from '../../files/images/navImages/profile_icon_30.png';
 import AuthFunctions from '../../AuthFunctions'; 
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
 import AppBar from '@material-ui/core/AppBar';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Notifications from '../Notifications/Notifications';
 import { withStyles } from '@material-ui/core/styles';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
+function LinkTab(props) {
+    return <Tab component={NavLink} {...props} />;
+  }
 const styles = theme => ({
     navBtn:{
         padding: "10px",
@@ -24,6 +28,7 @@ class NavBar extends React.Component{
     constructor(){
         super();
         this.state={
+            page: 0,
             user: {}
         }
         this.Auth = new AuthFunctions();
@@ -80,6 +85,9 @@ class NavBar extends React.Component{
             
         }
     } 
+    handleChange = (event, value) => {
+        this.setState({ page:value });
+    };
 
     componentWillMount = () => {
         this.setState({ user: this.Auth.getUser() });
@@ -90,11 +98,13 @@ class NavBar extends React.Component{
             <React.Fragment> 
                 <AppBar position="static" color="primary">
                     <Toolbar>
+                        <Tabs variant="fullWidth" value={this.state.page} onChange={this.handleChange}>
                         {
                             this.navMappings[this.state.user.userType].map((d, i)=>{
-                                return <Button className={classes.navBtn} key={i} component={NavLink} to={d.link} color="inherit">{d.name}</Button>
+                                return <LinkTab className={classes.navBtn} label={d.name} key={i} to={d.link} />
                             })
                         }
+                        </Tabs>
                         <div style={{flexGrow: 1}}></div>
                         <Notifications/>
                         <IconButton component={NavLink} to={this.profileMapping[this.state.user.userType].link} color="inherit">
