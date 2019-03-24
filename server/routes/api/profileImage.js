@@ -69,7 +69,7 @@ router.get('/view/:size', passport.authentication, (req, res) => {
 router.get('/view/:type/:id/:size', passport.authentication, (req, res) => {
     if(req.params.type == null)
         return res.status(400).json({success:false, error:"Missing Type"})
-    if(req.params.id == null)
+    if(req.params.id == null || Number.isNaN(parseInt(req.params.id, 10)))
         return res.status(400).json({success:false, error:"Missing Id"})
     if(req.params.size == null)
         return res.status(400).json({success:false, error:"Missing Size"})
