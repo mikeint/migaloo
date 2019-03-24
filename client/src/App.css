@@ -75,13 +75,12 @@ p {
 }
 .pageHeading {
     width: 100%; 
-    min-height: 60px;
-    font-weight: bold; 
+    min-height: 60px;  
     padding: 10px;
     border-bottom: 1px solid #e2e2e2;
     position: relative; 
     line-height: 40px;
-    background: #263c54;
+    background: #546f82;
     color: #fff;
 }
 .pageHeadingStatic {
@@ -102,8 +101,7 @@ p {
     .mainContainerProfile { 
         padding-top: 20px;
         width: 100%;
-        position: relative;
-        padding-bottom: 60px;
+        position: relative; 
     }
 }
 
@@ -186,48 +184,9 @@ p {
     right: 0px;
     top: 0px;
 }
+
+
  
-
-/* ADD BUTTON */ 
-.addBtn{  
-    position: absolute;  
-    margin-left: 10px; 
-    -webkit-appearance: none; 
-    background-color: #fff;
-    color: #263c54;
-    border-radius: 30px; 
-    border: none;
-    cursor: pointer;  
-    box-shadow: 0 3px 8px rgba(26, 43, 109, 0.43);
-
-    width: 40px;
-    height: 40px;
-    outline: 0;
-    background-image: url("./files/images/addNew_icon.png");
-    background-size: 25px;
-    background-repeat: no-repeat;
-    background-position: center; 
-}
-.addJob {
-    background-image: url("./files/images/addJob_icon.png");
-    background-size: 28px;
-}
-.addFilter {
-    background-image: url("./files/images/filter_icon.png");
-    background-size: 23px; 
-    background-position-y: 8px;
-}
-/* end ADD BUTTON */ 
-
-
-
-
-
-@media only screen and (max-width: 677px) {
-    .loginContainer {  
-    }  
-}
-
 /* Pagination Start */
 .paginationContainer ul {
     width: 100%;

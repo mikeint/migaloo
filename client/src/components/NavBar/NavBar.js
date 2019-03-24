@@ -1,8 +1,8 @@
 import React from 'react';
 import './NavBar.css';  
 import { NavLink } from 'react-router-dom';  
-import active_icon from '../../files/images/navImages/active_icon_30.png';
-import post_icon from '../../files/images/navImages/post_icon_30.png';
+//import active_icon from '../../files/images/navImages/active_icon_30.png';
+//import post_icon from '../../files/images/navImages/post_icon_30.png';
 import chat_icon from '../../files/images/navImages/chat_icon_30.png';
 import profile_icon from '../../files/images/navImages/profile_icon_30.png';
 import AuthFunctions from '../../AuthFunctions'; 
@@ -13,6 +13,9 @@ import Notifications from '../Notifications/Notifications';
 import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Search from '@material-ui/icons/Search';
+import Face from '@material-ui/icons/Face';
+import Chat from '@material-ui/icons/Chat';
 
 function LinkTab(props) {
     return <Tab component={NavLink} {...props} />;
@@ -35,29 +38,29 @@ const styles = theme => ({
 const navMappings = {
     1:[ // Recruiter
         {
-            icon:active_icon,
+            icon:<Search />, 
             link:"/recruiter/jobList",
             name:"Job Search"
         },
         {
-            icon:post_icon,
+            icon:<Face/>,
             link:"/recruiter/candidateList",
             name:"Candidate List"
         },
         {
-            icon:chat_icon,
+            icon:<Chat/>,
             link:"/recruiter/chat",
             name:"Chat"
         }
     ],
     2:[ // Employer
         {
-            icon:active_icon,
+            icon:<Search/>,
             link:"/employer/activeJobs",
             name:"Active Jobs"
         },
         {
-            icon:post_icon,
+            icon:<Search/>,
             link:"/employer/postAJob",
             name:"Post a Job"
         },
@@ -119,12 +122,12 @@ class NavBar extends React.Component{
         const { classes } = this.props;
         return (
             <React.Fragment> 
-                <AppBar position="static" color="primary">
+                <AppBar position="static" >
                     <Toolbar>
                         <Tabs variant="fullWidth" value={this.state.page} className={classes.tabsContainer} onChange={this.handleChange}>
                             {
                                 navMappings[this.state.user.userType].map((d, i)=>{
-                                    return <LinkTab className={classes.linkButton} label={d.name} key={i} to={d.link} />
+                                    return <LinkTab className={classes.linkButton} key={i} to={d.link} icon={d.icon} />
                                 })
                             }
                             <LinkTab className={classes.profileButton} to={profileMapping[this.state.user.userType].link} icon={<AccountCircle />} color="inherit" />

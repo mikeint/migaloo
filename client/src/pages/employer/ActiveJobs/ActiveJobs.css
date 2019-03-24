@@ -16,8 +16,7 @@
     padding: 10px;
 }
 .activeJobContainer .jobListContainer {
-    width: 100%;
-    padding-bottom: 60px;
+    width: 100%; 
 }
 .activeJobContainer .jobListItem{ 
     padding: 10px 10px;

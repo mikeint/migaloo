@@ -35,8 +35,7 @@
     font-size: 22px;
 }
 .jobPostingContainer .jobPostingContent {    
-    font-size: 16px;
-    padding-bottom: 60px;
+    font-size: 16px; 
 } 
 .jobPostingContainer .favContainer{
     display: inline-block;

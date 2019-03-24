@@ -12,7 +12,18 @@ import Tab from '@material-ui/core/Tab';
 
 import BuildFilterOverlay from './BuildFilterOverlay/BuildFilterOverlay';
 import Pagination from "react-js-pagination";
+import { withStyles } from '@material-ui/core/styles'; 
+import Button from '@material-ui/core/Button';
+import FilterList from '@material-ui/icons/FilterList';
 import '../../../constants/AnimateHROverlay';  
+
+
+const styles = theme => ({
+    button: {
+      float: 'right', 
+    }, 
+});
+
 
 class JobList extends React.Component{
 
@@ -109,15 +120,23 @@ class JobList extends React.Component{
     };
     /* end FOR CHANGING TABS */
     
-    render(){ 
+    render(){
+        const { classes } = this.props; 
         return (
             <React.Fragment>
                 { this.state.openJob && <Redirect to={"/recruiter/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidate_id:'')} />}
                 { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
                 <div className='jobListClassContainer'> 
                    <div className="pageHeading">
-                        Active Jobs Postings 
-                        <button className="addBtn addFilter" onClick={() => this.callFilterOverlay()}></button>
+                        Active Jobs Postings  
+                        <Button
+                            className={classes.button}
+                            variant="contained"
+                            color="secondary" 
+                            onClick={()=>this.callFilterOverlay()}>
+                            <FilterList/>
+                        </Button>
+
                         {this.state.candidateData ? <NavLink to={"/recruiter/candidate/"+this.state.candidateData.candidate_id}><div className="candidateSearched">For: {this.state.candidateData.first_name + " " + this.state.candidateData.last_name}</div></NavLink> : ""}
                    </div>
                     {
@@ -229,5 +248,5 @@ class JobList extends React.Component{
         );
     }
 };
-
-export default JobList;
+ 
+export default withStyles(styles)(JobList);

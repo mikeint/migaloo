@@ -230,9 +230,9 @@
 }
 
    
-span[class*='MuiPrivateTabIndicator-colorSecondary-'] {
+/* span[class*='MuiPrivateTabIndicator-colorSecondary-'] {
     background-color: #263c54 !important; 
-}
+} */
 
 @media only screen and (max-width: 600px) {
     .expandableRow .flex {

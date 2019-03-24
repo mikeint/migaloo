@@ -18,7 +18,7 @@ const theme = createMuiTheme({
     palette: {
         primary: {
           // light: will be calculated from palette.primary.main,
-          main: '#96b4be',
+          main: '#263c54',
           // dark: will be calculated from palette.primary.main,
           // contrastText: will be calculated to contrast with palette.primary.main
         },
@@ -40,6 +40,13 @@ const theme = createMuiTheme({
           color: '#ff0000', // Some CSS
         },
       },
+      MuiToolbar: { // Name of the component :atom_symbol: / style sheet
+        root: { // Name of the rule
+            backgroundColor: '#263c54', // Some CSS
+            color: 'white', // Some CSS
+        }
+    }
+
     },
 });
 

@@ -43,7 +43,7 @@ class BuildNotifications extends React.Component{
                 <div className={classes.alertTitle} color="primary">
                     <span>Notifications</span>
                     <IconButton color="primary" className={classes.alertClose} onClick={this.state.close}>
-                        <Close />
+                        <Close color="secondary" />
                     </IconButton>
                 </div>
                 <div className={classes.alertList}>

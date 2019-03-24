@@ -7,10 +7,27 @@ import Loader from '../../../components/Loader/Loader';
 import ExpandableRow from './ExpandableRow/ExpandableRow'; 
 import debounce from 'lodash/debounce'; 
 
-import Overlay from '../../../components/Overlay/Overlay';
+//import Overlay from '../../../components/Overlay/Overlay';
 import AddCandidate from '../AddCandidate/AddCandidate';
 import Pagination from "react-js-pagination";
 import '../../../constants/AnimateHROverlay';  
+
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import { withStyles } from '@material-ui/core/styles';  
+import Button from '@material-ui/core/Button';
+import Add from '@material-ui/icons/Add';
+
+
+const styles = theme => ({
+    button: {
+      float: 'right', 
+    },
+    drawer:{ 
+        minWidth: "300px",
+        maxHeight: "20px",
+        position: "relative"
+    }
+});
 
 class CandidateList extends React.Component{
 
@@ -83,7 +100,7 @@ class CandidateList extends React.Component{
             console.log(errors.response.data)
         )
     }
-    callOverlay = () => {
+    callAddOverlay = () => {
         this.setState({ showOverlay : !this.state.showOverlay })
     }
 
@@ -95,8 +112,8 @@ class CandidateList extends React.Component{
     };
 
 
-    render(){
-        const html = <AddCandidate handleClose={this.callOverlay} />
+    render(){ 
+        const { classes } = this.props; 
  
         return (
             <React.Fragment>  
@@ -104,7 +121,13 @@ class CandidateList extends React.Component{
  
                     <div className="pageHeading">
                         Candidates 
-                        <button className="addBtn" onClick={() => this.callOverlay()}></button> 
+                        <Button
+                            className={classes.button}
+                            variant="contained"
+                            color="secondary" 
+                            onClick={()=>this.callAddOverlay()}>
+                            <Add/>
+                        </Button>
                         {this.state.postData? <NavLink to="/recruiter/jobList/"><div className="candidateListJobSearched">{this.state.postData.title}</div></NavLink> : ""} 
                     </div>
                     <div className={'candidateListContainer '+this.state.enterSlide}> 
@@ -144,16 +167,20 @@ class CandidateList extends React.Component{
                             <Loader />
                         }
                         </div>
-
-                        {this.state.showOverlay && <Overlay
-                                                    html={html}  
-                                                    handleClose={this.callOverlay} 
-                                                    config={this.state.overlayConfig}
-                                                />}
+ 
+                        <SwipeableDrawer
+                            anchor="bottom"
+                            className={classes.drawer}
+                            open={this.state.showOverlay}
+                            onClose={()=>this.setState({"showOverlay":false})}
+                            onOpen={()=>this.setState({"showOverlay":true})}
+                        > 
+                        <AddCandidate close={()=>this.setState({"showOverlay":false})} />
+                    </SwipeableDrawer>
                     
             </React.Fragment>
         );
     }
 };
-
-export default CandidateList;
+ 
+export default withStyles(styles)(CandidateList);
