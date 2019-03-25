@@ -1,23 +1,4 @@
-.expandableRow .candidateListItem {   
-    height: 65px;
-    cursor: pointer; 
-    background: #ffffff;
-    color: #263c54;
-    margin-bottom: 1px;
-    position: relative;
-    border-bottom: 1px solid #1a2b6d14;
-    padding: 18px;
-}
-.expandableRow .collapse {
-    transition: max-height 0.5s;
-    overflow: hidden;
-    max-height: 0px;
-    position: relative;
-}
-.expandableRow .collapse.in {
-    max-height: 700px;
-    border-bottom: 2px solid #263c54;
-} 
+
 .expandableRow .nameContainer {   
     font-size: 23px;
     font-weight: bold;
@@ -66,21 +47,6 @@
     background-color: #de3141;  
     color: #fff;
 }
- 
-.expandableRow .rowButton{
-    width: 100%;
-    cursor: pointer;
-    background-color: #263c54;
-    color: #fff;
-    text-align: center;
-    padding: 10px 5px;
-    margin: 10px 10px;
-    font-size: 20px;
-    font-weight: bold;
-}
-.expandableRow .uploadFile{
-    width: 200px;
-}
 .expandableRow .flex{
     padding: 10px;
     width: 100%;
@@ -95,7 +61,6 @@
 .expandableRow .heading{
     font-weight: bold;
 }
-
 
 .expandableRow .flexColumn{
     display: -webkit-flex;
@@ -198,36 +163,6 @@
  
 .expandableRow .candidate_image { 
     float:right;
-}
-
-
-.expandableRow .candidateListItem::after { 
-    content: "";
-    display: inline-block;
-    cursor: pointer;
-    width: 20px;
-    height: 20px; 
-    background: url('../../../../files/images/accordArrow.png') 0 0 no-repeat;
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-    transform: rotate(0deg);
-    transition: 0.3s;
-    background-size: contain;
-    float: right;
-    position: absolute;
-    right: 6px;
-    top: 22px;
-}
-
-.expandableRow .candidateListItem.false::after {
-    -webkit-transform: rotate(-90deg);
-    transform: rotate(-90deg);
-}
-
-.expandableRow .candidateListItem.true {
-    background-color: #263c543b;
-    border-top: 2px solid #263c54;
-    box-shadow: inset 0 3px 2px #696d7b;
 }
 
    

@@ -11,8 +11,8 @@ import Dialog from '@material-ui/core/Dialog';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
-    closeBtn:{
-        marginLeft: "auto"
+    rightBtn:{
+        float: "right",
     }
 })
 class Conversation extends Component {
@@ -155,16 +155,17 @@ class Conversation extends Component {
                         onClose={this.handleChatDialogClose}
                         aria-labelledby="dialog-title"
                         open={other.open}> 
-                    <DialogTitle id="dialog-title">Conversation - {this.state.contactName}
-                        <IconButton color="inherit" onClick={this.handleChatDialogClose} className={classes.closeBtn}>
+                    <DialogTitle id="dialog-title">
+                        <span>Conversation - {this.state.contactName + " - " + this.state.conversation.subject_first_name+" "+this.state.conversation.subject_last_name}</span>
+                        <IconButton color="inherit" onClick={this.handleChatDialogClose} className={classes.rightBtn}>
                             <Close color="primary"/>
+                        </IconButton>
+                        <IconButton color="inherit" onClick={this.handleMeetingDialogOpen} className={classes.rightBtn}>
+                            <CalendarToday color="primary"/>
                         </IconButton>
                     </DialogTitle>
                     <div className='conversationModal'>
                         {/* <div className='contactHeader2'>{this.state.conversation.subject}</div> */}
-                        <IconButton color="inherit" onClick={this.handleMeetingDialogOpen}>
-                            <CalendarToday color="primary"/>
-                        </IconButton>
                         <MeetingPicker
                             open={this.state.meetingDialogOpen}
                             onClose={this.handleMeetingDialogClose} />

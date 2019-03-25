@@ -11,8 +11,10 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import Button from '@material-ui/core/Button';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
+const styles = theme => ({
+
+});
 class ExpandableRow extends React.Component{
 
     constructor(props) {
@@ -57,7 +59,7 @@ class ExpandableRow extends React.Component{
         this.setState({showPostJob: true})
     }
     render(){ 
-
+        // const { classes } = this.props;
         const rowObj = this.props.candidateData; 
         return (
             <div className="expandableRow">
@@ -148,5 +150,4 @@ class ExpandableRow extends React.Component{
     }
 }
  
-
-export default ExpandableRow;
+export default withStyles(styles)(ExpandableRow);

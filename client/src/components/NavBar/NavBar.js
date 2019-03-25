@@ -23,6 +23,9 @@ const styles = theme => ({
     linkButton:{
         maxWidth: "200px"
     },
+    tabsIndicator: {
+      backgroundColor: '#6f90a1'
+    },
     profileButton:{
         width: "50px",
         minWidth: "50px",
@@ -120,7 +123,11 @@ class NavBar extends React.Component{
             <React.Fragment> 
                 <AppBar position="static">
                     <Toolbar>
-                        <Tabs variant="fullWidth" value={this.state.page} className={classes.tabsContainer} onChange={this.handleChange}>
+                        <Tabs variant="fullWidth"
+                            value={this.state.page}
+                            className={classes.tabsContainer}
+                            classes={{indicator:classes.tabsIndicator}}
+                            onChange={this.handleChange}>
                             {
                                 navMappings[this.state.user.userType].map((d, i)=>{
                                     return <LinkTab className={classes.linkButton} label={d.name} icon={d.icon} key={i} to={d.link} />

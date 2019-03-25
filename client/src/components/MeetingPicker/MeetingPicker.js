@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
 
 const styles = theme => ({
     container: {
@@ -120,7 +121,7 @@ class MeetingPicker extends React.Component{
                         aria-labelledby="dialog-title"
                         open={other.open}> 
                     <DialogTitle id="dialog-title">Create a Meeting</DialogTitle>
-                    <div>
+                    <DialogContent>
                         <form className="calendarContainer">
                             <TextField
                                 id="subject"
@@ -180,7 +181,7 @@ class MeetingPicker extends React.Component{
                             variant="contained"
                             color="secondary"
                             onClick={()=>this.handleClose(1, this.state)}>Create</Button>
-                    </div>
+                    </DialogContent>
                 </Dialog>
             </React.Fragment>
         );

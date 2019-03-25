@@ -15,6 +15,13 @@ const theme = createMuiTheme({
     typography: {
         useNextVariants: true,
     },
+    /**
+     * Pallete colours:
+     * #96b4be
+     * #6f90a1
+     * #546f82
+     * #263c54
+     */
     palette: {
         primary: {
           // light: will be calculated from palette.primary.main,
@@ -35,17 +42,17 @@ const theme = createMuiTheme({
         // error: will use the default color
     },
     overrides: {
-      Button: { // Name of the component ⚛️ / style sheet
-        text: { // Name of the rule
-          color: '#ff0000', // Some CSS
+        Button: { // Name of the component ⚛️ / style sheet
+            text: { // Name of the rule
+                color: '#ff0000', // Some CSS
+            },
         },
-      },
-      MuiToolbar: { // Name of the component :atom_symbol: / style sheet
-        root: { // Name of the rule
-            backgroundColor: '#263c54', // Some CSS
-            color: 'white', // Some CSS
+        MuiToolbar: { // Name of the component :atom_symbol: / style sheet
+            root: { // Name of the rule
+                backgroundColor: '#263c54', // Some CSS
+                color: 'white', // Some CSS
+            }
         }
-    }
 
     },
 });
