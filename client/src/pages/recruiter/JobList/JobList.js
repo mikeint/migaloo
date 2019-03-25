@@ -1,7 +1,7 @@
 import React from 'react';
 import './JobList.css';    
-import Overlay from '../../../components/Overlay/Overlay';
 import Loader from '../../../components/Loader/Loader';
+import Filters from '../../../components/Filters/Filters';
 import ApiCalls from '../../../ApiCalls';  
 import { NavLink, Redirect } from 'react-router-dom';
 import debounce from 'lodash/debounce';
@@ -10,7 +10,6 @@ import SwipeableViews from 'react-swipeable-views';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
-import BuildFilterOverlay from './BuildFilterOverlay/BuildFilterOverlay';
 import Pagination from "react-js-pagination";
 import { withStyles } from '@material-ui/core/styles'; 
 import Button from '@material-ui/core/Button';
@@ -23,7 +22,7 @@ import whale from '../../../files/images/logo.png'
 const styles = theme => ({
     button: {
       float: 'right', 
-    }, 
+    }
 });
 
 
@@ -43,9 +42,16 @@ class JobList extends React.Component{
             openJob: false,
             candidateId: props.match.params.candidateId,
             candidateData: null,
-            enterSlide:"page-enter"
+            enterSlide:"page-enter",
+            filterOpen: false
         };
     }
+    handleDrawerToggle = () => {
+        this.setState({ filterOpen: !this.state.filterOpen });
+    };
+    handleDrawerClose = () => {
+        this.setState({ filterOpen: false });
+    };
 
     componentWillMount = () => {
         this.setState({ migalooOverlay: sessionStorage.getItem("migalooOverlay") });
@@ -129,6 +135,7 @@ class JobList extends React.Component{
             <React.Fragment>
                 { this.state.openJob && <Redirect to={"/recruiter/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidate_id:'')} />}
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
+                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} />
                 <div className='jobListClassContainer'> 
                    <div className="pageHeading">
                         Active Jobs Postings  
@@ -136,12 +143,12 @@ class JobList extends React.Component{
                             className={classes.button}
                             variant="contained"
                             color="secondary" 
-                            onClick={()=>this.callFilterOverlay()}>
+                            onClick={()=>this.handleDrawerToggle()}>
                             <FilterList/>
                         </Button>
 
                         {this.state.candidateData ? <NavLink to={"/recruiter/candidate/"+this.state.candidateData.candidate_id}><div className="candidateSearched">For: {this.state.candidateData.first_name + " " + this.state.candidateData.last_name}</div></NavLink> : ""}
-                   </div>
+                    </div>
                     {
                         this.state.jobList ?
                             <React.Fragment>
@@ -236,12 +243,7 @@ class JobList extends React.Component{
                                             prevPageText={'Back'}
                                         />
                                     </div>
-                                </div> 
-                                {this.state.showFilterOverlay && <Overlay
-                                                                html={<BuildFilterOverlay  />}  
-                                                                handleClose={this.callFilterOverlay} 
-                                                                config={this.state.overlayConfig}
-                                                            />}
+                                </div>
                             </React.Fragment>
                         :
                         <div className="loaderContainer"><Loader /></div>
