@@ -38,6 +38,7 @@ class Conversation extends Component {
         if(this.state.pageNumber <= this.state.pageCount || this.state.pageCount === -1){
             ApiCalls.get(`/api/message/listConversationMessages/${this.state.conversation.user_id_1}/${this.state.conversation.user_id_2}/${this.state.conversation.subject_user_id}/${this.state.pageNumber}`)
             .then((res)=>{
+                if(res == null) return
                 this.setState({showLoader:false})
                 if(res.data && res.data.length > 0){
                     var oldMessageList = this.state.messageList; // Get the previous page
@@ -99,6 +100,7 @@ class Conversation extends Component {
             }
             ApiCalls.post(`/api/message/create`, data)
             .then((res)=>{
+                if(res == null) return
                 // Reset messages and repull
                 this.message.value = ""
                 this.setState({
@@ -119,6 +121,7 @@ class Conversation extends Component {
         }
         ApiCalls.post(`/api/message/setResponse`, data)
         .then((res)=>{
+            if(res == null) return
             // Reset messages and repull
             this.setState({
                 pageNumber: 1,

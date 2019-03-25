@@ -41,7 +41,7 @@ class BuildActiveJobs extends React.Component{
             ApiCalls.get('/api/recruiterJobs/getCandidateForJob/'+this.state.candidateId+'/'+this.state.jobId):
             ApiCalls.get('/api/recruiterJobs/get/'+this.state.jobId))
         .then((res)=>{
-            if(res.data.success){
+            if(res && res.data.success){
                 console.log(res.data)
                 const jobList = res.data.jobList;
                 const candidateData = res.data.candidate;
@@ -57,6 +57,7 @@ class BuildActiveJobs extends React.Component{
     getImage = () => {
         ApiCalls.get(`/api/profileImage/view/2/${this.state.jobObj.employer_id}/small`)
         .then((res)=>{
+            if(res == null) return
             if(res.data.success){
                 this.setState({ profileImage: res.data.url }) 
             }else{

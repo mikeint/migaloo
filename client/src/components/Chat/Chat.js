@@ -22,13 +22,15 @@ class Chat extends Component {
         this.getConversationList();
     }
     componentWillUnmount = () => {
+        ApiCalls.cancel()
         this.setState({enterSlide:"page-exit"})
     }
     getConversationList = () => {
         ApiCalls.get('/api/message/list/'+this.state.page)
         .then((res)=>{
-            this.setState({ conversationList: res.data,
-                pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
+            if(res)
+                this.setState({ conversationList: res.data,
+                    pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )

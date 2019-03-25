@@ -44,7 +44,8 @@ class Profile extends React.Component{
     }
     getProfileInfo = () => {
         ApiCalls.get('/api/recruiter/getProfile')
-        .then((res)=>{    
+        .then((res)=>{   
+            if(res == null) return 
             this.setState({ profileInfo: res.data }) 
         }).catch(errors => 
             console.log(errors.response.data)
@@ -53,6 +54,7 @@ class Profile extends React.Component{
     getImage = () => {
         ApiCalls.get('/api/profileImage/view/medium')
         .then((res)=>{
+            if(res == null) return
             if(res.data.success){
                 this.setState({ profileImage: res.data.url }) 
             }else{

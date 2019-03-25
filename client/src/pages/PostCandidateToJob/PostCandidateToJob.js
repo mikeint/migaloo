@@ -37,7 +37,7 @@ class PostCandidateToJob extends React.Component{
         .then((res) => {
             // THIS IS getting messy, its to shut the overlay after submitting a new candidate.
             // TO-DO (not here) show the added candidate behind overlay
-            if(res.data.success) {
+            if(res && res.data.success) {
                 document.querySelector(".menu").classList.add("menu--animatable");	 
                 document.querySelector(".menu").classList.remove('menu--visible');
                 this.setState({candidateSubmitted: true})
@@ -50,6 +50,7 @@ class PostCandidateToJob extends React.Component{
     getProfileInfo = () => {
         ApiCalls.get('/api/recruiter/getProfile')
         .then((res)=>{    
+            if(res == null) return
             this.setState({ profileInfo: res.data }) 
         }).catch(errors => 
             console.log(errors.response.data)
@@ -58,7 +59,7 @@ class PostCandidateToJob extends React.Component{
     getResumeURL = () => {
         ApiCalls.get('/api/resume/view/'+this.props.candidateData.candidate_id)
         .then((res)=>{
-            if(res.data.success)
+            if(res && res.data.success)
                 window.open(res.data.url, '_blank');
         }).catch(errors => 
             console.log(errors.response.data)

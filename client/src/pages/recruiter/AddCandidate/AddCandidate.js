@@ -54,7 +54,7 @@ class AddCandidate extends React.Component{
         this.Auth = new AuthFunctions();
         ApiCalls.get('/api/autocomplete/salary')
         .then((res) => {
-            if(res.data.success) {
+            if(res && res.data.success) {
                 this.setState({salaryList:res.data.salaryList});
             }
         })
@@ -63,7 +63,7 @@ class AddCandidate extends React.Component{
         });
         ApiCalls.get('/api/autocomplete/experience')
         .then((res) => {
-            if(res.data.success) {
+            if(res && res.data.success) {
                 this.setState({experienceList:res.data.experienceList});
             }
         })
@@ -87,7 +87,7 @@ class AddCandidate extends React.Component{
 
             // THIS IS getting messy, its to shut the overlay after submitting a new candidate.
             // TO-DO (not here) show the added candidate behind overlay
-            if(res.data.success) {
+            if(res && res.data.success) {
                 this.props.handleClose();
             }
         })

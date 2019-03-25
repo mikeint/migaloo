@@ -51,7 +51,7 @@ class TagSearch extends React.Component{
             const lowerSearchString = searchString.toLowerCase()
             ApiCalls.get('/api/autocomplete/tag/'+lowerSearchString)
             .then((res) => { 
-                if(res.data.success) {
+                if(res && res.data.success) {
                     if(!res.data.tagList.find(tag=>
                         tag.tag_name.toLowerCase() === lowerSearchString
                     )){

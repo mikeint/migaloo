@@ -52,6 +52,7 @@ class ActiveJobs extends React.Component{
     getJobList = () => {
         ApiCalls.get('/api/employerPostings/list/'+this.state.page)
         .then((res)=>{    
+            if(res == null) return
             this.setState({ jobList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 })
         }).catch(errors => 
             console.log(errors.response.data)

@@ -49,7 +49,7 @@ class ExpandableRow extends React.Component{
     getResumeURL = () => {
         ApiCalls.get('/api/resume/view/'+this.props.candidateData.candidate_id)
         .then((res)=>{
-            if(res.data.success)
+            if(res && res.data.success)
                 window.open(res.data.url, '_blank');
         }).catch(errors => 
             console.log(errors.response.data)

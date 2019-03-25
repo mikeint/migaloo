@@ -34,6 +34,7 @@ class LoginForm extends Component {
             password: this.state.password
         })
         .then((res)=>{ 
+            if(res == null) return
             let token = res.data.token.replace(/Bearer/g, '').trim();
 
             this.Auth.setToken(token, ()=>{

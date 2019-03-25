@@ -31,7 +31,7 @@ class PostAJob extends React.Component{
     handleSubmit = () => {
         ApiCalls.post('/api/employerPostings/create', this.state)
         .then((res) => { 
-            if(res.data.success) {
+            if(res && res.data.success) {
                 this.setState({ redirect: true })
             }
         })

@@ -42,7 +42,7 @@ class ExpandableRow extends React.Component{
     getResumeURL = () => {
         ApiCalls.get('/api/resume/view/'+this.props.obj.candidate_id)
         .then((res)=>{
-            if(res.data.success)
+            if(res && res.data.success)
                 window.open(res.data.url, '_blank');
         }).catch(errors => 
             console.log(errors.response.data)
@@ -51,6 +51,7 @@ class ExpandableRow extends React.Component{
     handleAccept = () => {
         ApiCalls.post(`/api/employerPostings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:true})
         .then((res)=>{
+            if(res == null) return
             var newRowObj = {};
             Object.assign(newRowObj, this.state.rowObj);
             newRowObj.accepted = true;
@@ -63,6 +64,7 @@ class ExpandableRow extends React.Component{
     handleReject = () => {
         ApiCalls.post(`/api/employerPostings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:false})
         .then((res)=>{
+            if(res == null) return
             var newRowObj = {};
             Object.assign(newRowObj, this.state.rowObj);
             newRowObj.accepted = false;
