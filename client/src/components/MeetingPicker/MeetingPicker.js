@@ -139,10 +139,34 @@ class MeetingPicker extends React.Component{
                                 next2Label={null}
                             />
                             <div className="timeInputsContainer">
-                                <div className="timeInput">Start <input type="time" step="900"
-                                    defaultValue={this.state.startTime} ref={this.inputStartDate} onChange={this.onStartTimeChange} /></div>
-                                <div className="timeInput">End <input type="time" step="900"
-                                    defaultValue={this.state.endTime} ref={this.inputEndDate} onChange={this.onEndTimeChange} /></div>    
+                                <div className="timeInput"> 
+                                <TextField
+                                    label="Start Time"
+                                    type="time"
+                                    defaultValue={this.state.startTime}
+                                    ref={this.inputStartDate}
+                                    onChange={this.onStartTimeChange}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                    inputProps={{
+                                        step: 900, // 5 min
+                                    }}
+                                /></div>
+                                <div className="timeInput">
+                                    <TextField
+                                        label="End Time"
+                                        type="time"
+                                        defaultValue={this.state.endTime}
+                                        onChange={this.onEndTimeChange}
+                                        ref={this.inputEndDate}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        inputProps={{
+                                            step: 900, // 5 min
+                                        }}
+                                    /></div>    
                             </div>
                             {this.state.error != null && <div className="error">{this.state.error}</div>}
                             {this.state.error == null && <div>Length: {this.fullHumanize(this.state.length)}</div>}

@@ -4,7 +4,21 @@ import './TagSearch.css';
 import debounce from 'lodash/debounce';
 import ApiCalls from '../../ApiCalls';  
 import Loader from '../Loader/Loader'; 
-
+import Chip from '@material-ui/core/Chip';
+import TextField from '@material-ui/core/TextField';
+import { withStyles } from '@material-ui/core/styles';
+  
+const styles = theme => ({
+    chip: {
+        marginRight: "5px"
+    },
+    textField: {
+        width: 400,
+    },
+    userTagWrp: {
+        overflow: "hidden"
+    }
+})
 class TagSearch extends React.Component{ 
     constructor(props){
         super(props);
@@ -16,16 +30,15 @@ class TagSearch extends React.Component{
             tagListBoxStype:{
                 marginLeft: "0px"
             },
+            textValue: '',
             onChange: props.onChange
         }
         this.textInput = React.createRef();
         this.tagListBox = React.createRef();
         this.Auth = new AuthFunctions();
-        this.inputPlaceholder = "Ex. Leadership, Agile, Project Management"
         
     }
     componentDidMount() {
-        this.textInput.current.placeholder = this.inputPlaceholder; 
     }
     changed = () => {
         if(this.state.onChange)
@@ -61,8 +74,8 @@ class TagSearch extends React.Component{
         }
     }, 250)
     textChange = (e) =>{
-        this.setState({searching: true});
         const value = e.target.value;
+        this.setState({searching: true, textValue: value});
         this.queryForTags(value.trim());
     }
     focus = () =>{
@@ -83,8 +96,9 @@ class TagSearch extends React.Component{
     addTag = (tag)=>{
         var tags = this.state.tags;
         tags.push(tag);
-        this.setState({tags: tags, focus: false}, this.changed);
-        this.textInput.current.value = "";
+        this.setState({tags: tags, focus: false, potentialTagList: []}, this.changed);
+        // this.textInput.current.value = "";
+        this.setState({textValue: ""});
     }
     removeTag = (e, i) =>{
         e.stopPropagation();
@@ -95,10 +109,12 @@ class TagSearch extends React.Component{
     }
     editTag = (e, i) => {
         const removedTag = this.removeTag(e, i);
-        this.textInput.current.value = removedTag.tag_name;
+        // this.textInput.current.value = removedTag.tag_name;
+        this.setState({textValue: removedTag.tag_name});
         this.textInput.current.focus();
     }
     render(){  
+        const { classes } = this.props;
         return (
             <React.Fragment> 
                 <div id="tagParentElement"
@@ -106,23 +122,32 @@ class TagSearch extends React.Component{
                     tabIndex="0"
                     onBlur={(e)=>this.deFocus(e)}>
                     <span className="tag-floating-label">Tags</span>
-                    <div className="user-tag-wrp">
+                    
+                    <div className={classes.userTagWrp}>
                         <span className="tag-listing" style={this.state.tagListBoxStype} ref={this.tagListBox}>
                             {this.state.tags.map((tag, i)=>
-                                <span className="tag" key={i}  onClick={(e)=>this.editTag(e, i)}>
-                                    {tag.tag_name} <span className="tagX" onClick={(e)=>this.removeTag(e, i)}>X</span>
-                                </span>
+                                <Chip
+                                    label={tag.tag_name}
+                                    key={i}
+                                    onDelete={(e)=>this.removeTag(e, i)}
+                                    className={classes.chip}
+                                    color="secondary"
+                                />
                             )}
                         </span>
-                        <input
-                            className="tag-input"
-                            type="text"
-                            onChange={this.textChange}
-                            onFocus={this.focus}
+                        
+                        <TextField
+                            value={this.state.textValue}
+                            className={classes.textField}
+                            required
+                            placeholder="Ex. Leadership, Agile, Project Management"
                             ref={this.textInput}
-                            required/>
+                            onFocus={this.focus}
+                            onChange={this.textChange}
+                            margin="normal"
+                        />
                     </div>
-                    {/* this.state.focus && this.state.potentialTagList.length > 0 ? */
+                    {this.state.potentialTagList.length > 0 &&
                         <div className="autoCompleteBox">
                             {!this.state.searching?this.state.potentialTagList.map((tag, i)=>
                                 <div className="potentialTag" key={i} onClick={()=>this.addTag(tag)}>
@@ -136,5 +161,4 @@ class TagSearch extends React.Component{
         );
     }
 };
-
-export default TagSearch;
+export default withStyles(styles)(TagSearch);  

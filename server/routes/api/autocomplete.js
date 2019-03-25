@@ -16,7 +16,7 @@ router.get('/experience/:find', passport.authentication, (req, res) => {
     postgresdb.any('SELECT experience_type_name, experience_type_id \
             FROM experience_type \
             WHERE lower(experience_type_name) LIKE $1 \
-            ORDER BY experience_type_name ASC \
+            ORDER BY experience_type_id ASC \
             LIMIT 10', "%"+req.params.find.toLowerCase()+"%")
     .then(data => {
         res.json({success:true, experienceList: data});
@@ -29,7 +29,7 @@ router.get('/experience/:find', passport.authentication, (req, res) => {
 router.get('/experience', passport.authentication, (req, res) => {
     postgresdb.any('SELECT experience_type_name, experience_type_id \
             FROM experience_type \
-            ORDER BY experience_type_name ASC')
+            ORDER BY experience_type_id ASC')
     .then(data => {
         res.json({success:true, experienceList: data});
     })
@@ -126,7 +126,7 @@ router.get('/salary/:find', passport.authentication, (req, res) => {
     postgresdb.any('SELECT salary_type_name, salary_type_id \
             FROM salary_type \
             WHERE lower(salary_type_name) LIKE $1 \
-            ORDER BY salary_type_name ASC \
+            ORDER BY salary_type_id ASC \
             LIMIT 10', "%"+req.params.find.toLowerCase()+"%")
     .then(data => {
         res.json({success:true, salaryList: data});
@@ -139,7 +139,7 @@ router.get('/salary/:find', passport.authentication, (req, res) => {
 router.get('/salary', passport.authentication, (req, res) => {
     postgresdb.any('SELECT salary_type_name, salary_type_id \
             FROM salary_type \
-            ORDER BY salary_type_name ASC')
+            ORDER BY salary_type_id ASC')
     .then(data => {
         res.json({success:true, salaryList: data});
     })

@@ -1,21 +1,17 @@
 import React from 'react';
 import './NavBar.css';  
 import { NavLink } from 'react-router-dom';  
-//import active_icon from '../../files/images/navImages/active_icon_30.png';
-//import post_icon from '../../files/images/navImages/post_icon_30.png';
-import chat_icon from '../../files/images/navImages/chat_icon_30.png';
-import profile_icon from '../../files/images/navImages/profile_icon_30.png';
 import AuthFunctions from '../../AuthFunctions'; 
 import Toolbar from '@material-ui/core/Toolbar';
 import AppBar from '@material-ui/core/AppBar';
 import AccountCircle from '@material-ui/icons/AccountCircle';
+import ListAlt from '@material-ui/icons/ListAlt';
+import Search from '@material-ui/icons/Search';
+import Chat from '@material-ui/icons/Chat';
 import Notifications from '../Notifications/Notifications';
 import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Search from '@material-ui/icons/Search';
-import Face from '@material-ui/icons/Face';
-import Chat from '@material-ui/icons/Chat';
 
 function LinkTab(props) {
     return <Tab component={NavLink} {...props} />;
@@ -38,12 +34,12 @@ const styles = theme => ({
 const navMappings = {
     1:[ // Recruiter
         {
-            icon:<Search />, 
+            icon:<Search/>,
             link:"/recruiter/jobList",
             name:"Job Search"
         },
         {
-            icon:<Face/>,
+            icon:<ListAlt/>,
             link:"/recruiter/candidateList",
             name:"Candidate List"
         },
@@ -55,7 +51,7 @@ const navMappings = {
     ],
     2:[ // Employer
         {
-            icon:<Search/>,
+            icon:<ListAlt/>,
             link:"/employer/activeJobs",
             name:"Active Jobs"
         },
@@ -65,7 +61,7 @@ const navMappings = {
             name:"Post a Job"
         },
         {
-            icon:chat_icon,
+            icon:<Chat/>,
             link:"/employer/chat",
             name:"Chat"
         }
@@ -74,14 +70,14 @@ const navMappings = {
 const profileMapping = {
     1: // Recruiter
     {
-        icon:profile_icon,
+        icon:<AccountCircle />,
         link:"/recruiter/profile",
         name:"Profile"
     }
     ,
     2: // Employer
     {
-        icon:profile_icon,
+        icon:<AccountCircle />,
         link:"/employer/profile",
         name:"Profile"
     }
@@ -122,15 +118,15 @@ class NavBar extends React.Component{
         const { classes } = this.props;
         return (
             <React.Fragment> 
-                <AppBar position="static" >
+                <AppBar position="static">
                     <Toolbar>
                         <Tabs variant="fullWidth" value={this.state.page} className={classes.tabsContainer} onChange={this.handleChange}>
                             {
                                 navMappings[this.state.user.userType].map((d, i)=>{
-                                    return <LinkTab className={classes.linkButton} key={i} to={d.link} icon={d.icon} />
+                                    return <LinkTab className={classes.linkButton} label={d.name} icon={d.icon} key={i} to={d.link} />
                                 })
                             }
-                            <LinkTab className={classes.profileButton} to={profileMapping[this.state.user.userType].link} icon={<AccountCircle />} color="inherit" />
+                            <LinkTab className={classes.profileButton} to={profileMapping[this.state.user.userType].link} icon={profileMapping[this.state.user.userType].icon} color="inherit" />
                             <Notifications/>
                         </Tabs>
                     </Toolbar>
