@@ -28,13 +28,17 @@ class ActiveJobs extends React.Component{
         this.Auth = new AuthFunctions();
     }
 
+    componentWillUnmount = () => {
+        ApiCalls.cancel();
+    }
+    
     componentWillMount = () => {
         this.setState({ migalooOverlay: sessionStorage.getItem("migalooOverlay") });
         sessionStorage.removeItem('migalooOverlay');
-        this.getJobList();
     }
 
     componentDidMount = () => {
+        this.getJobList();
         if(this.state.migalooOverlay) {
             window.FX.fadeOut(document.getElementById('fadeOutOverlay'), {
                 duration: 1500, complete: function() {  

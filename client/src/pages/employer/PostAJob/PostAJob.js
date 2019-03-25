@@ -20,6 +20,9 @@ class PostAJob extends React.Component{
         this.Auth = new AuthFunctions();
     }
  
+    componentWillUnmount = () => {
+        ApiCalls.cancel();
+    }
     componentDidMount() {
         window.scrollTo(0, 0); 
     }

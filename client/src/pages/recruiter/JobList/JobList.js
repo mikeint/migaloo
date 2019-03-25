@@ -50,15 +50,16 @@ class JobList extends React.Component{
     componentWillMount = () => {
         this.setState({ migalooOverlay: sessionStorage.getItem("migalooOverlay") });
         sessionStorage.removeItem('migalooOverlay');
-        this.getJobList();
     }
 
     componentWillUnmount = () => {
+        ApiCalls.cancel()
         this.setState({enterSlide:"page-exit"})
     }
 
     
     componentDidMount = () => {
+        this.getJobList();
         if(this.state.migalooOverlay) {
             window.FX.fadeOut(document.getElementById('fadeOutOverlay'), {
                 duration: 1500, complete: function() {  

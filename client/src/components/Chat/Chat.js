@@ -18,7 +18,7 @@ class Chat extends Component {
         };
         this.Auth = new AuthFunctions();
     }
-    componentWillMount = () => {
+    componentDidMount = () => {
         this.getConversationList();
     }
     componentWillUnmount = () => {

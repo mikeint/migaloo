@@ -56,6 +56,7 @@ class CandidateList extends React.Component{
     }
 
     componentWillUnmount = () => {
+        ApiCalls.cancel()
         this.setState({enterSlide:"page-exit"})
     }
 

@@ -12,23 +12,28 @@ class Profile extends React.Component{
 
     constructor(){
         super();
+        this.Auth = new AuthFunctions();
         this.state={ 
             logout: false, 
             searchTerm: '', 
-            user: {},
+            user: this.Auth.getUser(),
             profileInfo: {},
             showUpload:false,
             profileImage: defaultProfileImage
         }
-        this.Auth = new AuthFunctions();
     } 
 
+    componentWillUnmount = () => {
+        ApiCalls.cancel()
+    }
     componentWillMount = () => {
-        this.setState({logout: false})
-        this.setState({ user: this.Auth.getUser() });
+        this.setState({ migalooOverlay: sessionStorage.getItem("migalooOverlay") });
+        sessionStorage.removeItem('migalooOverlay');
+    }
+    componentDidMount() {
         this.getProfileInfo();
         this.getImage();
-    }
+    } 
     handleLogout = () => { 
         Swal.fire({
             title: 'Are you sure?', 

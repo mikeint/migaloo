@@ -27,7 +27,7 @@ class BuildActiveJobs extends React.Component{
         }
         this.Auth = new AuthFunctions();
     } 
-    componentWillMount = () => {
+    componentDidMount = () => {
         this.setState({ user: this.Auth.getUser() }, ()=>{
             this.getImage();
         });

@@ -31,7 +31,7 @@ class Conversation extends Component {
             meetingDialogOpen: false
         };
     }
-    componentWillMount = () => {
+    componentDidMount = () => {
         this.getMessageList();
     }
     getMessageList = () => {

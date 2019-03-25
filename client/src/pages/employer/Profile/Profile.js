@@ -13,24 +13,25 @@ class Profile extends React.Component{
 
     constructor(){
         super();
+        this.Auth = new AuthFunctions();
         this.state={ 
             logout: false, 
             showOverlay: false,
             overlayConfig: {direction: "r-l", swipeLocation: "l"},
             searchTerm: '', 
-            user: {},
+            user: this.Auth.getUser(),
             profile: '',
             profileInfo: {},
             showUpload:false,
             profileImage: defaultProfileImage,
             showContactList: false
         }
-        this.Auth = new AuthFunctions();
     } 
 
-    componentWillMount = () => {
-        this.setState({logout: false})
-        this.setState({ user: this.Auth.getUser() });
+    componentWillUnmount = () => {
+        ApiCalls.cancel();
+    }
+    componentDidMount = () => {
         this.getProfileInfo();
         this.getImage();
     }
