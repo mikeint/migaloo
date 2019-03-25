@@ -50,7 +50,7 @@ class RegisterEmployerForm extends Component {
                 email: this.state.email,
                 password: this.state.password
             }).then((res)=>{
-                sessionStorage.setItem("HROverlay", true);
+                sessionStorage.setItem("migalooOverlay", true);
                 this.Auth.clearToken();
                 let token = res.data.token.replace(/Bearer/g, '').trim();
 

@@ -15,7 +15,9 @@ import Pagination from "react-js-pagination";
 import { withStyles } from '@material-ui/core/styles'; 
 import Button from '@material-ui/core/Button';
 import FilterList from '@material-ui/icons/FilterList';
-import '../../../constants/AnimateHROverlay';  
+import '../../../constants/AnimateMigalooOverlay';
+
+import whale from '../../../files/images/logo.png'
 
 
 const styles = theme => ({
@@ -30,7 +32,7 @@ class JobList extends React.Component{
     constructor(props) {
         super(props);
 		this.state = {
-            HROverlay: false, 
+            migalooOverlay: false, 
             showFilterOverlay: false,
             index:0,
             postId: null,
@@ -46,8 +48,8 @@ class JobList extends React.Component{
     }
 
     componentWillMount = () => {
-        this.setState({ HROverlay: sessionStorage.getItem("HROverlay") });
-        sessionStorage.removeItem('HROverlay');
+        this.setState({ migalooOverlay: sessionStorage.getItem("migalooOverlay") });
+        sessionStorage.removeItem('migalooOverlay');
         this.getJobList();
     }
 
@@ -57,7 +59,7 @@ class JobList extends React.Component{
 
     
     componentDidMount = () => {
-        if(this.state.HROverlay) {
+        if(this.state.migalooOverlay) {
             window.FX.fadeOut(document.getElementById('fadeOutOverlay'), {
                 duration: 1500, complete: function() {  
                     document.getElementById("fadeOutOverlay").style.display = "none";
@@ -125,7 +127,7 @@ class JobList extends React.Component{
         return (
             <React.Fragment>
                 { this.state.openJob && <Redirect to={"/recruiter/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidate_id:'')} />}
-                { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
+                { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
                 <div className='jobListClassContainer'> 
                    <div className="pageHeading">
                         Active Jobs Postings  

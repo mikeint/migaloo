@@ -8,14 +8,16 @@ import Loader from '../../../components/Loader/Loader';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import Pagination from "react-js-pagination";
-import '../../../constants/AnimateHROverlay'; 
+import '../../../constants/AnimateMigalooOverlay';
+
+import whale from '../../../files/images/logo.png'
 
 class ActiveJobs extends React.Component{
 
     constructor(props) {
         super(props);
 		this.state = {
-            HROverlay: false, 
+            migalooOverlay: false, 
             showOverlay: false,
             overlayConfig: {direction: "l-r", swipeLocation: "r"},
             postId: '',
@@ -27,13 +29,13 @@ class ActiveJobs extends React.Component{
     }
 
     componentWillMount = () => {
-        this.setState({ HROverlay: sessionStorage.getItem("HROverlay") });
-        sessionStorage.removeItem('HROverlay');
+        this.setState({ migalooOverlay: sessionStorage.getItem("migalooOverlay") });
+        sessionStorage.removeItem('migalooOverlay');
         this.getJobList();
     }
 
     componentDidMount = () => {
-        if(this.state.HROverlay) {
+        if(this.state.migalooOverlay) {
             window.FX.fadeOut(document.getElementById('fadeOutOverlay'), {
                 duration: 1500, complete: function() {  
                     document.getElementById("fadeOutOverlay").style.display = "none";
@@ -71,7 +73,7 @@ class ActiveJobs extends React.Component{
 
         return (
             <React.Fragment>
-                { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
+                { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
             
                 <div className='activeJobContainer'>
                     <div className="pageHeading">Active Jobs<NavLink to="/employer/postAJob"><button className="addBtn addJob"></button></NavLink></div> 

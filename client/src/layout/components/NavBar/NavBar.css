@@ -55,15 +55,7 @@
 .smallHeader #nav-icon1 span { 
     background: #263c54;
 }
-
-.smallHeader .hrLogoText {
-    line-height: 50px;
-    font-size: 30px;
-    color: #1b2c6e; 
-    padding-left: 130px;
-}
-
-
+ 
 .heroContainer {
     width: 100%;   
     position: relative; 
@@ -99,18 +91,7 @@
 
 #logoContainer {  
     float: left;     
-}
-.hrLogoText {
-    float: left; 
-    line-height: 135px;
-    letter-spacing: 5px;
-    font-size: 50px;
-    font-weight: bold;
-    padding-left: 260px;
-    transition: 0.3s;
-    color: #fff;
-}
-
+} 
 .logo {
     float: left;
     padding: 10px 25px;
@@ -337,10 +318,7 @@
         font-size: 60px; 
         padding-top: 160px;
         text-shadow: 0px 1px 0px #263c54;
-    } 
-    .hrLogoText { 
-        font-size: 35px;
-    }
+    }  
 } 
 
 @media only screen and (max-width: 768px) {
@@ -353,11 +331,7 @@
     } 
     .heroText { 
         font-size: 51px;  
-    }
-    .hrLogoText { 
-        font-size: 25px;
-    }
-
+    }  
 } 
  
 @media only screen and (max-width: 600px) { 

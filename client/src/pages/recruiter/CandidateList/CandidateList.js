@@ -7,10 +7,11 @@ import Loader from '../../../components/Loader/Loader';
 import ExpandableRow from './ExpandableRow/ExpandableRow'; 
 import debounce from 'lodash/debounce'; 
 
+import whale from '../../../files/images/logo.png'
 //import Overlay from '../../../components/Overlay/Overlay';
 import AddCandidate from '../AddCandidate/AddCandidate';
 import Pagination from "react-js-pagination";
-import '../../../constants/AnimateHROverlay';  
+import '../../../constants/AnimateMigalooOverlay';  
 
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import { withStyles } from '@material-ui/core/styles';  
@@ -34,7 +35,7 @@ class CandidateList extends React.Component{
     constructor(props) {
         super(props);
 		this.state = {
-            HROverlay: false, 
+            migalooOverlay: false, 
             showOverlay: false,
             overlayConfig: {direction: "b-t", swipeLocation: "t"},
             candidateList: null, 
@@ -50,8 +51,8 @@ class CandidateList extends React.Component{
     }
 
     componentWillMount = () => {
-        this.setState({ HROverlay: sessionStorage.getItem("HROverlay") });
-        sessionStorage.removeItem('HROverlay'); 
+        this.setState({ migalooOverlay: sessionStorage.getItem("migalooOverlay") });
+        sessionStorage.removeItem('migalooOverlay'); 
     }
 
     componentWillUnmount = () => {
@@ -66,7 +67,7 @@ class CandidateList extends React.Component{
     }
 
     componentDidMount = () => {
-        if(this.state.HROverlay) {
+        if(this.state.migalooOverlay) {
             window.FX.fadeOut(document.getElementById('fadeOutOverlay'), {
                 duration: 1500, complete: function() {  
                     document.getElementById("fadeOutOverlay").style.display = "none";
@@ -117,7 +118,7 @@ class CandidateList extends React.Component{
  
         return (
             <React.Fragment>  
-                    { this.state.HROverlay ? <div id="fadeOutOverlay" className="HROverlay"><div className="middleOverlay">HR</div></div>:"" }
+                    { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
  
                     <div className="pageHeading">
                         Candidates 

@@ -54,7 +54,7 @@ class LoginForm extends Component {
 
     if (user) {
         if(this.Auth.loggedIn())
-            sessionStorage.setItem("HROverlay", true);
+            sessionStorage.setItem("migalooOverlay", true);
         if(this.state.user.userType === 1)
             return <Redirect to='/recruiter'/>
         else
