@@ -8,7 +8,6 @@ import ExpandableRow from './ExpandableRow/ExpandableRow';
 import debounce from 'lodash/debounce'; 
 
 import whale from '../../../files/images/logo.png'
-//import Overlay from '../../../components/Overlay/Overlay';
 import AddCandidate from '../AddCandidate/AddCandidate';
 import Pagination from "react-js-pagination";
 import '../../../constants/AnimateMigalooOverlay';  
@@ -25,7 +24,6 @@ const styles = theme => ({
     },
     drawer:{ 
         minWidth: "300px",
-        maxHeight: "20px",
         position: "relative"
     }
 });
@@ -172,14 +170,14 @@ class CandidateList extends React.Component{
                         }
                         </div>
  
-                        <SwipeableDrawer
-                            anchor="bottom"
-                            className={classes.drawer}
-                            open={this.state.showOverlay}
-                            onClose={()=>this.setState({"showOverlay":false})}
-                            onOpen={()=>this.setState({"showOverlay":true})}
-                        > 
-                        <AddCandidate close={()=>this.setState({"showOverlay":false})} />
+                    <SwipeableDrawer
+                        anchor="bottom"
+                        className={classes.drawer}
+                        open={this.state.showOverlay}
+                        onClose={()=>this.setState({"showOverlay":false})}
+                        onOpen={()=>this.setState({"showOverlay":true})}
+                    > 
+                        <AddCandidate onClose={()=>this.setState({"showOverlay":false})} />
                     </SwipeableDrawer>
                     
             </React.Fragment>

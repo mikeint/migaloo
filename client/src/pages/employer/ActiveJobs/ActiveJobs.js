@@ -3,14 +3,24 @@ import './ActiveJobs.css';
 import { NavLink } from 'react-router-dom';
 import ApiCalls from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
-import Overlay from '../../../components/Overlay/Overlay';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import { withStyles } from '@material-ui/core/styles';
 import Loader from '../../../components/Loader/Loader';
+import Add from '@material-ui/icons/Add';
+import IconButton from '@material-ui/core/IconButton';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import Pagination from "react-js-pagination";
 import '../../../constants/AnimateMigalooOverlay';
 
 import whale from '../../../files/images/logo.png'
+
+const styles = theme => ({
+    drawer:{ 
+        minWidth: "300px",
+        position: "relative"
+    }
+});
 
 class ActiveJobs extends React.Component{
 
@@ -19,7 +29,6 @@ class ActiveJobs extends React.Component{
 		this.state = {
             migalooOverlay: false, 
             showOverlay: false,
-            overlayConfig: {direction: "l-r", swipeLocation: "r"},
             postId: '',
             jobList: '', 
             page: 1,
@@ -74,14 +83,14 @@ class ActiveJobs extends React.Component{
     };
 
     render(){ 
-        const html = <BuildActiveJobs obj={this.state.jobList[this.state.postId]} removedCallback={this.jobRemoved.bind(this)} />
 
+        const { classes } = this.props; 
         return (
             <React.Fragment>
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
             
                 <div className='activeJobContainer'>
-                    <div className="pageHeading">Active Jobs<NavLink to="/employer/postAJob"><button className="addBtn addJob"></button></NavLink></div> 
+                    <div className="pageHeading">Active Jobs<NavLink to="/employer/postAJob"><IconButton><Add/></IconButton></NavLink></div> 
                     {
                         this.state.jobList ?
                             <div className="jobListContainer">
@@ -109,11 +118,19 @@ class ActiveJobs extends React.Component{
                                         activeClass={'active'}
                                         />
                                 </div>
-                                {this.state.showOverlay && <Overlay
-                                                                html={html}  
-                                                                handleClose={this.callOverlay} 
-                                                                config={this.state.overlayConfig}
-                                                            />}
+                                    
+                                <SwipeableDrawer
+                                    anchor="bottom"
+                                    className={classes.drawer}
+                                    open={this.state.showOverlay}
+                                    onClose={()=>this.setState({"showOverlay":false})}
+                                    onOpen={()=>this.setState({"showOverlay":true})}
+                                > 
+                                    <BuildActiveJobs
+                                        obj={this.state.jobList[this.state.postId]}
+                                        removedCallback={this.jobRemoved.bind(this)} 
+                                        onClose={()=>this.setState({"showOverlay":false})} />
+                                </SwipeableDrawer>
                             </div>
                         :
                         <Loader />
@@ -124,4 +141,4 @@ class ActiveJobs extends React.Component{
     }
 };
 
-export default ActiveJobs;
+export default withStyles(styles)(ActiveJobs);

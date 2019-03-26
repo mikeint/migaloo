@@ -47,7 +47,7 @@ class AddCandidate extends React.Component{
             experience:'',
             tagIds:[],
             redirect: false,
-            close: props.close,
+            onClose: props.onClose,
             salaryList: [],
             experienceList: []
         }
@@ -88,7 +88,7 @@ class AddCandidate extends React.Component{
             // THIS IS getting messy, its to shut the overlay after submitting a new candidate.
             // TO-DO (not here) show the added candidate behind overlay
             if(res && res.data.success) {
-                this.props.handleClose();
+                this.props.onClose();
             }
         })
         .catch(error => {
@@ -104,7 +104,7 @@ class AddCandidate extends React.Component{
             <React.Fragment> 
                 {/* this.state.redirect ? <Redirect to='/recruiter/candidateList' /> : '' */}
                 <div className="pageHeading">Add a Candidate</div>
-                <IconButton color="primary" className={classes.alertClose} onClick={this.state.close}>
+                <IconButton color="primary" className={classes.alertClose} onClick={this.state.onClose}>
                     <Close color="primary" />
                 </IconButton>
                 <div className="addCandidateContainer">

@@ -2,17 +2,28 @@ import React from 'react';
 import './ExpandableRow.css'; 
 import ApiCalls from '../../../../../ApiCalls';  
 import AuthFunctions from '../../../../../AuthFunctions'; 
+import Button from '@material-ui/core/Button';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import ThumbDown from '@material-ui/icons/ThumbDown';
+import ThumbUp from '@material-ui/icons/ThumbUp';
+import FiberNew from '@material-ui/icons/FiberNew';
 
-import acceptImg from '../../../../../files/images/accept.png';
-import rejectImg from '../../../../../files/images/reject.png';
+import { withStyles } from '@material-ui/core/styles';  
+  
 
+const styles = theme => ({
+    newIndicator:{
+        marginLeft:"20px"
+    }
+});
 class ExpandableRow extends React.Component{
 
     constructor(props) {
         super(props);
         // Initial state
         this.state = { 
-            open: false,
             jobObj: props.job,
             rowObj: props.obj,
         };
@@ -32,12 +43,6 @@ class ExpandableRow extends React.Component{
                 console.log(errors.response.data)
             )
         }
-    }
-    toggle() {
-        this.setState({
-            open: !this.state.open,
-        });
-        this.handleRead();
     }
     getResumeURL = () => {
         ApiCalls.get('/api/resume/view/'+this.props.obj.candidate_id)
@@ -75,14 +80,17 @@ class ExpandableRow extends React.Component{
         )
     }
     render(){ 
+
+        const { classes } = this.props; 
         return (
-            <div className="expandableJobRow">
-                <div className="candidateExpand" onClick={this.toggle.bind(this)}>
-                    <div>
-                        {this.state.rowObj.candidate_first_name} {this.state.rowObj.has_seen_post ? '' : <span className="newPost">New</span>}<span className="coins">{this.state.rowObj.coins} coins(s)</span>
-                    </div>
-                </div>
-                <div className={"collapse" + (this.state.open ? ' in' : '')}>
+            <ExpansionPanel>
+                <ExpansionPanelSummary>
+                    <span>{this.state.rowObj.candidate_first_name}</span>
+                    {this.state.rowObj.has_seen_post ? '' : <FiberNew className={classes.newIndicator} />}
+                    {/* <span className="coins">{this.state.rowObj.coins} coins(s)</span> */}
+                    <div></div>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
                     <div className="flex">
                         <div className="flexColumn">
                             {this.state.rowObj.resume_id != null ? <div className="rowButton" onClick={this.getResumeURL}>View Resume</div> : ''}
@@ -94,15 +102,15 @@ class ExpandableRow extends React.Component{
                             <div className="rowMargin">Email: <span className="rowData"><a href={"mailto:"+this.state.rowObj.email}>{this.state.rowObj.email}</a></span></div>
                         </div>
                         <div className="flexColumn">
-                            <div className={"rowButton "+(this.state.rowObj.accepted?" selected":(this.state.rowObj.not_accepted?" notSelected":""))} onClick={this.handleAccept.bind(this)}><img className="thumbsBtn" src={acceptImg} alt="" /></div>
-                            <div className={"rowButton "+(this.state.rowObj.not_accepted?" selected":(this.state.rowObj.accepted?" notSelected":""))} onClick={this.handleReject.bind(this)}><img className="thumbsBtn" src={rejectImg} alt="" /></div>
+                            <Button className={(this.state.rowObj.accepted?"selected":(this.state.rowObj.not_accepted?" notSelected":""))} onClick={this.handleAccept.bind(this)}><ThumbUp/></Button>
+                            <Button className={(this.state.rowObj.not_accepted?"selected":(this.state.rowObj.accepted?" notSelected":""))} onClick={this.handleReject.bind(this)}><ThumbDown/></Button>
                         </div>
                     </div>
-                </div> 
-            </div> 
+                </ExpansionPanelDetails>
+            </ExpansionPanel>
         )
     }
 }
  
 
-export default ExpandableRow;
+export default withStyles(styles)(ExpandableRow);

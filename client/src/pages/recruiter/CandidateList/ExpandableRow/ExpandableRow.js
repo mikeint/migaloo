@@ -4,16 +4,19 @@ import UploadResume from '../UploadResume/UploadResume';
 import ApiCalls from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import Redirect from 'react-router-dom/Redirect';
-import Overlay from '../../../../components/Overlay/Overlay';
 import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
 import { withStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import Button from '@material-ui/core/Button';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 
 const styles = theme => ({
-
+    drawer:{ 
+        minWidth: "300px",
+        position: "relative"
+    }
 });
 class ExpandableRow extends React.Component{
 
@@ -27,7 +30,6 @@ class ExpandableRow extends React.Component{
             files: [],
             redirectCandidate: false,
             showPostJob: false,
-            overlayConfig: {direction: "b-t", swipeLocation: "t"}
         };
         this.Auth = new AuthFunctions();
     }
@@ -59,7 +61,7 @@ class ExpandableRow extends React.Component{
         this.setState({showPostJob: true})
     }
     render(){ 
-        // const { classes } = this.props;
+        const { classes } = this.props;
         const rowObj = this.props.candidateData; 
         return (
             <div className="expandableRow">
@@ -133,11 +135,18 @@ class ExpandableRow extends React.Component{
                                     {this.props.postData && <div className="resumeButtons">
                                         <Button variant="contained" color="primary" onClick={this.postToJob}>Post Candidate to Job</Button>
                                     </div>}
-                                    {this.state.showPostJob && <Overlay
-                                                                    html={<PostCandidateToJob candidate={this.props.candidateData} job={this.props.postData} handleClose={()=>this.setState({showPostJob:false})} />}  
-                                                                    handleClose={()=>this.setState({showPostJob:false})} 
-                                                                    config={this.state.overlayConfig}
-                                                                />}
+                                    
+                                    <SwipeableDrawer
+                                        anchor="bottom"
+                                        className={classes.drawer}
+                                        open={this.state.showPostJob}
+                                        onClose={()=>this.setState({"showPostJob":false})}
+                                        onOpen={()=>this.setState({"showPostJob":true})}
+                                    > 
+                                        <PostCandidateToJob candidate={this.props.candidateData}
+                                                                    job={this.props.postData}
+                                                                    handleClose={()=>this.setState({showPostJob:false})} />
+                                    </SwipeableDrawer>
                                     
                                     {this.state.showUpload && <UploadResume id={rowObj.candidate_id} handleClose={this.handleClose} />}
                                 </div> 

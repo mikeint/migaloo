@@ -14,7 +14,6 @@ const styles = theme => ({
     drawer:{
         width: "80%",
         minWidth: "300px",
-        maxHeight: "20px",
         position: "relative"
     }
 })
