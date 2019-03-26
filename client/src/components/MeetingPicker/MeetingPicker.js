@@ -69,8 +69,6 @@ class MeetingPicker extends React.Component{
         };
         this.onStartTimeChange = this.onStartTimeChange.bind(this);
         this.onEndTimeChange = this.onEndTimeChange.bind(this);
-        this.inputStartDate = React.createRef();
-        this.inputEndDate = React.createRef();
         ApiCalls.get("/api/message/locations")
         .then((res)=>{
             if(res == null) return
@@ -97,7 +95,6 @@ class MeetingPicker extends React.Component{
     }
     onStartTimeChange(time) {
         const endTime = moment(time.target.value, "HH:mm").add(this.state.length, "minutes").format("HH:mm");
-        this.inputEndDate.current.value = endTime;
         this.setState({
             startTime:time.target.value,
             endTime:endTime
@@ -127,7 +124,12 @@ class MeetingPicker extends React.Component{
         return ret.join(" ");
     }
     handleClose = (event, value) => {
-        this.props.onClose({response: event, value: value, meetingTime: this.state});
+        if(value != null){
+            value = {...value,
+                length: value.length.hours()*60+value.length.minutes(),
+                startDateTime:moment(moment(this.state.day).format("YYYY-MM-DD")+" "+this.state.startTime, "YYYY-MM-DD HH:mm")}
+        }
+        this.props.onClose({response: event, value: value});
     };
 
     render(){  
@@ -148,19 +150,19 @@ class MeetingPicker extends React.Component{
                                 name="subject"
                                 label="Subject"
                                 className={classes.textField}
-                                value={this.state.subject}
                                 required
-                                onChange={this.handleChange}
+                                onBlur={this.handleChange}
+                                inputProps={{ maxLength: 500 }} 
                                 margin="normal"
                             /><br/>
                             <FormControl className={classes.selectFormControl}>
                                 <InputLabel htmlFor="location-helper">Location</InputLabel>
                                 <Select
-                                    value={this.state.location}
                                     className={classes.textField}
                                     onChange={this.handleChange}
                                     required
                                     input={<Input name="location" id="location-helper" />}
+                                    value={this.state.location}
                                     inputProps={{
                                         id: 'location',
                                     }}
@@ -182,8 +184,7 @@ class MeetingPicker extends React.Component{
                                 <TextField
                                     label="Start Time"
                                     type="time"
-                                    defaultValue={this.state.startTime}
-                                    ref={this.inputStartDate}
+                                    value={this.state.startTime}
                                     onChange={this.onStartTimeChange}
                                     InputLabelProps={{
                                         shrink: true,
@@ -196,9 +197,8 @@ class MeetingPicker extends React.Component{
                                     <TextField
                                         label="End Time"
                                         type="time"
-                                        defaultValue={this.state.endTime}
                                         onChange={this.onEndTimeChange}
-                                        ref={this.inputEndDate}
+                                        value={this.state.endTime}
                                         InputLabelProps={{
                                             shrink: true,
                                         }}

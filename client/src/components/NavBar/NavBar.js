@@ -95,12 +95,12 @@ class NavBar extends React.Component{
         let page = 0;
         let i = 0
         for(; i < navMappings[userType].length; i++){
-            if(navMappings[userType][i].link.startsWith(path)){
+            if(path.startsWith(navMappings[userType][i].link)){
                 page = i;
                 break;
             }
         }
-        if(profileMapping[userType].link.startsWith(path)){
+        if(path.startsWith(profileMapping[userType].link)){
             page = i;
         }
 

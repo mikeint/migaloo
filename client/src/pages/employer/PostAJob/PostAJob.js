@@ -108,9 +108,8 @@ class PostAJob extends React.Component{
                                 name="title"
                                 label="Title"
                                 className={classes.textField}
-                                value={this.state.title}
                                 required
-                                onChange={this.handleChange}
+                                onBlur={this.handleChange}
                                 margin="normal"
                                 variant="outlined"
                             />
@@ -124,9 +123,8 @@ class PostAJob extends React.Component{
                                 placeholder="A basic Job Description"
                                 rowsMax={7}
                                 rows={2}
-                                value={this.state.caption}
                                 required
-                                onChange={this.handleChange}
+                                onBlur={this.handleChange}
                                 margin="normal"
                                 variant="outlined"
                             />

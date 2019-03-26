@@ -115,7 +115,6 @@ class AddCandidate extends React.Component{
                                     name="firstName"
                                     label="First Name"
                                     className={classes.textField}
-                                    value={this.state.firstName}
                                     required
                                     onChange={this.handleChange}
                                     margin="normal"
@@ -127,7 +126,6 @@ class AddCandidate extends React.Component{
                                     name="lastName"
                                     label="Last Name"
                                     className={classes.textField}
-                                    value={this.state.lastName}
                                     required
                                     onChange={this.handleChange}
                                     margin="normal"
@@ -139,7 +137,6 @@ class AddCandidate extends React.Component{
                                     name="email"
                                     label="Email"
                                     className={classes.textField}
-                                    value={this.state.email}
                                     required
                                     onChange={this.handleChange}
                                     margin="normal"

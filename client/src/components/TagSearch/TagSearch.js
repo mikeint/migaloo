@@ -137,7 +137,6 @@ class TagSearch extends React.Component{
                         </span>
                         
                         <TextField
-                            value={this.state.textValue}
                             className={classes.textField}
                             required
                             placeholder="Ex. Leadership, Agile, Project Management"

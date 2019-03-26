@@ -8,7 +8,7 @@ const db = require('../../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const messagesInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'message'], {table: 'messages'});
-const calendarInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'date_offer', 'minute_length', 'location_type'], {table: 'messages'});
+const calendarInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'date_offer', 'minute_length', 'location_type', 'meeting_subject'], {table: 'messages'});
 const subjectInsertHelper = new pgp.helpers.ColumnSet(['user_id_1', 'user_id_2', 'message_subject_id', 'post_id'], {table: 'messages'});
 /**
  * Create a new message in a conversation, or calendar invite
@@ -37,13 +37,6 @@ router.post('/create', passport.authentication,  (req, res) => {
     }
     var jwtPayload = body.jwtPayload;
     var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
-    var userId1 = userId;
-    var userId2 = body.toId;
-    if(userId1 > userId2){
-        var t = userId1;
-        userId1 = userId2;
-        userId2 = t;
-    }
     var messageType = null;
     if(body.message){ // Chat Message
         messageType = 1;
@@ -55,10 +48,10 @@ router.post('/create', passport.authentication,  (req, res) => {
         // Get basic data, and ensure they can message, candidate posting must be accepted
         return t.one('\
             SELECT 1 \
-            FROM messages m \
+            FROM messages_subject m \
             WHERE (m.user_id_1 = $1 OR m.user_id_2 = $1) AND m.message_subject_id = $2 \
             LIMIT 1 \
-            ', [jwtPayload.id, body.messageSubjectId])
+            ', [userId, body.messageSubjectId])
         .then((data) => {
             // Ensure the person is in this chain
             const makeMessage = {
@@ -66,10 +59,12 @@ router.post('/create', passport.authentication,  (req, res) => {
                 message_subject_id:body.messageSubjectId,
                 message_type_id: messageType,
                 message:body.message,
-                data_offer:body.dateOffer,
+                date_offer:body.dateOffer,
                 minute_length: body.minuteLength,
-                location_type: body.locationType
+                location_type: body.locationType,
+                meeting_subject: body.subject
             }
+            console.log(makeMessage)
             const query = pgp.helpers.insert(makeMessage, messageType===1?messagesInsertHelper:calendarInsertHelper);
 
             return t.none(query).then(() => {
@@ -246,6 +241,7 @@ function listMessages(req, res){
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
+            m.myId = userId;
             m.toMe = m.to_id == userId;
             let contactName = userId === m.user_id_1?
                 (m.user_2_company_name?m.user_2_company_name:(m.user_2_first_name+" "+m.user_2_last_name)):
@@ -302,7 +298,7 @@ function listConversationMessages(req, res){
 
     postgresdb.any('\
         SELECT m.message_id, ms.post_id, m.to_id, m.created_on, m.responded, \
-            m.message, m.has_seen, m.date_offer, m.response, m.minute_length, m.location_type_name, \
+            m.message, m.has_seen, m.date_offer, m.response, m.minute_length, m.location_type_name, m.meeting_subject, \
             um.user_type_id as subject_user_type_id, um.user_type_name as subject_user_type_name, \
             m.message_subject_id, um.first_name as subject_first_name, m.message_type_id, \
             m.user_id_1, um1.user_type_name as user_1_type_name, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
@@ -321,6 +317,7 @@ function listConversationMessages(req, res){
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
+            m.myId = userId;
             m.toMe = m.to_id == userId;
             var dateOfferTimestamp = moment(m.date_offer);
             m.date_offer_str = dateOfferTimestamp.format("LLL");

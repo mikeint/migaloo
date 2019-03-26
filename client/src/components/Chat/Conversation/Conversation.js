@@ -19,7 +19,7 @@ class Conversation extends Component {
 
     constructor(props) {
         super(props);
-        var toId = !props.conversation.toMe?props.conversation.to_id:(props.conversation.to_id===props.conversation.user_id_1?props.conversation.user_id_2:props.conversation.user_id_1);
+        var toId = (props.conversation.myId===props.conversation.user_id_1?props.conversation.user_id_2:props.conversation.user_id_1);
 		this.state = {
             conversation: props.conversation,
             messageList: [],
@@ -28,7 +28,8 @@ class Conversation extends Component {
             pageNumber: 1,
             toId: toId,
             showLoader: true,
-            meetingDialogOpen: false
+            meetingDialogOpen: false,
+            meetingCreate: {}
         };
     }
     componentDidMount = () => {
@@ -54,18 +55,27 @@ class Conversation extends Component {
                         }
                         if(d.message_type_id === 1){ // Is a chat message
                             // Write the message text
-                            messageList.unshift({type:'message', mine:!d.toMe, text:d.message, date:d.created})
+                            messageList.unshift({type:'message', 
+                            mine:!d.toMe,  // From me
+                            text:d.message, 
+                            date:d.created})
                         }else if(d.message_type_id === 2){ // Is a meeting request
-                            messageList.unshift({type:'calendar', mine:!d.toMe, dateOffer:d.date_offer_str,
+                            messageList.unshift({type:'calendar',
+                                mine:!d.toMe, // From me
+                                dateOffer:d.date_offer_str,
                                 length:d.minute_length >= 60?((d.minute_length/60).toString()+" hour"+(d.minute_length === 60?'':'s')):(d.minute_length+" minutes"),
                                 responded: d.responded,
                                 response:d.response,
                                 messageId: d.message_id,
+                                subject: d.meeting_subject,
                                 date:d.created, locationType: d.location_type_name})
                             if(d.response !== 0){
-                                messageList.unshift({type:'calendar_response', mine:d.toMe, dateOffer:d.date_offer_str,
+                                messageList.unshift({type:'calendar_response',
+                                    mine:d.toMe, // Reponses are duplicates of the invite
+                                    dateOffer:d.date_offer_str,
                                     length:d.minute_length >= 60?((d.minute_length/60).toString()+" hour"+(d.minute_length === 60?'':'s')):(d.minute_length+" minutes"),
                                     response:d.response,
+                                    subject: d.meeting_subject,
                                     date:d.created, locationType: d.location_type_name})
                             }
                         }
@@ -85,19 +95,32 @@ class Conversation extends Component {
             })
         }
     }
-    sendMessage = () => {
+    sendMessage = (meeting) => {
+        var data = null
         var message = this.message.value;
-        var dateOffer = null;//this.dateOffer.value;
-        var minuteLength = null;//this.dateOffer.value;
-        if((message && message !== "") || dateOffer){
-            var data = {
+        if(meeting){
+            var startDateTime = this.state.meetingCreate.startDateTime;//this.state.meetingCreate.value;
+            var minuteLength = this.state.meetingCreate.length;//this.state.meetingCreate.value;
+            var location = this.state.meetingCreate.location;//this.state.meetingCreate.value;
+            var subject = this.state.meetingCreate.subject;//this.state.meetingCreate.value;
+            data = {
                 messageSubjectId: this.state.conversation.message_subject_id,
                 toId: this.state.toId,
-                messageType: this.state.conversation.message_type_id,
-                message:message,
-                dateOffer:dateOffer,
-                minuteLength: minuteLength
+                messageType: 2,
+                dateOffer: startDateTime,
+                minuteLength: minuteLength,
+                locationType: location,
+                subject: subject
             }
+        }else if(message && message !== ""){
+            data = {
+                messageSubjectId: this.state.conversation.message_subject_id,
+                toId: this.state.toId,
+                messageType: 1,
+                message:message
+            }
+        }
+        if(data != null){
             ApiCalls.post(`/api/message/create`, data)
             .then((res)=>{
                 if(res == null) return
@@ -112,6 +135,7 @@ class Conversation extends Component {
                 console.log(errors.response.data)
             })
         }
+
     }
     setCalendarResponse = (row, response) => {
         var data = {
@@ -139,9 +163,9 @@ class Conversation extends Component {
     };
 
     handleMeetingDialogClose = (event) => {
-        if(event.response === 1)
-            this.setState({ meetingTime: event.value, meetingDialogOpen: false });
-        else
+        if(event.response === 1){
+            this.setState({ meetingCreate: event.value, meetingDialogOpen: false }, ()=>this.sendMessage(true));
+        }else
             this.setState({ meetingDialogOpen: false });
     };
     handleChatDialogClose = () => {
@@ -185,10 +209,11 @@ class Conversation extends Component {
                                         </div>:''}
                                         {d.type === 'calendar' &&
                                         <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
+                                            <div>{d.subject}</div>
                                             <div>{d.locationType}</div>
                                             <div>{d.dateOffer}</div>
                                             <div>{d.length}</div>
-                                            {d.response === 0 && <div className="responseContainer">
+                                            {d.response === 0 && d.toMe && <div className="responseContainer">
                                                 <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 1)}>Accept</div>
                                                 <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 2)}>Reject</div>
                                             </div>}
@@ -196,6 +221,7 @@ class Conversation extends Component {
                                         </div>}
                                         {d.type === 'calendar_response' &&
                                         <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
+                                            <div>{d.subject}</div>
                                             <div>
                                                 {d.locationType} Meeting has been {d.response === 1?"Accepted":"Rejected"}
                                             </div>
