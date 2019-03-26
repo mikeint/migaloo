@@ -77,7 +77,7 @@ class PostAJob extends React.Component{
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.id]: e.target.value })
+        this.setState({ [e.target.name]: e.target.value })
     }
 
     handleSubmit = () => {
@@ -105,7 +105,7 @@ class PostAJob extends React.Component{
                     <div className="formSection">  
                         <div className="input-2">
                             <TextField
-                                id="title"
+                                name="title"
                                 label="Title"
                                 className={classes.textField}
                                 value={this.state.title}
@@ -117,7 +117,7 @@ class PostAJob extends React.Component{
                         </div>  
                         <div className="input-2">
                             <TextField
-                                id="caption"
+                                name="caption"
                                 label="Description"
                                 multiline={true}
                                 className={classes.textAreaMaxHeight}

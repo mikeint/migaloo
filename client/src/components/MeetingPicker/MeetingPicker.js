@@ -5,9 +5,15 @@ import Calendar from 'react-calendar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
+import ApiCalls from '../../ApiCalls';  
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
+import Select from '@material-ui/core/Select';
+import Input from '@material-ui/core/Input';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
 
 const styles = theme => ({
     container: {
@@ -15,8 +21,8 @@ const styles = theme => ({
       flexWrap: 'wrap',
     },
     textField: {
-      marginLeft: theme.spacing.unit,
-      marginRight: theme.spacing.unit,
+      marginTop: theme.spacing.unit,
+      marginBottom: theme.spacing.unit,
       width: 400,
     },
     button:{
@@ -56,12 +62,22 @@ class MeetingPicker extends React.Component{
             startTime: currentTime.format("HH:mm"),
             endTime: currentTime.add(30, 'minutes').format("HH:mm"),
             length: moment.duration(30, 'minutes'),
-            error: null
+            error: null,
+            locationList: [],
+            subject: '',
+            location: -1
         };
         this.onStartTimeChange = this.onStartTimeChange.bind(this);
         this.onEndTimeChange = this.onEndTimeChange.bind(this);
         this.inputStartDate = React.createRef();
         this.inputEndDate = React.createRef();
+        ApiCalls.get("/api/message/locations")
+        .then((res)=>{
+            if(res == null) return
+            this.setState({locationList: res.data.locationList})
+        }).catch(errors => {
+            console.log(errors.response.data)
+        })
     }
     validateTime(){
         const dayStr = moment(this.state.day).format("YYYY-MM-DD")
@@ -91,6 +107,10 @@ class MeetingPicker extends React.Component{
         const dur = moment.duration(moment(time.target.value, "HH:mm").diff(moment(this.state.startTime, "HH:mm")))
         this.setState({endTime:time.target.value, length: dur}, this.validateTime);
     }
+    handleChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value })
+    }
+
     fullHumanize(duration){
         const hour = duration.hours();
         const minute = duration.minutes();
@@ -107,7 +127,7 @@ class MeetingPicker extends React.Component{
         return ret.join(" ");
     }
     handleClose = (event, value) => {
-        this.props.onClose({response: event, value: value});
+        this.props.onClose({response: event, value: value, meetingTime: this.state});
     };
 
     render(){  
@@ -117,6 +137,7 @@ class MeetingPicker extends React.Component{
                 <Dialog 
                         maxWidth="lg"
                         fullWidth={true}
+                        disableBackdropClick={true}
                         onClose={this.handleClose}
                         aria-labelledby="dialog-title"
                         open={other.open}> 
@@ -124,14 +145,31 @@ class MeetingPicker extends React.Component{
                     <DialogContent>
                         <form className="calendarContainer">
                             <TextField
-                                id="subject"
+                                name="subject"
                                 label="Subject"
                                 className={classes.textField}
                                 value={this.state.subject}
                                 required
                                 onChange={this.handleChange}
                                 margin="normal"
-                            />
+                            /><br/>
+                            <FormControl className={classes.selectFormControl}>
+                                <InputLabel htmlFor="location-helper">Location</InputLabel>
+                                <Select
+                                    value={this.state.location}
+                                    className={classes.textField}
+                                    onChange={this.handleChange}
+                                    required
+                                    input={<Input name="location" id="location-helper" />}
+                                    inputProps={{
+                                        id: 'location',
+                                    }}
+                                >
+                                    {this.state.locationList.map((d, i)=>
+                                        <MenuItem key={i} value={d.location_type_id}>{d.location_type_name}</MenuItem>
+                                    )}
+                                </Select>
+                            </FormControl>
                             <Calendar
                                 onChange={(v)=>this.setState({day:v}, this.validateTime)}
                                 minDate={new Date()}

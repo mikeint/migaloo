@@ -8,7 +8,7 @@ const db = require('../../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const messagesInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'message'], {table: 'messages'});
-const calendarInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'date_offer', 'minute_length'], {table: 'messages'});
+const calendarInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'date_offer', 'minute_length', 'location_type'], {table: 'messages'});
 const subjectInsertHelper = new pgp.helpers.ColumnSet(['user_id_1', 'user_id_2', 'message_subject_id', 'post_id'], {table: 'messages'});
 /**
  * Create a new message in a conversation, or calendar invite
@@ -27,6 +27,7 @@ router.post('/create', passport.authentication,  (req, res) => {
      * message
      * dateOffer
      * minuteLength
+     * locationType
      */
     var body = req.body
     const { errors, isValid } = validateMessageInput(body);
@@ -66,7 +67,8 @@ router.post('/create', passport.authentication,  (req, res) => {
                 message_type_id: messageType,
                 message:body.message,
                 data_offer:body.dateOffer,
-                minute_length: body.minuteLength
+                minute_length: body.minuteLength,
+                location_type: body.locationType
             }
             const query = pgp.helpers.insert(makeMessage, messageType===1?messagesInsertHelper:calendarInsertHelper);
 
@@ -89,6 +91,7 @@ router.post('/create', passport.authentication,  (req, res) => {
     });
 });
 /**
+ * TODO: No longer needed, handled automatically by set acceptance state
 * Create a new message conversation subject
 * @route POST api/message/createSubject
 * @group message - Chat Messages
@@ -334,5 +337,25 @@ function listConversationMessages(req, res){
         res.status(400).json(err)
     });
 }
+/**
+ * Get location types
+ * @route GET api/messages/locations
+ * @group messages - Chat Messages
+ * @returns {object} 200 - A list of maps containing autocompletes
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/locations', passport.authentication, (req, res) => {
+    postgresdb.any('SELECT location_type_name, location_type_id \
+            FROM location_type \
+            ORDER BY location_type_id ASC')
+    .then(data => {
+        res.json({success:true, locationList: data});
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json({success:false, error:err})
+    });
+});
 
 module.exports = router;

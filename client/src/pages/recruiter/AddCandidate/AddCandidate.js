@@ -78,7 +78,7 @@ class AddCandidate extends React.Component{
     } */
 
     handleChange = (e) => {
-        this.setState({ [e.target.id]: e.target.value })
+        this.setState({ [e.target.name]: e.target.value })
     }
 
     handleSubmit = () => {
@@ -112,7 +112,7 @@ class AddCandidate extends React.Component{
                         <div className="input-2">
                             <div className="i-2 il">
                                 <TextField
-                                    id="firstName"
+                                    name="firstName"
                                     label="First Name"
                                     className={classes.textField}
                                     value={this.state.firstName}
@@ -124,7 +124,7 @@ class AddCandidate extends React.Component{
                             </div>
                             <div className="i-2 il">
                                 <TextField
-                                    id="lastName"
+                                    name="lastName"
                                     label="Last Name"
                                     className={classes.textField}
                                     value={this.state.lastName}
@@ -136,7 +136,7 @@ class AddCandidate extends React.Component{
                             </div>
                             <div className="i-2 il">
                                 <TextField
-                                    id="email"
+                                    name="email"
                                     label="Email"
                                     className={classes.textField}
                                     value={this.state.email}
