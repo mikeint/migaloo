@@ -7,6 +7,7 @@ import { PrivateEmployerRoute, PrivateRecruiterRoute } from './PrivateRoute';
 import RecruiterRouter from './pages/recruiter/RecruiterRouter';
 import EmployerRouter from './pages/employer/EmployerRouter';
 import AboutTeamPage from './layout/AboutTeamPage/AboutTeam';
+import SignUpForm from './layout/SignUpForm/SignUpForm';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import './App.css';
@@ -74,6 +75,7 @@ class App extends Component {
                         <Route exact path='/login' render={ () => (<Login />) } />
                         <Route exact path="/" component={Landing} />
                         <Route exact path="/about" component={AboutTeamPage} />
+                        <Route exact path="/signUpForm" component={SignUpForm} />
                     </React.Fragment>
                 </BrowserRouter> 
                 

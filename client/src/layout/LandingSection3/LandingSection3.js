@@ -1,6 +1,6 @@
 import React, { Component } from "react";  
 import './LandingSection3.css';
-//import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ScrollAnimation from 'react-animate-on-scroll';  
 
 class LandingSection3 extends Component {
@@ -8,14 +8,10 @@ class LandingSection3 extends Component {
     constructor() {
         super();
 		this.state = {
-            showEmailInput: false,
+            
         }; 
     }
-
-
-    showEmailSignUp = () => { 
-        this.setState({ showEmailInput: !this.state.showEmailInput })
-    }
+ 
 
     handleChange = e => {
         this.setState({ [e.target.name]: e.target.value })
@@ -84,27 +80,7 @@ class LandingSection3 extends Component {
                         </div>
                         <div className="animated_half"> 
                             {/* <NavLink to='/login'><div className="signUpBtnHome">Sign Up</div></NavLink>  */}
-                            {!this.state.showEmailInput ? 
-                                <div className="signUpBtnHome" onClick={this.showEmailSignUp}>Sign Up</div>
-                            : 
-
-                            <React.Fragment>
-                                <h3 className="emailAnimatedTitle">Send us your email or contact below</h3>
-                                <div className="sendEmailContainer">
-                                    <input
-                                        id="email"
-                                        className="emailSignUpInput"
-                                        type="text"
-                                        name="email"
-                                        placeholder="email"
-                                        required
-                                        onChange={this.handleChange}
-                                    />
-                                    <div className="submitEmail">send</div>
-                                </div>
-                            </React.Fragment>
-                             }
-                            
+                            <Link to="/signUpForm"><div className="signUpBtnHome">Sign Up</div></Link>
                         </div>
                     </div>
                 </div>
