@@ -157,9 +157,9 @@ router.post('/createSubject', passport.authentication,  (req, res) => {
    });
 });
 /**
- * Set posting to be considered accepted or not accepted
- * @route POST api/message/setAcceptedState/:postId/:candidateId
- * @group postings - Job postings for employers
+ * Set response for the calander invide
+ * @route POST api/message/setResponse
+ * @group messages - Chat Messages
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
  * @returns {Error}  default - Unexpected error
@@ -230,13 +230,13 @@ function listMessages(req, res){
                 WHERE ml.user_id_1 = $1 OR ml.user_id_2 = $1 \
             ) mo \
             WHERE mo.rn = 1 \
-            ORDER BY mo.created_on DESC \
         ) m ON ms.message_subject_id = m.message_subject_id \
         INNER JOIN job_posting jp ON jp.post_id = ms.post_id \
         INNER JOIN user_master um ON um.user_id = ms.subject_user_id \
         LEFT JOIN user_master um1 ON um1.user_id = ms.user_id_1 \
         LEFT JOIN user_master um2 ON um2.user_id = ms.user_id_2 \
         WHERE ms.user_id_1 = $1 OR ms.user_id_2 = $1 \
+        ORDER BY coalesce(m.created_on, ms.created_on) DESC \
         OFFSET $2 \
         LIMIT 10 \
         ', [userId, (page-1)*10])
@@ -283,34 +283,17 @@ function listMessages(req, res){
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.get('/listConversationMessages/:user_id_1/:user_id_2/:subject_user_id', passport.authentication, listConversationMessages);
-router.get('/listConversationMessages/:user_id_1/:user_id_2/:subject_user_id/:page', passport.authentication, listConversationMessages);
+router.get('/listConversationMessages/:message_subject_id', passport.authentication, listConversationMessages);
+router.get('/listConversationMessages/:message_subject_id/:page', passport.authentication, listConversationMessages);
 function listConversationMessages(req, res){
     var page = req.params.page;
-    var userId1 = parseInt(req.params.user_id_1, 10);
-    var userId2 = parseInt(req.params.user_id_2, 10);
-    var subjectUserId = parseInt(req.params.subject_user_id, 10);
-    if(userId1 == null){
-        return res.status(400).json({success:false, error:"Missing User ID 1"})
-    }
-    if(userId2 == null){
-        return res.status(400).json({success:false, error:"Missing User ID 2"})
-    }
-    if(subjectUserId == null){
-        return res.status(400).json({success:false, error:"Missing Subject User ID"})
-    }
-    // Enforce user id 1 being less than 2
-    if(userId1 > userId2){
-        var t = userId1;
-        userId1 = userId2;
-        userId2 = t;
+    var messageSubjectId = parseInt(req.params.message_subject_id, 10);
+    if(messageSubjectId == null){
+        return res.status(400).json({success:false, error:"Missing Message Subject Id"})
     }
     var jwtPayload = req.body.jwtPayload;
     // Validate that the user id of the user is in the requested chain
     var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
-    if(userId != userId1 && userId != userId2){
-        return res.status(400).json({success:false, error:"You are not able to view this message chain"})
-    }
     if(page == null)
         page = 1;
 
@@ -327,11 +310,11 @@ function listConversationMessages(req, res){
         INNER JOIN user_master um ON um.user_id = ms.subject_user_id \
         INNER JOIN user_master um1 ON um1.user_id = m.user_id_1 \
         INNER JOIN user_master um2 ON um2.user_id = m.user_id_2 \
-        WHERE m.user_id_1 = $1 AND m.user_id_2 = $2 AND ms.subject_user_id = $3 \
+        WHERE m.message_subject_id = $1 \
         ORDER BY m.created_on DESC \
-        OFFSET $4 \
+        OFFSET $2 \
         LIMIT 10 \
-        ', [userId1, userId2, subjectUserId, (page-1)*10])
+        ', [messageSubjectId, (page-1)*10])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{

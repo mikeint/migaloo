@@ -42,18 +42,10 @@
 .expandableJobRow .selected{
     background-color: #4CAF50;
     color: #000;
-    float: right;
 }
-.expandableJobRow img {
-    width: 30px;
-} 
 .expandableJobRow .notSelected {
     background-color: #cecece70;
     color: #58585861;
-    width: 40px;
-}
-.expandableJobRow .notSelected img { 
-    width: 20px;
 }
 
 .expandableJobRow .thumbsBtn {

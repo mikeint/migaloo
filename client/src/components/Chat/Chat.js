@@ -49,7 +49,9 @@ class Chat extends Component {
                     {
                         this.state.conversationList != null ?
                             this.state.conversationList.map((conv, i)=>{
-                                return <ConversationRow key={i} conversation={conv}/>
+                                const initialOpen = conv.subject_user_id === this.props.match.params.candidateId &&
+                                    conv.post_id === this.props.match.params.postId
+                                return <ConversationRow key={i} conversation={conv} defaultOpenState={initialOpen} />
                             })
                         : <Loader/>
                     }

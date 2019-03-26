@@ -211,6 +211,7 @@ CREATE TABLE messages_subject (
     created_on timestamp default NOW(),
     subject_user_id bigint REFERENCES login(user_id),
     post_id bigint REFERENCES job_posting(post_id),
+    unique (user_id_1, user_id_2, subject_user_id, post_id),
     PRIMARY KEY(message_subject_id)
 );
 CREATE TABLE messages_base (
@@ -533,10 +534,10 @@ INSERT INTO candidate_tags (candidate_id, tag_id) VALUES
     (1007, 3),
     (1007, 4),
     (1007, 5);
-INSERT INTO messages_subject(message_subject_id, user_id_1, user_id_2, subject_user_id, post_id, created_on) VALUES
-    (1, 1, 500, 1000, 1, current_date - interval '7' day),
-    (2, 3, 500, 1006, 3, current_date - interval '11' day),
-    (3, 1, 500, 1001, 1, current_date - interval '1' day);
+INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id, created_on) VALUES
+    (1, 500, 1000, 1, current_date - interval '7' day), -- message_subject_id = 1
+    (3, 500, 1006, 3, current_date - interval '11' day), -- message_subject_id = 2
+    (1, 500, 1001, 1, current_date - interval '1' day); -- message_subject_id = 3
 INSERT INTO messages (message_type_id, to_id, message_subject_id, message, created_on) VALUES
     (1, 1, 1, 'We would like to hear more about sarah.', current_date - interval '6' day),
     (1, 500, 1, 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', current_date - interval '5' day),

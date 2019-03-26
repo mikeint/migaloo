@@ -8,7 +8,7 @@ class ConversationRow extends Component {
         super(props);
 		this.state = {
             conversation: props.conversation,
-            showChat:false
+            showChat:props.defaultOpenState?props.defaultOpenState:false
         };
     }
     openChat = (d) => {

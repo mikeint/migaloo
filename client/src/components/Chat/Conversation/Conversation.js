@@ -36,7 +36,7 @@ class Conversation extends Component {
     }
     getMessageList = () => {
         if(this.state.pageNumber <= this.state.pageCount || this.state.pageCount === -1){
-            ApiCalls.get(`/api/message/listConversationMessages/${this.state.conversation.user_id_1}/${this.state.conversation.user_id_2}/${this.state.conversation.subject_user_id}/${this.state.pageNumber}`)
+            ApiCalls.get(`/api/message/listConversationMessages/${this.state.conversation.message_subject_id}/${this.state.pageNumber}`)
             .then((res)=>{
                 if(res == null) return
                 this.setState({showLoader:false})

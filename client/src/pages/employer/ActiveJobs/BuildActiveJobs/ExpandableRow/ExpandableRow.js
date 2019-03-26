@@ -9,6 +9,8 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ThumbDown from '@material-ui/icons/ThumbDown';
 import ThumbUp from '@material-ui/icons/ThumbUp';
 import FiberNew from '@material-ui/icons/FiberNew';
+import Chat from '@material-ui/icons/Chat';
+import { NavLink } from 'react-router-dom';  
 
 import { withStyles } from '@material-ui/core/styles';  
   
@@ -16,6 +18,12 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
     newIndicator:{
         marginLeft:"20px"
+    },
+    selected:{
+        color:"#263c54"
+    },
+    notselected:{
+        color:"grey"
     }
 });
 class ExpandableRow extends React.Component{
@@ -53,27 +61,14 @@ class ExpandableRow extends React.Component{
             console.log(errors.response.data)
         )
     }
-    handleAccept = () => {
-        ApiCalls.post(`/api/employerPostings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:true})
+    handleResponse = (accepted) => {
+        ApiCalls.post(`/api/employerPostings/setAcceptedState/${this.state.jobObj.post_id}/${this.state.rowObj.candidate_id}/${this.state.rowObj.recruiter_id}`, {accepted:accepted})
         .then((res)=>{
             if(res == null) return
             var newRowObj = {};
             Object.assign(newRowObj, this.state.rowObj);
-            newRowObj.accepted = true;
-            newRowObj.not_accepted = false;
-            this.setState({rowObj:newRowObj});
-        }).catch(errors => 
-            console.log(errors.response.data)
-        )
-    }
-    handleReject = () => {
-        ApiCalls.post(`/api/employerPostings/setAcceptedState/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {accepted:false})
-        .then((res)=>{
-            if(res == null) return
-            var newRowObj = {};
-            Object.assign(newRowObj, this.state.rowObj);
-            newRowObj.accepted = false;
-            newRowObj.not_accepted = true;
+            newRowObj.accepted = accepted;
+            newRowObj.not_accepted = !accepted;
             this.setState({rowObj:newRowObj});
         }).catch(errors => 
             console.log(errors.response.data)
@@ -102,9 +97,23 @@ class ExpandableRow extends React.Component{
                             <div className="rowMargin">Email: <span className="rowData"><a href={"mailto:"+this.state.rowObj.email}>{this.state.rowObj.email}</a></span></div>
                         </div>
                         <div className="flexColumn">
-                            <Button className={(this.state.rowObj.accepted?"selected":(this.state.rowObj.not_accepted?" notSelected":""))} onClick={this.handleAccept.bind(this)}><ThumbUp/></Button>
-                            <Button className={(this.state.rowObj.not_accepted?"selected":(this.state.rowObj.accepted?" notSelected":""))} onClick={this.handleReject.bind(this)}><ThumbDown/></Button>
+                            <Button onClick={()=>this.handleResponse(true)}>
+                                <ThumbUp className={(this.state.rowObj.accepted?classes.selected:(this.state.rowObj.not_accepted?classes.notselected:""))}/>
+                            </Button>
+                            <Button onClick={()=>this.handleResponse(false)}>
+                                <ThumbDown className={(this.state.rowObj.not_accepted?classes.selected:(this.state.rowObj.accepted?classes.notselected:""))}/>
+                            </Button>
                         </div>
+                        {this.state.rowObj.accepted && 
+                            <NavLink to={`/employer/chat/${this.props.job.post_id}/${this.props.obj.candidate_id}`}>
+                                <Button
+                                variant="contained" 
+                                color="primary">
+                                    <Chat/>&nbsp;
+                                    Open Chat
+                                </Button>
+                            </NavLink>
+                        }
                     </div>
                 </ExpansionPanelDetails>
             </ExpansionPanel>

@@ -20,6 +20,8 @@ const methodOverride = require('method-override');
 
 const app = express();
 
+var logger = require('morgan');
+app.use(logger('dev'));
 app.use(cors());
 
 app.use(bodyParser.urlencoded({
