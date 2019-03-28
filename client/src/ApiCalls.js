@@ -6,6 +6,9 @@ const axiosConfig = {
     cancelToken: null,
     headers: {'Authorization': 'Bearer ' + Auth.getToken(), 'Content-Type': 'application/json' }
 }
+function getNewAuthToken(){
+    axiosConfig.headers = {'Authorization': 'Bearer ' + Auth.getToken(), 'Content-Type': 'application/json' }
+}
 const handleErrors = (errors) => {
     if (axios.isCancel(errors)) {
       console.log('Request canceled', errors.message);
@@ -42,5 +45,6 @@ const post = (url, args) => {
 module.exports = {
     get:get,
     post:post,
-    cancel:cancel
+    cancel:cancel,
+    getNewAuthToken:getNewAuthToken
 };

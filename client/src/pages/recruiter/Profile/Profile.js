@@ -43,6 +43,7 @@ class Profile extends React.Component{
         }).then((result) => {
             if (result.value) {
                 this.Auth.logout();
+                ApiCalls.getNewAuthToken();
                 this.setState({logout: true})
             } 
         }) 
