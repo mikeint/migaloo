@@ -2,24 +2,36 @@
     width: 100%; 
     height: 500px; 
     background-color: #cecece;
+    position: relative;
+    overflow: hidden;
 }
-
-.heroImg { 
-    width: 100%;
+.heroAnimation{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    animation: moveHeroDesktop 100s infinite linear;
+    width: 300%;
 }
-
 .heroLayer {  
     height: 600px; 
     background-repeat: no-repeat;
-    background-size: inherit;
+    background-size: auto 100%;
+    width: 100%;
     position: absolute;
-    width: 100%;  
-    animation: moveHeroDesktop 500s infinite;
 }
-@keyframes moveHeroDesktop { 
-    0% { background-position-x: 0; }
-    50% { background-position-x: -2560px; }
-    100% { background-position-x: 0; }   
+@keyframes moveHeroDesktop {
+    0% { 
+        left: 0;
+        margin-left: 0;
+    }
+    50% { 
+        left: -1870px;
+        margin-left: 100%;
+    }
+    100% { 
+        left: 0;
+        margin-left: 0;
+    }   
 }
 
 #heroLayer0{
@@ -27,46 +39,40 @@
 }
 #heroLayer1{
     background-image: url("../../files/images/landingPage/layer1.png");
-    background-position-y: 20px;
 }
 #heroLayer2{
     background-image: url("../../files/images/landingPage/layer2.png");
-    background-position-y: 120px;
 }
 #heroLayer3{
     background-image: url("../../files/images/landingPage/layer3.png");
-    background-position-y: 60px;
 }
 
 
 @media only screen and (max-width: 1024px) { 
     .heroContainer { 
-        height: 360px;
+        height: 400px;
     }
-    .heroImg { 
-        width: 100%;
-        height: 430px;
+    .heroAnimation{
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        animation: moveHeroMobile 250s infinite linear;
     }
     .heroLayer {  
-        height: 430px; 
-        background-size: 2000px;
-        animation: moveHeroMobile 120s infinite;
+        height: 430px;
     } 
     @keyframes moveHeroMobile { 
-        0% { background-position-x: 1000; }
-        50% { background-position-x: -1000px; }
-        100% { background-position-x: 1000; }   
-    }
-    #heroLayer0{ 
-        background-size: cover;
-    }
-    #heroLayer1{ 
-        background-position-y: 180px;
-    }
-    #heroLayer2{ 
-        background-position-y: 200px;
-    }
-    #heroLayer3{ 
-        background-position-y: 190px;
+        0% { 
+            left: 0;
+            margin-left: 0;
+        }
+        50% { 
+            left: -1340px;
+            margin-left: 100%;
+        }
+        100% { 
+            left: 0; 
+            margin-left: 0;
+        }   
     }
 }
