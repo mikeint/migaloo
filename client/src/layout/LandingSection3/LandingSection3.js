@@ -1,33 +1,33 @@
 import React, { Component } from "react";  
 import './LandingSection3.css';
-//import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import ScrollAnimation from 'react-animate-on-scroll';  
 
-class LandingSection3 extends Component {
+import empImg from "../../files/images/employer_pick.png";
+import recImg from "../../files/images/recruiter_pick.png";
 
+class LandingSection3 extends Component {
     constructor() {
         super();
 		this.state = {
-            showEmailInput: false,
+            showSignUpButtons: false,
         }; 
     }
 
-
-    showEmailSignUp = () => { 
-        this.setState({ showEmailInput: !this.state.showEmailInput })
+    showButtons = () => { 
+        this.setState({ showSignUpButtons: !this.state.showSignUpButtons })
     }
 
+ 
     handleChange = e => {
         this.setState({ [e.target.name]: e.target.value })
     }
-  
+ 
     render() { 
 
         return (
             <div className="landingSection3">  
-
-
-
+ 
             
                 {/* FOR DESKTOP - stacking properly */ }
                 <div className="showOnDesktop">
@@ -82,29 +82,16 @@ class LandingSection3 extends Component {
                                 <p>We are near the release of our beta platform but we are not quite there yet - thanks for your patience.  Please sign up now to be part of our first cohort of recruiters and employers… Free of&nbsp;charge!</p>
                             </div>
                         </div>
-                        <div className="animated_half"> 
-                            {/* <NavLink to='/login'><div className="signUpBtnHome">Sign Up</div></NavLink>  */}
-                            {!this.state.showEmailInput ? 
-                                <div className="signUpBtnHome" onClick={this.showEmailSignUp}>Sign Up</div>
-                            : 
-
+                        <div className="animated_half">  
+                            {!this.state.showSignUpButtons ? 
+                                <div className="signUpBtnHome" onClick={this.showButtons}>Sign Up</div>
+                            :  
                             <React.Fragment>
-                                <h3 className="emailAnimatedTitle">Send us your email or contact below</h3>
-                                <div className="sendEmailContainer">
-                                    <input
-                                        id="email"
-                                        className="emailSignUpInput"
-                                        type="text"
-                                        name="email"
-                                        placeholder="email"
-                                        required
-                                        onChange={this.handleChange}
-                                    />
-                                    <div className="submitEmail">send</div>
-                                </div>
+                                <div className="chooseText">Please choose:</div>
+                                <Link to='signUpFormEmployer'><div className="signUpBtnHome"><img src={empImg} alt="" align="middle" />Employer</div></Link>
+                                <Link to='signUpFormRecruiter'><div className="signUpBtnHome"><img src={recImg} alt="" align="middle" />Recruiter</div></Link>
                             </React.Fragment>
-                             }
-                            
+                            }
                         </div>
                     </div>
                 </div>
@@ -168,29 +155,14 @@ class LandingSection3 extends Component {
                             </div>
                         </div>
                         <div className="animated_half">
-                            <div className="module_content">
-                                {/* <NavLink to='/login'><div className="signUpBtnHome">Sign Up</div></NavLink> */}
-                                {!this.state.showEmailInput ? 
-                                    <div className="signUpBtnHome" onClick={this.showEmailSignUp}>Sign Up</div>
-                                : 
-
-                                <React.Fragment>
-                                    <h3 className="emailAnimatedTitle">Send us your email or contact below</h3>
-                                    <div className="sendEmailContainer">
-                                        <input
-                                            id="email"
-                                            className="emailSignUpInput"
-                                            type="text"
-                                            name="email"
-                                            placeholder="email"
-                                            required
-                                            onChange={this.handleChange}
-                                        />
-                                        <div className="submitEmail">send</div>
-                                    </div>
-                                </React.Fragment>
-                                }
-                            </div>
+                            {!this.state.showSignUpButtons ? 
+                                <div className="signUpBtnHome" onClick={this.showButtons}>Sign Up</div>
+                            :  
+                            <React.Fragment>
+                               <Link to='signUpFormEmployer'><div className="signUpBtnHome"><img src={empImg} alt="" />Employer</div></Link>
+                               <Link to='signUpFormRecruiter'><div className="signUpBtnHome"><img src={recImg} alt="" />Recruiter</div></Link>
+                            </React.Fragment>
+                            }
                         </div>
                     </div>
                 </div>

@@ -7,7 +7,9 @@ import { PrivateEmployerRoute, PrivateRecruiterRoute } from './PrivateRoute';
 import RecruiterRouter from './pages/recruiter/RecruiterRouter';
 import EmployerRouter from './pages/employer/EmployerRouter';
 import AboutTeamPage from './layout/AboutTeamPage/AboutTeam';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'; 
+import SignUpFormEmployer from './layout/components/SignUpFormEmployer/SignUpFormEmployer';
+import SignUpFormRecruiter from './layout/components/SignUpFormRecruiter/SignUpFormRecruiter';
 
 import './App.css';
 
@@ -66,7 +68,9 @@ class App extends Component {
                         </Switch>
                         <Route exact path='/login' render={ () => (<Login />) } />
                         <Route exact path="/" component={Landing} />
-                        <Route exact path="/about" component={AboutTeamPage} />
+                        <Route exact path="/about" component={AboutTeamPage} /> 
+                        <Route exact path="/signUpFormEmployer" component={SignUpFormEmployer} /> 
+                        <Route exact path="/signUpFormRecruiter" component={SignUpFormRecruiter} /> 
                     </React.Fragment>
                 </BrowserRouter> 
                 

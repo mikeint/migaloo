@@ -3,16 +3,59 @@
     float: left;
     overflow: hidden;
 }
-.signUpBtnHome{
-    width: 50%;
-    margin: auto;
+.signUpBtnHome {
+    width: 70%;
     text-align: center;
     padding: 20px;
     color: #fff;
     background: #263c54;
     cursor: pointer;
-    font-size: 22px;
+    font-size: 32px;
+    margin: 20px auto; 
+    transition: 0.3s;
+    animation: fadein 1.3s;
+    -moz-animation: fadein 1.3s; /* Firefox */
+    -webkit-animation: fadein 1.3s; /* Safari and Chrome */
+    -o-animation: fadein 1.3s; /* Opera */
 }
+.signUpBtnHome img {
+    width: 40px;
+    float: right;
+    margin-top: -9px;
+}  
+.signUpBtnHome:hover {
+    background-color: #546f82;
+} 
+.chooseText { 
+    width: 70%;
+    text-align: center;  
+    font-size: 32px;
+    font-weight: bold;
+    margin: 20px auto; 
+    transition: 0.3s;
+    animation: fadein 0.5s;
+    -moz-animation: fadein 0.5s; /* Firefox */
+    -webkit-animation: fadein 0.5s; /* Safari and Chrome */
+    -o-animation: fadein 0.5s; /* Opera */
+}
+@keyframes fadein {
+    from { opacity:0; }
+    to { opacity:1; }
+}
+@-moz-keyframes fadein { /* Firefox */
+    from { opacity:0; }
+    to { opacity:1; }
+}
+@-webkit-keyframes fadein { /* Safari and Chrome */
+    from { opacity:0; }
+    to { opacity:1; }
+}
+@-o-keyframes fadein { /* Opera */
+    from { opacity:0; }
+    to { opacity: 1; }
+}
+
+
 
 .sendEmailContainer {
     width:100%;
@@ -141,7 +184,7 @@
         display: block;
     }
     .signUpBtnHome {
-        width: 100%;
+        width: 90%;
     }
     .header_module_content {
         min-height: 200px;
