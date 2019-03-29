@@ -6,11 +6,15 @@ module.exports = function validateMessageInput(data) {
     if (Validator.isEmpty(data.messageSubjectId)) {
         errors.messageSubjectId = 'Subject field is required';
     }
-    if (Validator.isEmpty(data.message) && Validator.isEmpty(data.dateOffer)) {
+    if ((!data.message || Validator.isEmpty(data.message)) && (!data.dateOffer || Validator.isEmpty(data.dateOffer))) {
         errors.message = 'Message field is required';
         errors.dateOffer = 'Date Offer field is required';
-        if(!Validator.isEmpty(data.minuteLength)){
+    }else if(!data.dateOffer && !Validator.isEmpty(data.dateOffer)){
+        if(Validator.isEmpty(data.minuteLength)){
             errors.minuteLength = 'Minute Length field is required';
+        }
+        if(Validator.isEmpty(data.subject)){
+            errors.minuteLength = 'Subject field is required';
         }
     }
     if (Validator.isEmpty(data.toId)) {

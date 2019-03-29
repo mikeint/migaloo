@@ -18,17 +18,19 @@ class Chat extends Component {
         };
         this.Auth = new AuthFunctions();
     }
-    componentWillMount = () => {
+    componentDidMount = () => {
         this.getConversationList();
     }
     componentWillUnmount = () => {
+        ApiCalls.cancel()
         this.setState({enterSlide:"page-exit"})
     }
     getConversationList = () => {
         ApiCalls.get('/api/message/list/'+this.state.page)
         .then((res)=>{
-            this.setState({ conversationList: res.data,
-                pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
+            if(res)
+                this.setState({ conversationList: res.data,
+                    pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )
@@ -47,7 +49,9 @@ class Chat extends Component {
                     {
                         this.state.conversationList != null ?
                             this.state.conversationList.map((conv, i)=>{
-                                return <ConversationRow key={i} conversation={conv}/>
+                                const initialOpen = conv.subject_user_id === this.props.match.params.candidateId &&
+                                    conv.post_id === this.props.match.params.postId
+                                return <ConversationRow key={i} conversation={conv} defaultOpenState={initialOpen} />
                             })
                         : <Loader/>
                     }

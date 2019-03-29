@@ -6,20 +6,72 @@ import AuthFunctions from '../../../AuthFunctions';
 
 import ApiCalls from '../../../ApiCalls';  
 import TagSearch from '../../../components/TagSearch/TagSearch';
+import { withStyles } from '@material-ui/core/styles';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import Input from '@material-ui/core/Input';
+import MenuItem from '@material-ui/core/MenuItem';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import Button from '@material-ui/core/Button';
 
+const styles = theme => ({
+    textField: {
+        width: "50%",
+        margin: "10px"
+    },
+    selectFormControl:{
+        flex: "1 1",
+        margin: "10px"
+    },
+    tagSearch:{
+        margin: "10px"
+    },
+    postButton:{
+        width:"100%",
+        marginTop: "20px"
+    },
+    textAreaMaxHeight:{
+        width: "100%",
+        margin: "10px"
+    }
+})
 class PostAJob extends React.Component{
     constructor() {
         super();
         this.state = {   
             title:'',
             caption:'',
-            experience_type_name:'',
-            compensation:'',
-            redirect: false
+            salary:'',
+            experience:'',
+            redirect: false,
+            salaryList: [],
+            experienceList: []
         }
         this.Auth = new AuthFunctions();
+        ApiCalls.get('/api/autocomplete/salary')
+        .then((res) => {
+            if(res && res.data.success) {
+                this.setState({salaryList:res.data.salaryList});
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+        ApiCalls.get('/api/autocomplete/experience')
+        .then((res) => {
+            if(res && res.data.success) {
+                this.setState({experienceList:res.data.experienceList});
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
     }
  
+    componentWillUnmount = () => {
+        ApiCalls.cancel();
+    }
     componentDidMount() {
         window.scrollTo(0, 0); 
     }
@@ -31,7 +83,7 @@ class PostAJob extends React.Component{
     handleSubmit = () => {
         ApiCalls.post('/api/employerPostings/create', this.state)
         .then((res) => { 
-            if(res.data.success) {
+            if(res && res.data.success) {
                 this.setState({ redirect: true })
             }
         })
@@ -44,6 +96,7 @@ class PostAJob extends React.Component{
 
 
     render(){   
+        const { classes } = this.props;
         return (
             <React.Fragment>
                 {this.state.redirect ? <Redirect to='/employer/activeJobs' /> : ''}
@@ -51,63 +104,77 @@ class PostAJob extends React.Component{
                 <div className="postAJobContainer">
                     <div className="formSection">  
                         <div className="input-2">
-                            <div className="i-2 il">
-                                <div className="user-input-wrp">
-                                    <input
-                                        id="title"
-                                        type="text"
-                                        name="title"
-                                        required
-                                        onChange={this.handleChange}
-                                        value={this.state.title}
-                                    />
-                                    <span className="floating-label">Title</span>
-                                </div>
-                            </div>
-                            <div className="i-2">
-                                <div className="user-input-wrp">
-                                    <textarea
-                                        id="caption"
-                                        type="text"
-                                        name="caption"
-                                        required
-                                        onChange={this.handleChange}
-                                        value={this.state.caption}
-                                    />
-                                    <span className="floating-label">Description</span>
-                                </div>
-                            </div>
+                            <TextField
+                                name="title"
+                                label="Title"
+                                className={classes.textField}
+                                required
+                                onBlur={this.handleChange}
+                                margin="normal"
+                                variant="outlined"
+                            />
                         </div>  
-                        <TagSearch onChange={(tags)=>this.setState({tagIds:tags})}/>
                         <div className="input-2">
-                            <div className="i-2 il">
-                                <div className="user-input-wrp">
-                                    <input
-                                        id="experience_type_name"
-                                        type="text"
-                                        name="experience_type_name"
-                                        required
-                                        onChange={this.handleChange}
-                                        value={this.state.experience_type_name}
-                                    />
-                                    <span className="floating-label">Experience type</span>
-                                </div>
-                            </div>
-                            <div className="i-2">
-                                <div className="user-input-wrp">
-                                    <input
-                                        id="compensation"
-                                        type="text"
-                                        name="compensation"
-                                        required
-                                        onChange={this.handleChange}
-                                        value={this.state.compensation}
-                                    />
-                                    <span className="floating-label">Compensation</span>
-                                </div>
-                            </div>
+                            <TextField
+                                name="caption"
+                                label="Description"
+                                multiline={true}
+                                className={classes.textAreaMaxHeight}
+                                placeholder="A basic Job Description"
+                                rowsMax={7}
+                                rows={2}
+                                required
+                                onBlur={this.handleChange}
+                                margin="normal"
+                                variant="outlined"
+                            />
+                        </div>  
+                        <div  className={classes.tagSearch}>
+                            <TagSearch onChange={(tags)=>this.setState({tagIds:tags})}/>
                         </div>
-                        <div className="submitJobBtn" onClick={this.handleSubmit}>Post</div>
+                        <div className="input-2">
+                                <FormControl className={classes.selectFormControl}>
+                                    <InputLabel htmlFor="salary-helper">Salary</InputLabel>
+                                    <Select
+                                        value={this.state.salary}
+                                        onChange={this.handleChange}
+                                        input={<Input name="salary" id="salary-helper" />}
+                                        inputProps={{
+                                            id: 'salary',
+                                        }}
+                                    >
+                                        <MenuItem value="">
+                                            <em>Unspecified</em>
+                                        </MenuItem>
+                                        {this.state.salaryList.map((d, i)=>
+                                            <MenuItem key={i} value={d.salary_type_id}>{d.salary_type_name}</MenuItem>
+                                        )}
+                                    </Select>
+                                </FormControl>
+                                <FormControl className={classes.selectFormControl}>
+                                    <InputLabel htmlFor="experience-helper">Experience</InputLabel>
+                                    <Select
+                                        value={this.state.experience}
+                                        onChange={this.handleChange}
+                                        input={<Input name="experience" id="experience-helper" />}
+                                        inputProps={{
+                                            id: 'experience',
+                                        }}
+                                    >
+                                        <MenuItem value="">
+                                            <em>Unspecified</em>
+                                        </MenuItem>
+                                        {this.state.experienceList.map((d, i)=>
+                                            <MenuItem key={i} value={d.experience_type_id}>{d.experience_type_name}</MenuItem>
+                                        )}
+                                    </Select>
+                                </FormControl>
+                        </div>
+                        <Button 
+                            color="primary"
+                            variant="contained"
+                            className={classes.postButton}
+                            onClick={this.handleSubmit}>Post</Button>
                     </div>
                 </div> 
             </React.Fragment>
@@ -115,4 +182,4 @@ class PostAJob extends React.Component{
     }
 };
 
-export default PostAJob;
+export default withStyles(styles)(PostAJob);  

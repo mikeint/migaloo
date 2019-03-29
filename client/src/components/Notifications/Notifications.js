@@ -14,7 +14,6 @@ const styles = theme => ({
     drawer:{
         width: "80%",
         minWidth: "300px",
-        maxHeight: "20px",
         position: "relative"
     }
 })
@@ -55,7 +54,7 @@ class Notifications extends React.Component{
         var userType = this.Auth.getUser().userType;
         ApiCalls.get(userType===1?'/api/recruiter/alerts':'/api/employer/alerts')
         .then((res) => {
-            if(res.data.success) {
+            if(res && res.data.success) {
                 var count = (res.data.alertList.length === 0 ? 0 : 
                     parseInt(res.data.alertList[0].alert_count, 10))
                 count = count > 99 ? 99 : count;

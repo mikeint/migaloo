@@ -1,0 +1,36 @@
+.signUpFormContainer {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    background: #263c54;
+}
+.signUpForm { 
+    padding: 30px;
+    color: #fff; 
+ 
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;    
+    width: 100%;
+    max-width: 1020px;
+    margin: auto;
+}
+
+.formButtonContainer {
+    display: flex;
+}
+.formQuestionTitle {
+    width: 50%;
+    justify-content: center;
+    display: flex;
+    height: 50px;
+    line-height: 50px;
+    font-size: 40px;
+    border: 1px solid white;
+    cursor: pointer;
+}
+
+.formQuestionTitle:hover {
+    background: #546f82;
+}

@@ -8,7 +8,6 @@ import ExpandableRow from './ExpandableRow/ExpandableRow';
 import debounce from 'lodash/debounce'; 
 
 import whale from '../../../files/images/logo.png'
-//import Overlay from '../../../components/Overlay/Overlay';
 import AddCandidate from '../AddCandidate/AddCandidate';
 import Pagination from "react-js-pagination";
 import '../../../constants/AnimateMigalooOverlay';  
@@ -25,7 +24,6 @@ const styles = theme => ({
     },
     drawer:{ 
         minWidth: "300px",
-        maxHeight: "20px",
         position: "relative"
     }
 });
@@ -56,13 +54,15 @@ class CandidateList extends React.Component{
     }
 
     componentWillUnmount = () => {
+        ApiCalls.cancel()
         this.setState({enterSlide:"page-exit"})
     }
 
     openCandidateTop = (candidateId) => { 
         ApiCalls.get(`/api/candidate/getCandidate/${candidateId}`)
         .then((res) => {
-            this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].page_count, 10):1 }) 
+            if(res)
+                this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].page_count, 10):1 }) 
         });
     }
 
@@ -96,7 +96,8 @@ class CandidateList extends React.Component{
             ApiCalls.get('/api/candidate/listForJob/'+this.state.postId+"/"+this.state.page+(searchString?`/${searchString}`:'')):
             ApiCalls.get('/api/candidate/list/'+this.state.page+(searchString?`/${searchString}`:'')))
         .then((res)=>{
-            this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].page_count, 10):1 }) 
+            if(res)
+                this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].page_count, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )
@@ -169,14 +170,14 @@ class CandidateList extends React.Component{
                         }
                         </div>
  
-                        <SwipeableDrawer
-                            anchor="bottom"
-                            className={classes.drawer}
-                            open={this.state.showOverlay}
-                            onClose={()=>this.setState({"showOverlay":false})}
-                            onOpen={()=>this.setState({"showOverlay":true})}
-                        > 
-                        <AddCandidate close={()=>this.setState({"showOverlay":false})} />
+                    <SwipeableDrawer
+                        anchor="bottom"
+                        className={classes.drawer}
+                        open={this.state.showOverlay}
+                        onClose={()=>this.setState({"showOverlay":false})}
+                        onOpen={()=>this.setState({"showOverlay":true})}
+                    > 
+                        <AddCandidate onClose={()=>this.setState({"showOverlay":false})} />
                     </SwipeableDrawer>
                     
             </React.Fragment>

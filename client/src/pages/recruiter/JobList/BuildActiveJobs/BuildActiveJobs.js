@@ -3,12 +3,19 @@ import './BuildActiveJobs.css';
 import ApiCalls from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import {Redirect} from 'react-router-dom';
-import Overlay from '../../../../components/Overlay/Overlay';
 import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import { withStyles } from '@material-ui/core/styles';
 
 import goldStar from '../../../../files/images/star_gold.png';
 import blackStar from '../../../../files/images/star_black.png';
   
+const styles = theme => ({
+    drawer:{ 
+        minWidth: "300px",
+        position: "relative"
+    }
+});
 class BuildActiveJobs extends React.Component{
 
     constructor(props){
@@ -21,13 +28,12 @@ class BuildActiveJobs extends React.Component{
             jobObj: {},
             redirectJob: false,
             showPostJob: false,
-            overlayConfig: {direction: "b-t", swipeLocation: "t"},
             enterSlide:"page-enter",
             openJobPageState: false,
         }
         this.Auth = new AuthFunctions();
     } 
-    componentWillMount = () => {
+    componentDidMount = () => {
         this.setState({ user: this.Auth.getUser() }, ()=>{
             this.getImage();
         });
@@ -41,7 +47,7 @@ class BuildActiveJobs extends React.Component{
             ApiCalls.get('/api/recruiterJobs/getCandidateForJob/'+this.state.candidateId+'/'+this.state.jobId):
             ApiCalls.get('/api/recruiterJobs/get/'+this.state.jobId))
         .then((res)=>{
-            if(res.data.success){
+            if(res && res.data.success){
                 console.log(res.data)
                 const jobList = res.data.jobList;
                 const candidateData = res.data.candidate;
@@ -57,6 +63,7 @@ class BuildActiveJobs extends React.Component{
     getImage = () => {
         ApiCalls.get(`/api/profileImage/view/2/${this.state.jobObj.employer_id}/small`)
         .then((res)=>{
+            if(res == null) return
             if(res.data.success){
                 this.setState({ profileImage: res.data.url }) 
             }else{
@@ -90,6 +97,7 @@ class BuildActiveJobs extends React.Component{
 
 
     render(){
+        const { classes } = this.props;
         if(this.state.jobObj == null){
             return <div>Job can not be found.</div>
         }else
@@ -144,15 +152,20 @@ class BuildActiveJobs extends React.Component{
 
  
 
-                {this.state.showPostJob && <Overlay
-                                                html={<PostCandidateToJob candidate={this.state.candidateData} job={this.state.jobData} handleClose={()=>this.setState({showPostJob:false})} />}  
-                                                handleClose={()=>this.setState({showPostJob:false})} 
-                                                config={this.state.overlayConfig}
-                                            />}
+                <SwipeableDrawer
+                    anchor="bottom"
+                    className={classes.drawer}
+                    open={this.state.showPostJob}
+                    onClose={()=>this.setState({"showPostJob":false})}
+                    onOpen={()=>this.setState({"showPostJob":true})}
+                > 
+                    <PostCandidateToJob candidate={this.props.candidateData}
+                                                job={this.props.jobData}
+                                                handleClose={()=>this.setState({showPostJob:false})} />
+                </SwipeableDrawer>
             </React.Fragment>
         )
     }
 }
  
-
-export default BuildActiveJobs;
+export default withStyles(styles)(BuildActiveJobs);

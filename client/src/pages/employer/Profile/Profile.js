@@ -3,7 +3,6 @@ import './Profile.css';
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import AuthFunctions from '../../../AuthFunctions';  
 import { Redirect } from 'react-router-dom';
-import Overlay from '../../../components/Overlay/Overlay';
 import ApiCalls from '../../../ApiCalls';  
 import UploadImage from '../../../components/UploadImage/UploadImage'; 
 import defaultProfileImage from '../../../files/images/profile.png'
@@ -13,24 +12,23 @@ class Profile extends React.Component{
 
     constructor(){
         super();
+        this.Auth = new AuthFunctions();
         this.state={ 
             logout: false, 
-            showOverlay: false,
-            overlayConfig: {direction: "r-l", swipeLocation: "l"},
             searchTerm: '', 
-            user: {},
+            user: this.Auth.getUser(),
             profile: '',
             profileInfo: {},
             showUpload:false,
             profileImage: defaultProfileImage,
             showContactList: false
         }
-        this.Auth = new AuthFunctions();
     } 
 
-    componentWillMount = () => {
-        this.setState({logout: false})
-        this.setState({ user: this.Auth.getUser() });
+    componentWillUnmount = () => {
+        ApiCalls.cancel();
+    }
+    componentDidMount = () => {
         this.getProfileInfo();
         this.getImage();
     }
@@ -43,17 +41,16 @@ class Profile extends React.Component{
         }).then((result) => {
             if (result.value) {
                 this.Auth.logout();
+                ApiCalls.getNewAuthToken();
                 this.setState({logout: true})
             } 
         }) 
-    }
-    callOverlay = () => {
-        this.setState({ showOverlay : !this.state.showOverlay }) 
     }
 
     getProfileInfo = () => {
         ApiCalls.get('/api/employer/getProfile')
         .then((res)=>{    
+            if(res == null) return
             this.setState({ profileInfo: res.data }) 
         }).catch(errors => 
             console.log(errors.response.data)
@@ -66,6 +63,7 @@ class Profile extends React.Component{
     getImage = () => {
         ApiCalls.get('/api/profileImage/view/medium')
         .then((res)=>{
+            if(res == null) return
             if(res.data.success){
                 this.setState({ profileImage: res.data.url }) 
             }else{
@@ -85,7 +83,6 @@ class Profile extends React.Component{
             return <Redirect to='/login' />
         }
         
-        const html = "HELLO"
         return (
             <React.Fragment>
                 <div className="profileContainer_employer">
@@ -100,10 +97,10 @@ class Profile extends React.Component{
                         <div className="profileName"></div>
                     </div>
                     <div className='profileBottom'>
-                        <div className="profileItem" onClick={() => this.callOverlay()}>Employer info</div>
+                        <div className="profileItem">Employer info</div>
                         <div className="profileItem" onClick={() => this.setState({showContactList: !this.state.showContactList})}>Contact List</div>
                         {this.state.showContactList && <ContactList/> }
-                        <div className="profileItem" onClick={() => this.callOverlay()}>Account info</div>
+                        <div className="profileItem">Account info</div>
                         <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
                     </div> 
                     {this.state.showUpload?<UploadImage 
@@ -112,11 +109,6 @@ class Profile extends React.Component{
                                                 handleClose={this.handleClose} />:''}                    
                 </div> 
 
-                {this.state.showOverlay && <Overlay
-                                                html={html}  
-                                                handleClose={this.callOverlay} 
-                                                config={this.state.overlayConfig}
-                                            />}
             </React.Fragment>
         );
     }

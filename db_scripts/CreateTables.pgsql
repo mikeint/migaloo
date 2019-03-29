@@ -211,6 +211,7 @@ CREATE TABLE messages_subject (
     created_on timestamp default NOW(),
     subject_user_id bigint REFERENCES login(user_id),
     post_id bigint REFERENCES job_posting(post_id),
+    unique (user_id_1, user_id_2, subject_user_id, post_id),
     PRIMARY KEY(message_subject_id)
 );
 CREATE TABLE messages_base (
@@ -231,6 +232,7 @@ CREATE TABLE messages_calander (
     message_id_calander bigint references messages_base(message_id) not null,
     date_offer timestamp not null,
     minute_length smallint not null,
+    meeting_subject varchar(500) not null,
     location_type integer references location_type(location_type_id) not null,
     responded boolean default false,
     response smallint default 0,
@@ -261,8 +263,8 @@ BEGIN
             Insert into messages_chat(message_id_chat, message)
             VALUES (MessageID, NEW.message);
         ELSIF (NEW.message_type_id = 2) THEN -- Calander
-            Insert into messages_calander(message_id_calander, date_offer, minute_length, location_type)
-            VALUES (MessageID, NEW.date_offer, NEW.minute_length, NEW.location_type);
+            Insert into messages_calander(message_id_calander, date_offer, minute_length, location_type, meeting_subject)
+            VALUES (MessageID, NEW.date_offer, NEW.minute_length, NEW.location_type, NEW.meeting_subject);
         END IF;
         RETURN NEW;
     ELSIF (TG_OP = 'UPDATE') THEN
@@ -281,8 +283,8 @@ BEGIN
                 WHERE message_id = NEW.message_id
             RETURNING message_id into MessageID;
 
-            Insert into messages_calander(message_id_calander, date_offer, minute_length, location_type, response)
-                SELECT MessageID, date_offer, minute_length, location_type, NEW.response
+            Insert into messages_calander(message_id_calander, date_offer, minute_length, location_type, response, meeting_subject)
+                SELECT MessageID, date_offer, minute_length, location_type, NEW.response, meeting_subject
                 FROM messages_calander
                 WHERE message_id_calander = NEW.message_id;
         END IF;
@@ -533,10 +535,10 @@ INSERT INTO candidate_tags (candidate_id, tag_id) VALUES
     (1007, 3),
     (1007, 4),
     (1007, 5);
-INSERT INTO messages_subject(message_subject_id, user_id_1, user_id_2, subject_user_id, post_id, created_on) VALUES
-    (1, 1, 500, 1000, 1, current_date - interval '7' day),
-    (2, 3, 500, 1006, 3, current_date - interval '11' day),
-    (3, 1, 500, 1001, 1, current_date - interval '1' day);
+INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id, created_on) VALUES
+    (1, 500, 1000, 1, current_date - interval '7' day), -- message_subject_id = 1
+    (3, 500, 1006, 3, current_date - interval '11' day), -- message_subject_id = 2
+    (1, 500, 1001, 1, current_date - interval '1' day); -- message_subject_id = 3
 INSERT INTO messages (message_type_id, to_id, message_subject_id, message, created_on) VALUES
     (1, 1, 1, 'We would like to hear more about sarah.', current_date - interval '6' day),
     (1, 500, 1, 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', current_date - interval '5' day),
@@ -558,9 +560,9 @@ INSERT INTO messages (message_type_id, to_id, message_subject_id, message, creat
     (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '9' hour),
     (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '8' hour),
     (1, 500, 2, 'Yes that works, I look forward to hearing from you.', current_date - interval '7' hour);
-INSERT INTO messages (message_type_id, user_id_1, user_id_2, to_id, message_subject_id, date_offer, minute_length, location_type, created_on) VALUES
-    (2, 1, 500, 1, 1, current_date - interval '63' hour, 30, 1, current_date - interval '72' hour),
-    (2, 1, 500, 1, 1, current_date - interval '60' hour, 30, 1, current_date - interval '72' hour),
-    (2, 1, 500, 1, 1, current_date + interval '12' hour, 60, 1, current_date - interval '48' hour);
+INSERT INTO messages (message_type_id, user_id_1, user_id_2, to_id, message_subject_id, date_offer, minute_length, location_type, meeting_subject, created_on) VALUES
+    (2, 1, 500, 1, 1, current_date - interval '63' hour, 30, 1, 'Initial Meeting, Time 1', current_date - interval '72' hour),
+    (2, 1, 500, 1, 1, current_date - interval '60' hour, 30, 1, 'Initial Meeting, Time 2', current_date - interval '72' hour),
+    (2, 1, 500, 1, 1, current_date + interval '12' hour, 60, 1, 'Follow up Meeting', current_date - interval '48' hour);
 UPDATE messages SET response = 1 WHERE message_id = 21;
 UPDATE messages SET response = 2 WHERE message_id = 22;

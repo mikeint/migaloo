@@ -20,7 +20,7 @@ class ContactList extends React.Component{
         ApiCalls.get(`/api/employer/getEmployerContactList/${this.state.page}`)
         .then((res)=>{
             this.setState({loading: false});
-            if(res.data.success){
+            if(res && res.data.success){
                 const contactList = res.data.contactList
                 this.setState({ contactList: contactList,
                     pageCount: contactList.length>0?parseInt(contactList[0].page_count, 10):1 });
@@ -34,7 +34,7 @@ class ContactList extends React.Component{
         ApiCalls.post(`/api/employer/setContactAdmin`,
             {employerContactId:employerContact.employer_contact_id, isAdmin:e.target.checked})
         .then((res)=>{
-            if(res.data.success){
+            if(res && res.data.success){
                 this.setState({ contactList: this.state.contactList.map(d=>{
                     if(employerContact.employer_contact_id === d.employer_contact_id)
                         d.isadmin = !d.isadmin

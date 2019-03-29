@@ -1,5 +1,4 @@
 .tagSearchContainer {
-    position: relative;
     margin-bottom: 30px;
     outline: 0;
 }
@@ -35,8 +34,7 @@
     font-size: 13px;
     color: #263c54;
     opacity: 0.6;
-    font-weight: bold; 
-    margin-left: 10px;
+    font-weight: bold;
 }
 .tagSearchContainer .tag{
     display: inline-block;
@@ -57,11 +55,9 @@
     margin-left: 7px;
 }
 .tagSearchContainer .user-tag-wrp{
-    border-bottom: 1px solid black; 
     overflow: hidden;
 }
 .tagSearchContainer .tag-listing{  
-    line-height: 40px;   
     display: table-row;
 }
 .tagSearchContainer .tag-input{

@@ -4,9 +4,20 @@ import UploadResume from '../UploadResume/UploadResume';
 import ApiCalls from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import Redirect from 'react-router-dom/Redirect';
-import Overlay from '../../../../components/Overlay/Overlay';
 import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
+import { withStyles } from '@material-ui/core/styles';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import Button from '@material-ui/core/Button';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 
+const styles = theme => ({
+    drawer:{ 
+        minWidth: "300px",
+        position: "relative"
+    }
+});
 class ExpandableRow extends React.Component{
 
     constructor(props) {
@@ -19,7 +30,6 @@ class ExpandableRow extends React.Component{
             files: [],
             redirectCandidate: false,
             showPostJob: false,
-            overlayConfig: {direction: "b-t", swipeLocation: "t"}
         };
         this.Auth = new AuthFunctions();
     }
@@ -41,7 +51,7 @@ class ExpandableRow extends React.Component{
     getResumeURL = () => {
         ApiCalls.get('/api/resume/view/'+this.props.candidateData.candidate_id)
         .then((res)=>{
-            if(res.data.success)
+            if(res && res.data.success)
                 window.open(res.data.url, '_blank');
         }).catch(errors => 
             console.log(errors.response.data)
@@ -51,100 +61,102 @@ class ExpandableRow extends React.Component{
         this.setState({showPostJob: true})
     }
     render(){ 
-
+        const { classes } = this.props;
         const rowObj = this.props.candidateData; 
         return (
             <div className="expandableRow">
                 {this.state.redirectCandidate && <Redirect to={'/recruiter/jobList/'+this.props.candidateData.candidate_id}/>}
-                <div className={"candidateListItem "+ this.state.open} onClick={this.toggle.bind(this)}>  
-                    {rowObj.coins_spent > 0 && <div className="coinContainer"><span className="coinAmount">{rowObj.coins_spent}</span></div> }
-                    <div className="nameContainer">{rowObj.first_name}&nbsp;{rowObj.last_name}</div>
-                    {rowObj.new_accepted_count > 0 ? <div className="acceptedCount" title={rowObj.new_accepted_count+" New Postings Accepted"}>{/* rowObj.new_accepted_count */}</div> : ""}
-                    {rowObj.new_not_accepted_count > 0 ? <div className="notAcceptedCount" title={rowObj.new_not_accepted_count+" New Postings Not Accepted"}>{/* rowObj.new_not_accepted_count */}</div> : ""}
-                    
-                    
-                    {rowObj.tag_score?<span className="score" style={{width: parseInt(rowObj.tag_score, 10)+"%"}}>{parseInt(rowObj.tag_score, 10)+"%"}</span>:''}
-                    
-                </div>
-                <div className={this.state.open ? "collapse in": "collapse" + (this.state.open ? ' in' : '') }>
-
-
-
-                    <div className="flex">
-                        <div className="flexColumn">
-                            <div className="flex-item">
-                                <div>
-                                    <div className="created-info-item"> 
-                                        <span className="heading">Created:</span> 
-                                        <span className="headingInfo">{rowObj.created}</span>
-                                    </div>
-                                </div>
-                                <div className="info-container"> 
+                
+                <ExpansionPanel>
+                    <ExpansionPanelSummary>
+                        {rowObj.coins_spent > 0 && <div className="coinContainer"><span className="coinAmount">{rowObj.coins_spent}</span></div> }
+                        <div className="nameContainer">{rowObj.first_name}&nbsp;{rowObj.last_name}</div>
+                        {rowObj.new_accepted_count > 0 ? <div className="acceptedCount" title={rowObj.new_accepted_count+" New Postings Accepted"}>{/* rowObj.new_accepted_count */}</div> : ""}
+                        {rowObj.new_not_accepted_count > 0 ? <div className="notAcceptedCount" title={rowObj.new_not_accepted_count+" New Postings Not Accepted"}>{/* rowObj.new_not_accepted_count */}</div> : ""}
+                        {rowObj.tag_score?<span className="score" style={{width: parseInt(rowObj.tag_score, 10)+"%"}}>{parseInt(rowObj.tag_score, 10)+"%"}</span>:''}
+                        <div></div>
+                    </ExpansionPanelSummary>
+                    <ExpansionPanelDetails>
+                        <div className="flex">
+                            <div className="flexColumn">
+                                <div className="flex-item">
                                     <div>
-                                        <span className="email_icon"></span>
-                                        <div className="candidate-info-item">
-                                            <span className="heading">Email:</span> 
-                                            <span className="headingInfo">{rowObj.email}</span>
-                                        </div>
-                                    </div> 
-                                    <div>
-                                        <span className="experience_icon"></span>
-                                        <div className="candidate-info-item">
-                                            <span className="heading">Experience:</span> 
-                                            <span className="headingInfo">{rowObj.experience_type_name}</span>
+                                        <div className="created-info-item"> 
+                                            <span className="heading">Created: </span> 
+                                            <span className="headingInfo">{rowObj.created}</span>
                                         </div>
                                     </div>
-                                    <div>
-                                        <span className="tags_icon"></span>
-                                        <div className="candidate-info-item">
-                                            <span className="headingInfo">
-                                                {rowObj.tag_names && <span className="rowMargin">
-                                                <span className="heading">Tags:</span> {rowObj.tag_names.join(", ")}</span>}
-                                            </span>
+                                    <div className="info-container"> 
+                                        <div>
+                                            <span className="email_icon"></span>
+                                            <div className="candidate-info-item">
+                                                <span className="heading">Email: </span> 
+                                                <span className="headingInfo">{rowObj.email}</span>
+                                            </div>
+                                        </div> 
+                                        <div>
+                                            <span className="experience_icon"></span>
+                                            <div className="candidate-info-item">
+                                                <span className="heading">Experience: </span> 
+                                                <span className="headingInfo">{rowObj.experience_type_name}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div>
-                                        <span className="posted_icon"></span>
-                                        <div className="candidate-info-item">
-                                            <span className="heading">Posted to Job:</span> 
-                                            <span className="headingInfo">{rowObj.posted_count} time(s)</span>
+                                        <div>
+                                            <span className="tags_icon"></span>
+                                            <div className="candidate-info-item">
+                                                <span className="headingInfo">
+                                                    {rowObj.tag_names && <span className="rowMargin">
+                                                    <span className="heading">Tags: </span> {rowObj.tag_names.join(", ")}</span>}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <span className="posted_icon"></span>
+                                            <div className="candidate-info-item">
+                                                <span className="heading">Posted to Job: </span> 
+                                                <span className="headingInfo">{rowObj.posted_count} time(s)</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div> 
-                            <img className="candidate_image" src="http://placehold.it/100x100" alt="" />
-                              
-                            <div className="rowButton" onClick={this.searchJobsForCandidates}>Search Jobs</div>
+ 
+                                <Button variant="contained" color="primary" onClick={this.searchJobsForCandidates}>Search Jobs</Button>
+                            </div>
+                            <div className="flexColumn">
+                                <div className="flex-item"> 
+                                    <img className="candidate_image" src="http://placehold.it/100x100" alt="" />
+                                    <p><span className="accepted_icon"></span><span className="heading">Accepted by Postings: </span> {rowObj.accepted_count} time(s)</p>
+                                    <p><span className="not_accepted_icon"></span><span className="heading">Not Accepted by Postings: </span> {rowObj.not_accepted_count} time(s)</p> 
+
+                                    <div className="resumeButtons">
+                                        {rowObj.resume_id != null && <Button variant="contained" color="primary" onClick={this.getResumeURL}>View Resume</Button>}
+                                        <Button variant="contained" color="primary" onClick={this.showUpload}>Upload Resume</Button>
+                                    </div>
+                                    {this.props.postData && <div className="resumeButtons">
+                                        <Button variant="contained" color="primary" onClick={this.postToJob}>Post Candidate to Job</Button>
+                                    </div>}
+                                    
+                                    <SwipeableDrawer
+                                        anchor="bottom"
+                                        className={classes.drawer}
+                                        open={this.state.showPostJob}
+                                        onClose={()=>this.setState({"showPostJob":false})}
+                                        onOpen={()=>this.setState({"showPostJob":true})}
+                                    > 
+                                        <PostCandidateToJob candidate={this.props.candidateData}
+                                                                    job={this.props.postData}
+                                                                    handleClose={()=>this.setState({showPostJob:false})} />
+                                    </SwipeableDrawer>
+                                    
+                                    {this.state.showUpload && <UploadResume id={rowObj.candidate_id} handleClose={this.handleClose} />}
+                                </div> 
+                            </div>
                         </div>
-                        <div className="flexColumn">
-                            <div className="flex-item"> 
-                                <p><span className="accepted_icon"></span><span className="heading">Accepted by Postings:</span> {rowObj.accepted_count} time(s)</p>
-                                <p><span className="not_accepted_icon"></span><span className="heading">Not Accepted by Postings:</span> {rowObj.not_accepted_count} time(s)</p> 
-
-                                <div className="resumeButtons">
-                                    {rowObj.resume_id != null && <div className="rowButton" onClick={this.getResumeURL}>View Resume</div>}
-                                    <div className="rowButton" onClick={this.showUpload}>Upload Resume</div>
-                                </div>
-                                {this.props.postData && <div className="resumeButtons"><div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div></div>}
-                                {this.state.showPostJob && <Overlay
-                                                                html={<PostCandidateToJob candidate={this.props.candidateData} job={this.props.postData} handleClose={()=>this.setState({showPostJob:false})} />}  
-                                                                handleClose={()=>this.setState({showPostJob:false})} 
-                                                                config={this.state.overlayConfig}
-                                                            />}
-                                
-                                {this.state.showUpload && <UploadResume id={rowObj.candidate_id} handleClose={this.handleClose} />}
-                            </div> 
-                        </div>
-                    </div>
-
-
-
-
-                </div> 
+                    </ExpansionPanelDetails>
+                </ExpansionPanel>
             </div> 
         )
     }
 }
  
-
-export default ExpandableRow;
+export default withStyles(styles)(ExpandableRow);

@@ -4,13 +4,41 @@ import AuthFunctions from '../../../../AuthFunctions';
 import './BuildActiveJobs.css';  
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import ExpandableRow from './ExpandableRow/ExpandableRow';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import { withStyles } from '@material-ui/core/styles';  
+import Close from '@material-ui/icons/Close';
   
+const styles = theme => ({
+    button:{ 
+        width: "80%",
+    },
+    buttonContainer:{
+        textAlign:"center"
+    },
+    alertClose: {
+        position: "absolute",
+        right: "10px"
+    },
+    alertTitle: {
+        width: "100%",
+        height: "50px",
+        backgroundColor: "#263c54",
+        textAlign: "center",
+        color: "#fff",
+        lineHeight: "50px",
+        fontSize: "24px",
+        fontWeight: "bold", 
+        position: "relative"
+    }
+});
 class BuildActiveJobs extends React.Component{
 
     constructor(props) {
         super(props);
 		this.state = {
             postId: props.obj.post_id,
+            onClose: props.onClose,
             candidateList: []
         };
         this.Auth = new AuthFunctions();
@@ -19,7 +47,7 @@ class BuildActiveJobs extends React.Component{
     getJobList = () => {
         ApiCalls.get('/api/employerPostings/listCandidates/'+this.state.postId)
         .then((res)=>{
-            if(res.data.success){
+            if(res && res.data.success){
                 this.setState({ candidateList: res.data.candidateList });
             }
         }).catch(errors => 
@@ -27,9 +55,7 @@ class BuildActiveJobs extends React.Component{
         )
     }
     removeJob = () => {
-
-
-
+        this.state.onClose();
         Swal.fire({
             title: 'Are you sure?',
             text: 'You will not be able to recover this job.',
@@ -41,7 +67,7 @@ class BuildActiveJobs extends React.Component{
             if (result.value) { 
                 ApiCalls.post('/api/employerPostings/remove', {postId:this.state.postId})
                 .then((res)=>{
-                    if(res.data.success){
+                    if(res && res.data.success){
                         if(this.props.removedCallback != null){
                             this.props.removedCallback();
                         }
@@ -56,20 +82,21 @@ class BuildActiveJobs extends React.Component{
                 )  
             } 
           })
-
-
- 
-
-
-
     }
     render(){ 
+
+        const { classes } = this.props; 
 
         const jobObj = this.props.obj; 
         return ( 
             <div className="activeJobContainer"> 
+                <div className={classes.alertTitle} color="primary">
+                    <span>{jobObj.title}</span>
+                    <IconButton color="primary" className={classes.alertClose} onClick={this.state.onClose}>
+                        <Close color="secondary" />
+                    </IconButton>
+                </div>
                 <div className="jobPostingContainer">
-                    <h2>{jobObj.title}</h2>
                     <p>{jobObj.caption}</p>
                     <h3>{jobObj.experience_type_name}</h3> 
                     {jobObj.tag_names?<p>Tags: {jobObj.tag_names.join(", ")}</p>:''}
@@ -82,11 +109,17 @@ class BuildActiveJobs extends React.Component{
                         })
                     }
                 </div>
-                <div className="button" onClick={this.removeJob.bind(this)}>Remove Job Posting</div>
+                <div className={classes.buttonContainer}>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        className={classes.button}
+                        onClick={this.removeJob.bind(this)}>Remove Job Posting</Button>
+                </div>
             </div> 
         )
     }
 }
  
 
-export default BuildActiveJobs;
+export default withStyles(styles)(BuildActiveJobs);

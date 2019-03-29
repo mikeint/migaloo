@@ -12,23 +12,28 @@ class Profile extends React.Component{
 
     constructor(){
         super();
+        this.Auth = new AuthFunctions();
         this.state={ 
             logout: false, 
             searchTerm: '', 
-            user: {},
+            user: this.Auth.getUser(),
             profileInfo: {},
             showUpload:false,
             profileImage: defaultProfileImage
         }
-        this.Auth = new AuthFunctions();
     } 
 
+    componentWillUnmount = () => {
+        ApiCalls.cancel()
+    }
     componentWillMount = () => {
-        this.setState({logout: false})
-        this.setState({ user: this.Auth.getUser() });
+        this.setState({ migalooOverlay: sessionStorage.getItem("migalooOverlay") });
+        sessionStorage.removeItem('migalooOverlay');
+    }
+    componentDidMount() {
         this.getProfileInfo();
         this.getImage();
-    }
+    } 
     handleLogout = () => { 
         Swal.fire({
             title: 'Are you sure?', 
@@ -38,13 +43,15 @@ class Profile extends React.Component{
         }).then((result) => {
             if (result.value) {
                 this.Auth.logout();
+                ApiCalls.getNewAuthToken();
                 this.setState({logout: true})
             } 
         }) 
     }
     getProfileInfo = () => {
         ApiCalls.get('/api/recruiter/getProfile')
-        .then((res)=>{    
+        .then((res)=>{   
+            if(res == null) return 
             this.setState({ profileInfo: res.data }) 
         }).catch(errors => 
             console.log(errors.response.data)
@@ -53,6 +60,7 @@ class Profile extends React.Component{
     getImage = () => {
         ApiCalls.get('/api/profileImage/view/medium')
         .then((res)=>{
+            if(res == null) return
             if(res.data.success){
                 this.setState({ profileImage: res.data.url }) 
             }else{

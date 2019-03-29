@@ -17,7 +17,6 @@ class LandingSection3 extends Component {
     showButtons = () => { 
         this.setState({ showSignUpButtons: !this.state.showSignUpButtons })
     }
-
  
     handleChange = e => {
         this.setState({ [e.target.name]: e.target.value })
@@ -92,6 +91,7 @@ class LandingSection3 extends Component {
                                 <Link to='signUpFormRecruiter'><div className="signUpBtnHome"><img src={recImg} alt="" align="middle" />Recruiter</div></Link>
                             </React.Fragment>
                             }
+
                         </div>
                     </div>
                 </div>
