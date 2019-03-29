@@ -14,8 +14,8 @@
 }
 .heroLayer {  
     height: 500px; 
-    width: 10000px;
-    background-repeat: no-repeat;
+    width: 20000px;
+    background-repeat: repeat-x;
     background-clip: border-box;
     background-size: auto 100%;
     position: absolute;
@@ -23,15 +23,12 @@
 @keyframes moveHeroDesktop {
     0% { 
         left: 0;
-        margin-left: 0;
     }
     50% { 
         left: -3000px;
-        margin-left: 100%;
     }
     100% { 
         left: 0;
-        margin-left: 0;
     }   
 }
 
