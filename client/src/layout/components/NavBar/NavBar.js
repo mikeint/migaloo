@@ -68,11 +68,19 @@ class NavBar extends Component {
                     onOpen={()=>this.setState({"showOverlay":true,  menuOpen: !this.state.menuOpen})}
                 >  
                     <div className="side-menu">
-                        <a href="#landingSection2" onClick={this.toggleMobileMenu}><li>Overview</li></a>
-                        <a href="#landingSection3" onClick={this.toggleMobileMenu}><li>How it Works</li></a>
-                        <a href="#contactSection" onClick={this.toggleMobileMenu}><li>Contact Us</li></a> 
-                        <Link to='/about' onClick={this.toggleMobileMenu}><li>About</li></Link>
-                    </div>
+                        {this.props.page==="home" ?
+                            <React.Fragment>
+                                <a href="#landingSection2" onClick={this.toggleMobileMenu}><li>Overview</li></a>
+                                <a href="#landingSection3" onClick={this.toggleMobileMenu}><li>How it Works</li></a>
+                                <a href="#contactSection" onClick={this.toggleMobileMenu}><li>Contact Us</li></a> 
+                                <Link to='/about' onClick={this.toggleMobileMenu}><li>About</li></Link>
+                            </React.Fragment>
+                            : 
+                            <React.Fragment>
+                                <Link to='/' onClick={this.toggleMobileMenu}><li>Home</li></Link> 
+                            </React.Fragment>
+                        }
+                        </div>
                 </SwipeableDrawer>
 
 

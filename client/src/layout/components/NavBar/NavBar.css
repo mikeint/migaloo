@@ -120,10 +120,11 @@
     display: none;
 }  
 .side-menu li {
+    font-size: 26px;
     text-align: center;
     list-style-type: none;
     color: #263c54;
-    padding: 20px 100px;
+    padding: 20px 80px;
 }
 .side-menu a {
     color: #fff;
@@ -254,8 +255,7 @@
 
 @media only screen and (max-width: 768px) {
     .side-menu li {
-        width: 100%;
-        font-size: 26px;
+        width: 100%; 
         margin: auto;
         border: 0px;
         text-align: center;
