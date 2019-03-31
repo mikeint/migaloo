@@ -138,7 +138,7 @@
 
 .header_module_content { 
     width: 100%; 
-    padding-top: 50px;
+    padding: 20px;
     min-height: 400px;
     margin: auto;
 }
@@ -187,8 +187,7 @@
         width: 90%;
     }
     .header_module_content {
-        min-height: 200px;
-        padding-top: 20px; 
+        min-height: 200px; 
     }
 } 
 

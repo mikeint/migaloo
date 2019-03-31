@@ -116,19 +116,19 @@ class BuildActiveJobs extends React.Component{
                             {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
                             <div className="jobTitle">
                                 {this.state.jobObj.title}
-                                <div className="favContainer" onClick={() => this.setFavourite()}>
-                                    <div className="favourite-flip" id="card-object" >
-                                        <div className="front face">
-                                            <div className="text"><img src={blackStar} alt="" /></div>
-                                        </div>
-                                        <div className="back face">
-                                            <div className="text"><img src={goldStar} alt="" /></div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                             <div className="backButton" onClick={() => this.closeJobPage()}></div>
                             <span className="jobSalary">Salary: {this.state.jobObj.salary_type_name}</span> 
+                            <div className="favContainer" onClick={() => this.setFavourite()}>
+                                <div className="favourite-flip" id="card-object" >
+                                    <div className="front face">
+                                        <div className="text"><img src={blackStar} alt="" /></div>
+                                    </div>
+                                    <div className="back face">
+                                        <div className="text"><img src={goldStar} alt="" /></div>
+                                    </div>
+                                </div>
+                            </div>
                          
                             
                         </div> 

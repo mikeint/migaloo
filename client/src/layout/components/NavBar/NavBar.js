@@ -4,6 +4,8 @@ import './NavBar.css';
 
 import Whale from '../../../components/Whale/Whale';
 
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+
 class NavBar extends Component {
    
     constructor(props) {
@@ -11,6 +13,7 @@ class NavBar extends Component {
 		this.state = {
             smallHeader: false,
             menuOpen: false,
+            showOverlay:false, 
         };
     }
 
@@ -22,12 +25,10 @@ class NavBar extends Component {
     }
     handleScroll = () => {  
         this.setState({ smallHeader: window.pageYOffset > 0 });
-    }
-    toggleMobileMenu = () => {
-        this.setState({ menuOpen: !this.state.menuOpen }); 
-        window.scrollTo(0,0);
-    }
-    toggleLandingMenu = () => { 
+    }  
+ 
+    callAddOverlay = () => {
+        this.setState({ showOverlay : !this.state.showOverlay })
         this.setState({ menuOpen: !this.state.menuOpen }); 
     }
 
@@ -51,26 +52,30 @@ class NavBar extends Component {
                     }
                 </div>
 
-                <div id="navBarMobile" onClick={this.toggleLandingMenu}>
+                <div id="navBarMobile" onClick={this.callAddOverlay}>
                     <div id="nav-icon1" className={this.state.menuOpen ? "open" : ""}>
                         <span className="hmbSpanA"></span>
                         <span className="hmbSpanA"></span>
                         <span className="hmbSpanA"></span> 
-                    </div>
-                    <div id="side-menu" className={this.state.menuOpen ? "side-menu active-side-menu" : "side-menu"}> 
-                        {this.props.page==="home" ?
-                            <React.Fragment> 
-                                <a href="#landingSection2" onClick={this.toggleMobileMenu}><li>Overview</li></a>
-                                <a href="#landingSection3" onClick={this.toggleMobileMenu}><li>How it Works</li></a>
-                                <a href="#contactSection" onClick={this.toggleMobileMenu}><li>Contact Us</li></a> 
-                                <Link to='/about' onClick={this.toggleMobileMenu}><li>About</li></Link>
-                            </React.Fragment> 
-                        : 
-                            <Link to='/' onClick={this.toggleMobileMenu}><li>Home</li></Link> 
-                        }
-                    </div>
+                    </div> 
                 </div>
-                
+
+
+                <SwipeableDrawer
+                    anchor="left" 
+                    open={this.state.showOverlay}
+                    onClose={()=>this.setState({"showOverlay":false, menuOpen: !this.state.menuOpen})}
+                    onOpen={()=>this.setState({"showOverlay":true,  menuOpen: !this.state.menuOpen})}
+                >  
+                    <div className="side-menu">
+                        <a href="#landingSection2" onClick={this.toggleMobileMenu}><li>Overview</li></a>
+                        <a href="#landingSection3" onClick={this.toggleMobileMenu}><li>How it Works</li></a>
+                        <a href="#contactSection" onClick={this.toggleMobileMenu}><li>Contact Us</li></a> 
+                        <Link to='/about' onClick={this.toggleMobileMenu}><li>About</li></Link>
+                    </div>
+                </SwipeableDrawer>
+
+
                 <Link to='/'><Whale {...whaleOptions}/></Link>
             </div>
         </React.Fragment>

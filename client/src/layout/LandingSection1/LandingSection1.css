@@ -26,10 +26,9 @@
 }
 
 .csImg_desktop{
-    display: block;
-    margin-top: -10px;
-    padding-bottom: 10px;
-    padding-top: 10px;
+    display: block; 
+    padding-bottom: 20px;
+    padding-top: 20px;
 }
 .csImg_mobile{
     display: none;
