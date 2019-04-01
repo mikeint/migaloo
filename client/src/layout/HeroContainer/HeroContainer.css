@@ -10,11 +10,10 @@
     left: 0px;
     top: 0px;
     animation: moveHeroDesktop 100s infinite linear;
-    width: 3000px;
 }
 .heroLayer {  
     height: 500px; 
-    width: 20000px;
+    width: 16000px;
     background-repeat: repeat-x;
     background-clip: border-box;
     background-size: auto 100%;
@@ -22,14 +21,11 @@
 }
 @keyframes moveHeroDesktop {
     0% { 
-        left: 0;
-    }
-    50% { 
-        left: -3000px;
+        transform: translate3d(0, 0, 0);
     }
     100% { 
-        left: 0;
-    }   
+        transform: translate3d(-4680px, 0, 0);
+    }
 }
 
 #heroLayer0{
@@ -55,20 +51,14 @@
         width: 1340px;
     }
     .heroLayer {  
-        height: 430px;
+        height: 400px;
     } 
     @keyframes moveHeroMobile { 
         0% { 
-            left: 0;
-            margin-left: 0;
-        }
-        50% { 
-            left: -1340px;
-            margin-left: 100%;
+            transform: translate3d(0, 0, 0);
         }
         100% { 
-            left: 0; 
-            margin-left: 0;
-        }   
+            transform: translate3d(-3744px, 0, 0);
+        }
     }
 }
