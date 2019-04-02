@@ -30,7 +30,7 @@ class LoginForm extends Component {
     }
 
     login = () => {
-        ApiCalls.post('/api/users/login', {
+        ApiCalls.post('/api/auth/login', {
             email: this.state.email,
             password: this.state.password
         })

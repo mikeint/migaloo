@@ -32,51 +32,65 @@ function createJWT(userId, email, type, employerId=null){
         })
     })
 }
+
+router.post('/saml/callback', passport.passportObject.authenticate('saml', {
+    failureRedirect: '/error',
+    failureFlash: true
+  }), function (req, res) {
+    res.redirect('/')
+  })
 // @route       GET api/user/login
 // @desc        Login user route
 // @access      Public
 router.post('/login', (req, res) => {
-    console.log(req.body.email, req.body.password)
     const { errors, isValid } = validateLoginInput(req.body);
     // Check Validation 
     if (!isValid) {
         return res.status(400).json(errors);
     }
-
     const email = req.body.email;
-    const password = req.body.password;
-    postgresdb.one('SELECT user_id, passwordhash, l.user_type_id, ut.user_type_name, ec.employer_id\
-            FROM login l \
-            INNER JOIN user_type ut ON l.user_type_id = ut.user_type_id \
-            LEFT JOIN employer_contact ec ON l.user_id = ec.employer_contact_id \
-            WHERE email = $1', email).then(user => {
-        console.log(user)
-        if (!user) {
-            errors.email = 'Email not registered';
-            console.log('Email not registered');
-            return res.status(400).json(errors);
-        } else {
-            bcrypt.compare(password, user.passwordhash).then(isMatch => {
-                if(isMatch) {
-                    createJWT(user.user_id, email, user.user_type_id, user.employer_id).then((token)=>{
-                        res.status(200).json(token)
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        res.status(400).json({success: false, error:err})
-                    });
-                } else {
-                    errors.password = "Password Incorrect";
-                    return res.status(400).json(errors)
-                }
-            });
- 
+    if(req.body.email.endsWith("@migaloo.io")){
+        console.log("saml")
+        passport.passportObject.authenticate('saml', { failureRedirect: '/', failureFlash: true }),
+        function(req, res) {
+            console.log("saml complete")
+            res.redirect('/employer');
         }
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(500).json({success: false, error:err})
-    });;
+    }else{
+        const password = req.body.password;
+        postgresdb.one('SELECT user_id, passwordhash, l.user_type_id, ut.user_type_name, ec.employer_id\
+                FROM login l \
+                INNER JOIN user_type ut ON l.user_type_id = ut.user_type_id \
+                LEFT JOIN employer_contact ec ON l.user_id = ec.employer_contact_id \
+                WHERE email = $1', email).then(user => {
+            console.log(user)
+            if (!user) {
+                errors.email = 'Email not registered';
+                console.log('Email not registered');
+                return res.status(400).json(errors);
+            } else {
+                bcrypt.compare(password, user.passwordhash).then(isMatch => {
+                    if(isMatch) {
+                        createJWT(user.user_id, email, user.user_type_id, user.employer_id).then((token)=>{
+                            res.status(200).json(token)
+                        })
+                        .catch(err => {
+                            console.log(err)
+                            res.status(400).json({success: false, error:err})
+                        });
+                    } else {
+                        errors.password = "Password Incorrect";
+                        return res.status(400).json(errors)
+                    }
+                });
+     
+            }
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({success: false, error:err})
+        });
+    }
 });
 
 function checkEmailExists(email){

@@ -1,8 +1,8 @@
-var aws = require('aws-sdk')
-var s3 = new aws.S3()
+const aws = require('aws-sdk')
+const s3 = new aws.S3()
 
-var multer  = require('multer')
-var multerS3  = require('multer-s3')
+const multer  = require('multer')
+const multerS3  = require('multer-s3')
 const bucketName = 'hireranked-data'
 const MIME_TYPE_MAP = {
     'application/x-pdf':'pdf',

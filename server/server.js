@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const users = require('./routes/api/users');
+const auth = require('./routes/api/auth');
 const mailto = require('./routes/mailto');  
 const recruiterJobs = require('./routes/api/recruiterJobs');  
 const employerPostings = require('./routes/api/employerPostings');
@@ -37,7 +37,7 @@ app.use('/api/public/', express.static(path.join(`${__dirname}/public/`)))
 app.get('/', (req, res) => res.send("Hello World"));
 
 // USE routes
-app.use('/api/users', users);
+app.use('/api/auth', auth);
 app.use('/api/mailto', mailto);
 app.use('/api/recruiterJobs', recruiterJobs);
 app.use('/api/employerPostings', employerPostings);

@@ -39,8 +39,8 @@ class RegisterRecruiterForm extends Component {
 			password2: this.state.password2
 		}; 
         
-        axios.post('/api/users/register', newUser).then((res)=>{
-            axios.post('/api/users/login', {
+        axios.post('/api/auth/register', newUser).then((res)=>{
+            axios.post('/api/auth/login', {
                 email: this.state.email,
                 password: this.state.password
             }).then((res)=>{

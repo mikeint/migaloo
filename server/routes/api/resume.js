@@ -6,6 +6,8 @@ const postgresdb = require('../../config/db').postgresdb
 const generateUploadMiddleware = require('../upload').generateUploadMiddleware
 const upload = generateUploadMiddleware('resumes/')
 const useAWS = process.env.AWS ? true : false;
+const aws = require('aws-sdk');
+const s3 = new aws.S3()
 
 const generateResumeFileNameAndValidation = (req, res, next) => {
     // Validate this candidate is with this recruiter

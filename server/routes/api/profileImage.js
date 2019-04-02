@@ -4,6 +4,8 @@ const passport = require('../../config/passport');
 const db = require('../../config/db')
 const postgresdb = db.postgresdb
 const useAWS = process.env.AWS ? true : false;
+const aws = require('aws-sdk');
+var s3 = new aws.S3()
 
 /**
  * Get image
