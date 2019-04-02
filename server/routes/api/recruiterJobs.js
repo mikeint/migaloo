@@ -54,8 +54,8 @@ function getJobs(req, res){
            'WHERE j.post_id = $2'
         :
         (search ? 
-            'WHERE (company_name_search @@ to_tsquery(\'simple\', $2)) \
-            ORDER BY ts_rank_cd(company_name_search, to_tsquery(\'simple\', $2)) DESC'
+            'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', $2)) \
+            ORDER BY ts_rank_cd(company_name_search || posting_search, to_tsquery(\'simple\', $2)) DESC'
         :
             'ORDER BY j.created_on DESC'
         ))+' \
@@ -160,7 +160,7 @@ function getJobsForCandidate(req, res){
                     'WHERE j.post_id = $3'
                 :
                 (search ? 
-                    'WHERE (company_name_search @@ to_tsquery(\'simple\', $3))'
+                    'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', $3))'
                 :'')
                 )+' \
                 ORDER BY tag_score DESC, j.created_on DESC \

@@ -135,9 +135,17 @@ CREATE TABLE job_posting (
 	created_on timestamp default NOW(),
     experience_type_id int REFERENCES experience_type(experience_type_id),
     active boolean default true,
+    posting_search tsvector,
     PRIMARY KEY(post_id)
 );
 CREATE INDEX job_posting_active_idx ON job_posting(active);
+CREATE INDEX job_posting_tsv_idx ON job_posting USING gin(posting_search);
+CREATE TRIGGER job_posting_search_vector_update
+BEFORE INSERT OR UPDATE
+ON job_posting
+FOR EACH ROW EXECUTE PROCEDURE
+tsvector_update_trigger (posting_search, 'pg_catalog.simple', title, caption);
+
 CREATE TABLE job_posting_contact (
     post_id bigint REFERENCES job_posting(post_id),
     employer_contact_id bigint REFERENCES employer_contact(employer_contact_id),
