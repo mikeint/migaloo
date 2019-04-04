@@ -61,7 +61,7 @@
 .heroText {
     width: 100%;
     text-align: center;
-    font-size: 80px;
+    font-size: 50px;
     color: #ffffff;
     font-weight: bold; 
     padding: 20px; 
@@ -261,7 +261,7 @@
         text-align: center;
     } 
     .heroText { 
-        font-size: 51px;  
+        font-size: 27px;  
     }  
 } 
  

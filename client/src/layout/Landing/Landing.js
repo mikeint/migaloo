@@ -23,7 +23,8 @@ class Landing extends Component {
   
                 <div className="heroText"> 
 					<ScrollAnimation className="heroTxtFull" animateIn='fadeIn' initiallyVisible={true} animateOnce={true}> 
-                        A managed marketplace for&nbsp;recruitment
+						For a managed marketplace<br/>
+						join the whales of recruitment.
 					</ScrollAnimation>
 				</div>
 
