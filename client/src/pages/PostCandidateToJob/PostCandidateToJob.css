@@ -9,107 +9,6 @@
     margin: auto auto 25px auto;
     position: relative; 
 } 
-.postACandidateContainer input {
-    width: 100%;
-    height: 40px; 
-    padding: 0px 10px 0px 10px;
-    transition: 0.3s;  
-    color: #263c54;
-    width: 100%; 
-    outline: none;    
-    border: none;
-    border-bottom: 1px solid #263c54;
-    font-size: 20px; 
-    border-radius: 0px;
-}
-.postACandidateContainer select {
-    width: 100%;
-    height: 40px;  
-    padding-left: 10px;
-    border: none;
-    outline: none; 
-    font-size: 20px;
-    cursor: pointer;
-    border-radius: 3px;  
-    font: inherit;  
-  
-    /* reset */   
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-
-select.minimal {
-    background-image:
-      linear-gradient(45deg, transparent 50%, gray 50%),
-      linear-gradient(135deg, gray 50%, transparent 50%),
-      linear-gradient(to right, #ccc, #ccc);
-    background-position:
-      calc(100% - 20px) calc(1em + 2px),
-      calc(100% - 15px) calc(1em + 2px),
-      calc(100% - 2.5em) 0.5em;
-    background-size:
-      5px 5px,
-      5px 5px,
-      1px 1.5em;
-    background-repeat: no-repeat;
-}
-select.minimal:focus {
-    background-image:
-      linear-gradient(45deg, #263c54 50%, transparent 50%),
-      linear-gradient(135deg, transparent 50%, #263c54 50%),
-      linear-gradient(to right, #ccc, #ccc);
-    background-position:
-      calc(100% - 15px) 1em,
-      calc(100% - 20px) 1em,
-      calc(100% - 2.5em) 0.5em;
-    background-size:
-      5px 5px,
-      5px 5px,
-      1px 1.5em;
-    background-repeat: no-repeat;
-    border-color: #263c54;
-    outline: 0;
-}
-select:-moz-focusring {
-    color: transparent;
-    text-shadow: 0 0 0 #263c54;
-} 
-
-
- 
-
-.postACandidateContainer .user-input-wrp {
-    position: relative; 
-    margin-bottom: 30px;
-}
-.postACandidateContainer input:focus,
-.postACandidateContainer select:focus,
-.postACandidateContainer textarea:focus  {
-    border: 1px solid #263c54;
-    border-color: #263c54;
-    box-shadow: none;
-}
-.postACandidateContainer .floating-label {
-	position: absolute;
-	pointer-events: none;
-	top: 12px;
-	left: 10px;
-	transition: 0.3s ease all;
-}
-
-.formSection select:focus ~ .floating-label,
-.formSection select:not(:focus):valid ~ .floating-label,
-.formSection input:focus ~ .floating-label,
-.formSection input:not(:focus):valid ~ .floating-label,
-.formSection textarea:focus ~ .floating-label,
-.formSection textarea:not(:focus):valid ~ .floating-label {
-	top: -18px;
-	left: 10px;
-    font-size: 13px;
-    color: #263c54;
-    opacity: 0.6;
-    font-weight: bold; 
-}  
 
 .postACandidateContainer .input-2 {
     width:100%; 
@@ -130,35 +29,6 @@ select:-moz-focusring {
     margin-right: 5%;
 }
  
-.postACandidateContainer .btn-secondary {
-    width: 100%;
-    padding: 10px; 
-    cursor: pointer;
-    font-size: 30px; 
-    letter-spacing: 3px;
-    font-weight: bold;
-    color: #ffffff;
-    background: #2e2e2e;
-    border: none; 
-    border-radius: 5px; 
-    transition: 0.3s;
-    overflow: hidden; 
-}
-
-.postACandidateContainer textarea {
-    width: 100%;
-    max-width: 100%;
-    min-width: 100%;
-    height: 240px;
-    font: 400 13.3333px Arial;
-    padding: 10px;   
-    color: #263c54;
-    border:1px solid #fff;
-    overflow: auto;  
-    background: #fff;
-    outline: none;
-    resize: none;
-}
 .postACandidateContainer .matchingScore{
     width: 100%;
     height: 35px;
@@ -199,30 +69,15 @@ select:-moz-focusring {
     flex: 1 1;
 }
 
-.submitCandidateBtn {
-    width: 100%;
-    float: left;
-    background: #263c54;
-    color: #fff;
-    padding: 10px;
-    text-align: center;
-    font-size: 30px;
-    font-weight: bold;
-    cursor: pointer;
-}
 
 @media only screen and (max-width: 1000px) {
     .postACandidateContainer .i-2,
     .postACandidateContainer .i-4,
     .postACandidateContainer .i-1-4,
     .postACandidateContainer .i-3-4,
-    .postACandidateContainer .i-small,
-    .postACandidateContainer select {
+    .postACandidateContainer .i-small {
         min-width: 100% !important;
     }
-    .postACandidateContainer .btn-secondary {
-        border-radius: 0px;
-    } 
     .postACandidateContainer .candidateJobContainer{
         display: block;
     }

@@ -6,7 +6,8 @@ import {Redirect} from 'react-router-dom';
 import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import { withStyles } from '@material-ui/core/styles';
-
+import IconButton from '@material-ui/core/IconButton';
+import Close from '@material-ui/icons/Close';
 import goldStar from '../../../../files/images/star_gold.png';
 import blackStar from '../../../../files/images/star_black.png';
   
@@ -14,6 +15,9 @@ const styles = theme => ({
     drawer:{ 
         minWidth: "300px",
         position: "relative"
+    },
+    rightBtn:{
+        float: "right",
     }
 });
 class BuildActiveJobs extends React.Component{
@@ -103,35 +107,41 @@ class BuildActiveJobs extends React.Component{
         }else
 
 
-        if (this.state.openJobPageState) return <Redirect to='/recruiter/jobList'/>
+        if (this.state.openJobPageState) return <Redirect to={'/recruiter/jobList'+(this.state.candidateId?`/${this.state.candidateId}`:'')}/>
 
         return (
             <React.Fragment>
                 <div className="fixedjobPostingContainer"></div>
                 <div className={"jobPostingContainer "+this.state.enterSlide}> 
 
-                    <div className="jobPostingContent">
-                        <div className="jobPostingHeader">
-                            {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobObj.post_id}/> : ''}
-                            {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
-                            <div className="jobTitle">
-                                {this.state.jobObj.title}
-                            </div>
-                            <div className="backButton" onClick={() => this.closeJobPage()}></div>
-                            <span className="jobSalary">Salary: {this.state.jobObj.salary_type_name}</span> 
-                            <div className="favContainer" onClick={() => this.setFavourite()}>
-                                <div className="favourite-flip" id="card-object" >
-                                    <div className="front face">
-                                        <div className="text"><img src={blackStar} alt="" /></div>
-                                    </div>
-                                    <div className="back face">
-                                        <div className="text"><img src={goldStar} alt="" /></div>
-                                    </div>
+                    <div className="jobPostingHeader">
+                        {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobObj.post_id}/> : ''}
+                        {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
+                        <div className="jobTitle">
+                            {this.state.jobObj.title}
+                        </div>
+                        
+                        <IconButton color="inherit"
+                            onClick={() => this.closeJobPage()}
+                            className={classes.rightBtn}>
+                            <Close color="primary"/>
+                        </IconButton>
+                        {/* <div className="backButton" onClick={() => this.closeJobPage()}></div> */}
+                        <span className="jobSalary">Salary: {this.state.jobObj.salary_type_name}</span> 
+                        <div className="favContainer" onClick={() => this.setFavourite()}>
+                            <div className="favourite-flip" id="card-object" >
+                                <div className="front face">
+                                    <div className="text"><img src={blackStar} alt="" /></div>
+                                </div>
+                                <div className="back face">
+                                    <div className="text"><img src={goldStar} alt="" /></div>
                                 </div>
                             </div>
-                         
-                            
-                        </div> 
+                        </div>
+                        
+                        
+                    </div> 
+                    <div className="jobPostingContent">
 
                         <h3>Description</h3>
                         <div className="jobCaption">{this.state.jobObj.caption}</div>
@@ -159,7 +169,7 @@ class BuildActiveJobs extends React.Component{
                     onClose={()=>this.setState({"showPostJob":false})}
                     onOpen={()=>this.setState({"showPostJob":true})}
                 > 
-                    <PostCandidateToJob candidate={this.props.candidateData}
+                    <PostCandidateToJob candidate={this.state.candidateData}
                                                 job={this.state.jobObj}
                                                 handleClose={()=>this.setState({showPostJob:false})} />
                 </SwipeableDrawer>
