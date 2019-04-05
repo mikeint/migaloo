@@ -1,6 +1,6 @@
 import React from 'react';
 import './NavBar.css';  
-import { NavLink } from 'react-router-dom';  
+import { NavLink, withRouter } from 'react-router-dom';  
 import AuthFunctions from '../../AuthFunctions'; 
 import Toolbar from '@material-ui/core/Toolbar';
 import AppBar from '@material-ui/core/AppBar';
@@ -84,14 +84,9 @@ const profileMapping = {
         link:"/employer/profile",
         name:"Profile"
     }
-    
 }
 class NavBar extends React.Component{
-    constructor(props){
-        super(props);
-        this.Auth = new AuthFunctions();
-        const userType = this.Auth.getUser().userType;
-        const path = window.location.pathname;
+    getNewPage(userType, path){
         let page = 0;
         let i = 0
         for(; i < navMappings[userType].length; i++){
@@ -103,12 +98,29 @@ class NavBar extends React.Component{
         if(path.startsWith(profileMapping[userType].link)){
             page = i;
         }
-
+        return page;
+    }
+    constructor(props){
+        super(props);
+        this.Auth = new AuthFunctions();
+        const userType = this.Auth.getUser().userType;
+        const path = window.location.pathname;
+        const page = this.getNewPage(userType, path);
         this.state={
             page: page,
+            userType: userType,
             user: {}
         }
-
+        const { history } = this.props;
+        history.listen((location, action) => {
+            const userType = this.state.userType;
+            const page = this.state.page;
+            const path = location.pathname;
+            const newPage = this.getNewPage(userType, path)
+            if(newPage !== page){
+                this.setState({page: newPage})
+            }
+        });
     } 
     handleChange = (event, value) => {
         this.setState({ page:value });
@@ -143,4 +155,4 @@ class NavBar extends React.Component{
     }
 };
 
-export default withStyles(styles)(NavBar);
+export default withRouter(withStyles(styles)(NavBar));
