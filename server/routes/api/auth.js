@@ -11,14 +11,13 @@ const validateRegisterInput = require('../../validation/register');
 const validateLoginInput = require('../../validation/login');
 
 // TODO: encrypt JWT with public key
-function createJWT(userId, email, type, employerId=null){
+function createJWT(userId, email, type){
     return new Promise((resolve, reject)=>{
         //create jwt payload
         const payload = {
             id: userId,
             userType: type,
-            email: email,
-            employerId: employerId
+            email: email
         }
         //make JWT token (sign token) (payload obj, secretKey, expires obj) 
         passport.signToken(payload).then((token)=>{
@@ -58,10 +57,9 @@ router.post('/login', (req, res) => {
         }
     }else{
         const password = req.body.password;
-        postgresdb.one('SELECT user_id, passwordhash, l.user_type_id, ut.user_type_name, ec.employer_id\
+        postgresdb.one('SELECT user_id, passwordhash, l.user_type_id, ut.user_type_name\
                 FROM login l \
                 INNER JOIN user_type ut ON l.user_type_id = ut.user_type_id \
-                LEFT JOIN employer_contact ec ON l.user_id = ec.employer_contact_id \
                 WHERE email = $1', email).then(user => {
             console.log(user)
             if (!user) {
@@ -71,7 +69,7 @@ router.post('/login', (req, res) => {
             } else {
                 bcrypt.compare(password, user.passwordhash).then(isMatch => {
                     if(isMatch) {
-                        createJWT(user.user_id, email, user.user_type_id, user.employer_id).then((token)=>{
+                        createJWT(user.user_id, email, user.user_type_id).then((token)=>{
                             res.status(200).json(token)
                         })
                         .catch(err => {

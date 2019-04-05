@@ -112,7 +112,7 @@ class BuildActiveJobs extends React.Component{
 
                     <div className="jobPostingContent">
                         <div className="jobPostingHeader">
-                            {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobData.post_id}/> : ''}
+                            {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobObj.post_id}/> : ''}
                             {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
                             <div className="jobTitle">
                                 {this.state.jobObj.title}
@@ -160,7 +160,7 @@ class BuildActiveJobs extends React.Component{
                     onOpen={()=>this.setState({"showPostJob":true})}
                 > 
                     <PostCandidateToJob candidate={this.props.candidateData}
-                                                job={this.props.jobData}
+                                                job={this.state.jobObj}
                                                 handleClose={()=>this.setState({showPostJob:false})} />
                 </SwipeableDrawer>
             </React.Fragment>

@@ -65,7 +65,7 @@ class ExpandableRow extends React.Component{
         const rowObj = this.props.candidateData; 
         return (
             <div className="expandableRow">
-                {this.state.redirectCandidate && <Redirect to={'/recruiter/jobList/'+this.props.candidateData.candidate_id}/>}
+                {this.state.redirectCandidate && <Redirect to={`/recruiter/jobList/${this.props.candidateData.candidate_id}`}/>}
                 
                 <ExpansionPanel>
                     <ExpansionPanelSummary>

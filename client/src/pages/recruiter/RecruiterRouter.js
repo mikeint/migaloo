@@ -19,11 +19,11 @@ function RecruiterRouter({ match }) {
                     <Route strict path="/recruiter/candidate/:candidateId" component={CandidateList} />
                     <Route strict path="/recruiter/candidateList" component={CandidateList} />
                     <Route strict path="/recruiter/addCandidate" component={AddCandidate} />
-                    <Route strict path="/recruiter/job/:jobId/:candidateId" component={BuildActiveJobs} />
-                    <Route strict path="/recruiter/job/:jobId" component={BuildActiveJobs} />
+                    <Route strict path="/recruiter/jobList/job/:jobId/:candidateId" component={BuildActiveJobs} />
+                    <Route strict path="/recruiter/jobList/job/:jobId" component={BuildActiveJobs} />
+                    <Route strict path="/recruiter/jobList/:candidateId" component={JobList} />
                     <Route strict path="/recruiter/jobList" component={JobList} />
-                    <Route strict path="/recruiter/jobList/:jobId/:candidateId" component={BuildActiveJobs} />
-                    <Route strict path="/employer/chat/:postId/:candidateId" component={Chat} />
+                    <Route strict path="/recruiter/chat/:postId/:candidateId" component={Chat} />
                     <Route strict path="/recruiter/chat" component={Chat} />
                 </Switch>
             </div>

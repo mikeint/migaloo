@@ -202,7 +202,6 @@ router.post('/setAcceptedState/:postId/:candidateId/:recruiterId', passport.auth
     var postId = req.params.postId;
     var candidateId = req.params.candidateId;
     var recruiterId = req.params.recruiterId;
-    var employerId = jwtPayload.employerId;
     var accepted = req.body.accepted
     if(jwtPayload.userType != 2){
         return res.status(400).json({success:false, error:"Must be an employer to look at postings"})
@@ -216,15 +215,14 @@ router.post('/setAcceptedState/:postId/:candidateId/:recruiterId', passport.auth
     if(recruiterId == null){
         return res.status(400).json({success:false, error:"Missing Candidate Id"})
     }
-    employerId = parseInt(employerId, 10);
     recruiterId = parseInt(recruiterId, 10);
-    postgresdb.any('\
-        SELECT 1 \
+    postgresdb.one('\
+        SELECT jp.employer_id \
         FROM job_posting jp \
         INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
         INNER JOIN candidate_posting cp ON jp.post_id = cp.post_id \
-        WHERE ec.employer_contact_id = $1 AND jp.active \
-        LIMIT 1', [jwtPayload.id])
+        WHERE ec.employer_contact_id = $1 AND jp.active AND jp.post_id = $2 \
+        LIMIT 1', [jwtPayload.id, postId])
     .then(d=>{
         if(d.length > 0){
             postgresdb.none('UPDATE candidate_posting SET accepted=$1, not_accepted=$2, has_seen_response=NULL, responded_on=NOW()\
@@ -232,11 +230,11 @@ router.post('/setAcceptedState/:postId/:candidateId/:recruiterId', passport.auth
             .then((data) => {
                 if(accepted){
                     var userId1, userId2;
-                    if(recruiterId < employerId){
+                    if(recruiterId < d.employerId){
                         userId1 = recruiterId;
-                        userId2 = employerId;
+                        userId2 = d.employerId;
                     }else{
-                        userId1 = employerId;
+                        userId1 = d.employerId;
                         userId2 = recruiterId;
                     }
                     postgresdb.none('INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id) VALUES \
@@ -256,7 +254,7 @@ router.post('/setAcceptedState/:postId/:candidateId/:recruiterId', passport.auth
                 res.status(400).json(err)
             });
         }else{
-            res.status(400).json({success:false, error:"Mismatched posting"})
+            res.status(400).json({success:false, error:"Must be a contact for this posting"})
         }
     })
     .catch(err => {

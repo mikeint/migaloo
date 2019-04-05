@@ -9,7 +9,7 @@ const postgresdb = db.postgresdb
 const pgp = db.pgp
 const messagesInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'message'], {table: 'messages'});
 const calendarInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'date_offer', 'minute_length', 'location_type', 'meeting_subject'], {table: 'messages'});
-const subjectInsertHelper = new pgp.helpers.ColumnSet(['user_id_1', 'user_id_2', 'message_subject_id', 'post_id'], {table: 'messages'});
+// const subjectInsertHelper = new pgp.helpers.ColumnSet(['user_id_1', 'user_id_2', 'message_subject_id', 'post_id'], {table: 'messages'});
 /**
  * Create a new message in a conversation, or calendar invite
  * @route POST api/message/create
@@ -36,7 +36,7 @@ router.post('/create', passport.authentication,  (req, res) => {
         return res.status(400).json(errors);
     }
     var jwtPayload = body.jwtPayload;
-    var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
+    var userId = jwtPayload.id;
     var messageType = null;
     if(body.message){ // Chat Message
         messageType = 1;
@@ -49,7 +49,10 @@ router.post('/create', passport.authentication,  (req, res) => {
         return t.one('\
             SELECT 1 \
             FROM messages_subject m \
-            WHERE (m.user_id_1 = $1 OR m.user_id_2 = $1) AND m.message_subject_id = $2 \
+            LEFT JOIN employer_contact ec1 ON m.user_id_1 = ec1.employer_id \
+            LEFT JOIN employer_contact ec2 ON m.user_id_2 = ec2.employer_id \
+            WHERE (m.user_id_1 = $1 OR m.user_id_2 = $1 OR ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1) \
+                AND m.message_subject_id = $2 \
             LIMIT 1 \
             ', [userId, body.messageSubjectId])
         .then((data) => {
@@ -64,7 +67,6 @@ router.post('/create', passport.authentication,  (req, res) => {
                 location_type: body.locationType,
                 meeting_subject: body.subject
             }
-            console.log(makeMessage)
             const query = pgp.helpers.insert(makeMessage, messageType===1?messagesInsertHelper:calendarInsertHelper);
 
             return t.none(query).then(() => {
@@ -95,65 +97,65 @@ router.post('/create', passport.authentication,  (req, res) => {
 * @returns {Error}  default - Unexpected error
 * @access Private
 */
-router.post('/createSubject', passport.authentication,  (req, res) => {
-   /**
-    * Inputs Body:
-    * postId
-    * subjectUserId
-    */
-   var body = req.body
-   const { errors, isValid } = validateMessageInput(body);
-   //check Validation
-   if(!isValid) {
-       return res.status(400).json(errors);
-   }
-   var jwtPayload = body.jwtPayload;
-   var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
-   var userId1 = userId;
-   var userId2 = body.toId;
-   if(userId1 > userId2){
-       var t = userId1;
-       userId1 = userId2;
-       userId2 = t;
-   }
-   postgresdb.tx(t => {
-       // Get basic data, and ensure they can message, candidate posting must be accepted
-       return t.one('\
-           SELECT cp.candidate_id, cp.post_id \
-           FROM candidate_posting cp \
-           INNER JOIN job_posting jp ON cp.post_id = jp.post_id \
-           INNER JOIN job_posting_contact jpc ON cp.post_id = jpc.post_id \
-           INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
-           INNER JOIN message_subject ms ON ms.subject_user_id = cp.candidate_id AND ms.post_id = cp.post_id \
-           WHERE cp.accepted AND jpc.post_id = $1 AND cp.candidate_id = $2 AND (ec.employer_contact_id = $3 OR cp.recruiter_id = $3)', [body.postId, body.subjectUserId, jwtPayload.id])
-       .then((data) => {
-           // Ensure the person is in this chain
-           const makeMessage = {
-               user_id_1:userId1,
-               user_id_2:userId2,
-               message_subject_id:body.messageSubjectId,
-               post_id:body.postId,
-           }
-           const query = pgp.helpers.insert(makeMessage, subjectInsertHelper);
+// router.post('/createSubject', passport.authentication,  (req, res) => {
+//    /**
+//     * Inputs Body:
+//     * postId
+//     * subjectUserId
+//     */
+//    var body = req.body
+//    const { errors, isValid } = validateMessageInput(body);
+//    //check Validation
+//    if(!isValid) {
+//        return res.status(400).json(errors);
+//    }
+//    var jwtPayload = body.jwtPayload;
+//    var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
+//    var userId1 = userId;
+//    var userId2 = body.toId;
+//    if(userId1 > userId2){
+//        var t = userId1;
+//        userId1 = userId2;
+//        userId2 = t;
+//    }
+//    postgresdb.tx(t => {
+//        // Get basic data, and ensure they can message, candidate posting must be accepted
+//        return t.one('\
+//            SELECT cp.candidate_id, cp.post_id \
+//            FROM candidate_posting cp \
+//            INNER JOIN job_posting jp ON cp.post_id = jp.post_id \
+//            INNER JOIN job_posting_contact jpc ON cp.post_id = jpc.post_id \
+//            INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
+//            INNER JOIN message_subject ms ON ms.subject_user_id = cp.candidate_id AND ms.post_id = cp.post_id \
+//            WHERE cp.accepted AND jpc.post_id = $1 AND cp.candidate_id = $2 AND (ec.employer_contact_id = $3 OR cp.recruiter_id = $3)', [body.postId, body.subjectUserId, jwtPayload.id])
+//        .then((data) => {
+//            // Ensure the person is in this chain
+//            const makeMessage = {
+//                user_id_1:userId1,
+//                user_id_2:userId2,
+//                message_subject_id:body.messageSubjectId,
+//                post_id:body.postId,
+//            }
+//            const query = pgp.helpers.insert(makeMessage, subjectInsertHelper);
 
-           return t.none(query).then(() => {
-               res.json({success: true})
-           }).catch((err)=>{
-               console.log(err)
-               return res.status(500).json({success: false, error:err})
-           });
-       }).catch((err)=>{
-           console.log(err)
-           return res.status(500).json({success: false, error:err})
-       });
-   })
-   .then(() => {
+//            return t.none(query).then(() => {
+//                res.json({success: true})
+//            }).catch((err)=>{
+//                console.log(err)
+//                return res.status(500).json({success: false, error:err})
+//            });
+//        }).catch((err)=>{
+//            console.log(err)
+//            return res.status(500).json({success: false, error:err})
+//        });
+//    })
+//    .then(() => {
        
-   }).catch((err)=>{
-       console.log(err) // Not an admin
-       return res.status(500).json({success: false, error:err})
-   });
-});
+//    }).catch((err)=>{
+//        console.log(err) // Not an admin
+//        return res.status(500).json({success: false, error:err})
+//    });
+// });
 /**
  * Set response for the calander invide
  * @route POST api/message/setResponse
@@ -166,16 +168,24 @@ router.post('/createSubject', passport.authentication,  (req, res) => {
 router.post('/setResponse', passport.authentication,  (req, res) => {
     const jwtPayload = req.body.jwtPayload;
     const messageId = req.body.messageId;
+    const messageSubjectId = req.body.messageSubjectId;
     let response = req.body.response;
     if(response !== 1 && response !== 2)
         return res.status(400).json({success:false, error:"Invalid response"})
 
-    const userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
+    const userId = jwtPayload.id;
     postgresdb.one('\
-        SELECT 1 \
-        FROM messages m \
-        WHERE (m.user_id_1 = $1 OR m.user_id_2 = $1) AND m.message_id = $2 \
-        LIMIT 1', [userId, messageId])
+            SELECT 1 \
+            FROM messages_subject ms \
+            '+(jwtPayload.userType == 2?
+            'LEFT JOIN employer_contact ec1 ON ms.user_id_1 = ec1.employer_id \
+            LEFT JOIN employer_contact ec2 ON ms.user_id_2 = ec2.employer_id \
+            ':'')+
+            'WHERE '+(jwtPayload.userType == 1 ? 
+                '(ms.user_id_1 = $1 OR ms.user_id_2 = $1) AND ms.message_subject_id = $2' :
+                '(ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1) AND ms.message_subject_id = $2')+
+            ' \
+            LIMIT 1', [userId, messageSubjectId])
     .then(d=>{ 
         postgresdb.none('UPDATE messages_calander SET response = $1 WHERE message_id_calander = $2', [response, messageId])
         .then((data) => {
@@ -208,7 +218,7 @@ function listMessages(req, res){
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     
-    var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
+    var userId = jwtPayload.id;
     postgresdb.any('\
         SELECT ms.post_id, jp.title as job_post_title, m.to_id, m.created_on, ms.created_on as subject_created_on, \
             m.message, m.response, m.date_offer, m.has_seen, m.message_id, ms.message_subject_id, \
@@ -216,7 +226,15 @@ function listMessages(req, res){
             um.user_id as subject_user_id, um.first_name as subject_first_name, um.last_name as subject_last_name, \
             ms.user_id_1, um1.user_type_name as user_1_type_name, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
             ms.user_id_2, um2.user_type_name as user_2_type_name, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
-            (count(1) OVER())/10+1 AS page_count \
+            (count(1) OVER())/10+1 AS page_count, '+
+            (jwtPayload.userType == 1 ? 
+                '$1 as my_id' :
+                'CASE \
+                    WHEN ec1.employer_id IS NULL AND ec2.employer_id IS NOT NULL THEN ec1.employer_id \
+                    WHEN ec1.employer_id IS NOT NULL AND ec2.employer_id IS NULL THEN ec2.employer_id \
+                    ELSE 0 \
+                END as my_id')+
+            ' \
         FROM messages_subject ms \
         LEFT JOIN ( \
             SELECT mo.* \
@@ -233,7 +251,14 @@ function listMessages(req, res){
         INNER JOIN user_master um ON um.user_id = ms.subject_user_id \
         LEFT JOIN user_master um1 ON um1.user_id = ms.user_id_1 \
         LEFT JOIN user_master um2 ON um2.user_id = ms.user_id_2 \
-        WHERE ms.user_id_1 = $1 OR ms.user_id_2 = $1 \
+        '+(jwtPayload.userType == 2?
+        'LEFT JOIN employer_contact ec1 ON ms.user_id_1 = ec1.employer_id \
+        LEFT JOIN employer_contact ec2 ON ms.user_id_2 = ec2.employer_id \
+        ':'')+
+        'WHERE '+(jwtPayload.userType == 1 ? 
+            'ms.user_id_1 = $1 OR ms.user_id_2 = $1' :
+            'ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1')+
+        ' \
         ORDER BY coalesce(m.created_on, ms.created_on) DESC \
         OFFSET $2 \
         LIMIT 10 \
@@ -241,7 +266,6 @@ function listMessages(req, res){
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
-            m.myId = userId;
             m.toMe = m.to_id == userId;
             let contactName = userId === m.user_id_1?
                 (m.user_2_company_name?m.user_2_company_name:(m.user_2_first_name+" "+m.user_2_last_name)):
@@ -292,7 +316,7 @@ function listConversationMessages(req, res){
     }
     var jwtPayload = req.body.jwtPayload;
     // Validate that the user id of the user is in the requested chain
-    var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
+    var userId = jwtPayload.id;
     if(page == null)
         page = 1;
 
@@ -303,21 +327,35 @@ function listConversationMessages(req, res){
             m.message_subject_id, um.first_name as subject_first_name, m.message_type_id, \
             m.user_id_1, um1.user_type_name as user_1_type_name, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
             m.user_id_2, um2.user_type_name as user_2_type_name, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
-            (count(1) OVER())/10+1 AS page_count \
+            (count(1) OVER())/10+1 AS page_count, '+
+            (jwtPayload.userType == 1 ? 
+                '$1 as my_id' :
+                'CASE \
+                    WHEN ec1.employer_id IS NULL AND ec2.employer_id IS NOT NULL THEN ec1.employer_id \
+                    WHEN ec1.employer_id IS NOT NULL AND ec2.employer_id IS NULL THEN ec2.employer_id \
+                    ELSE 0 \
+                END as my_id')+
+            ' \
         FROM messages m \
         INNER JOIN messages_subject ms ON ms.message_subject_id = m.message_subject_id \
         INNER JOIN user_master um ON um.user_id = ms.subject_user_id \
         INNER JOIN user_master um1 ON um1.user_id = m.user_id_1 \
         INNER JOIN user_master um2 ON um2.user_id = m.user_id_2 \
-        WHERE m.message_subject_id = $1 \
+        '+(jwtPayload.userType == 2?
+        'LEFT JOIN employer_contact ec1 ON ms.user_id_1 = ec1.employer_id \
+        LEFT JOIN employer_contact ec2 ON ms.user_id_2 = ec2.employer_id \
+        ':'')+
+        'WHERE '+(jwtPayload.userType == 1 ? 
+            '(ms.user_id_1 = $1 OR ms.user_id_2 = $1) AND m.message_subject_id = $2' :
+            '(ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1) AND m.message_subject_id = $2')+
+        ' \
         ORDER BY m.created_on DESC \
-        OFFSET $2 \
+        OFFSET $3 \
         LIMIT 10 \
-        ', [messageSubjectId, (page-1)*10])
+        ', [userId, messageSubjectId, (page-1)*10])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
-            m.myId = userId;
             m.toMe = m.to_id == userId;
             var dateOfferTimestamp = moment(m.date_offer);
             m.date_offer_str = dateOfferTimestamp.format("LLL");

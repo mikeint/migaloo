@@ -133,7 +133,7 @@ class JobList extends React.Component{
         const { classes } = this.props; 
         return (
             <React.Fragment>
-                { this.state.openJob && <Redirect to={"/recruiter/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidate_id:'')} />}
+                { this.state.openJob && <Redirect to={"/recruiter/jobList/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidate_id:'')} />}
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
                 <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} />
                 <div className='jobListClassContainer'> 

@@ -19,7 +19,7 @@ class Conversation extends Component {
 
     constructor(props) {
         super(props);
-        var toId = (props.conversation.myId===props.conversation.user_id_1?props.conversation.user_id_2:props.conversation.user_id_1);
+        var toId = (props.conversation.my_id===props.conversation.user_id_1?props.conversation.user_id_2:props.conversation.user_id_1);
 		this.state = {
             conversation: props.conversation,
             messageList: [],
@@ -31,6 +31,7 @@ class Conversation extends Component {
             meetingDialogOpen: false,
             meetingCreate: {}
         };
+        this.message = React.createRef();
     }
     componentDidMount = () => {
         this.getMessageList();
@@ -97,8 +98,8 @@ class Conversation extends Component {
     }
     sendMessage = (meeting) => {
         var data = null
-        var message = this.message.value;
-        if(meeting){
+        var message = this.message.current.value;
+        if(meeting === true){
             var startDateTime = this.state.meetingCreate.startDateTime;//this.state.meetingCreate.value;
             var minuteLength = this.state.meetingCreate.length;//this.state.meetingCreate.value;
             var location = this.state.meetingCreate.location;//this.state.meetingCreate.value;
@@ -125,7 +126,7 @@ class Conversation extends Component {
             .then((res)=>{
                 if(res == null) return
                 // Reset messages and repull
-                this.message.value = ""
+                this.message.current.value = ""
                 this.setState({
                     pageNumber: 1,
                     pageCount: -1,
@@ -213,7 +214,7 @@ class Conversation extends Component {
                                             <div>{d.locationType}</div>
                                             <div>{d.dateOffer}</div>
                                             <div>{d.length}</div>
-                                            {d.response === 0 && d.toMe && <div className="responseContainer">
+                                            {d.response === 0 && !d.mine && <div className="responseContainer">
                                                 <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 1)}>Accept</div>
                                                 <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 2)}>Reject</div>
                                             </div>}
@@ -238,7 +239,7 @@ class Conversation extends Component {
                                 })
                             }
                         </div>
-                        <textarea className="chatInput" placeholder="Message" name='message' type='text' ref={(c) => this.message = c} onChange={this.handleChange} />
+                        <textarea className="chatInput" placeholder="Message" name='message' type='text' ref={this.message} />
                         <div className="sendButton" onClick={this.sendMessage.bind(this)}>Send</div> 
                     </div>
                 </Dialog>

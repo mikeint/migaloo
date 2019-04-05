@@ -260,7 +260,7 @@ DECLARE
 BEGIN
     IF (TG_OP = 'INSERT') THEN
         IF (NEW.created_on is NULL) THEN
-            NEW.created_on = CURRENT_DATE;
+            NEW.created_on = NOW();
         END IF;
         Insert into messages_base(message_type_id, to_id, message_subject_id, created_on) VALUES (
             NEW.message_type_id,
@@ -467,23 +467,23 @@ INSERT INTO candidate (candidate_id, first_name, last_name, experience_type_id, 
     (1006, 'Chris', 'Roth', 2, 5),
     (1007, 'Lukas', 'Page', 1, 4);
 INSERT INTO recruiter_candidate (candidate_id, recruiter_id, created_on) VALUES
-    (1000, 1, current_date - interval '1' day),
-    (1001, 1, current_date - interval '2' day),
-    (1001, 2, current_date - interval '2' day),
-    (1002, 3, current_date - interval '3' day),
-    (1003, 1, current_date - interval '4' day),
-    (1004, 1, current_date - interval '5' day),
-    (1005, 1, current_date - interval '6' day),
-    (1005, 2, current_date - interval '6' day),
-    (1006, 3, current_date - interval '7' day),
-    (1007, 1, current_date - interval '8' day),
-    (1007, 2, current_date - interval '8' day),
-    (1007, 3, current_date - interval '8' day);
+    (1000, 1, NOW() - interval '1' day),
+    (1001, 1, NOW() - interval '2' day),
+    (1001, 2, NOW() - interval '2' day),
+    (1002, 3, NOW() - interval '3' day),
+    (1003, 1, NOW() - interval '4' day),
+    (1004, 1, NOW() - interval '5' day),
+    (1005, 1, NOW() - interval '6' day),
+    (1005, 2, NOW() - interval '6' day),
+    (1006, 3, NOW() - interval '7' day),
+    (1007, 1, NOW() - interval '8' day),
+    (1007, 2, NOW() - interval '8' day),
+    (1007, 3, NOW() - interval '8' day);
 INSERT INTO job_posting (post_id, employer_id, created_on, title, caption, experience_type_id, salary_type_id) VALUES
-    (1, 500, current_date - interval '5' minute, 'Senior Software Developer - Working on exciting projects', 'We are a small company that develops solutions to protect national security and everyday folks. That includes OS integration, programming in C, C++, Java, Scala, Python, JS, or whatever the job calls for, writing security policies, and everything in between.', 2, 4),
-    (2, 501, current_date - interval '1' hour, 'Software Developer', 'As a software developer, you will be a key individual contributor on a sprint team building the future software at the core of the business. The role is for a full stack developer with the ability to develop solutions for the user interface, business logic, persistence layer and data store. Developers are responsible for implementing well-defined requirements as part of the sprint team including unit tests.', null, 5),
-    (3, 500, current_date - interval '3' hour, 'Director of Technical Support', 'As Director of Technical Support for Tenable, you will provide strategic direction, leadership, development and management with our Americas Technical Support team. The Director of Technical Support is an experienced, enthusiastic, hands-on leader focused on building a world class Technical Support organization that is focused on delivering customer success. You will be the conduit between the Technical Support team, Customer Success Management team, Product and Development teams, and other internal stakeholders developing a trusted advisor relationship that enables rapid, focused, resolution for our customers. To be successful in this role, the Director of Technical Support must have the right combination of strategy, leadership and operational skills to manage a growing team of dedicated Technical Support Engineers.', 3, 6),
-    (4, 501, current_date - interval '1' day, 'IT Director', 'The primary directive of the IT Director is to ensure that the technology and computing needs of the company are met. The candidate will work with executive leadership to help develop and maintain an IT roadmap keeping the company�s future objectives in mind. This position requires significant hands-on technical knowledge and expertise coupled with solid business knowledge. The IT Director must be able to collaborate with internal customers to identify and prioritize business requirements and deliver business and technology solutions with a focus on process transformation from planning through implementation. They will support the organizational initiative of process re-engineering by involving client departments in process flow analysis and work re-design. ', 3, 7);
+    (1, 500, NOW() - interval '5' minute, 'Senior Software Developer - Working on exciting projects', 'We are a small company that develops solutions to protect national security and everyday folks. That includes OS integration, programming in C, C++, Java, Scala, Python, JS, or whatever the job calls for, writing security policies, and everything in between.', 2, 4),
+    (2, 501, NOW() - interval '1' hour, 'Software Developer', 'As a software developer, you will be a key individual contributor on a sprint team building the future software at the core of the business. The role is for a full stack developer with the ability to develop solutions for the user interface, business logic, persistence layer and data store. Developers are responsible for implementing well-defined requirements as part of the sprint team including unit tests.', null, 5),
+    (3, 500, NOW() - interval '3' hour, 'Director of Technical Support', 'As Director of Technical Support for Tenable, you will provide strategic direction, leadership, development and management with our Americas Technical Support team. The Director of Technical Support is an experienced, enthusiastic, hands-on leader focused on building a world class Technical Support organization that is focused on delivering customer success. You will be the conduit between the Technical Support team, Customer Success Management team, Product and Development teams, and other internal stakeholders developing a trusted advisor relationship that enables rapid, focused, resolution for our customers. To be successful in this role, the Director of Technical Support must have the right combination of strategy, leadership and operational skills to manage a growing team of dedicated Technical Support Engineers.', 3, 6),
+    (4, 501, NOW() - interval '1' day, 'IT Director', 'The primary directive of the IT Director is to ensure that the technology and computing needs of the company are met. The candidate will work with executive leadership to help develop and maintain an IT roadmap keeping the company�s future objectives in mind. This position requires significant hands-on technical knowledge and expertise coupled with solid business knowledge. The IT Director must be able to collaborate with internal customers to identify and prioritize business requirements and deliver business and technology solutions with a focus on process transformation from planning through implementation. They will support the organizational initiative of process re-engineering by involving client departments in process flow analysis and work re-design. ', 3, 7);
 
 INSERT INTO job_posting_contact (post_id, employer_contact_id) VALUES
     (1, 100),
@@ -492,20 +492,20 @@ INSERT INTO job_posting_contact (post_id, employer_contact_id) VALUES
     (4, 101);
 
 INSERT INTO candidate_posting (post_id, candidate_id, recruiter_id, coins, created_on, responded_on, has_seen_post, has_seen_response, accepted, not_accepted, comment) VALUES
-    (1, 1000, 1, 10, current_date - interval '1' day, current_date - interval '0' day, true, false, true, false, 'I think this Sarah would be great for the job'),
-    (1, 1001, 2, 5, current_date - interval '2' day, current_date - interval '1' day, true, false, false, true, 'Amanda has all of the skills you need'),
-    (1, 1002, 3, 1, current_date - interval '1' day, NULL, false, false, false, false, 'Beth is very respectable and I think she will be a great addition to your team'),
-    (2, 1003, 1, 2, current_date - interval '3' day, current_date - interval '2' day, true, true, true, false, 'Stephanie meets your criteria exactly, please have a look at her resume'),
-    (2, 1004, 1, 20, current_date - interval '4' day, current_date - interval '3' day, true, false, true, false, null),
-    (2, 1005, 2, 30, current_date - interval '2', NULL, false, false, false, false, null),
-    (3, 1006, 3, 6, current_date - interval '5' day, current_date - interval '4' day, true, true, true, false, null),
-    (3, 1007, 1, 7, current_date - interval '3' day, current_date - interval '1' day, true, false, false, true, null),
-    (3, 1000, 1, 4, current_date - interval '2' day, NULL, false, false, false, false, 'I think this Sarah would be great for the job'),
-    (3, 1001, 2, 4, current_date - interval '1' day, current_date - interval '0' day, true, true, true, false, 'Amanda has all of the skills you need'),
-    (4, 1002, 3, 20, current_date - interval '3' day, current_date - interval '2' day, true, false, false, true, 'Beth is very respectable and I think she will be a great addition to your team'),
-    (4, 1003, 1, 9, current_date - interval '4' day, current_date - interval '3' day, true, true, true, false, 'Stephanie meets your criteria exactly, please have a look at her resume'),
-    (4, 1004, 1, 8, current_date - interval '5' day, current_date - interval '4' day, true, false, false, true, null),
-    (4, 1000, 1, 1, current_date - interval '2' day, NULL, false, false, false, false, 'I think this Sarah would be great for the position you have open');
+    (1, 1000, 1, 10, NOW() - interval '1' day, NOW() - interval '0' day, true, false, true, false, 'I think this Sarah would be great for the job'),
+    (1, 1001, 2, 5, NOW() - interval '2' day, NOW() - interval '1' day, true, false, false, true, 'Amanda has all of the skills you need'),
+    (1, 1002, 3, 1, NOW() - interval '1' day, NULL, false, false, false, false, 'Beth is very respectable and I think she will be a great addition to your team'),
+    (2, 1003, 1, 2, NOW() - interval '3' day, NOW() - interval '2' day, true, true, true, false, 'Stephanie meets your criteria exactly, please have a look at her resume'),
+    (2, 1004, 1, 20, NOW() - interval '4' day, NOW() - interval '3' day, true, false, true, false, null),
+    (2, 1005, 2, 30, NOW() - interval '2', NULL, false, false, false, false, null),
+    (3, 1006, 3, 6, NOW() - interval '5' day, NOW() - interval '4' day, true, true, true, false, null),
+    (3, 1007, 1, 7, NOW() - interval '3' day, NOW() - interval '1' day, true, false, false, true, null),
+    (3, 1000, 1, 4, NOW() - interval '2' day, NULL, false, false, false, false, 'I think this Sarah would be great for the job'),
+    (3, 1001, 2, 4, NOW() - interval '1' day, NOW() - interval '0' day, true, true, true, false, 'Amanda has all of the skills you need'),
+    (4, 1002, 3, 20, NOW() - interval '3' day, NOW() - interval '2' day, true, false, false, true, 'Beth is very respectable and I think she will be a great addition to your team'),
+    (4, 1003, 1, 9, NOW() - interval '4' day, NOW() - interval '3' day, true, true, true, false, 'Stephanie meets your criteria exactly, please have a look at her resume'),
+    (4, 1004, 1, 8, NOW() - interval '5' day, NOW() - interval '4' day, true, false, false, true, null),
+    (4, 1000, 1, 1, NOW() - interval '2' day, NULL, false, false, false, false, 'I think this Sarah would be great for the position you have open');
 INSERT INTO posting_tags (post_id, tag_id) VALUES
     (1, 1),
     (1, 2),
@@ -544,33 +544,33 @@ INSERT INTO candidate_tags (candidate_id, tag_id) VALUES
     (1007, 4),
     (1007, 5);
 INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id, created_on) VALUES
-    (1, 500, 1000, 1, current_date - interval '7' day), -- message_subject_id = 1
-    (3, 500, 1006, 3, current_date - interval '11' day), -- message_subject_id = 2
-    (1, 500, 1001, 1, current_date - interval '1' day); -- message_subject_id = 3
+    (1, 500, 1000, 1, NOW() - interval '7' day), -- message_subject_id = 1
+    (3, 500, 1006, 3, NOW() - interval '11' day), -- message_subject_id = 2
+    (1, 500, 1001, 1, NOW() - interval '1' day); -- message_subject_id = 3
 INSERT INTO messages (message_type_id, to_id, message_subject_id, message, created_on) VALUES
-    (1, 1, 1, 'We would like to hear more about sarah.', current_date - interval '6' day),
-    (1, 500, 1, 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', current_date - interval '5' day),
-    (1, 1, 1, 'That sounds great lets have a call tommorow for a follow-up, I will send two meeting requests, let me know what works.', current_date - interval '4' day),
-    (1, 1, 1, 'One more follow up.', current_date - interval '2.2' day),
-    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '10' day),
-    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '9' day),
-    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '8' day),
-    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', current_date - interval '7' day),
-    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '6' day),
-    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '5' day),
-    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '4' day),
-    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', current_date - interval '3' day),
-    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '2' day),
-    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '1' day),
-    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '12' hour),
-    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', current_date - interval '11' hour),
-    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', current_date - interval '10' hour),
-    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', current_date - interval '9' hour),
-    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', current_date - interval '8' hour),
-    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', current_date - interval '7' hour);
+    (1, 1, 1, 'We would like to hear more about sarah.', NOW() - interval '6' day),
+    (1, 500, 1, 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', NOW() - interval '5' day),
+    (1, 1, 1, 'That sounds great lets have a call tommorow for a follow-up, I will send two meeting requests, let me know what works.', NOW() - interval '4' day),
+    (1, 1, 1, 'One more follow up.', NOW() - interval '2.2' day),
+    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', NOW() - interval '10' day),
+    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', NOW() - interval '9' day),
+    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', NOW() - interval '8' day),
+    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', NOW() - interval '7' day),
+    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', NOW() - interval '6' day),
+    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', NOW() - interval '5' day),
+    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', NOW() - interval '4' day),
+    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', NOW() - interval '3' day),
+    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', NOW() - interval '2' day),
+    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', NOW() - interval '1' day),
+    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', NOW() - interval '12' hour),
+    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', NOW() - interval '11' hour),
+    (1, 3, 2, 'We would like to move forward with Stephanie, can we please set up a time for a call this week', NOW() - interval '10' hour),
+    (1, 500, 2, 'Hi Steve that is great, I am free tommorow any time, does 2PM work for you?', NOW() - interval '9' hour),
+    (1, 3, 2, 'Actually, I have a meeting at 2, lets do 3:30PM', NOW() - interval '8' hour),
+    (1, 500, 2, 'Yes that works, I look forward to hearing from you.', NOW() - interval '7' hour);
 INSERT INTO messages (message_type_id, user_id_1, user_id_2, to_id, message_subject_id, date_offer, minute_length, location_type, meeting_subject, created_on) VALUES
-    (2, 1, 500, 1, 1, current_date - interval '63' hour, 30, 1, 'Initial Meeting, Time 1', current_date - interval '72' hour),
-    (2, 1, 500, 1, 1, current_date - interval '60' hour, 30, 1, 'Initial Meeting, Time 2', current_date - interval '72' hour),
-    (2, 1, 500, 1, 1, current_date + interval '12' hour, 60, 1, 'Follow up Meeting', current_date - interval '48' hour);
+    (2, 1, 500, 1, 1, NOW() - interval '63' hour, 30, 1, 'Initial Meeting, Time 1', NOW() - interval '72' hour),
+    (2, 1, 500, 1, 1, NOW() - interval '60' hour, 30, 1, 'Initial Meeting, Time 2', NOW() - interval '72' hour),
+    (2, 1, 500, 1, 1, NOW() + interval '12' hour, 60, 1, 'Follow up Meeting', NOW() - interval '48' hour);
 UPDATE messages SET response = 1 WHERE message_id = 21;
 UPDATE messages SET response = 2 WHERE message_id = 22;

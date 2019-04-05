@@ -130,7 +130,7 @@ class CandidateList extends React.Component{
                             onClick={()=>this.callAddOverlay()}>
                             <Add/>
                         </Button>
-                        {this.state.postData? <NavLink to="/recruiter/jobList/"><div className="candidateListJobSearched">{this.state.postData.title}</div></NavLink> : ""} 
+                        {this.state.postData? <NavLink to={`/recruiter/jobList/job/${this.state.postData.post_id}`}><div className="candidateListJobSearched">{this.state.postData.title}</div></NavLink> : ""} 
                     </div>
                     <div className={'candidateListContainer '+this.state.enterSlide}> 
                         {

@@ -43,7 +43,7 @@
 .candidateListJobSearched {
     width: 100%;
     height: 30px;
-    overflow-y: scroll;
+    overflow-y: none;
     background: #b1b9dbba;
     color: #ffffff;
     margin-top: 20px;
