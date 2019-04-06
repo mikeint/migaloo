@@ -82,7 +82,8 @@ router.get('/tag', passport.authentication, (req, res) => {
                 ) un \
                 GROUP BY tag_id \
             ) cnt ON cnt.tag_id = t.tag_id \
-            ORDER BY length(t.tag_name) ASC')
+            ORDER BY length(t.tag_name) ASC \
+            LIMIT 10')
     .then(data => {
         res.json({success:true, tagList: data});
     })
