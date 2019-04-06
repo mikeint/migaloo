@@ -58,7 +58,7 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:"Must be an employer for this"})
     }
     
-    postgresdb.one('\
+    postgresdb.any('\
         SELECT email, first_name, last_name, \
             phone_number, company_name, ec.image_id, \
             street_address_1, street_address_2, city, state, country \
@@ -151,7 +151,7 @@ router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
 });
 
 /**
- * Add a new contact to an employer
+ * Add a new contact to an employer, must be an admin for the employer to do so
  * @route POST api/employer/addContactToEmployer
  * @group employer - Employer
  * @param {Object} body.optional
@@ -171,6 +171,7 @@ router.post('/addContactToEmployer', passport.authentication,  (req, res) => {
      * firstName
      * lastName
      * phoneNumber
+     * employerId
      * isAdmin (Optional)
      */
     var bodyData = req.body;
@@ -183,7 +184,7 @@ router.post('/addContactToEmployer', passport.authentication,  (req, res) => {
         return t.one('SELECT ec.employer_id \
                         FROM employer_contact ec \
                         WHERE ec.employer_contact_id = ${employer_contact_id} AND ec.employer_id = ${employer_id} AND ec.isAdmin',
-                        {employer_contact_id:jwtPayload.id, employer_id:jwtPayload.employerId})
+                        {employer_contact_id:jwtPayload.id, employer_id:bodyData.employerId})
             .then(()=>{
                 // creating a sequence of transaction queries:
                 return t.one('INSERT INTO login (email, user_type_id) VALUES ($1, $2) RETURNING user_id',
@@ -191,7 +192,7 @@ router.post('/addContactToEmployer', passport.authentication,  (req, res) => {
                 .then((login_ret)=>{
                     console.log(login_ret)
                     return t.none('INSERT INTO employer_contact (employer_contact_id, employer_id, first_name, last_name, phone_number, isAdmin) VALUES ($1, $2, $3, $4, $5, $6)',
-                        [login_ret.user_id, jwtPayload.employerId, body.firstName, body.lastName, body.phoneNumber, body.isAdmin?true:false])
+                        [login_ret.user_id, bodyData.employerId, body.firstName, body.lastName, body.phoneNumber, body.isAdmin?true:false])
                     .then(()=>{
                         // TODO: send request email to contact to make a password
                         res.status(200).json({success: true})
@@ -239,6 +240,7 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
      * Input: Must be admin
      * employerContactId
      * isAdmin
+     * employerId
      */
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
@@ -259,7 +261,7 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
         return t.one('SELECT ec.employer_id \
                         FROM employer_contact ec \
                         WHERE ec.employer_contact_id = ${employer_contact_id} AND ec.employer_id = ${employer_id} AND ec.isAdmin',
-                        {employer_contact_id:jwtPayload.id, employer_id:jwtPayload.employerId})
+                        {employer_contact_id:jwtPayload.id, employer_id:bodyData.employerId})
             .then(()=>{
                 return t.none('UPDATE employer_contact SET isAdmin=${isAdmin} WHERE employer_contact_id = ${employerContactId}',
                     {isAdmin:isAdmin, employerContactId:employerContactId})
@@ -296,8 +298,8 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.get('/getEmployerContactList', passport.authentication,  getEmployerContactList)
-router.get('/getEmployerContactList/:page', passport.authentication,  getEmployerContactList)
+router.get('/getEmployerContactList/:employerId', passport.authentication,  getEmployerContactList)
+router.get('/getEmployerContactList/:employerId/:page', passport.authentication,  getEmployerContactList)
 function getEmployerContactList(req, res) {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
@@ -310,7 +312,7 @@ function getEmployerContactList(req, res) {
         return t.one('SELECT ec.employer_id \
                         FROM employer_contact ec \
                         WHERE ec.employer_contact_id = ${employer_contact_id} AND ec.employer_id = ${employer_id} AND ec.isAdmin',
-                        {employer_contact_id:jwtPayload.id, employer_id:jwtPayload.employerId})
+                        {employer_contact_id:jwtPayload.id, employer_id:req.params.employerId})
             .then(()=>{
                 return t.any('\
                     SELECT ec.employer_contact_id, l.email, ec.first_name, ec.last_name, \
@@ -325,7 +327,7 @@ function getEmployerContactList(req, res) {
                     WHERE e.employer_id = ${employer_id} AND ec.active \
                     ORDER BY ec.last_name ASC, ec.first_name ASC \
                     OFFSET ${page} \
-                    LIMIT 10', {employer_id:jwtPayload.employerId, page:(page-1)*10})
+                    LIMIT 10', {employer_id:req.params.employerId, page:(page-1)*10})
                 .then((data) => {
                     // Marshal data
                     data = data.map(m=>{
