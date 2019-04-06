@@ -56,7 +56,7 @@ class DistanceFilter extends React.Component{
                     <ListItemIcon>
                         {this.state.icon}
                     </ListItemIcon>
-                    <ListItemText inset primary={this.state.text} classes={this.state.selected != null ? classes.selectedHeader : {}}/>
+                    <ListItemText inset primary={this.state.text} classes={{primary:this.state.selected != null ? classes.selectedHeader : ''}} />
                     {this.state.collapse ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
                 <Collapse in={this.state.collapse} timeout="auto" unmountOnExit>

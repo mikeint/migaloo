@@ -62,7 +62,7 @@ class ListFilter extends React.Component{
                     <ListItemIcon>
                         {this.state.icon}
                     </ListItemIcon>
-                    <ListItemText inset primary={this.state.text} classes={this.state.selected.length > 0 ? classes.selectedHeader : {}} />
+                    <ListItemText inset primary={this.state.text} classes={{primary:this.state.selected.length > 0 ? classes.selectedHeader : ''}} />
                     {this.state.collapse ? <ExpandLess /> : <ExpandMore />}
                 </ListItem>
                 <Collapse in={this.state.collapse} timeout="auto" unmountOnExit>

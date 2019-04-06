@@ -83,6 +83,7 @@ class Filters extends React.Component{
 
     constructor(props) {
         super(props);
+        this.handleFilterChange = this.handleFilterChange.bind(this)
         const filterList = [
             (<ListFilter
                 text={"Salary"}
