@@ -31,6 +31,9 @@ class ListFilter extends React.Component{
         };
         this.dataFunc = props.dataFunc.bind(this)
         this.dataFunc();
+        this.clearSelected = this.clearSelected.bind(this)
+        if(props.clearSubject != null)
+            props.clearSubject.subscribe(this.clearSelected)
     }
     toggleCollapse(){
         this.setState({collapse: !this.state.collapse});

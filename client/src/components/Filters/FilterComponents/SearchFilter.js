@@ -38,6 +38,9 @@ class SearchFilter extends React.Component{
         this.dataFunc = props.dataFunc.bind(this)
         this.dataFunc('');
         this.searchRef = React.createRef();
+        this.clearSelected = this.clearSelected.bind(this)
+        if(props.clearSubject != null)
+            props.clearSubject.subscribe(this.clearSelected)
     }
     
     queryByString = debounce((searchString) => {

@@ -1,5 +1,4 @@
 import React from 'react';
-import './Filters.css'; 
 
 import ApiCalls from '../../ApiCalls';  
 import List from '@material-ui/core/List';
@@ -21,6 +20,9 @@ import LocationOn from '@material-ui/icons/LocationOn';
 import ListFilter from './FilterComponents/ListFilter';
 import SearchFilter from './FilterComponents/SearchFilter';
 import DistanceFilter from './FilterComponents/DistanceFilter';
+import { Subject } from 'rxjs';
+
+const clearFilterSubject = new Subject();
 
 const styles = theme => ({
     drawer: {
@@ -90,24 +92,28 @@ class Filters extends React.Component{
                 id={"salary"}
                 icon={<AttachMoney />}
                 dataFunc={salaryDataCall}
-                onChange={this.handleFilterChange} />),
+                onChange={this.handleFilterChange}
+                clearSubject={clearFilterSubject.asObservable()} />),
             (<ListFilter
                 text={"Experience"}
                 id={"experience"}
                 icon={<Gavel />}
                 dataFunc={experienceDataCall}
-                onChange={this.handleFilterChange} />),
+                onChange={this.handleFilterChange}
+                clearSubject={clearFilterSubject.asObservable()} />),
             (<SearchFilter
                 text={"Tags"}
                 id={"tags"}
                 icon={<Assignment />}
                 dataFunc={tagsDataCall}
-                onChange={this.handleFilterChange} />),
+                onChange={this.handleFilterChange}
+                clearSubject={clearFilterSubject.asObservable()} />),
             (<DistanceFilter
                 text={"Location"}
                 id={"location"}
                 icon={<LocationOn />}
-                onChange={this.handleFilterChange} />)
+                onChange={this.handleFilterChange}
+                clearSubject={clearFilterSubject.asObservable()} />)
         ]
 		this.state = {
             filterOpen: props.open,
@@ -116,6 +122,7 @@ class Filters extends React.Component{
             filters: {}
         };
     }
+
     shouldComponentUpdate(nextProps, nextState) {
         const change = this.state.filterOpen !== nextProps.open;
         if(change){
@@ -140,6 +147,9 @@ class Filters extends React.Component{
         this.state.onClose();
         this.setState({ filterOpen: false });
     };
+    clearAllFilters(){
+        clearFilterSubject.next();
+    }
   
     render(){
         const { classes } = this.props; 
@@ -161,7 +171,8 @@ class Filters extends React.Component{
                     </div>
                     <Divider />
                     <List>
-                        <ListItem button key="Clear All Filters">
+                        <ListItem button key="Clear All Filters"
+                                onClick={this.clearAllFilters.bind(this)}>
                             <ListItemIcon><Clear /></ListItemIcon>
                             <ListItemText primary="Clear All Filters" />
                         </ListItem> 

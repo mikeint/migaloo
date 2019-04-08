@@ -31,6 +31,9 @@ class DistanceFilter extends React.Component{
             rangeValue: 50,
             onChange: props.onChange
         };
+        this.clearSelected = this.clearSelected.bind(this)
+        if(props.clearSubject != null)
+            props.clearSubject.subscribe(this.clearSelected)
     }
     toggleCollapse(){
         this.setState({collapse: !this.state.collapse});
