@@ -42,8 +42,10 @@ class BuildActiveJobs extends React.Component{
             candidateList: []
         };
         this.Auth = new AuthFunctions();
-        this.getJobList();
     }
+    componentDidMount = () => {
+        this.getJobList();
+    } 
     getJobList = () => {
         ApiCalls.get('/api/employerPostings/listCandidates/'+this.state.postId)
         .then((res)=>{

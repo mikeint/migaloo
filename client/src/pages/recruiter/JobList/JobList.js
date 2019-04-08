@@ -18,7 +18,6 @@ import '../../../constants/AnimateMigalooOverlay';
 
 import whale from '../../../files/images/logo.png'
 
-
 const styles = theme => ({
     button: {
       float: 'right', 
@@ -43,14 +42,15 @@ class JobList extends React.Component{
             candidateId: props.match.params.candidateId,
             candidateData: null,
             enterSlide:"page-enter",
-            filterOpen: false
+            filterOpen: false,
+            filters: {}
         };
     }
     handleDrawerToggle = () => {
         this.setState({ filterOpen: !this.state.filterOpen });
     };
-    handleDrawerClose = () => {
-        this.setState({ filterOpen: false });
+    handleDrawerClose = (filters) => {
+        this.setState({ filterOpen: false , filters:filters }, this.getJobList());
     };
 
     componentWillMount = () => {
@@ -84,6 +84,7 @@ class JobList extends React.Component{
 
 
     getJobList = (searchString) => {
+        console.log(this.state.filters)
         (this.state.candidateId?
             ApiCalls.get('/api/recruiterJobs/listForCandidate/'+this.state.candidateId+'/'+this.state.page+(searchString?`/${searchString}`:'')):
             ApiCalls.get('/api/recruiterJobs/list/'+this.state.page+(searchString?`/${searchString}`:'')))

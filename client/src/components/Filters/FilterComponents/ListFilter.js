@@ -30,11 +30,13 @@ class ListFilter extends React.Component{
             onChange: props.onChange
         };
         this.dataFunc = props.dataFunc.bind(this)
-        this.dataFunc();
         this.clearSelected = this.clearSelected.bind(this)
         if(props.clearSubject != null)
             props.clearSubject.subscribe(this.clearSelected)
     }
+    componentDidMount = () => {
+        this.dataFunc();
+    } 
     toggleCollapse(){
         this.setState({collapse: !this.state.collapse});
     }
@@ -85,7 +87,7 @@ class ListFilter extends React.Component{
                                 className={classes.nested}
                                 onClick={()=>this.toggleSelected(item)}>
                                 {this.isSelected(item) && <ListItemIcon><Check /></ListItemIcon>}
-                                <ListItemText inset primary={item.name} />
+                                <ListItemText inset primary={item.name} secondary={item.secname} />
                             </ListItem>
                         )}
                     </List>

@@ -36,12 +36,14 @@ class SearchFilter extends React.Component{
             defaultSearch: ''
         };
         this.dataFunc = props.dataFunc.bind(this)
-        this.dataFunc('');
         this.searchRef = React.createRef();
         this.clearSelected = this.clearSelected.bind(this)
         if(props.clearSubject != null)
             props.clearSubject.subscribe(this.clearSelected)
     }
+    componentDidMount = () => {
+        this.dataFunc('');
+    } 
     
     queryByString = debounce((searchString) => {
         this.dataFunc(searchString.trim())
@@ -132,7 +134,7 @@ class SearchFilter extends React.Component{
                                 className={classes.nested}
                                 onClick={()=>this.toggleSelected(item)}>
                                 {this.isSelected(item) && <ListItemIcon><Check /></ListItemIcon>}
-                                <ListItemText inset primary={item.name} />
+                                <ListItemText inset primary={item.name} secondary={item.secname} />
                             </ListItem>
                         )}
                     </List>

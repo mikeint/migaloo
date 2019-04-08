@@ -52,6 +52,9 @@ class AddCandidate extends React.Component{
             experienceList: []
         }
         this.Auth = new AuthFunctions();
+    }
+    loadData(){
+        
         ApiCalls.get('/api/autocomplete/salary')
         .then((res) => {
             if(res && res.data.success) {
@@ -72,10 +75,9 @@ class AddCandidate extends React.Component{
         });
     }
  
- 
-/*     componentDidMount() {
-        window.scrollTo(0, 0); 
-    } */
+    componentDidMount() {
+        this.loadData();
+    } 
 
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value })

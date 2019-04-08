@@ -72,7 +72,7 @@ function tagsDataCall(searchString){
     .then((res) => { 
         if(res && res.data.success) {
             const data = res.data.tagList
-                    .map(d=>{return {name:d.tag_name, id: d.tag_id}})
+                    .map(d=>{return {name:d.tag_name, id: d.tag_id, secname:d.tag_type_name}})
             this.setState({data: data});
         }
     })
@@ -139,12 +139,12 @@ class Filters extends React.Component{
     }
     handleDrawerToggle = () => {
         if(!this.state.filterOpen)
-            this.state.onClose();
+            this.state.onClose(this.state.filters);
         this.setState({ filterOpen: !this.state.filterOpen });
     };
     
     handleDrawerClose = () => {
-        this.state.onClose();
+        this.state.onClose(this.state.filters);
         this.setState({ filterOpen: false });
     };
     clearAllFilters(){

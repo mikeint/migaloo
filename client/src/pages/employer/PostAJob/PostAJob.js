@@ -49,6 +49,8 @@ class PostAJob extends React.Component{
             experienceList: []
         }
         this.Auth = new AuthFunctions();
+    }
+    loadData(){
         ApiCalls.get('/api/autocomplete/salary')
         .then((res) => {
             if(res && res.data.success) {
@@ -73,6 +75,7 @@ class PostAJob extends React.Component{
         ApiCalls.cancel();
     }
     componentDidMount() {
+        this.loadData()
         window.scrollTo(0, 0); 
     }
 
