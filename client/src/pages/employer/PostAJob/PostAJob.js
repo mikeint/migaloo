@@ -44,9 +44,11 @@ class PostAJob extends React.Component{
             caption:'',
             salary:'',
             experience:'',
+            employer:'',
             redirect: false,
             salaryList: [],
-            experienceList: []
+            experienceList: [],
+            employers: []
         }
         this.Auth = new AuthFunctions();
     }
@@ -55,6 +57,15 @@ class PostAJob extends React.Component{
         .then((res) => {
             if(res && res.data.success) {
                 this.setState({salaryList:res.data.salaryList});
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+        ApiCalls.get('/api/employer/listEmployers')
+        .then((res) => {
+            if(res && res.data.success) {
+                this.setState({employers:res.data.employers.map(d=>{return {id:d.employer_id, name:d.company_name}})});
             }
         })
         .catch(error => {
@@ -103,9 +114,29 @@ class PostAJob extends React.Component{
         return (
             <React.Fragment>
                 {this.state.redirect ? <Redirect to='/employer/activeJobs' /> : ''}
-                <div className="pageHeading">Post a job</div>
+                <div className="pageHeading">Post a job</div> 
                 <div className="postAJobContainer">
-                    <div className="formSection">  
+                    <div className="formSection">
+                        <div className="input-2">  
+                            <FormControl className={classes.selectFormControl}>
+                                <InputLabel htmlFor="employer-helper">Employer</InputLabel>
+                                <Select
+                                    value={this.state.employer}
+                                    onChange={this.handleChange}
+                                    input={<Input name="employer" id="employer-helper" />}
+                                    inputProps={{
+                                        id: 'employer',
+                                    }}
+                                >
+                                    <MenuItem value="">
+                                        <em>Unspecified</em>
+                                    </MenuItem>
+                                    {this.state.employers.map((d, i)=>
+                                        <MenuItem key={i} value={d.id}>{d.name}</MenuItem>
+                                    )}
+                                </Select>
+                            </FormControl>
+                        </div>  
                         <div className="input-2">
                             <TextField
                                 name="title"

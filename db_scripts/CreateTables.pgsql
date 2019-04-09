@@ -163,6 +163,7 @@ CREATE TABLE candidate (
     experience_type_id int REFERENCES experience_type(experience_type_id),
     active boolean default true,
     rating float default null,
+    image_id varchar(128),
     address_id bigint REFERENCES address(address_id),
     name_search tsvector,
     PRIMARY KEY(candidate_id)
@@ -350,21 +351,21 @@ CREATE INDEX candidate_tags_idx ON candidate_tags(tag_id);
 
 CREATE VIEW user_master AS 
 SELECT 
-    l.created_on, l.user_id, l.user_type_id, l.last_login, l.email, ut.user_type_name, ec.employer_id,
+    l.created_on, l.user_id, l.user_type_id, l.last_login, l.email, ut.user_type_name,
     coalesce(c.first_name, r.first_name, ac.first_name) as first_name,
-    coalesce(e.company_name, eec.company_name) as company_name,
+    coalesce(e.company_name) as company_name,
     coalesce(c.last_name, r.last_name, ac.last_name) as last_name,
     coalesce(c.phone_number, r.phone_number, ac.phone_number) as phone_number,
     coalesce(c.rating, r.rating, e.rating) as rating,
-    coalesce(c.active, r.active, ac.active) as active
+    coalesce(c.active, r.active, ac.active) as active,
+    coalesce(c.image_id, r.image_id, ac.image_id) as image_id,
+    (CASE WHEN l.passwordhash IS NULL THEN false ELSE true END) as account_active
 FROM login l
 INNER JOIN user_type ut ON ut.user_type_id = l.user_type_id
 LEFT JOIN candidate c ON c.candidate_id = l.user_id
 LEFT JOIN recruiter r ON r.recruiter_id = l.user_id
 LEFT JOIN employer e ON e.employer_id = l.user_id
-LEFT JOIN account_manager ac ON ac.account_manager_id = l.user_id
-LEFT JOIN employer_contact ec ON ac.account_manager_id = ec.employer_contact_id
-LEFT JOIN employer eec ON eec.employer_id = ec.employer_id;
+LEFT JOIN account_manager ac ON ac.account_manager_id = l.user_id;
 
 -- DATA START
 INSERT INTO messages_type (message_type_id, message_type_name) VALUES

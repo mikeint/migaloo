@@ -6,7 +6,6 @@ import { Redirect } from 'react-router-dom';
 import ApiCalls from '../../../ApiCalls';  
 import UploadImage from '../../../components/UploadImage/UploadImage'; 
 import defaultProfileImage from '../../../files/images/profile.png'
-import ContactList from './ContactList/ContactList'
 
 class Profile extends React.Component{
 
@@ -20,8 +19,7 @@ class Profile extends React.Component{
             profile: '',
             profileInfo: {},
             showUpload:false,
-            profileImage: defaultProfileImage,
-            showContactList: false
+            profileImage: defaultProfileImage
         }
     } 
 
@@ -98,8 +96,6 @@ class Profile extends React.Component{
                     </div>
                     <div className='profileBottom'>
                         <div className="profileItem">Employer info</div>
-                        <div className="profileItem" onClick={() => this.setState({showContactList: !this.state.showContactList})}>Contact List</div>
-                        {this.state.showContactList && <ContactList/> }
                         <div className="profileItem">Account info</div>
                         <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
                     </div> 

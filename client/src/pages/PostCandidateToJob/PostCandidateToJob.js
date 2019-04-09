@@ -36,7 +36,6 @@ class PostCandidateToJob extends React.Component{
             profileInfo: {},
             candidateSubmitted: false,
         }
-        this.getProfileInfo();
     }
 
     componentDidMount = () => {

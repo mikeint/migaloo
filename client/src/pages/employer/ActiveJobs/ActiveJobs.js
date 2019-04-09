@@ -64,10 +64,10 @@ class ActiveJobs extends React.Component{
         this.getEmployers();
     } 
     getEmployers(){
-        ApiCalls.get('/api/employers/listEmployers')
+        ApiCalls.get('/api/employer/listEmployers')
         .then((res) => {
             if(res && res.data.success) {
-                this.setState({employers:res.data.employers});
+                this.setState({employers:res.data.employers.map(d=>{return {id:d.employer_id, name:d.company_name}})});
             }
         })
         .catch(error => {
@@ -113,7 +113,7 @@ class ActiveJobs extends React.Component{
         return (
             <React.Fragment>
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
-                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} />
+                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} filterOptions={['employer']} />
 
                 <div className='activeJobContainer'>
                     <div className="pageHeading">Active Jobs

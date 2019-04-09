@@ -5,6 +5,7 @@ import PostAJob from './PostAJob/PostAJob';
 import EmployerProfile from './Profile/Profile';
 import NavBar from '../../components/NavBar/NavBar';
 import Chat from '../../components/Chat/Chat';
+import Accounts from "./Accounts/Accounts";
 
 function EmployerRouter({ match }) {
 
@@ -15,6 +16,7 @@ function EmployerRouter({ match }) {
                 <Switch>
                     <Route strict path="/employer/postAJob" component={PostAJob} />
                     <Route strict path="/employer/profile" component={EmployerProfile} />  
+                    <Route strict path="/employer/accounts" component={Accounts} />  
                     <Route strict path="/employer/activeJobs" component={ActiveJobs} />
                     <Route strict path="/employer/chat/:postId/:candidateId" component={Chat} />
                     <Route strict path="/employer/chat" component={Chat} />

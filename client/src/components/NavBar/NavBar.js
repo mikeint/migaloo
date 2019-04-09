@@ -8,6 +8,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import ListAlt from '@material-ui/icons/ListAlt';
 import Search from '@material-ui/icons/Search';
 import Chat from '@material-ui/icons/Chat';
+import AccountBalance from '@material-ui/icons/AccountBalance';
 import Notifications from '../Notifications/Notifications';
 import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
@@ -26,14 +27,14 @@ const styles = theme => ({
     tabsIndicator: {
       backgroundColor: '#6f90a1'
     },
-    profileButton:{
+    leftButton:{
         width: "50px",
         minWidth: "50px",
         maxWidth: "50px",
         padding: 0,
         marginLeft: "auto"
     },
-    backButton:{
+    smallButton:{
         width: "50px",
         minWidth: "50px",
         maxWidth: "50px",
@@ -63,7 +64,7 @@ const navMappings = {
             {
                 icon:<AccountCircle />,
                 link:"/recruiter/profile",
-                className: 'profileButton'
+                className: 'leftButton'
             }
         ]
     },
@@ -88,9 +89,14 @@ const navMappings = {
                 className: 'linkButton'
             },
             {
-                icon:<AccountCircle />,
+                icon:<AccountBalance />,
                 link:"/employer/accounts",
-                className: 'profileButton'
+                className: 'leftButton'
+            },
+            {
+                icon:<AccountCircle />,
+                link:"/employer/profile",
+                className: 'smallButton'
             }
         ]
     }
@@ -123,7 +129,6 @@ class NavBar extends React.Component{
         }
         const { history } = this.props;
         history.listen((location, action) => {
-            const userType = this.state.userType;
             const page = this.state.page;
             const path = location.pathname;
             const newPage = this.getNewPage(path)
