@@ -48,7 +48,7 @@ router.get('/experience', passport.authentication, (req, res) => {
  * @access Private
  */
 router.get('/tag/:find', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT t.tag_name, t.tag_id, COALESCE(cnt.tag_count, 0) as tag_count \
+    postgresdb.any('SELECT t.tag_name, t.tag_id, tt.tag_type_name, COALESCE(cnt.tag_count, 0) as tag_count \
             FROM tags t \
             LEFT JOIN ( \
                 SELECT tag_id, count(1) as tag_count \
@@ -59,6 +59,7 @@ router.get('/tag/:find', passport.authentication, (req, res) => {
                 ) un \
                 GROUP BY tag_id \
             ) cnt ON cnt.tag_id = t.tag_id \
+            INNER JOIN tag_type tt ON tt.tag_type_id = t.tag_type_id \
             WHERE lower(t.tag_name) LIKE $1 \
             ORDER BY length(t.tag_name) ASC \
             LIMIT 10', "%"+req.params.find.toLowerCase()+"%")
@@ -71,7 +72,7 @@ router.get('/tag/:find', passport.authentication, (req, res) => {
     });
 });
 router.get('/tag', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT t.tag_name, t.tag_id, COALESCE(cnt.tag_count, 0) as tag_count \
+    postgresdb.any('SELECT t.tag_name, t.tag_id, tt.tag_type_name, COALESCE(cnt.tag_count, 0) as tag_count \
             FROM tags t \
             LEFT JOIN ( \
                 SELECT tag_id, count(1) as tag_count \
@@ -82,7 +83,8 @@ router.get('/tag', passport.authentication, (req, res) => {
                 ) un \
                 GROUP BY tag_id \
             ) cnt ON cnt.tag_id = t.tag_id \
-            ORDER BY length(t.tag_name) ASC \
+            INNER JOIN tag_type tt ON tt.tag_type_id = t.tag_type_id \
+            ORDER BY t.tag_name ASC \
             LIMIT 10')
     .then(data => {
         res.json({success:true, tagList: data});

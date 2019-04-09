@@ -1,9 +1,9 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
-import RecruiterProfile from '../../pages/recruiter/Profile/Profile';  
-import JobList from '../../pages/recruiter/JobList/JobList';
-import CandidateList from '../../pages/recruiter/CandidateList/CandidateList';
-import AddCandidate from '../../pages/recruiter/AddCandidate/AddCandidate';
+import RecruiterProfile from './Profile/Profile';  
+import JobList from './JobList/JobList';
+import CandidateList from './CandidateList/CandidateList';
+import AddCandidate from './AddCandidate/AddCandidate';
 import NavBar from '../../components/NavBar/NavBar';
 import Chat from '../../components/Chat/Chat';
 import BuildActiveJobs from './JobList/BuildActiveJobs/BuildActiveJobs';

@@ -32,72 +32,80 @@ const styles = theme => ({
         maxWidth: "50px",
         padding: 0,
         marginLeft: "auto"
+    },
+    backButton:{
+        width: "50px",
+        minWidth: "50px",
+        maxWidth: "50px",
+        padding: 0
     }
 })
 const navMappings = {
-    1:[ // Recruiter
-        {
-            icon:<Search/>,
-            link:"/recruiter/jobList",
-            name:"Job Search"
-        },
-        {
-            icon:<ListAlt/>,
-            link:"/recruiter/candidateList",
-            name:"Candidate List"
-        },
-        {
-            icon:<Chat/>,
-            link:"/recruiter/chat",
-            name:"Chat"
-        }
-    ],
-    2:[ // Employer
-        {
-            icon:<ListAlt/>,
-            link:"/employer/activeJobs",
-            name:"Active Jobs"
-        },
-        {
-            icon:<Search/>,
-            link:"/employer/postAJob",
-            name:"Post a Job"
-        },
-        {
-            icon:<Chat/>,
-            link:"/employer/chat",
-            name:"Chat"
-        }
-    ]
-}
-const profileMapping = {
-    1: // Recruiter
-    {
-        icon:<AccountCircle />,
-        link:"/recruiter/profile",
-        name:"Profile"
-    }
-    ,
-    2: // Employer
-    {
-        icon:<AccountCircle />,
-        link:"/employer/profile",
-        name:"Profile"
+    1:{'/recruiter':[ // Recruiter
+            {
+                icon:<Search/>,
+                link:"/recruiter/jobList",
+                name:"Job Search",
+                className: 'linkButton'
+            },
+            {
+                icon:<ListAlt/>,
+                link:"/recruiter/candidateList",
+                name:"Candidate List",
+                className: 'linkButton'
+            },
+            {
+                icon:<Chat/>,
+                link:"/recruiter/chat",
+                name:"Chat",
+                className: 'linkButton'
+            },
+            {
+                icon:<AccountCircle />,
+                link:"/recruiter/profile",
+                className: 'profileButton'
+            }
+        ]
+    },
+    2:{
+        '/employer':[ // Employer
+            {
+                icon:<ListAlt/>,
+                link:"/employer/activeJobs",
+                name:"Active Jobs",
+                className: 'linkButton'
+            },
+            {
+                icon:<Search/>,
+                link:"/employer/postAJob",
+                name:"Post a Job",
+                className: 'linkButton'
+            },
+            {
+                icon:<Chat/>,
+                link:"/employer/chat",
+                name:"Chat",
+                className: 'linkButton'
+            },
+            {
+                icon:<AccountCircle />,
+                link:"/employer/accounts",
+                className: 'profileButton'
+            }
+        ]
     }
 }
 class NavBar extends React.Component{
-    getNewPage(userType, path){
-        let page = 0;
-        let i = 0
-        for(; i < navMappings[userType].length; i++){
-            if(path.startsWith(navMappings[userType][i].link)){
-                page = i;
-                break;
-            }
-        }
-        if(path.startsWith(profileMapping[userType].link)){
-            page = i;
-        }
+    getBasePath(path){
+        const i = path.lastIndexOf('/');
+        if(i === 0)
+            return path;
+        return path.slice(0, i);
+    }
+    getNewPage(path){
+        const page = this.getNavMappings().findIndex(d=>path.startsWith(d.link))
+        if(page === -1)
+            return 0
         return page;
     }
     constructor(props){
@@ -105,10 +113,12 @@ class NavBar extends React.Component{
         this.Auth = new AuthFunctions();
         const userType = this.Auth.getUser().userType;
         const path = window.location.pathname;
-        const page = this.getNewPage(userType, path);
+        const basePath = this.getBasePath(path);
+        const page = navMappings[userType][basePath].findIndex(d=>path.startsWith(d.link));
         this.state={
             page: page,
             userType: userType,
+            basePath: basePath,
             user: {}
         }
         const { history } = this.props;
@@ -116,9 +126,9 @@ class NavBar extends React.Component{
             const userType = this.state.userType;
             const page = this.state.page;
             const path = location.pathname;
-            const newPage = this.getNewPage(userType, path)
+            const newPage = this.getNewPage(path)
             if(newPage !== page){
-                this.setState({page: newPage})
+                this.setState({page: newPage, basePath:this.getBasePath(path)})
             }
         });
     } 
@@ -128,6 +138,9 @@ class NavBar extends React.Component{
 
     componentWillMount = () => {
         this.setState({ user: this.Auth.getUser() });
+    }
+    getNavMappings(){
+        return navMappings[this.state.user.userType][this.state.basePath]
     }
     render(){
         const { classes } = this.props;
@@ -141,11 +154,10 @@ class NavBar extends React.Component{
                             classes={{indicator:classes.tabsIndicator}}
                             onChange={this.handleChange}>
                             {
-                                navMappings[this.state.user.userType].map((d, i)=>{
-                                    return <LinkTab className={classes.linkButton} label={d.name} icon={d.icon} key={i} to={d.link} />
+                                this.getNavMappings().map((d, i)=>{
+                                    return <LinkTab className={classes[d.className]} label={d.name} icon={d.icon} key={i} to={d.link} />
                                 })
                             }
-                            <LinkTab className={classes.profileButton} to={profileMapping[this.state.user.userType].link} icon={profileMapping[this.state.user.userType].icon} color="inherit" />
                             <Notifications/>
                         </Tabs>
                     </Toolbar>

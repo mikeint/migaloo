@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS job_posting_contact; -- To Remove
+
 DROP VIEW IF EXISTS user_master;
 DROP TABLE IF EXISTS rate_employer;
 DROP TABLE IF EXISTS rate_recruiter;
@@ -14,11 +16,11 @@ DROP TABLE IF EXISTS posting_tags;
 DROP TABLE IF EXISTS candidate_tags;
 DROP TABLE IF EXISTS recruiter_candidate;
 DROP TABLE IF EXISTS candidate_posting;
-DROP TABLE IF EXISTS job_posting_contact;
 DROP TABLE IF EXISTS job_posting;
 DROP TABLE IF EXISTS recruiter;
 DROP TABLE IF EXISTS candidate;
 DROP TABLE IF EXISTS employer_contact;
+DROP TABLE IF EXISTS account_manager;
 DROP TABLE IF EXISTS employer;
 DROP TABLE IF EXISTS address;
 DROP TABLE IF EXISTS login;
@@ -88,24 +90,28 @@ CREATE TABLE rate_employer (
     rating int NOT NULL,
     PRIMARY KEY(employer_id, user_id)
 );
-CREATE TABLE employer_contact (
-    employer_id bigint REFERENCES employer(employer_id),
-    employer_contact_id bigint REFERENCES login(user_id),
+CREATE TABLE account_manager (
+    account_manager_id bigint REFERENCES login(user_id),
     first_name varchar(128) NOT NULL,
     last_name varchar(128) NOT NULL,
     phone_number  varchar(32) NULL,
     image_id varchar(128),
     active boolean default true,
-    isAdmin boolean default false,
     name_search tsvector,
-    PRIMARY KEY(employer_contact_id)
+    PRIMARY KEY(account_manager_id)
 );
-CREATE INDEX employer_contact_order_idx ON employer_contact(last_name ASC, first_name ASC);
-CREATE INDEX employer_contact_active_idx ON employer_contact(active);
-CREATE INDEX employer_contact_tsv_idx ON employer_contact USING gin(name_search);
-CREATE TRIGGER employer_contact_search_vector_update
+CREATE TABLE employer_contact (
+    employer_id bigint REFERENCES employer(employer_id),
+    employer_contact_id bigint REFERENCES login(user_id),
+    isAdmin boolean default false,
+    PRIMARY KEY(employer_id, employer_contact_id)
+);
+CREATE INDEX account_manager_order_idx ON account_manager(last_name ASC, first_name ASC);
+CREATE INDEX account_manager_active_idx ON account_manager(active);
+CREATE INDEX account_manager_tsv_idx ON account_manager USING gin(name_search);
+CREATE TRIGGER account_manager_search_vector_update
 BEFORE INSERT OR UPDATE
-ON employer_contact
+ON account_manager
 FOR EACH ROW EXECUTE PROCEDURE
 tsvector_update_trigger (name_search, 'pg_catalog.simple', last_name, first_name);
 
@@ -147,11 +153,6 @@ ON job_posting
 FOR EACH ROW EXECUTE PROCEDURE
 tsvector_update_trigger (posting_search, 'pg_catalog.simple', title, caption);
 
-CREATE TABLE job_posting_contact (
-    post_id bigint REFERENCES job_posting(post_id),
-    employer_contact_id bigint REFERENCES employer_contact(employer_contact_id),
-    PRIMARY KEY(post_id)
-);
 CREATE TABLE candidate (
     candidate_id bigint REFERENCES login(user_id),
     first_name varchar(128) NOT NULL,
@@ -350,18 +351,19 @@ CREATE INDEX candidate_tags_idx ON candidate_tags(tag_id);
 CREATE VIEW user_master AS 
 SELECT 
     l.created_on, l.user_id, l.user_type_id, l.last_login, l.email, ut.user_type_name, ec.employer_id,
-    coalesce(c.first_name, r.first_name, ec.first_name) as first_name,
+    coalesce(c.first_name, r.first_name, ac.first_name) as first_name,
     coalesce(e.company_name, eec.company_name) as company_name,
-    coalesce(c.last_name, r.last_name, ec.last_name) as last_name,
-    coalesce(c.phone_number, r.phone_number, ec.phone_number) as phone_number,
+    coalesce(c.last_name, r.last_name, ac.last_name) as last_name,
+    coalesce(c.phone_number, r.phone_number, ac.phone_number) as phone_number,
     coalesce(c.rating, r.rating, e.rating) as rating,
-    coalesce(c.active, r.active, ec.active) as active
+    coalesce(c.active, r.active, ac.active) as active
 FROM login l
 INNER JOIN user_type ut ON ut.user_type_id = l.user_type_id
 LEFT JOIN candidate c ON c.candidate_id = l.user_id
 LEFT JOIN recruiter r ON r.recruiter_id = l.user_id
 LEFT JOIN employer e ON e.employer_id = l.user_id
-LEFT JOIN employer_contact ec ON ec.employer_contact_id = l.user_id
+LEFT JOIN account_manager ac ON ac.account_manager_id = l.user_id
+LEFT JOIN employer_contact ec ON ac.account_manager_id = ec.employer_contact_id
 LEFT JOIN employer eec ON eec.employer_id = ec.employer_id;
 
 -- DATA START
@@ -373,7 +375,7 @@ INSERT INTO location_type (location_type_id, location_type_name) VALUES
     (2, 'In-Person');
 INSERT INTO user_type (user_type_name) VALUES
     ('Recruiter'),
-    ('Employer Contact'),
+    ('Account Manager'),
     ('Candidate'),
     ('Employer');
 INSERT INTO experience_type (experience_type_name) VALUES 
@@ -513,12 +515,12 @@ INSERT INTO login (user_id, email, passwordhash, created_on, user_type_id) VALUE
     (1, 'r1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-17 10:23:54', 1), -- Add Recruiter, pass: test
     (2, 'r2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-11-25 10:23:54', 1), -- Add Recruiter, pass: test
     (3, 'r3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-12-25 10:23:54', 1), -- Add Recruiter, pass: test
-    (100, 'e1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-01-21 10:23:54', 2), -- Add Employer, pass: test
-    (101, 'e2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
-    (102, 'e3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
-    (103, 'e4@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
-    (104, 'e5@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
-    (105, 'e6@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
+    (100, 'e1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-01-21 10:23:54', 2), -- Add Account Manager, pass: test
+    (101, 'e2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
+    (102, 'e3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
+    (103, 'e4@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
+    (104, 'e5@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
+    (105, 'e6@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
     (106, 'e7@test.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
     (500, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4), -- Dummy Employer, pass: test
     (501, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4); -- Dummy Employer, pass: test
@@ -539,14 +541,23 @@ INSERT INTO address (street_address_1, street_address_2, city, state, country, l
 INSERT INTO employer (employer_id, company_name, address_id) VALUES
     (500, 'Google Inc.', 1), 
     (501, 'Microsoft Inc.', 2);
-INSERT INTO employer_contact (employer_contact_id, employer_id, first_name, last_name, phone_number, isAdmin) VALUES
-    (100, 500, 'Steve', 'Smith', '905-555-8942', true), 
-    (101, 501, 'Jerry', 'McGuire', '905-555-0425', true),
-    (102, 500, 'Tom', 'McInly', '905-555-7624', false),
-    (103, 500, 'Arnold', 'Stone', '905-555-0786', false),
-    (104, 500, 'Adam', 'Steal', '905-555-9782', false),
-    (105, 500, 'Kelly', 'Rogers', '905-555-6456', false),
-    (106, 500, 'Rebecca', 'Brown', NULL, false);
+INSERT INTO account_manager (account_manager_id, first_name, last_name, phone_number) VALUES
+    (100, 'Steve', 'Smith', '905-555-8942'), 
+    (101, 'Jerry', 'McGuire', '905-555-0425'),
+    (102, 'Tom', 'McInly', '905-555-7624'),
+    (103, 'Arnold', 'Stone', '905-555-0786'),
+    (104, 'Adam', 'Steal', '905-555-9782'),
+    (105, 'Kelly', 'Rogers', '905-555-6456'),
+    (106, 'Rebecca', 'Brown', NULL);
+INSERT INTO employer_contact (employer_contact_id, employer_id, isAdmin) VALUES
+    (100, 500, true), 
+    (100, 501, true), 
+    (101, 501, true),
+    (102, 500, false),
+    (103, 500, false),
+    (104, 500, false),
+    (105, 500, false),
+    (106, 500, false);
 INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, coins, address_id) VALUES
     (1, 'John', 'Macabee', '443-555-8234', 25, 3),
     (2, 'Milton', 'Walker', '443-555-6456', 50, 4),
@@ -579,11 +590,6 @@ INSERT INTO job_posting (post_id, employer_id, created_on, title, caption, exper
     (3, 500, NOW() - interval '3' hour, 'Director of Technical Support', 'As Director of Technical Support for Tenable, you will provide strategic direction, leadership, development and management with our Americas Technical Support team. The Director of Technical Support is an experienced, enthusiastic, hands-on leader focused on building a world class Technical Support organization that is focused on delivering customer success. You will be the conduit between the Technical Support team, Customer Success Management team, Product and Development teams, and other internal stakeholders developing a trusted advisor relationship that enables rapid, focused, resolution for our customers. To be successful in this role, the Director of Technical Support must have the right combination of strategy, leadership and operational skills to manage a growing team of dedicated Technical Support Engineers.', 3, 6),
     (4, 501, NOW() - interval '1' day, 'IT Director', 'The primary directive of the IT Director is to ensure that the technology and computing needs of the company are met. The candidate will work with executive leadership to help develop and maintain an IT roadmap keeping the company�s future objectives in mind. This position requires significant hands-on technical knowledge and expertise coupled with solid business knowledge. The IT Director must be able to collaborate with internal customers to identify and prioritize business requirements and deliver business and technology solutions with a focus on process transformation from planning through implementation. They will support the organizational initiative of process re-engineering by involving client departments in process flow analysis and work re-design. ', 3, 7);
 
-INSERT INTO job_posting_contact (post_id, employer_contact_id) VALUES
-    (1, 100),
-    (2, 101),
-    (3, 100),
-    (4, 101);
 
 INSERT INTO candidate_posting (post_id, candidate_id, recruiter_id, coins, created_on, responded_on, has_seen_post, has_seen_response, accepted, not_accepted, comment) VALUES
     (1, 1000, 1, 10, NOW() - interval '1' day, NOW() - interval '0' day, true, false, true, false, 'I think this Sarah would be great for the job'),

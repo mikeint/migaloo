@@ -36,9 +36,6 @@ def jobPostingQuery = "INSERT INTO job_posting (post_id, employer_id, created_on
 def jobPostingData = []
 def postId = 100
 
-def jobPostingContactQuery = "INSERT INTO job_posting_contact (post_id, employer_contact_id) VALUES \n\t"
-def jobPostingContactData = []
-
 def jobPostingTagsQuery = "INSERT INTO posting_tags (post_id, tag_id) VALUES \n\t"
 def jobPostingTagsData = []
 
@@ -101,5 +98,4 @@ out << (employerQuery + employerData.join(",\n\t")+";\n")
 out << (employerContactQuery + employerContactData.join(",\n\t")+";\n")
 out << (jobPostingQuery + jobPostingData.join(",\n\t")+";\n")
 out << (jobPostingTagsQuery + jobPostingTagsData.join(",\n\t")+";\n")
-out << (jobPostingContactQuery + jobPostingContactData.join(",\n\t")+";\n")
 // Generate Employers 

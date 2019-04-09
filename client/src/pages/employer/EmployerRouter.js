@@ -1,8 +1,8 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
-import ActiveJobs from '../../pages/employer/ActiveJobs/ActiveJobs';
-import PostAJob from '../../pages/employer/PostAJob/PostAJob';
-import EmployerProfile from '../../pages/employer/Profile/Profile';
+import ActiveJobs from './ActiveJobs/ActiveJobs';
+import PostAJob from './PostAJob/PostAJob';
+import EmployerProfile from './Profile/Profile';
 import NavBar from '../../components/NavBar/NavBar';
 import Chat from '../../components/Chat/Chat';
 
