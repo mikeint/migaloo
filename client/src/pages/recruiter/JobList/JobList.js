@@ -73,18 +73,13 @@ class JobList extends React.Component{
                 }
             })
         }
-    } 
-    callFilterOverlay = () => { 
-        this.setState({ showFilterOverlay : !this.state.showFilterOverlay }) 
     }
-
     callNewJobPage = (postId) => {
         this.setState({postId : postId, openJob:true}) 
     }
 
 
     getJobList = (searchString) => {
-        console.log(this.state.filters)
         (this.state.candidateId?
             ApiCalls.get('/api/recruiterJobs/listForCandidate/'+this.state.candidateId+'/'+this.state.page+(searchString?`/${searchString}`:'')):
             ApiCalls.get('/api/recruiterJobs/list/'+this.state.page+(searchString?`/${searchString}`:'')))
@@ -136,7 +131,7 @@ class JobList extends React.Component{
             <React.Fragment>
                 { this.state.openJob && <Redirect to={"/recruiter/jobList/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidate_id:'')} />}
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
-                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} />
+                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} filterOptions={['salary', 'location', 'experience', 'tags']} />
                 <div className='jobListClassContainer'> 
                    <div className="pageHeading">
                         Active Jobs Postings  

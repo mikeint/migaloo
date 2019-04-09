@@ -14,6 +14,7 @@ import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import FilterList from '@material-ui/icons/FilterList'; 
 import AttachMoney from '@material-ui/icons/AttachMoney';
+import Business from '@material-ui/icons/Business';
 import Gavel from '@material-ui/icons/Gavel';
 import Assignment from '@material-ui/icons/Assignment';
 import LocationOn from '@material-ui/icons/LocationOn';
@@ -80,18 +81,39 @@ function tagsDataCall(searchString){
         console.log(error);
     })
 }
+function employerDataCall(){
+    ApiCalls.get('/api/employer/listEmployers')
+    .then((res) => {
+        if(res && res.data.success) {
+            const data = res.data.employers
+                    .map(d=>{return {name:d.company_name, id:d.employer_id}})
+            this.setState({data: data});
+        }
+    })
+    .catch(error => {
+        console.log(error);
+    });
+}
 
 class Filters extends React.Component{
 
     constructor(props) {
         super(props);
         this.handleFilterChange = this.handleFilterChange.bind(this)
-        const filterList = [
+        var filterList = [
             (<ListFilter
                 text={"Salary"}
                 id={"salary"}
                 icon={<AttachMoney />}
                 dataFunc={salaryDataCall}
+                onChange={this.handleFilterChange}
+                clearSubject={clearFilterSubject.asObservable()} />),
+            (<ListFilter
+                text={"Employer"}
+                id={"employer"}
+                icon={<Business />}
+                type={"radio"}
+                dataFunc={employerDataCall}
                 onChange={this.handleFilterChange}
                 clearSubject={clearFilterSubject.asObservable()} />),
             (<ListFilter
@@ -115,6 +137,8 @@ class Filters extends React.Component{
                 onChange={this.handleFilterChange}
                 clearSubject={clearFilterSubject.asObservable()} />)
         ]
+        if(props.filterOptions)
+            filterList = filterList.filter(d=>props.filterOptions.includes(d.props.id))
 		this.state = {
             filterOpen: props.open,
             onClose: props.onClose,

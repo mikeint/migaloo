@@ -33,6 +33,7 @@ class SearchFilter extends React.Component{
             dataFunc: props.dataFunc,
             selected:[],
             onChange: props.onChange,
+            type: props.type || 'checkbox',
             defaultSearch: ''
         };
         this.dataFunc = props.dataFunc.bind(this)
@@ -53,10 +54,14 @@ class SearchFilter extends React.Component{
         this.setState({collapse: !this.state.collapse});
     }
     toggleSelected(item){
-        const selected = this.state.selected;
+        let selected = this.state.selected;
         const i = selected.findIndex(d=> d.id === item.id)
         if(i === -1){
-            selected.push(item)
+            if(this.state.type === 'checkbox'){
+                selected.push(item);
+            }else if(this.state.type === 'radio'){
+                selected = [item];
+            }
         }else{
             selected.splice(i, 1)
         }
