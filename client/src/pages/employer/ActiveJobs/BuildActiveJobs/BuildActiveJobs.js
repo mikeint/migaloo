@@ -14,7 +14,9 @@ const styles = theme => ({
         width: "80%",
     },
     buttonContainer:{
-        textAlign:"center"
+        textAlign:"center",
+        marginTop:"10px",
+        marginBottom:"10px"
     },
     alertClose: {
         position: "absolute",

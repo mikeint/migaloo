@@ -3,7 +3,7 @@ import './ActiveJobs.css';
 import { NavLink } from 'react-router-dom';
 import ApiCalls from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import Loader from '../../../components/Loader/Loader';
 import Add from '@material-ui/icons/Add';
@@ -155,7 +155,7 @@ class ActiveJobs extends React.Component{
                                         />
                                 </div>
                                     
-                                <SwipeableDrawer
+                                <Drawer
                                     anchor="bottom"
                                     className={classes.drawer}
                                     open={this.state.showOverlay}
@@ -166,7 +166,7 @@ class ActiveJobs extends React.Component{
                                         obj={this.state.jobList[this.state.postId]}
                                         removedCallback={this.jobRemoved.bind(this)} 
                                         onClose={()=>this.setState({"showOverlay":false})} />
-                                </SwipeableDrawer>
+                                </Drawer>
                             </div>
                         :
                         <Loader />

@@ -12,7 +12,7 @@ import AddCandidate from '../AddCandidate/AddCandidate';
 import Pagination from "react-js-pagination";
 import '../../../constants/AnimateMigalooOverlay';  
 
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';  
 import Button from '@material-ui/core/Button';
 import Add from '@material-ui/icons/Add';
@@ -170,7 +170,7 @@ class CandidateList extends React.Component{
                         }
                         </div>
  
-                    <SwipeableDrawer
+                    <Drawer
                         anchor="bottom"
                         className={classes.drawer}
                         open={this.state.showOverlay}
@@ -178,7 +178,7 @@ class CandidateList extends React.Component{
                         onOpen={()=>this.setState({"showOverlay":true})}
                     > 
                         <AddCandidate onClose={()=>this.setState({"showOverlay":false})} />
-                    </SwipeableDrawer>
+                    </Drawer>
                     
             </React.Fragment>
         );
