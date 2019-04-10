@@ -46,7 +46,7 @@ class Profile extends React.Component{
     }
 
     getProfileInfo = () => {
-        ApiCalls.get('/api/employer/getProfile')
+        ApiCalls.get('/api/accountManager/getProfile')
         .then((res)=>{    
             if(res == null) return
             this.setState({ profileInfo: res.data }) 
@@ -86,7 +86,6 @@ class Profile extends React.Component{
                 <div className="profileContainer_employer">
                     <div className='profileImageContainer'>
                         <img  className='profileImage' src={this.state.profileImage} alt="" onClick={this.showUpload}/>
-                        <div className="profileType">{this.state.profileInfo.company_name}</div>
                         <div className="profileName">{this.state.profileInfo.first_name} {this.state.profileInfo.last_name}</div>
                         <div className="profileEmail">{this.state.user.email}<br/>{this.state.profileInfo.phone_number}</div>
                         <div className="profileEmail">
@@ -95,12 +94,11 @@ class Profile extends React.Component{
                         <div className="profileName"></div>
                     </div>
                     <div className='profileBottom'>
-                        <div className="profileItem">Employer info</div>
                         <div className="profileItem">Account info</div>
                         <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
                     </div> 
                     {this.state.showUpload?<UploadImage 
-                                                baseUrl={"/api/employer/"}
+                                                baseUrl={"/api/accountManager/"}
                                                 uploadUrl={"uploadImage/"}
                                                 handleClose={this.handleClose} />:''}                    
                 </div> 

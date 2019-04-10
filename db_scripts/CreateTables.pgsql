@@ -97,6 +97,7 @@ CREATE TABLE account_manager (
     phone_number  varchar(32) NULL,
     image_id varchar(128),
     active boolean default true,
+    address_id bigint REFERENCES address(address_id),
     name_search tsvector,
     PRIMARY KEY(account_manager_id)
 );
