@@ -125,8 +125,16 @@ CREATE TABLE recruiter (
     image_id varchar(128),
     active boolean default true,
     rating float default null,
+    name_search tsvector,
     PRIMARY KEY(recruiter_id)
 );
+CREATE INDEX recruiter_tsv_idx ON recruiter USING gin(name_search);
+CREATE TRIGGER recruiter_search_vector_update
+BEFORE INSERT OR UPDATE
+ON recruiter
+FOR EACH ROW EXECUTE PROCEDURE
+tsvector_update_trigger (name_search, 'pg_catalog.simple', last_name, first_name);
+
 CREATE TABLE rate_recruiter (
     recruiter_id bigint REFERENCES recruiter(recruiter_id),
     user_id bigint REFERENCES login(user_id),
@@ -353,8 +361,9 @@ CREATE VIEW user_master AS
 SELECT 
     l.created_on, l.user_id, l.user_type_id, l.last_login, l.email, ut.user_type_name,
     coalesce(c.first_name, r.first_name, ac.first_name) as first_name,
-    coalesce(e.company_name) as company_name,
+    coalesce(e.company_name) as company_name, 
     coalesce(c.last_name, r.last_name, ac.last_name) as last_name,
+    coalesce(c.name_search, r.name_search, ac.name_search, e.company_name_search) as name_search,
     coalesce(c.phone_number, r.phone_number, ac.phone_number) as phone_number,
     coalesce(c.rating, r.rating, e.rating) as rating,
     coalesce(c.active, r.active, ac.active) as active,
@@ -675,3 +684,12 @@ INSERT INTO messages (message_type_id, user_id_1, user_id_2, to_id, message_subj
     (2, 1, 500, 1, 1, NOW() + interval '12' hour, 60, 1, 'Follow up Meeting', NOW() - interval '48' hour);
 UPDATE messages SET response = 1 WHERE message_id = 21;
 UPDATE messages SET response = 2 WHERE message_id = 22;
+
+SELECT setval(pg_get_serial_sequence('login', 'user_id'), max(user_id)) FROM login;
+SELECT setval(pg_get_serial_sequence('address', 'address_id'), max(address_id)) FROM address;
+SELECT setval(pg_get_serial_sequence('employer', 'employer_id'), max(employer_id)) FROM employer;
+SELECT setval(pg_get_serial_sequence('candidate', 'candidate_id'), max(candidate_id)) FROM candidate;
+SELECT setval(pg_get_serial_sequence('job_posting', 'post_id'), max(post_id)) FROM job_posting;
+SELECT setval(pg_get_serial_sequence('recruiter', 'recruiter_id'), max(recruiter_id)) FROM recruiter;
+SELECT setval(pg_get_serial_sequence('account_manager', 'account_manager_id'), max(account_manager_id)) FROM account_manager;
+

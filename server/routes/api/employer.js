@@ -6,7 +6,9 @@ const moment = require('moment');
 //load input validation
 const validateEmployerInput = require('../../validation/employer');  
 
-const postgresdb = require('../../config/db').postgresdb
+const db = require('../../config/db')
+const postgresdb = db.postgresdb
+const pgp = db.pgp
 const generateUploadMiddleware = require('../upload').generateUploadMiddleware
 const upload = generateUploadMiddleware('profile_image/')
 
@@ -130,28 +132,23 @@ router.post('/addEmployer', passport.authentication,  (req, res) => {
     postgresdb.tx(t => {
         var fields = ['company_name'];
         var addressFields = ['street_address_1', 'street_address_2', 'city', 'state', 'country'];
-        return t.one('SELECT ec.employer_id, first_name, last_name, phone_number, company_name, e.address_id, street_address_1, street_address_2, city, state, country \
-                        FROM employer e \
-                        INNER JOIN employer_contact ec ON ec.employer_id = e.employer_id AND ec.isAdmin \
-                        INNER JOIN account_manager ac ON ac.account_manager_id = ec.employer_contact_id \
-                        LEFT JOIN address a ON e.address_id = a.address_id\
-                        WHERE ec.employer_contact_id = $1', [jwtPayload.id]).then((data)=>{
-            var employer_id = data.employer_id;
-            var addressId = data.address_id;
-            var addressIdExists = (data.address_id != null);
-            var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:data[f]);
-            var addrFieldUpdates = addressFields.map(f=> bodyData[f] != null?bodyData[f]:data[f]);
-            // creating a sequence of transaction queries:
-            var q1
-            if(!addressIdExists){
-                q1 = t.one('INSERT INTO address (street_address_1, street_address_2, city, state, country) VALUES ($1, $2, $3, $4, $5) RETURNING address_id',
-                        [...addrFieldUpdates])
-            }
-            return q1.then((addr_ret)=>{
-                addressId = addressIdExists ? addressId : addr_ret.address_id
-                const q2 = t.none('UPDATE employer SET company_name=$1, address_id=$2 WHERE employer_id = $3',
-                                [...fieldUpdates, addressId, employer_id]);
-                return q2
+        var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:null);
+        var addrFieldUpdates = addressFields.map(f=> bodyData[f] != null?bodyData[f]:null);
+        
+        // creating a sequence of transaction queries:
+        var q1 = new Promise(function(resolve, reject) { resolve({address_id:null}); });
+        if(!addrFieldUpdates.some(a=>a != null)){
+            q1 = t.one('INSERT INTO address (street_address_1, street_address_2, city, state, country) VALUES ($1, $2, $3, $4, $5) RETURNING address_id',
+                    [...addrFieldUpdates])
+        }
+        return q1.then((addr_ret)=>{
+            return t.one('INSERT INTO login(user_type_id) VALUES (4) RETURNING user_id')
+            .then((user_ret) => {
+                const q3 = t.none('INSERT INTO employer(employer_id, company_name, address_id) VALUES ($1, $2, $3)',
+                                [user_ret.user_id, ...fieldUpdates, addr_ret.address_id]);
+                const q4 = t.none('INSERT INTO employer_contact(employer_id, employer_contact_id, isAdmin) VALUES ($1, $2, true)',
+                                [user_ret.user_id, jwtPayload.id]);
+                return t.batch([q3, q4])
                     .then(() => {
                         res.status(200).json({success: true})
                         return []
@@ -180,7 +177,7 @@ router.post('/addEmployer', passport.authentication,  (req, res) => {
 });
 /**
  * Set employer profile information
- * @route POST api/employer/setProfile
+ * @route POST api/employer/setEmployerProfile
  * @group employer - Employer
  * @param {Object} body.optional
  * @returns {object} 200 - An array of user info
@@ -253,6 +250,7 @@ router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
     });
 });
 
+const employerContactHelper = new pgp.helpers.ColumnSet(['employer_contact_id', 'employer_id'], {table: 'employer_contact'});
 /**
  * Add a new contact to an employer, must be an admin for the employer to do so
  * @route POST api/employer/addContactToEmployer
@@ -270,12 +268,8 @@ router.post('/addContactToEmployer', passport.authentication,  (req, res) => {
     // }
     /**
      * Input: Must be admin
-     * userId or email
-     * firstName
-     * lastName
-     * phoneNumber
+     * userIds <list>
      * employerId
-     * isAdmin (Optional)
      */
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
@@ -289,22 +283,68 @@ router.post('/addContactToEmployer', passport.authentication,  (req, res) => {
                         WHERE ec.employer_contact_id = ${employer_contact_id} AND ec.employer_id = ${employer_id} AND ec.isAdmin',
                         {employer_contact_id:jwtPayload.id, employer_id:bodyData.employerId})
             .then(()=>{
-                // creating a sequence of transaction queries:
-                return t.one('INSERT INTO login (email, user_type_id) VALUES ($1, $2) RETURNING user_id',
-                    [body.email, 2])
-                .then((login_ret)=>{
-                    console.log(login_ret)
-                    return t.none('INSERT INTO employer_contact (employer_contact_id, employer_id, first_name, last_name, phone_number, isAdmin) VALUES ($1, $2, $3, $4, $5, $6)',
-                        [login_ret.user_id, bodyData.employerId, body.firstName, body.lastName, body.phoneNumber, body.isAdmin?true:false])
-                    .then(()=>{
-                        // TODO: send request email to contact to make a password
-                        res.status(200).json({success: true})
-                        return []
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        res.status(400).json({success: false, error:err})
-                    });
+                const data = bodyData.userIds.map(id=>{
+                    return {
+                        employer_contact_id: id,
+                        employer_id: bodyData.employerId
+                    }
+                })
+                const query = pgp.helpers.insert(data, employerContactHelper);
+                return t.none(query)
+                .then(()=>{
+                    // TODO: send request email to contact to make a password
+                    res.status(200).json({success: true})
+                    return []
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.status(400).json({success: false, error:err})
+                });
+            })
+            .catch(err => {
+                console.log(err)
+                res.status(400).json({success: false, error:"Either not with this employer, or not an admin"})
+            });
+    })
+    .then(() => {
+        console.log("Done TX")
+    }).catch((err)=>{
+        console.log(err) // Not an admin
+        return res.status(500).json({success: false, error:err})
+    });
+});
+router.post('/removeContactFromEmployer', passport.authentication,  (req, res) => {
+    // const { errors, isValid } = validateEmployerInput(req.body);
+    //check Validation
+    // if(!isValid) {
+    //     return res.status(400).json(errors);
+    // }
+    /**
+     * Input: Must be admin
+     * userId
+     * employerId
+     */
+    var bodyData = req.body;
+    var jwtPayload = bodyData.jwtPayload;
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+    }
+    if(bodyData.userId === jwtPayload.id){
+        return res.status(400).json({success:false, error:"Can not remove yourself"})
+    }
+    postgresdb.tx(t => {
+        return t.one('SELECT ec.employer_id \
+                        FROM employer_contact ec \
+                        WHERE ec.employer_contact_id = ${employer_contact_id} AND ec.employer_id = ${employer_id} AND ec.isAdmin',
+                        {employer_contact_id:jwtPayload.id, employer_id:bodyData.employerId})
+            .then(()=>{
+                return t.none('DELETE FROM employer_contact \
+                WHERE employer_contact_id = ${employer_contact_id} AND employer_id = ${employer_id}',
+                {employer_contact_id:bodyData.userId, employer_id:bodyData.employerId})
+                .then(()=>{
+                    // TODO: send request email to contact to make a password
+                    res.status(200).json({success: true})
+                    return []
                 })
                 .catch(err => {
                     console.log(err)
@@ -451,6 +491,59 @@ function getEmployerContactList(req, res) {
             });
     })
     .then((data) => { })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json({success: false, error:err})
+    });
+}
+
+/**
+ * Get employer contact list
+ * @route GET api/employer/getEmployerContactList
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - A list of contacts
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/getAccountManagers', passport.authentication,  getAccountManagers)
+router.get('/getAccountManagers/:page', passport.authentication,  getAccountManagers)
+router.get('/getAccountManagers/search/:searchString', passport.authentication,  getAccountManagers)
+router.get('/getAccountManagers/search/:searchString/:page', passport.authentication,  getAccountManagers)
+function getAccountManagers(req, res) {
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+    }
+    var page = req.params.page;
+    var searchString = req.params.searchString;
+    if(searchString != null)
+    searchString = searchString.split(' ').map(d=>d+":*").join(" & ")
+    if(page == null)
+        page = 1;
+    postgresdb.any('\
+        SELECT l.user_id, l.email, ac.first_name, ac.last_name, \
+            ac.phone_number, ac.image_id, l.created_on, \
+            (count(1) OVER())/10+1 AS page_count \
+        FROM account_manager ac \
+        INNER JOIN login l ON l.user_id = ac.account_manager_id \
+        WHERE l.user_type_id = 2 AND ac.active \
+        '+(searchString?' \
+        AND ((name_search) @@ to_tsquery(\'simple\', ${searchString})) \
+        ORDER BY ts_rank_cd(name_search, to_tsquery(\'simple\', ${searchString})) DESC ':
+        'ORDER BY ac.last_name ASC, ac.first_name ASC ')+
+        'OFFSET ${page} \
+        LIMIT 10', {page:(page-1)*10, searchString:searchString})
+    .then((data) => { 
+        data = data.map(m=>{
+            var timestamp = moment(m.created_on);
+            var ms = timestamp.diff(moment());
+            m.created = moment.duration(ms).humanize() + " ago";
+            m.created_on = timestamp.format("x");
+            return m
+        })
+        res.json({success: true, accountManagers:data})
+    })
     .catch(err => {
         console.log(err)
         res.status(400).json({success: false, error:err})

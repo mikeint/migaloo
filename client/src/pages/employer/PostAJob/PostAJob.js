@@ -136,7 +136,7 @@ class PostAJob extends React.Component{
                                     )}
                                 </Select>
                             </FormControl>
-                        </div>  
+                        </div>
                         <div className="input-2">
                             <TextField
                                 name="title"
@@ -167,42 +167,42 @@ class PostAJob extends React.Component{
                             <TagSearch onChange={(tags)=>this.setState({tagIds:tags})}/>
                         </div>
                         <div className="input-2">
-                                <FormControl className={classes.selectFormControl}>
-                                    <InputLabel htmlFor="salary-helper">Salary</InputLabel>
-                                    <Select
-                                        value={this.state.salary}
-                                        onChange={this.handleChange}
-                                        input={<Input name="salary" id="salary-helper" />}
-                                        inputProps={{
-                                            id: 'salary',
-                                        }}
-                                    >
-                                        <MenuItem value="">
-                                            <em>Unspecified</em>
-                                        </MenuItem>
-                                        {this.state.salaryList.map((d, i)=>
-                                            <MenuItem key={i} value={d.salary_type_id}>{d.salary_type_name}</MenuItem>
-                                        )}
-                                    </Select>
-                                </FormControl>
-                                <FormControl className={classes.selectFormControl}>
-                                    <InputLabel htmlFor="experience-helper">Experience</InputLabel>
-                                    <Select
-                                        value={this.state.experience}
-                                        onChange={this.handleChange}
-                                        input={<Input name="experience" id="experience-helper" />}
-                                        inputProps={{
-                                            id: 'experience',
-                                        }}
-                                    >
-                                        <MenuItem value="">
-                                            <em>Unspecified</em>
-                                        </MenuItem>
-                                        {this.state.experienceList.map((d, i)=>
-                                            <MenuItem key={i} value={d.experience_type_id}>{d.experience_type_name}</MenuItem>
-                                        )}
-                                    </Select>
-                                </FormControl>
+                            <FormControl className={classes.selectFormControl}>
+                                <InputLabel htmlFor="salary-helper">Salary</InputLabel>
+                                <Select
+                                    value={this.state.salary}
+                                    onChange={this.handleChange}
+                                    input={<Input name="salary" id="salary-helper" />}
+                                    inputProps={{
+                                        id: 'salary',
+                                    }}
+                                >
+                                    <MenuItem value="">
+                                        <em>Unspecified</em>
+                                    </MenuItem>
+                                    {this.state.salaryList.map((d, i)=>
+                                        <MenuItem key={i} value={d.salary_type_id}>{d.salary_type_name}</MenuItem>
+                                    )}
+                                </Select>
+                            </FormControl>
+                            <FormControl className={classes.selectFormControl}>
+                                <InputLabel htmlFor="experience-helper">Experience</InputLabel>
+                                <Select
+                                    value={this.state.experience}
+                                    onChange={this.handleChange}
+                                    input={<Input name="experience" id="experience-helper" />}
+                                    inputProps={{
+                                        id: 'experience',
+                                    }}
+                                >
+                                    <MenuItem value="">
+                                        <em>Unspecified</em>
+                                    </MenuItem>
+                                    {this.state.experienceList.map((d, i)=>
+                                        <MenuItem key={i} value={d.experience_type_id}>{d.experience_type_name}</MenuItem>
+                                    )}
+                                </Select>
+                            </FormControl>
                         </div>
                         <Button 
                             color="primary"

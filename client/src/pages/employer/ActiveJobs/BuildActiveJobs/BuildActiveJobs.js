@@ -94,8 +94,8 @@ class BuildActiveJobs extends React.Component{
             <div className="activeJobContainer"> 
                 <div className={classes.alertTitle} color="primary">
                     <span>{jobObj.title}</span>
-                    <IconButton color="primary" className={classes.alertClose} onClick={this.state.onClose}>
-                        <Close color="secondary" />
+                    <IconButton color="inherit" className={classes.alertClose} onClick={this.state.onClose}>
+                        <Close />
                     </IconButton>
                 </div>
                 <div className="jobPostingContainer">

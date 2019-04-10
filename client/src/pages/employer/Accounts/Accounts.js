@@ -1,6 +1,5 @@
 import React from 'react';
 import './Accounts.css';    
-import { NavLink } from 'react-router-dom';
 import ApiCalls from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import { withStyles } from '@material-ui/core/styles';
@@ -10,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
 import ContactList from './ContactList/ContactList';
+import AddEmployer from './AddEmployer/AddEmployer';
 
 const styles = theme => ({
     createdTime:{ 
@@ -37,7 +37,6 @@ class Accounts extends React.Component{
             clickedEmployer: null
         };
         this.Auth = new AuthFunctions();
-
     }
 
     componentWillUnmount = () => {
@@ -57,17 +56,36 @@ class Accounts extends React.Component{
             console.log(errors.response.data)
         )
     }
-    toggleDrawer = (side, open) => () => {
-      this.setState({
-        [side]: open,
-      });
-    };
     openContactList(employer){
-        console.log(employer)
+        console.log("Open 2")
         this.setState({
             openContact: true,
             clickedEmployer:employer
         })
+    }
+    handleContactsClose(didChange) {
+        this.setState({
+            openContact: false
+        })
+        if(didChange){
+            this.getEmployers();
+        }
+    }
+    openAddEmployer(){
+        console.log("Open 1")
+        this.setState({
+            openAddEmployer: true
+        })
+    }
+    handleAddEmployerClose(didChange) {
+        console.log("Closing", this)
+        this.setState({
+            openAddEmployer: false,
+            clickedEmployer: false
+        })
+        if(didChange){
+            this.getEmployers();
+        }
     }
 
     render(){ 
@@ -78,7 +96,7 @@ class Accounts extends React.Component{
 
                 <div>
                     <div className="pageHeading">Employers
-                    <NavLink to="/accountManager/addEmployer"><IconButton><Add/></IconButton></NavLink>
+                    <IconButton onClick={()=>this.openAddEmployer()}><Add/></IconButton>
                     </div> 
                     {
                         this.state.employerList ?
@@ -99,30 +117,19 @@ class Accounts extends React.Component{
                 <Drawer
                     anchor="bottom"
                     open={this.state.openContact}
-                    onClose={this.toggleDrawer('openContact', false)}
+                    onClose={this.handleContactsClose.bind(this)}
                     >
-                    <div
-                        tabIndex={0}
-                        role="button"
-                        onClick={this.toggleDrawer('openContact', false)}
-                        onKeyDown={this.toggleDrawer('openContact', false)}
-                    >
-                        <ContactList employer={this.state.clickedEmployer} />
-                    </div>
+                    <ContactList
+                        employer={this.state.clickedEmployer}
+                        onClose={this.handleContactsClose.bind(this)} />
                 </Drawer>
                 <Drawer
                     anchor="bottom"
                     open={this.state.openAddEmployer}
-                    onClose={this.toggleDrawer('openAddEmployer', false)}
+                    onClose={this.handleAddEmployerClose.bind(this)}
                     >
-                    <div
-                        tabIndex={0}
-                        role="button"
-                        onClick={this.toggleDrawer('openAddEmployer', false)}
-                        onKeyDown={this.toggleDrawer('openAddEmployer', false)}
-                    >
-                        <ContactList/>
-                    </div>
+                    <AddEmployer
+                        onClose={this.handleAddEmployerClose.bind(this)} />
                 </Drawer>
             </React.Fragment>
         );

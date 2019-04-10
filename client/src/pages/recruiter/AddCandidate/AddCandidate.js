@@ -106,7 +106,7 @@ class AddCandidate extends React.Component{
             <React.Fragment> 
                 {/* this.state.redirect ? <Redirect to='/recruiter/candidateList' /> : '' */}
                 <div className="pageHeading">Add a Candidate</div>
-                <IconButton color="primary" className={classes.alertClose} onClick={this.state.onClose}>
+                <IconButton color="inherit" className={classes.alertClose} onClick={this.state.onClose}>
                     <Close color="primary" />
                 </IconButton>
                 <div className="addCandidateContainer">
