@@ -193,7 +193,7 @@ class ContactList extends React.Component{
                         className={classes.textField}
                         defaultValue={this.state.company_name}
                         required
-                        onBlur={this.handleChange}
+                        onChange={this.handleChange}
                         margin="normal"
                         variant="outlined"
                     />

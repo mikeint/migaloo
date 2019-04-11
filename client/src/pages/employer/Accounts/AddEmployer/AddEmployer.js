@@ -75,7 +75,7 @@ class AddEmployer extends React.Component{
                     label="Company Name"
                     className={classes.textField}
                     required
-                    onBlur={this.handleChange}
+                    onChange={this.handleChange}
                     margin="normal"
                     variant="outlined"
                 />
