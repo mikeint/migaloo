@@ -74,7 +74,7 @@ class LandingSection4 extends Component {
                         </div>
                         
                     </div> 
-                    <div style={{ height: '550px' }}></div>
+                    <div style={{ height: '500px' }}></div>
                 </Parallax> 
             
  

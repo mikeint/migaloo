@@ -1,6 +1,6 @@
 .contactUsContainer {
     background: #263c54;
-    padding: 30px;
+    padding: 20px;
     font-weight: bold; 
  
     background-size: cover;
@@ -124,8 +124,8 @@
     width: 100%;
     max-width: 100%;
     min-width: 100%;
-    min-height: 200px;
-    height: 140px;
+    min-height: 120px;
+    height: 120px;
     font: 400 13.3333px Arial;
     padding: 10px;  
     background: #263c54;

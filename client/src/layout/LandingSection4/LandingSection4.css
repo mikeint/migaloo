@@ -24,10 +24,11 @@
 
 .sp_choose{
     width: 100%;
-    float: left;
+    float: left; 
 }
 .chooseText { 
     width: 100%;
+    color: #fff;
     text-align: center;  
     font-size: 32px;
     font-weight: bold;
@@ -59,7 +60,7 @@
     margin-top: -9px;
 }  
 .signUpBtnHome:hover {
-    background-color: #263c54;
+    background-color: #263c54; 
 } 
 .signUpBtnChoose { 
     color: #fff;
@@ -71,7 +72,9 @@
 }
 
 
-
+.react-parallax-content{
+    background-color: #5a718194;
+}
 
 
 @keyframes fadein {
@@ -92,7 +95,10 @@
 }
 
 
-@media only screen and (max-width: 1024px) { 
+@media only screen and (max-width: 1024px) {
+    .signUpBtnChoose {
+        font-size: 22px;
+    }
 } 
 
 @media only screen and (max-width: 768px) {
