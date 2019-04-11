@@ -1,0 +1,99 @@
+.landingSection4 {
+    width: 100%;
+    float: left;
+    overflow: hidden;
+} 
+.sp_contain {
+    width: 100%;
+    text-align: center;
+    font-size: 30px;
+    color: #e2e2e2;
+    font-weight: bold;
+    position: absolute;  
+}
+.sp_text{
+    width: 100%;
+    color: #ffffff;
+    text-align: center;
+    font-size: 24px;
+    float: left;
+    background: #263c5494;
+    position: relative;
+} 
+
+
+.sp_choose{
+    width: 100%;
+    float: left;
+}
+.chooseText { 
+    width: 100%;
+    text-align: center;  
+    font-size: 32px;
+    font-weight: bold;
+    margin: 20px auto; 
+    transition: 0.3s;
+    animation: fadein 0.5s;
+    -moz-animation: fadein 0.5s; /* Firefox */
+    -webkit-animation: fadein 0.5s; /* Safari and Chrome */
+    -o-animation: fadein 0.5s; /* Opera */
+} 
+.signUpBtnHome {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+    background: #263c5494;
+    cursor: pointer;
+    font-size: 32px; 
+    transition: 0.3s;
+    animation: fadein 1.3s;
+    -moz-animation: fadein 1.3s; /* Firefox */
+    -webkit-animation: fadein 1.3s; /* Safari and Chrome */
+    -o-animation: fadein 1.3s; /* Opera */
+    float: left;
+} 
+.signUpBtnHome img {
+    width: 40px;
+    float: right;
+    margin-top: -9px;
+}  
+.signUpBtnHome:hover {
+    background-color: #263c54;
+} 
+.signUpBtnChoose { 
+    color: #fff;
+    background: unset;
+    width: 48%;
+    height: 70px;
+    margin: 1%;
+    background: #5d7481;
+}
+
+
+
+
+
+@keyframes fadein {
+    from { opacity:0; }
+    to { opacity:1; }
+}
+@-moz-keyframes fadein { /* Firefox */
+    from { opacity:0; }
+    to { opacity:1; }
+}
+@-webkit-keyframes fadein { /* Safari and Chrome */
+    from { opacity:0; }
+    to { opacity:1; }
+}
+@-o-keyframes fadein { /* Opera */
+    from { opacity:0; }
+    to { opacity: 1; }
+}
+
+
+@media only screen and (max-width: 1024px) { 
+} 
+
+@media only screen and (max-width: 768px) {
+}

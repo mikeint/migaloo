@@ -1,32 +1,13 @@
 import React, { Component } from "react";  
-import './LandingSection3.css';
-import { Link } from 'react-router-dom';
-import ScrollAnimation from 'react-animate-on-scroll';  
+import './LandingSection3.css'; 
+import ScrollAnimation from 'react-animate-on-scroll';   
 
-import empImg from "../../files/images/employer_pick.png";
-import recImg from "../../files/images/recruiter_pick.png";
+class LandingSection3 extends Component { 
 
-class LandingSection3 extends Component {
-    constructor() {
-        super();
-		this.state = {
-            showSignUpButtons: false,
-        }; 
-    }
-
-    showButtons = () => { 
-        this.setState({ showSignUpButtons: !this.state.showSignUpButtons })
-    }
- 
-    handleChange = e => {
-        this.setState({ [e.target.name]: e.target.value })
-    }
- 
     render() { 
 
         return (
-            <div className="landingSection3">  
- 
+            <div className="landingSection3">   
             
                 {/* FOR DESKTOP - stacking properly */ }
                 <div className="showOnDesktop">
@@ -73,26 +54,6 @@ class LandingSection3 extends Component {
                         <ScrollAnimation animateIn='bounceInRight' duration={1} animateOnce={true}>  
                                 <div className="module_img module_img4"></div> 
                         </ScrollAnimation>
-                    </div>
-                    <div className="module_wrapper greyBG">
-                        <div className="animated_half">
-                            <div className="module_content"> 
-                                <h1>Ready to find out more?</h1>
-                                <p>We are near the release of our beta platform but we are not quite there yet - thanks for your patience.  Please sign up now to be part of our first cohort of recruiters and employers… Free of&nbsp;charge!</p>
-                            </div>
-                        </div>
-                        <div className="animated_half">  
-                            {!this.state.showSignUpButtons ? 
-                                <div className="signUpBtnHome" onClick={this.showButtons}>Sign Up</div>
-                            :  
-                            <React.Fragment>
-                                <div className="chooseText">Please choose:</div>
-                                <Link to='signUpFormEmployer'><div className="signUpBtnHome"><img src={empImg} alt="" align="middle" />Employer</div></Link>
-                                <Link to='signUpFormRecruiter'><div className="signUpBtnHome"><img src={recImg} alt="" align="middle" />Recruiter</div></Link>
-                            </React.Fragment>
-                            }
-
-                        </div>
                     </div>
                 </div>
                 {/* end FOR DESKTOP - stacking properly */ }
@@ -146,30 +107,9 @@ class LandingSection3 extends Component {
                                 <p>Employer can reach out to the recruiter(s) they’ve chosen to engage based on their candidate profile submission and terms and conditions via our messaging app, email, or&nbsp;phone</p>
                             </div> 
                         </ScrollAnimation>
-                    </div>
-                    <div className="module_wrapper greyBG">
-                        <div className="animated_half">
-                            <div className="module_content"> 
-                                <h1>Ready to find out more?</h1>
-                                <p>We are currently working towards finishing our platform. Please sign up below to get word about when our FREE version&nbsp;launches. </p>
-                            </div>
-                        </div>
-                        <div className="animated_half">
-                            {!this.state.showSignUpButtons ? 
-                                <div className="signUpBtnHome" onClick={this.showButtons}>Sign Up</div>
-                            :  
-                            <React.Fragment>
-                               <Link to='signUpFormEmployer'><div className="signUpBtnHome"><img src={empImg} alt="" />Employer</div></Link>
-                               <Link to='signUpFormRecruiter'><div className="signUpBtnHome"><img src={recImg} alt="" />Recruiter</div></Link>
-                            </React.Fragment>
-                            }
-                        </div>
-                    </div>
+                    </div> 
                 </div>
                 {/* FOR MOBILE - stacking properly*/ }
-
-
-
  
             </div>
         );
