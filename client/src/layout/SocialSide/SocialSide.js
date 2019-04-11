@@ -10,7 +10,7 @@ class SocialSide extends Component {
     return (
             <div className="socialSideContainer">  
                 <div className="icon-bar">
-                    <a href="https://www.linkedin.com/in/miga-loo-67ab78181/" className="linkedin" target="_blank" rel="noopener noreferrer"><img src={linkedInLogo} alt="" /></a>
+                    <a href="https://www.linkedin.com/company/migalooio/about/" className="linkedin" target="_blank" rel="noopener noreferrer"><img src={linkedInLogo} alt="" /></a>
                     <a href="#" className="slack" target="_blank" rel="noopener noreferrer"><img src={slackLogo} alt="" /></a> 
                     {/*<a href="#" className="twitter">F</a>
                     <a href="#" className="google">F</a>
