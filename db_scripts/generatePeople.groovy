@@ -7,7 +7,7 @@ def jobTitles = new JsonSlurper().parseText(new File("${dbscriptsPath}jobTitles.
 def jobDescriptions = new File("${dbscriptsPath}jobDescriptions.txt").readLines().collect{StringEscapeUtils.unescapeHtml(it.replaceAll(/'/, "''"))}
 def lines = new File("${dbscriptsPath}FakeNames.txt").readLines()
 def out = new File("${dbscriptsPath}fakeData.pgsql")
-def addressQuery = "INSERT INTO address (address_id, street_address_1, city, state, country, lat_lon) VALUES \n\t"
+def addressQuery = "INSERT INTO address (address_id, address_line_1, city, state, country, lat_lon) VALUES \n\t"
 def addressData = []
 def addressId = 5000
 

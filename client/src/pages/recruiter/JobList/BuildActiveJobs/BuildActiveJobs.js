@@ -147,8 +147,8 @@ class BuildActiveJobs extends React.Component{
                         <div className="jobCaption">{this.state.jobObj.caption}</div>
                         <h3>{this.state.jobObj.company_name}</h3>
                         <p>
-                            {this.state.jobObj.street_address_1}<br/>
-                            {this.state.jobObj.street_address_2}<br/>
+                            {this.state.jobObj.address_line_1}<br/>
+                            {this.state.jobObj.address_line_2}<br/>
                             {this.state.jobObj.city+", "+this.state.jobObj.state+", "+this.state.jobObj.country}
                         </p>
                         <h5>Experience: {this.state.jobObj.experience_type_name}</h5>

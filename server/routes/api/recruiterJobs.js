@@ -36,7 +36,7 @@ function getJobs(req, res){
         sqlArgs.push(jobId)
     postgresdb.any('\
         SELECT j.employer_id, j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, \
-            street_address_1, street_address_2, city, state, country, tag_ids, \
+            address_line_1, address_line_2, city, state, country, tag_ids, \
             tag_names, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting j \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
@@ -125,7 +125,7 @@ function getJobsForCandidate(req, res){
                 sqlArgs.push(jobId)
             return t.any('\
                 SELECT j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, j.employer_id, \
-                    street_address_1, street_address_2, city, state, country, tag_ids, tag_names, \
+                    address_line_1, address_line_2, city, state, country, tag_ids, tag_names, \
                     score, total_score, score/total_score*100.0 as tag_score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
                 FROM job_posting j \
                 LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \

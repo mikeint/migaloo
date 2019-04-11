@@ -63,7 +63,7 @@ router.get('/listEmployers', passport.authentication,  (req, res) => {
     postgresdb.any('\
         SELECT \
             e.employer_id, company_name, e.image_id, \
-            street_address_1, street_address_2, city, state, country \
+            address_line_1, address_line_2, city, state, country \
         FROM employer e \
         INNER JOIN employer_contact ec ON ec.employer_id = e.employer_id \
         LEFT JOIN address a ON a.address_id = e.address_id \
@@ -99,14 +99,14 @@ router.post('/addEmployer', passport.authentication,  (req, res) => {
     }
     postgresdb.tx(t => {
         var fields = ['company_name'];
-        var addressFields = ['street_address_1', 'street_address_2', 'city', 'state', 'country'];
+        var addressFields = ['address_line_1', 'address_line_2', 'city', 'state', 'country'];
         var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:null);
         var addrFieldUpdates = addressFields.map(f=> bodyData[f] != null?bodyData[f]:null);
         
         // creating a sequence of transaction queries:
         var q1 = new Promise(function(resolve, reject) { resolve({address_id:null}); });
         if(!addrFieldUpdates.some(a=>a != null)){
-            q1 = t.one('INSERT INTO address (street_address_1, street_address_2, city, state, country) VALUES ($1, $2, $3, $4, $5) RETURNING address_id',
+            q1 = t.one('INSERT INTO address (address_line_1, address_line_2, city, state, country) VALUES ($1, $2, $3, $4, $5) RETURNING address_id',
                     [...addrFieldUpdates])
         }
         return q1.then((addr_ret)=>{
@@ -165,8 +165,8 @@ router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
     }
     postgresdb.tx(t => {
         var fields = ['company_name'];
-        var addressFields = ['street_address_1', 'street_address_2', 'city', 'state', 'country'];
-        return t.one('SELECT ec.employer_id, first_name, last_name, phone_number, company_name, e.address_id, street_address_1, street_address_2, city, state, country \
+        var addressFields = ['address_line_1', 'address_line_2', 'city', 'state', 'country'];
+        return t.one('SELECT ec.employer_id, first_name, last_name, phone_number, company_name, e.address_id, address_line_1, address_line_2, city, state, country \
                         FROM employer e \
                         INNER JOIN employer_contact ec ON ec.employer_id = e.employer_id AND ec.isAdmin \
                         INNER JOIN account_manager ac ON ac.account_manager_id = ec.employer_contact_id \
@@ -180,10 +180,10 @@ router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
             // creating a sequence of transaction queries:
             var q1
             if(!addressIdExists){
-                q1 = t.one('INSERT INTO address (street_address_1, street_address_2, city, state, country) VALUES ($1, $2, $3, $4, $5) RETURNING address_id',
+                q1 = t.one('INSERT INTO address (address_line_1, address_line_2, city, state, country) VALUES ($1, $2, $3, $4, $5) RETURNING address_id',
                         [...addrFieldUpdates])
             }else{
-                q1 = t.none('UPDATE address SET street_address_1=$1, street_address_2=$2, city=$3, state=$4, country=$5 WHERE address_id = $6',
+                q1 = t.none('UPDATE address SET address_line_1=$1, address_line_2=$2, city=$3, state=$4, country=$5 WHERE address_id = $6',
                         [...addrFieldUpdates, addressId]);
             }
             return q1.then((addr_ret)=>{

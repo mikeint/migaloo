@@ -88,7 +88,7 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
     postgresdb.one('\
         SELECT email, first_name, last_name, \
             phone_number, image_id, \
-            street_address_1, street_address_2, city, state, country, coins \
+            address_line_1, address_line_2, city, state, country, coins \
         FROM recruiter r \
         INNER JOIN login l ON l.user_id = r.recruiter_id \
         LEFT JOIN address a ON a.address_id = r.address_id \
@@ -123,8 +123,8 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:"Must be a recruiter for this"})
     }
     var fields = ['first_name', 'last_name', 'phone_number'];
-    var addressFields = ['street_address_1', 'street_address_2', 'city', 'state', 'country'];
-    postgresdb.one('SELECT first_name, last_name, phone_number, r.address_id, street_address_1, street_address_2, city, state, country \
+    var addressFields = ['address_line_1', 'address_line_2', 'city', 'state', 'country'];
+    postgresdb.one('SELECT first_name, last_name, phone_number, r.address_id, address_line_1, address_line_2, city, state, country \
                     FROM recruiter r \
                     LEFT JOIN address a ON r.address_id = a.address_id\
                     WHERE recruiter_id = $1', [jwtPayload.id]).then((data)=>{
@@ -136,10 +136,10 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
             // creating a sequence of transaction queries:
             var q1
             if(!addressIdExists){
-                q1 = t.one('INSERT INTO address (street_address_1, street_address_2, city, state, country) VALUES ($1, $2, $3, $4, $5) RETURNING address_id',
+                q1 = t.one('INSERT INTO address (address_line_1, address_line_2, city, state, country) VALUES ($1, $2, $3, $4, $5) RETURNING address_id',
                                 [...addrFieldUpdates])
             }else{
-                q1 = t.none('UPDATE address SET street_address_1=$1, street_address_2=$2, city=$3, state=$4, country=$5 WHERE address_id = $6',
+                q1 = t.none('UPDATE address SET address_line_1=$1, address_line_2=$2, city=$3, state=$4, country=$5 WHERE address_id = $6',
                                 [...addrFieldUpdates, addressId]);
             }
             return q1.then((addr_ret)=>{

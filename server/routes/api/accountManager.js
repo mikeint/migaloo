@@ -63,7 +63,7 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
     postgresdb.one('\
         SELECT email, first_name, last_name, \
             phone_number, ac.image_id, \
-            street_address_1, street_address_2, city, state, country \
+            address_line_1, address_line_2, city, state, country \
         FROM account_manager ac \
         INNER JOIN login l ON l.user_id = ac.account_manager_id \
         LEFT JOIN address a ON a.address_id = ac.address_id \

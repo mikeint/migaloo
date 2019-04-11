@@ -58,8 +58,8 @@ CREATE TABLE login (
 CREATE UNIQUE INDEX login_lower_idx ON login ((lower(email)));
 CREATE TABLE address (
     address_id bigserial,
-    street_address_1 varchar(128),
-    street_address_2 varchar(128),
+    address_line_1 varchar(128),
+    address_line_2 varchar(128),
     city varchar(128),
     state varchar(128),
     country varchar(128),
@@ -544,11 +544,11 @@ INSERT INTO login (user_id, email, created_on, user_type_id) VALUES
     (1005, 'c6@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
     (1006, 'c7@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
     (1007, 'c8@test.com', TIMESTAMP '2019-02-20 10:23:54', 3); -- Add candidate
-INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('123 Main St.', 'Toronto', 'ON', 'CA', point(43.6531, -79.3831));
-INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('4312 Dundas Rd.', 'Toronto', 'ON', 'CA', point(43.6533, -79.3833));
-INSERT INTO address (street_address_1, city, state, country, lat_lon) VALUES ('21 Backersfield Rd.', 'North York', 'ON', 'CA', point(43.65335, -79.38325));
-INSERT INTO address (street_address_1, street_address_2, city, state, country, lat_lon) VALUES ('654 York Rd.', 'Suite 203', 'Toronto', 'ON', 'CA', point(43.65325, -79.38312));
-INSERT INTO address (street_address_1, street_address_2, city, state, country, lat_lon) VALUES ('1325 York Rd.', 'Building 3', 'Toronto', 'ON', 'CA', point(43.65324, -79.38328));
+INSERT INTO address (address_line_1, city, state, country, lat_lon) VALUES ('123 Main St.', 'Toronto', 'ON', 'CA', point(43.6531, -79.3831));
+INSERT INTO address (address_line_1, city, state, country, lat_lon) VALUES ('4312 Dundas Rd.', 'Toronto', 'ON', 'CA', point(43.6533, -79.3833));
+INSERT INTO address (address_line_1, city, state, country, lat_lon) VALUES ('21 Backersfield Rd.', 'North York', 'ON', 'CA', point(43.65335, -79.38325));
+INSERT INTO address (address_line_1, address_line_2, city, state, country, lat_lon) VALUES ('654 York Rd.', 'Suite 203', 'Toronto', 'ON', 'CA', point(43.65325, -79.38312));
+INSERT INTO address (address_line_1, address_line_2, city, state, country, lat_lon) VALUES ('1325 York Rd.', 'Building 3', 'Toronto', 'ON', 'CA', point(43.65324, -79.38328));
 INSERT INTO employer (employer_id, company_name, address_id) VALUES
     (500, 'Google Inc.', 1), 
     (501, 'Microsoft Inc.', 2);

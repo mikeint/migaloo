@@ -89,7 +89,7 @@ class Profile extends React.Component{
                         <div className="profileName">{this.state.profileInfo.first_name} {this.state.profileInfo.last_name}</div>
                         <div className="profileEmail">{this.state.user.email}<br/>{this.state.profileInfo.phone_number}</div>
                         <div className="profileEmail">
-                        {[this.state.profileInfo.street_address_1, this.state.profileInfo.city, this.state.profileInfo.state, this.state.profileInfo.country].filter(d=>d).join(", ")}
+                        {[this.state.profileInfo.address_line_1, this.state.profileInfo.city, this.state.profileInfo.state, this.state.profileInfo.country].filter(d=>d).join(", ")}
                         </div>
                         <div className="profileName"></div>
                     </div>
