@@ -1,5 +1,4 @@
 import React from 'react';
-import './Filters.css'; 
 
 import ApiCalls from '../../ApiCalls';  
 import List from '@material-ui/core/List';
@@ -15,12 +14,16 @@ import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import FilterList from '@material-ui/icons/FilterList'; 
 import AttachMoney from '@material-ui/icons/AttachMoney';
+import Business from '@material-ui/icons/Business';
 import Gavel from '@material-ui/icons/Gavel';
 import Assignment from '@material-ui/icons/Assignment';
 import LocationOn from '@material-ui/icons/LocationOn';
 import ListFilter from './FilterComponents/ListFilter';
 import SearchFilter from './FilterComponents/SearchFilter';
 import DistanceFilter from './FilterComponents/DistanceFilter';
+import { Subject } from 'rxjs';
+
+const clearFilterSubject = new Subject();
 
 const styles = theme => ({
     drawer: {
@@ -70,7 +73,7 @@ function tagsDataCall(searchString){
     .then((res) => { 
         if(res && res.data.success) {
             const data = res.data.tagList
-                    .map(d=>{return {name:d.tag_name, id: d.tag_id}})
+                    .map(d=>{return {name:d.tag_name, id: d.tag_id, secname:d.tag_type_name}})
             this.setState({data: data});
         }
     })
@@ -78,37 +81,64 @@ function tagsDataCall(searchString){
         console.log(error);
     })
 }
+function employerDataCall(){
+    ApiCalls.get('/api/employer/listEmployers')
+    .then((res) => {
+        if(res && res.data.success) {
+            const data = res.data.employers
+                    .map(d=>{return {name:d.company_name, id:d.employer_id}})
+            this.setState({data: data});
+        }
+    })
+    .catch(error => {
+        console.log(error);
+    });
+}
 
 class Filters extends React.Component{
 
     constructor(props) {
         super(props);
         this.handleFilterChange = this.handleFilterChange.bind(this)
-        const filterList = [
+        var filterList = [
             (<ListFilter
                 text={"Salary"}
                 id={"salary"}
                 icon={<AttachMoney />}
                 dataFunc={salaryDataCall}
-                onChange={this.handleFilterChange} />),
+                onChange={this.handleFilterChange}
+                clearSubject={clearFilterSubject.asObservable()} />),
+            (<ListFilter
+                text={"Employer"}
+                id={"employer"}
+                icon={<Business />}
+                type={"radio"}
+                dataFunc={employerDataCall}
+                onChange={this.handleFilterChange}
+                clearSubject={clearFilterSubject.asObservable()} />),
             (<ListFilter
                 text={"Experience"}
                 id={"experience"}
                 icon={<Gavel />}
                 dataFunc={experienceDataCall}
-                onChange={this.handleFilterChange} />),
+                onChange={this.handleFilterChange}
+                clearSubject={clearFilterSubject.asObservable()} />),
             (<SearchFilter
                 text={"Tags"}
                 id={"tags"}
                 icon={<Assignment />}
                 dataFunc={tagsDataCall}
-                onChange={this.handleFilterChange} />),
+                onChange={this.handleFilterChange}
+                clearSubject={clearFilterSubject.asObservable()} />),
             (<DistanceFilter
                 text={"Location"}
                 id={"location"}
                 icon={<LocationOn />}
-                onChange={this.handleFilterChange} />)
+                onChange={this.handleFilterChange}
+                clearSubject={clearFilterSubject.asObservable()} />)
         ]
+        if(props.filterOptions)
+            filterList = filterList.filter(d=>props.filterOptions.includes(d.props.id))
 		this.state = {
             filterOpen: props.open,
             onClose: props.onClose,
@@ -116,6 +146,7 @@ class Filters extends React.Component{
             filters: {}
         };
     }
+
     shouldComponentUpdate(nextProps, nextState) {
         const change = this.state.filterOpen !== nextProps.open;
         if(change){
@@ -132,14 +163,17 @@ class Filters extends React.Component{
     }
     handleDrawerToggle = () => {
         if(!this.state.filterOpen)
-            this.state.onClose();
+            this.state.onClose(this.state.filters);
         this.setState({ filterOpen: !this.state.filterOpen });
     };
     
     handleDrawerClose = () => {
-        this.state.onClose();
+        this.state.onClose(this.state.filters);
         this.setState({ filterOpen: false });
     };
+    clearAllFilters(){
+        clearFilterSubject.next();
+    }
   
     render(){
         const { classes } = this.props; 
@@ -161,7 +195,8 @@ class Filters extends React.Component{
                     </div>
                     <Divider />
                     <List>
-                        <ListItem button key="Clear All Filters">
+                        <ListItem button key="Clear All Filters"
+                                onClick={this.clearAllFilters.bind(this)}>
                             <ListItemIcon><Clear /></ListItemIcon>
                             <ListItemText primary="Clear All Filters" />
                         </ListItem> 

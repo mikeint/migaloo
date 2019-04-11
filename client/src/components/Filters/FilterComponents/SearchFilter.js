@@ -33,12 +33,18 @@ class SearchFilter extends React.Component{
             dataFunc: props.dataFunc,
             selected:[],
             onChange: props.onChange,
+            type: props.type || 'checkbox',
             defaultSearch: ''
         };
         this.dataFunc = props.dataFunc.bind(this)
-        this.dataFunc('');
         this.searchRef = React.createRef();
+        this.clearSelected = this.clearSelected.bind(this)
+        if(props.clearSubject != null)
+            props.clearSubject.subscribe(this.clearSelected)
     }
+    componentDidMount = () => {
+        this.dataFunc('');
+    } 
     
     queryByString = debounce((searchString) => {
         this.dataFunc(searchString.trim())
@@ -48,10 +54,14 @@ class SearchFilter extends React.Component{
         this.setState({collapse: !this.state.collapse});
     }
     toggleSelected(item){
-        const selected = this.state.selected;
+        let selected = this.state.selected;
         const i = selected.findIndex(d=> d.id === item.id)
         if(i === -1){
-            selected.push(item)
+            if(this.state.type === 'checkbox'){
+                selected.push(item);
+            }else if(this.state.type === 'radio'){
+                selected = [item];
+            }
         }else{
             selected.splice(i, 1)
         }
@@ -129,7 +139,7 @@ class SearchFilter extends React.Component{
                                 className={classes.nested}
                                 onClick={()=>this.toggleSelected(item)}>
                                 {this.isSelected(item) && <ListItemIcon><Check /></ListItemIcon>}
-                                <ListItemText inset primary={item.name} />
+                                <ListItemText inset primary={item.name} secondary={item.secname} />
                             </ListItem>
                         )}
                     </List>

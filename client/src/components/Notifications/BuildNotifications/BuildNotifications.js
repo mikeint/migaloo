@@ -42,8 +42,8 @@ class BuildNotifications extends React.Component{
             <React.Fragment>
                 <div className={classes.alertTitle} color="primary">
                     <span>Notifications</span>
-                    <IconButton color="primary" className={classes.alertClose} onClick={this.state.close}>
-                        <Close color="secondary" />
+                    <IconButton color="inherit" className={classes.alertClose} onClick={this.state.close}>
+                        <Close />
                     </IconButton>
                 </div>
                 <div className={classes.alertList}>

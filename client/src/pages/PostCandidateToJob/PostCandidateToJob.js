@@ -36,9 +36,11 @@ class PostCandidateToJob extends React.Component{
             profileInfo: {},
             candidateSubmitted: false,
         }
-        this.getProfileInfo();
     }
 
+    componentDidMount = () => {
+        this.getProfileInfo();
+    } 
     handleChange = (e) => {
         if(e.target.name === "coins"){
             var value = parseInt(e.target.value, 10);

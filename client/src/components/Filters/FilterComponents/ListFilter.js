@@ -27,19 +27,29 @@ class ListFilter extends React.Component{
             icon: props.icon,
             selected:[],
             dataFunc: props.dataFunc,
-            onChange: props.onChange
+            onChange: props.onChange,
+            type: props.type || 'checkbox'
         };
         this.dataFunc = props.dataFunc.bind(this)
-        this.dataFunc();
+        this.clearSelected = this.clearSelected.bind(this)
+        if(props.clearSubject != null)
+            props.clearSubject.subscribe(this.clearSelected)
     }
+    componentDidMount = () => {
+        this.dataFunc();
+    } 
     toggleCollapse(){
         this.setState({collapse: !this.state.collapse});
     }
     toggleSelected(item){
-        const selected = this.state.selected;
+        let selected = this.state.selected;
         const i = selected.findIndex(d=> d.id === item.id)
         if(i === -1){
-            selected.push(item)
+            if(this.state.type === 'checkbox'){
+                selected.push(item);
+            }else if(this.state.type === 'radio'){
+                selected = [item];
+            }
         }else{
             selected.splice(i, 1)
         }
@@ -82,7 +92,7 @@ class ListFilter extends React.Component{
                                 className={classes.nested}
                                 onClick={()=>this.toggleSelected(item)}>
                                 {this.isSelected(item) && <ListItemIcon><Check /></ListItemIcon>}
-                                <ListItemText inset primary={item.name} />
+                                <ListItemText inset primary={item.name} secondary={item.secname} />
                             </ListItem>
                         )}
                     </List>

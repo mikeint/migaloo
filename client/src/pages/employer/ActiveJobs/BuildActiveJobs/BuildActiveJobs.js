@@ -14,7 +14,9 @@ const styles = theme => ({
         width: "80%",
     },
     buttonContainer:{
-        textAlign:"center"
+        textAlign:"center",
+        marginTop:"10px",
+        marginBottom:"10px"
     },
     alertClose: {
         position: "absolute",
@@ -42,8 +44,10 @@ class BuildActiveJobs extends React.Component{
             candidateList: []
         };
         this.Auth = new AuthFunctions();
-        this.getJobList();
     }
+    componentDidMount = () => {
+        this.getJobList();
+    } 
     getJobList = () => {
         ApiCalls.get('/api/employerPostings/listCandidates/'+this.state.postId)
         .then((res)=>{
@@ -92,8 +96,8 @@ class BuildActiveJobs extends React.Component{
             <div className="activeJobContainer"> 
                 <div className={classes.alertTitle} color="primary">
                     <span>{jobObj.title}</span>
-                    <IconButton color="primary" className={classes.alertClose} onClick={this.state.onClose}>
-                        <Close color="secondary" />
+                    <IconButton color="inherit" className={classes.alertClose} onClick={this.state.onClose}>
+                        <Close />
                     </IconButton>
                 </div>
                 <div className="jobPostingContainer">

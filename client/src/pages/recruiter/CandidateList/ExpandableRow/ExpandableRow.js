@@ -10,7 +10,7 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import Button from '@material-ui/core/Button';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Drawer from '@material-ui/core/Drawer';
 
 const styles = theme => ({
     drawer:{ 
@@ -135,7 +135,7 @@ class ExpandableRow extends React.Component{
                                         <Button variant="contained" color="primary" onClick={this.postToJob}>Post Candidate to Job</Button>
                                     </div>}
                                     
-                                    <SwipeableDrawer
+                                    <Drawer
                                         anchor="bottom"
                                         className={classes.drawer}
                                         open={this.state.showPostJob}
@@ -145,7 +145,7 @@ class ExpandableRow extends React.Component{
                                         <PostCandidateToJob candidate={candidateData}
                                                                     job={postData}
                                                                     handleClose={()=>this.setState({showPostJob:false})} />
-                                    </SwipeableDrawer>
+                                    </Drawer>
                                     
                                     {this.state.showUpload && <UploadResume id={candidateData.candidate_id} handleClose={this.handleClose} />}
                                 </div> 

@@ -52,7 +52,7 @@ class Notifications extends React.Component{
     handleAlert = () => {
         
         var userType = this.Auth.getUser().userType;
-        ApiCalls.get(userType===1?'/api/recruiter/alerts':'/api/employer/alerts')
+        ApiCalls.get(userType===1?'/api/recruiter/alerts':'/api/accountManager/alerts')
         .then((res) => {
             if(res && res.data.success) {
                 var count = (res.data.alertList.length === 0 ? 0 : 

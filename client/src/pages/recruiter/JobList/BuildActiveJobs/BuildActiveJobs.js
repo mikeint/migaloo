@@ -4,7 +4,7 @@ import ApiCalls from '../../../../ApiCalls';
 import AuthFunctions from '../../../../AuthFunctions'; 
 import {Redirect} from 'react-router-dom';
 import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Close from '@material-ui/icons/Close';
@@ -162,7 +162,7 @@ class BuildActiveJobs extends React.Component{
 
  
 
-                <SwipeableDrawer
+                <Drawer
                     anchor="bottom"
                     className={classes.drawer}
                     open={this.state.showPostJob}
@@ -172,7 +172,7 @@ class BuildActiveJobs extends React.Component{
                     <PostCandidateToJob candidate={this.state.candidateData}
                                                 job={this.state.jobObj}
                                                 handleClose={()=>this.setState({showPostJob:false})} />
-                </SwipeableDrawer>
+                </Drawer>
             </React.Fragment>
         )
     }

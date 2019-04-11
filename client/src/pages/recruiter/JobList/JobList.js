@@ -18,7 +18,6 @@ import '../../../constants/AnimateMigalooOverlay';
 
 import whale from '../../../files/images/logo.png'
 
-
 const styles = theme => ({
     button: {
       float: 'right', 
@@ -43,14 +42,15 @@ class JobList extends React.Component{
             candidateId: props.match.params.candidateId,
             candidateData: null,
             enterSlide:"page-enter",
-            filterOpen: false
+            filterOpen: false,
+            filters: {}
         };
     }
     handleDrawerToggle = () => {
         this.setState({ filterOpen: !this.state.filterOpen });
     };
-    handleDrawerClose = () => {
-        this.setState({ filterOpen: false });
+    handleDrawerClose = (filters) => {
+        this.setState({ filterOpen: false , filters:filters }, this.getJobList());
     };
 
     componentWillMount = () => {
@@ -73,11 +73,7 @@ class JobList extends React.Component{
                 }
             })
         }
-    } 
-    callFilterOverlay = () => { 
-        this.setState({ showFilterOverlay : !this.state.showFilterOverlay }) 
     }
-
     callNewJobPage = (postId) => {
         this.setState({postId : postId, openJob:true}) 
     }
@@ -135,7 +131,7 @@ class JobList extends React.Component{
             <React.Fragment>
                 { this.state.openJob && <Redirect to={"/recruiter/jobList/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidate_id:'')} />}
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
-                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} />
+                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} filterOptions={['salary', 'location', 'experience', 'tags']} />
                 <div className='jobListClassContainer'> 
                    <div className="pageHeading">
                         Active Jobs Postings  

@@ -49,10 +49,14 @@ router.post('/create', passport.authentication,  (req, res) => {
         return t.one('\
             SELECT 1 \
             FROM messages_subject m \
-            LEFT JOIN employer_contact ec1 ON m.user_id_1 = ec1.employer_id \
-            LEFT JOIN employer_contact ec2 ON m.user_id_2 = ec2.employer_id \
-            WHERE (m.user_id_1 = $1 OR m.user_id_2 = $1 OR ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1) \
-                AND m.message_subject_id = $2 \
+            '+(jwtPayload.userType == 2?
+                'LEFT JOIN employer_contact ec1 ON m.user_id_1 = ec1.employer_id \
+                LEFT JOIN employer_contact ec2 ON m.user_id_2 = ec2.employer_id \
+            ':'')+
+            'WHERE '+(jwtPayload.userType == 1 ? 
+                '(m.user_id_1 = $1 OR m.user_id_2 = $1) AND m.message_subject_id = $2' :
+                '(ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1) AND m.message_subject_id = $2')+
+            ' \
             LIMIT 1 \
             ', [userId, body.messageSubjectId])
         .then((data) => {
@@ -87,75 +91,7 @@ router.post('/create', passport.authentication,  (req, res) => {
         return res.status(500).json({success: false, error:err})
     });
 });
-/**
- * TODO: No longer needed, handled automatically by set acceptance state
-* Create a new message conversation subject
-* @route POST api/message/createSubject
-* @group message - Chat Messages
-* @param {Object} body.optional
-* @returns {object} 200 - Success Message
-* @returns {Error}  default - Unexpected error
-* @access Private
-*/
-// router.post('/createSubject', passport.authentication,  (req, res) => {
-//    /**
-//     * Inputs Body:
-//     * postId
-//     * subjectUserId
-//     */
-//    var body = req.body
-//    const { errors, isValid } = validateMessageInput(body);
-//    //check Validation
-//    if(!isValid) {
-//        return res.status(400).json(errors);
-//    }
-//    var jwtPayload = body.jwtPayload;
-//    var userId = jwtPayload.employerId?jwtPayload.employerId:jwtPayload.id;
-//    var userId1 = userId;
-//    var userId2 = body.toId;
-//    if(userId1 > userId2){
-//        var t = userId1;
-//        userId1 = userId2;
-//        userId2 = t;
-//    }
-//    postgresdb.tx(t => {
-//        // Get basic data, and ensure they can message, candidate posting must be accepted
-//        return t.one('\
-//            SELECT cp.candidate_id, cp.post_id \
-//            FROM candidate_posting cp \
-//            INNER JOIN job_posting jp ON cp.post_id = jp.post_id \
-//            INNER JOIN job_posting_contact jpc ON cp.post_id = jpc.post_id \
-//            INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
-//            INNER JOIN message_subject ms ON ms.subject_user_id = cp.candidate_id AND ms.post_id = cp.post_id \
-//            WHERE cp.accepted AND jpc.post_id = $1 AND cp.candidate_id = $2 AND (ec.employer_contact_id = $3 OR cp.recruiter_id = $3)', [body.postId, body.subjectUserId, jwtPayload.id])
-//        .then((data) => {
-//            // Ensure the person is in this chain
-//            const makeMessage = {
-//                user_id_1:userId1,
-//                user_id_2:userId2,
-//                message_subject_id:body.messageSubjectId,
-//                post_id:body.postId,
-//            }
-//            const query = pgp.helpers.insert(makeMessage, subjectInsertHelper);
 
-//            return t.none(query).then(() => {
-//                res.json({success: true})
-//            }).catch((err)=>{
-//                console.log(err)
-//                return res.status(500).json({success: false, error:err})
-//            });
-//        }).catch((err)=>{
-//            console.log(err)
-//            return res.status(500).json({success: false, error:err})
-//        });
-//    })
-//    .then(() => {
-       
-//    }).catch((err)=>{
-//        console.log(err) // Not an admin
-//        return res.status(500).json({success: false, error:err})
-//    });
-// });
 /**
  * Set response for the calander invide
  * @route POST api/message/setResponse

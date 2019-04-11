@@ -78,7 +78,7 @@ class ExpandableRow extends React.Component{
 
         const { classes } = this.props; 
         return (
-            <ExpansionPanel>
+            <ExpansionPanel onClick={this.handleRead.bind(this)}>
                 <ExpansionPanelSummary>
                     <span>{this.state.rowObj.candidate_first_name}</span>
                     {this.state.rowObj.has_seen_post ? '' : <FiberNew className={classes.newIndicator} />}

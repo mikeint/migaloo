@@ -3,15 +3,18 @@ import './ActiveJobs.css';
 import { NavLink } from 'react-router-dom';
 import ApiCalls from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import Loader from '../../../components/Loader/Loader';
 import Add from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
+import Filters from '../../../components/Filters/Filters';
 
 import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
 import Pagination from "react-js-pagination";
 import '../../../constants/AnimateMigalooOverlay';
+import Button from '@material-ui/core/Button';
+import FilterList from '@material-ui/icons/FilterList';
 
 import whale from '../../../files/images/logo.png'
 
@@ -19,6 +22,9 @@ const styles = theme => ({
     drawer:{ 
         minWidth: "300px",
         position: "relative"
+    },
+    rbutton: {
+      float: 'right', 
     }
 });
 
@@ -54,8 +60,20 @@ class ActiveJobs extends React.Component{
                     document.getElementById("fadeOutOverlay").style.display = "none";
                 }
             })
-        } 
+        }
+        this.getEmployers();
     } 
+    getEmployers(){
+        ApiCalls.get('/api/employer/listEmployers')
+        .then((res) => {
+            if(res && res.data.success) {
+                this.setState({employers:res.data.employers.map(d=>{return {id:d.employer_id, name:d.company_name}})});
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
     callOverlay = (postId) => {
         this.setState({ showOverlay : !this.state.showOverlay })
         this.setState({ postId : postId })
@@ -81,6 +99,13 @@ class ActiveJobs extends React.Component{
             this.getJobList();
         });
     };
+    handleDrawerToggle = () => {
+        this.setState({ filterOpen: !this.state.filterOpen });
+    };
+    handleDrawerClose = (filters) => {
+        this.setState({ filterOpen: false , filters:filters }, this.getJobList());
+    };
+
 
     render(){ 
 
@@ -88,9 +113,20 @@ class ActiveJobs extends React.Component{
         return (
             <React.Fragment>
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
-            
+                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} filterOptions={['employer']} />
+
                 <div className='activeJobContainer'>
-                    <div className="pageHeading">Active Jobs<NavLink to="/employer/postAJob"><IconButton><Add/></IconButton></NavLink></div> 
+                    <div className="pageHeading">Active Jobs
+                    <NavLink to="/employer/postAJob"><IconButton><Add/></IconButton></NavLink>
+                    
+                    <Button
+                        className={classes.rbutton}
+                        variant="contained"
+                        color="secondary" 
+                        onClick={()=>this.handleDrawerToggle()}>
+                        <FilterList/>
+                    </Button>
+                    </div> 
                     {
                         this.state.jobList ?
                             <div className="jobListContainer">
@@ -119,7 +155,7 @@ class ActiveJobs extends React.Component{
                                         />
                                 </div>
                                     
-                                <SwipeableDrawer
+                                <Drawer
                                     anchor="bottom"
                                     className={classes.drawer}
                                     open={this.state.showOverlay}
@@ -130,7 +166,7 @@ class ActiveJobs extends React.Component{
                                         obj={this.state.jobList[this.state.postId]}
                                         removedCallback={this.jobRemoved.bind(this)} 
                                         onClose={()=>this.setState({"showOverlay":false})} />
-                                </SwipeableDrawer>
+                                </Drawer>
                             </div>
                         :
                         <Loader />

@@ -2,7 +2,7 @@
 import org.apache.commons.lang.StringEscapeUtils
 
 import groovy.json.JsonSlurper
-def dbscriptsPath = "C:\\Users\\marcuccm\\git\\hireRanked\\db_scripts\\"
+def dbscriptsPath = "C:\\Users\\marcuccm\\git\\migaloo\\db_scripts\\"
 def jobTitles = new JsonSlurper().parseText(new File("${dbscriptsPath}jobTitles.json").text.replaceAll(/'/, "''"))
 def jobDescriptions = new File("${dbscriptsPath}jobDescriptions.txt").readLines().collect{StringEscapeUtils.unescapeHtml(it.replaceAll(/'/, "''"))}
 def lines = new File("${dbscriptsPath}FakeNames.txt").readLines()
@@ -28,7 +28,7 @@ def employerQuery = "INSERT INTO employer (employer_id, company_name, address_id
 def employerData = []
 def employerId = 1000000
 
-def employerContactQuery = "INSERT INTO employer_contact (employer_contact_id, employer_id, first_name, last_name, phone_number, isAdmin) VALUES \n\t"
+def employerContactQuery = "INSERT INTO employer_contact (employer_contact_id, employer_id, isAdmin) VALUES \n\t"
 def employerContactData = []
 def employerContactId = 10000000
 
@@ -36,11 +36,11 @@ def jobPostingQuery = "INSERT INTO job_posting (post_id, employer_id, created_on
 def jobPostingData = []
 def postId = 100
 
-def jobPostingContactQuery = "INSERT INTO job_posting_contact (post_id, employer_contact_id) VALUES \n\t"
-def jobPostingContactData = []
-
 def jobPostingTagsQuery = "INSERT INTO posting_tags (post_id, tag_id) VALUES \n\t"
 def jobPostingTagsData = []
+
+def accountManagerQuery = "INSERT INTO posting_tags (account_manager_id, first_name, last_name, phone_number) VALUES \n\t"
+def accountManagerData = []
 
 def headers = lines[0].split("\t")
 def recruiterCount = 3
@@ -82,9 +82,9 @@ lines.drop(1001).take(1000).each{line->
     loginData << "(${employerId}, null, current_date - interval '${daysBack}' day, 4)"
     addressData << "(${addressId}, '${d.StreetAddress}', '${d.City}', '${d.State}', '${d.Country}', point(${d.Latitude}, ${d.Longitude}))"
     employerData << "(${employerId}, '${d.Company}', ${addressId})"
-    employerContactData << "(${employerContactId}, ${employerId}, '${d.GivenName}', '${d.Surname}', '${d.TelephoneNumber}', true)"
+    employerContactData << "(${employerContactId}, ${employerId}, true)"
+    accountManagerData << "(${employerContactId}, '${d.GivenName}', '${d.Surname}', '${d.TelephoneNumber}')"
     jobPostingData << "(${postId}, ${employerId}, current_date - interval '${daysBack}' day, '${title}', '${caption}', ${exp}, ${salary})"
-    jobPostingContactData << "(${postId}, ${employerContactId})"
     jobPostingTagsData << tag.collect{"(${postId}, ${it})"}.unique().join(", ")
     addressId++
     employerContactId++
@@ -101,5 +101,4 @@ out << (employerQuery + employerData.join(",\n\t")+";\n")
 out << (employerContactQuery + employerContactData.join(",\n\t")+";\n")
 out << (jobPostingQuery + jobPostingData.join(",\n\t")+";\n")
 out << (jobPostingTagsQuery + jobPostingTagsData.join(",\n\t")+";\n")
-out << (jobPostingContactQuery + jobPostingContactData.join(",\n\t")+";\n")
 // Generate Employers 
