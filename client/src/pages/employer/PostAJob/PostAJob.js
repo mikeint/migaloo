@@ -14,6 +14,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
+import FormHelperText from '@material-ui/core/FormHelperText';
 
 const styles = theme => ({
     textField: {
@@ -48,7 +49,8 @@ class PostAJob extends React.Component{
             redirect: false,
             salaryList: [],
             experienceList: [],
-            employers: []
+            employers: [],
+            errors: {}
         }
         this.Auth = new AuthFunctions();
     }
@@ -95,20 +97,49 @@ class PostAJob extends React.Component{
     }
 
     handleSubmit = () => {
-        ApiCalls.post('/api/employerPostings/create', this.state)
-        .then((res) => { 
-            if(res && res.data.success) {
-                this.setState({ redirect: true })
-            }
-        })
-        .catch(error => {
-            console.log(error);
-            document.getElementById("registration_popup").style.display = "block"
-        });
+        if(this.isValid()){
+            ApiCalls.post('/api/employerPostings/create', this.state)
+            .then((res) => { 
+                if(res && res.data.success) {
+                    this.setState({ redirect: true })
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                document.getElementById("registration_popup").style.display = "block"
+            });
+        }
     }
-
-
-
+    isValid(){
+        const errors = {};
+        if(!this.state.caption || this.state.caption.lengh === 0){
+            errors.caption = "Please enter a description for the job posting";
+        }
+        if(!this.state.title || this.state.title.lengh === 0){
+            errors.title = "Please enter a title for the job posting";
+        }
+        if(!this.state.salary || this.state.salary.lengh === 0){
+            errors.salary = "Please select the salary range";
+        }
+        if(!this.state.employer || this.state.employer.lengh === 0){
+            errors.employer = "Please select an employer for the job posting";
+        }
+        if(!this.state.experience || this.state.experience.lengh === 0){
+            errors.experience = "Please select the experience required";
+        }
+        if(!this.state.tagIds || this.state.tagIds.lengh === 0){
+            errors.tags = "Please select some tags related to the job";
+        }
+        this.setState({errors:errors});
+        return Object.keys(errors).length === 0
+    }
+    hasError(id){
+        const errorMessage = this.state.errors[id];
+        if(errorMessage == null)
+            return {};
+        else
+            return {error: true, helperText: errorMessage};
+    }
     render(){   
         const { classes } = this.props;
         return (
@@ -118,7 +149,9 @@ class PostAJob extends React.Component{
                 <div className="postAJobContainer">
                     <div className="formSection">
                         <div className="input-2">  
-                            <FormControl className={classes.selectFormControl}>
+                            <FormControl
+                                    className={classes.selectFormControl}
+                                    {...(this.hasError("employer").error?{error:true}:{})}>
                                 <InputLabel htmlFor="employer-helper">Employer</InputLabel>
                                 <Select
                                     value={this.state.employer}
@@ -135,6 +168,7 @@ class PostAJob extends React.Component{
                                         <MenuItem key={i} value={d.id}>{d.name}</MenuItem>
                                     )}
                                 </Select>
+                                <FormHelperText>{this.hasError("employer").helperText}</FormHelperText>
                             </FormControl>
                         </div>
                         <div className="input-2">
@@ -146,6 +180,7 @@ class PostAJob extends React.Component{
                                 onBlur={this.handleChange}
                                 margin="normal"
                                 variant="outlined"
+                                {...this.hasError("title")}
                             />
                         </div>  
                         <div className="input-2">
@@ -161,13 +196,17 @@ class PostAJob extends React.Component{
                                 onBlur={this.handleChange}
                                 margin="normal"
                                 variant="outlined"
+                                {...this.hasError("caption")}
                             />
                         </div>  
                         <div  className={classes.tagSearch}>
-                            <TagSearch onChange={(tags)=>this.setState({tagIds:tags})}/>
+                            <TagSearch onChange={(tags)=>this.setState({tagIds:tags})}
+                                    {...this.hasError("tags")}/>
                         </div>
                         <div className="input-2">
-                            <FormControl className={classes.selectFormControl}>
+                            <FormControl
+                                    className={classes.selectFormControl}
+                                    {...(this.hasError("salary").error?{error:true}:{})} >
                                 <InputLabel htmlFor="salary-helper">Salary</InputLabel>
                                 <Select
                                     value={this.state.salary}
@@ -184,8 +223,11 @@ class PostAJob extends React.Component{
                                         <MenuItem key={i} value={d.salary_type_id}>{d.salary_type_name}</MenuItem>
                                     )}
                                 </Select>
+                                <FormHelperText>{this.hasError("salary").helperText}</FormHelperText>
                             </FormControl>
-                            <FormControl className={classes.selectFormControl}>
+                            <FormControl
+                                    className={classes.selectFormControl}
+                                    {...(this.hasError("experience").error?{error:true}:{})} >
                                 <InputLabel htmlFor="experience-helper">Experience</InputLabel>
                                 <Select
                                     value={this.state.experience}
@@ -202,6 +244,7 @@ class PostAJob extends React.Component{
                                         <MenuItem key={i} value={d.experience_type_id}>{d.experience_type_name}</MenuItem>
                                     )}
                                 </Select>
+                                <FormHelperText>{this.hasError("experience").helperText}</FormHelperText>
                             </FormControl>
                         </div>
                         <Button 

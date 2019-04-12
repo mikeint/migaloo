@@ -17,6 +17,15 @@ const styles = theme => ({
     },
     userTagWrp: {
         overflow: "hidden"
+    },
+    floatingLabel:{
+        fontSize: "13px",
+        color: "#263c54",
+        opacity: 0.6,
+        fontWeight: "bold"
+    },
+    errorFloatingLabel:{
+        color: "red"
     }
 })
 class TagSearch extends React.Component{ 
@@ -31,7 +40,9 @@ class TagSearch extends React.Component{
                 marginLeft: "0px"
             },
             textValue: '',
-            onChange: props.onChange
+            onChange: props.onChange,
+            error: false,
+            helperText: ''
         }
         this.textInput = React.createRef();
         this.tagListBox = React.createRef();
@@ -44,6 +55,15 @@ class TagSearch extends React.Component{
         if(this.state.onChange)
             this.state.onChange(this.state.tags.map(t=>t.tag_id));
         this.updateInputLocation();
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+        const change = this.state.error !== nextProps.error || this.state.helperText !== nextProps.helperText;
+        if(change){
+            this.setState({ error: nextProps.error, helperText: nextProps.helperText });
+        }
+        if(this.state !== nextState)
+            return true
+        return change;
     }
 
     queryForTags = debounce((searchString) => {
@@ -121,7 +141,7 @@ class TagSearch extends React.Component{
                     className="tagSearchContainer"
                     tabIndex="0"
                     onBlur={(e)=>this.deFocus(e)}>
-                    <span className="tag-floating-label">Tags</span>
+                    <span className={classes.floatingLabel+" "+(this.state.error?classes.errorFloatingLabel:"")}>Tags</span>
                     
                     <div className={classes.userTagWrp}>
                         <span className="tag-listing" style={this.state.tagListBoxStype} ref={this.tagListBox}>
@@ -144,6 +164,7 @@ class TagSearch extends React.Component{
                             onFocus={this.focus}
                             onChange={this.textChange}
                             margin="normal"
+                            {...(this.state.error?{error:true, helperText:this.state.helperText}:{})}
                         />
                     </div>
                     {this.state.potentialTagList.length > 0 &&

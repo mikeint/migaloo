@@ -57,7 +57,6 @@ class Accounts extends React.Component{
         )
     }
     openContactList(employer){
-        console.log("Open 2")
         this.setState({
             openContact: true,
             clickedEmployer:employer
@@ -72,13 +71,11 @@ class Accounts extends React.Component{
         }
     }
     openAddEmployer(){
-        console.log("Open 1")
         this.setState({
             openAddEmployer: true
         })
     }
     handleAddEmployerClose(didChange) {
-        console.log("Closing", this)
         this.setState({
             openAddEmployer: false,
             clickedEmployer: false
