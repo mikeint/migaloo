@@ -25,6 +25,7 @@ router.post('/create', passport.authentication,  (req, res) => {
      * Inputs Body:
      * title
      * caption
+     * employer
      * salaryTypeId (Optional)
      * experienceTypeId (Optional)
      * tagIds (Optional)
@@ -40,11 +41,14 @@ router.post('/create', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:"Must be an employer to add a posting"})
     }
 
-    postgresdb.one('SELECT employer_id FROM employer_contact ec WHERE ec.employer_contact_id = $1 AND ec.active', [jwtPayload.id]).then((employer_data)=>{
+    postgresdb.one('SELECT employer_id \
+            FROM employer_contact ec \
+            INNER JOIN account_manager ac ON ac.account_manager_id = ec.employer_contact_id \
+            WHERE ec.employer_contact_id = $1 AND ac.active AND employer_id = $2', [jwtPayload.id, body.employer]).then(()=>{
         postgresdb.tx(t => {
             // creating a sequence of transaction queries:
-            const q1 = t.one('INSERT INTO job_posting (employer_id, employer_contact_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING post_id',
-                                [employer_data.employer_id, jwtPayload.id, body.title, body.caption, body.experienceTypeId, body.salaryTypeId])
+            const q1 = t.one('INSERT INTO job_posting (employer_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING post_id',
+                                [body.employer, body.title, body.caption, body.experience, body.salary])
             return q1.then((post_ret)=>{
                 if(body.tagIds != null && body.tagIds.length > 0){
                     const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper);
