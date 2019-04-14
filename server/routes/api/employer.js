@@ -63,7 +63,11 @@ router.get('/listEmployers', passport.authentication,  (req, res) => {
     postgresdb.any('\
         SELECT \
             e.employer_id, company_name, e.image_id, \
-            address_line_1, address_line_2, city, state, country \
+            address_line_1 as "addressLine1", \
+            address_line_2 as "addressLine2", \
+            city, state, country, lat, lon, \
+            state_code as "stateCode", \
+            country_code as "countryCode" \
         FROM employer e \
         INNER JOIN employer_contact ec ON ec.employer_id = e.employer_id \
         LEFT JOIN address a ON a.address_id = e.address_id \

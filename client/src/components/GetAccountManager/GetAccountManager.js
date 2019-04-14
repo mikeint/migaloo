@@ -54,7 +54,7 @@ class GetAccountManager extends Component {
                 });
             }
         }).catch(errors => {
-            console.log(errors.response.data)
+            console.log(errors.response)
         })
         this.searchRef = React.createRef();
     }

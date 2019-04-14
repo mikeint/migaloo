@@ -5,7 +5,6 @@ DROP TABLE IF EXISTS rate_employer;
 DROP TABLE IF EXISTS rate_recruiter;
 DROP TABLE IF EXISTS rate_candidate;
 DROP VIEW IF EXISTS messages;
-DROP FUNCTION IF EXISTS messages_InsteadOfInsert_pr;
 DROP TABLE IF EXISTS messages_chat;
 DROP TABLE IF EXISTS messages_calander;
 DROP TABLE IF EXISTS messages_base;
@@ -60,10 +59,14 @@ CREATE TABLE address (
     address_id bigserial,
     address_line_1 varchar(128),
     address_line_2 varchar(128),
+    place_id varchar(128),
     city varchar(128),
     state varchar(128),
+    state_code varchar(3),
     country varchar(128),
-    lat_lon point,
+    country_code varchar(3),
+    lat float,
+    lon float,
     PRIMARY KEY(address_id)
 );
 CREATE TABLE employer (
@@ -266,7 +269,7 @@ LEFT JOIN messages_calander cl ON cl.message_id_calander = mb.message_id
 LEFT JOIN location_type lt ON cl.location_type = lt.location_type_id
 LEFT JOIN messages_subject ms ON ms.message_subject_id = mb.message_subject_id;
 
-CREATE FUNCTION messages_InsteadOfInsert_pr() RETURNS trigger AS $$
+CREATE OR REPLACE FUNCTION messages_InsteadOfInsert_pr() RETURNS trigger AS $$
 DECLARE 
     MessageID bigint;
 BEGIN
@@ -544,11 +547,13 @@ INSERT INTO login (user_id, email, created_on, user_type_id) VALUES
     (1005, 'c6@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
     (1006, 'c7@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
     (1007, 'c8@test.com', TIMESTAMP '2019-02-20 10:23:54', 3); -- Add candidate
-INSERT INTO address (address_line_1, city, state, country, lat_lon) VALUES ('123 Main St.', 'Toronto', 'ON', 'CA', point(43.6531, -79.3831));
-INSERT INTO address (address_line_1, city, state, country, lat_lon) VALUES ('4312 Dundas Rd.', 'Toronto', 'ON', 'CA', point(43.6533, -79.3833));
-INSERT INTO address (address_line_1, city, state, country, lat_lon) VALUES ('21 Backersfield Rd.', 'North York', 'ON', 'CA', point(43.65335, -79.38325));
-INSERT INTO address (address_line_1, address_line_2, city, state, country, lat_lon) VALUES ('654 York Rd.', 'Suite 203', 'Toronto', 'ON', 'CA', point(43.65325, -79.38312));
-INSERT INTO address (address_line_1, address_line_2, city, state, country, lat_lon) VALUES ('1325 York Rd.', 'Building 3', 'Toronto', 'ON', 'CA', point(43.65324, -79.38328));
+INSERT INTO address (address_line_1, city, state_code, country_code, state, country, lat, lon) VALUES 
+    ('123 Main St.', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.6531, -79.3831),
+    ('4312 Dundas Rd.', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.6533, -79.3833),
+    ('21 Backersfield Rd.', 'North York', 'ON', 'CA', 'Ontario', 'Canada', 43.65335, -79.38325);
+INSERT INTO address (address_line_1, address_line_2, city, state_code, country_code, state, country, lat, lon) VALUES
+    ('654 York Rd.', 'Suite 203', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.65325, -79.38312),
+    ('1325 York Rd.', 'Building 3', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.65324, -79.38328);
 INSERT INTO employer (employer_id, company_name, address_id) VALUES
     (500, 'Google Inc.', 1), 
     (501, 'Microsoft Inc.', 2);

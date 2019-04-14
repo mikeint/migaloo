@@ -2,6 +2,8 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
+import Info from '@material-ui/icons/Info';
+import Tooltip from '@material-ui/core/Tooltip';
 import React, { Component } from "react";
 import PlacesAutocomplete, {
     geocodeByAddress,
@@ -11,21 +13,52 @@ import PlacesAutocomplete, {
 const styles = theme => ({
     textField:{
         width: 400,
+    },
+    info:{
+        marginTop: "16px"
+    },
+    alignment:{
+        display: "flex"
+    },
+    secondaryAddress:{
+        marginLeft: "30px"
     }
 })
 class AddressInput extends Component {
 
     constructor(props) {
         super(props);
+        const formattedAddress = this.formatAddress(props)
 		this.state = {
-            address: ''
+            hasBlur: false,
+            address: formattedAddress,
+            formattedAddress: formattedAddress,
+            onChange: props.onChange,
+            addressLine1: props.addressLine1 || '',
+            addressLine2: props.addressLine2 || '',
+            placeId: props.placeId, // Nullable
+            city: props.city || '',
+            stateProvince: props.stateProvince || '', 
+            stateProvinceCode: props.stateProvinceCode || '', 
+            country: props.country || '', 
+            countryCode: props.countryCode || '', 
+            postalCode: props.postalCode || '', 
+            lat: props.lat, // Nullable
+            lon: props.lon // Nullable
         };
     }
     handleChange = address => {
-        this.setState({ address });
+        this.setState({ address:address, placeId: null });
+        this.state.onChange(this.state);
     };
     handleAddr2Change = addressLine2 => {
-        this.setState({ addressLine2: addressLine2 });
+        const formattedAddress = this.formatAddress({...this.state, addressLine2:addressLine2.target.value})
+        this.setState({ 
+            address: formattedAddress,
+            formattedAddress: formattedAddress,
+            addressLine2: addressLine2.target.value
+        });
+        this.state.onChange(this.state);
     };
   
     handleSelect = address => {
@@ -33,23 +66,23 @@ class AddressInput extends Component {
             .then(results => {
                 return this.getAddress(results[0])
             })
-            .then(addressData => this.setState({ ...addressData }))
+            .then(addressData => {
+                this.setState({ ...addressData });
+                this.state.onChange(this.state);
+            })
             .catch(error => console.error('Error', error));
     };
     joinBy(list, sep){
-        return list.filter(d=>d != null).join(sep)
+        return list.filter(d=>d != null && d !== "").join(sep)
     }
     formatAddress(a){
-        return this.joinBy([a.addressLine1, a.city, this.joinBy([a.stateProvinceCode, a.postalCode], " "), a.countryCode], ", ")
+        return this.joinBy([a.addressLine1, a.addressLine2, a.city, this.joinBy([a.stateProvinceCode, a.postalCode], " "), a.countryCode], ", ")
     }
     getAddress(result){
         const addr = {
             placeId: result.place_id,
             ...getLatLng(result)
         };
-        const formattedAddress = this.formatAddress(addr);
-        addr.formattedAddress = formattedAddress;
-        addr.address = formattedAddress;
         result.address_components.forEach(c=>{
             if(c.types.includes("street_number")){
                 addr.addressLine1 = c.long_name;
@@ -77,12 +110,34 @@ class AddressInput extends Component {
                 }
             }
         })
+        const formattedAddress = this.formatAddress(addr);
+        addr.formattedAddress = formattedAddress;
+        addr.address = formattedAddress;
         return addr;
     }
+    blurredOnce(){
+        if(!this.state.hasBlur)
+            this.setState({hasBlur: true})
+    }
+    isValid(){
+        return this.state.placeId != null
+    }
     render(){  
-        const { classes, onClose, ...other } = this.props;
+        const { classes, onClose } = this.props;
+        const inputProps = {
+            label: "Address",
+            placeholder: "Address",
+            margin: "normal",
+            variant: "outlined",
+            onBlur: this.blurredOnce.bind(this),
+            className: `location-search-input ${classes.textField}`
+        }
+        if(!this.state.placeId && this.state.hasBlur){
+            inputProps.error = true;
+            inputProps.helperText="Please select an item from the drop down"
+        }
         return (
-            <React.Fragment>
+            <div className={classes.alignment}>
                 <PlacesAutocomplete
                     value={this.state.address}
                     onChange={this.handleChange}
@@ -92,16 +147,13 @@ class AddressInput extends Component {
                     searchOptions={{types: ['address']}}
                 >
                 {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                    <React.Fragment>
+                    <div>
                         <TextField
-                            {...getInputProps({
-                                label: "Address",
-                                placeholder: "Address",
-                                margin: "normal",
-                                variant: "outlined",
-                                className: `location-search-input ${classes.textField}`,
-                            })}
+                            {...getInputProps(inputProps)}
                         />
+                        <Tooltip title="An item must be selected from the drop down search" aria-label="Search">
+                            <Info className={classes.info}/>
+                        </Tooltip>
                         <Paper className={classes.paper} square>
                             {loading && <MenuItem
                                     {...getSuggestionItemProps}
@@ -131,19 +183,20 @@ class AddressInput extends Component {
                                 </MenuItem>
                             })}
                         </Paper>
-                    </React.Fragment>
+                    </div>
                 )}
                 </PlacesAutocomplete>
                 <TextField
                     name="addressLine2"
                     label="Address Line 2"
                     placeholder="Address Line 2 (Optional)"
-                    className={classes.textField}
-                    onChange={this.handleAddr2Change}
+                    defaultValue={this.state.addressLine2}
+                    className={classes.textField+" "+classes.secondaryAddress}
+                    onChange={this.handleAddr2Change.bind(this)}
                     margin="normal"
                     variant="outlined"
                 />
-            </React.Fragment>
+            </div>
         );
     }
 }

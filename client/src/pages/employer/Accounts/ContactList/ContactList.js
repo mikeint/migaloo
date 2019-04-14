@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import GetAccountManager from '../../../../components/GetAccountManager/GetAccountManager';
 import ModifiableProfileImage from '../../../../components/ModifiableProfileImage/ModifiableProfileImage';
+import AddressInput from '../../../../components/AddressInput/AddressInput';
 
 const styles = theme => ({
     button:{ 
@@ -170,6 +171,9 @@ class ContactList extends React.Component{
     closeSelf(){
         this.state.onClose(this.state.didSave)
     }
+    handleAddressChange(address){
+        this.setState({addressChange:address})
+    }
     render(){
         const { classes } = this.props; 
         return ( 
@@ -198,12 +202,15 @@ class ContactList extends React.Component{
                         variant="outlined"
                     />
                     </div>
+                    <div>
+                        <AddressInput {...this.state.employer} onChange={this.handleAddressChange.bind(this)}/>
+                    </div>
                     <Button
-                    className={classes.button}
-                    color="primary"
-                    variant="contained"
-                    disabled={!this.state.isModified}
-                    onClick={this.saveEmployer}>Save Changes</Button>
+                        className={classes.button}
+                        color="primary"
+                        variant="contained"
+                        disabled={!this.state.isModified}
+                        onClick={this.saveEmployer}>Save Changes</Button>
                 </div>
                 <div className={classes.tableBody}>
                     <div className={classes.tableHeading}>
