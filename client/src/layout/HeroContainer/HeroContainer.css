@@ -8,8 +8,7 @@
 .heroAnimation{
     position: absolute;
     left: 0px;
-    top: 0px;
-    animation: moveHeroDesktop 100s infinite linear;
+    top: 0px; 
 }
 .heroLayer {  
     height: 500px; 
@@ -19,26 +18,34 @@
     background-size: auto 100%;
     position: absolute;
 }
-@keyframes moveHeroDesktop {
-    0% { 
-        transform: translate3d(0, 0, 0);
-    }
-    100% { 
-        transform: translate3d(-4680px, 0, 0);
-    }
-}
-
+ 
 #heroLayer0{
-    background-image: url("../../files/images/landingPage/layer0.png"); 
+    background-image: url("../../files/images/landingPage/layer0.png");   
 }
 #heroLayer1{
     background-image: url("../../files/images/landingPage/layer1.png");
+    animation: moveHeroDesktop1 125s infinite linear;
 }
 #heroLayer2{
     background-image: url("../../files/images/landingPage/layer2.png");
+    animation: moveHeroDesktop2 100s infinite linear;
 }
 #heroLayer3{
     background-image: url("../../files/images/landingPage/layer3.png");
+    animation: moveHeroDesktop3 75s infinite linear;
+}
+
+@keyframes moveHeroDesktop1 {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-4680px, 0, 0); }
+}
+@keyframes moveHeroDesktop2 {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-4680px, 0, 0); }
+}
+@keyframes moveHeroDesktop3 {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-4680px, 0, 0); }
 }
 
 
