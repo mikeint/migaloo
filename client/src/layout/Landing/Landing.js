@@ -3,12 +3,12 @@ import './Landing.css';
 import ScrollAnimation from 'react-animate-on-scroll';
 import ScrollableAnchor from 'react-scrollable-anchor'
 import SocialSide from "../SocialSide/SocialSide"; 
-import ContactSection from "../ContactSection/ContactSection"; 
 
 import LandingSection1 from "../LandingSection1/LandingSection1"; 
 //import LandingSection2 from "../LandingSection2/LandingSection2"; 
 import LandingSection3 from "../LandingSection3/LandingSection3";  
 import LandingSection4 from "../LandingSection4/LandingSection4";  
+/* import ContactSection from "../ContactSection/ContactSection";  */
 import HeroContainer from "../HeroContainer/HeroContainer";  
 import NavBar from '../components/NavBar/NavBar';
 
@@ -34,7 +34,7 @@ class Landing extends Component {
 				{/* <ScrollableAnchor id={'landingSection2'}><LandingSection2 /></ScrollableAnchor> */}
 				<ScrollableAnchor id={'landingSection3'}><LandingSection3 /></ScrollableAnchor>
                 <ScrollableAnchor id={'landingSection4'}><LandingSection4 /></ScrollableAnchor>
-				<ScrollableAnchor id={'contactSection'}><ContactSection /></ScrollableAnchor>
+				{/* <ScrollableAnchor id={'contactSection'}><ContactSection /></ScrollableAnchor> */}
                  
 			</React.Fragment>
 		);

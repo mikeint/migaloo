@@ -1,0 +1,16 @@
+/* .mainLanding {
+    float: left;
+    margin-bottom: 720px;
+} 
+.mainLandingBottom {
+    position: fixed;
+    z-index: -1;
+    bottom: 0; 
+    width: 100%; 
+}
+
+@media only screen and (max-width: 768px) {
+    .mainLanding { 
+        margin-bottom: 820px;
+    }
+} */

@@ -22,7 +22,7 @@ class LandingSection3 extends Component {
                             </div>
                         </ScrollAnimation>
                     </div>
-                    <div className="module_wrapper">
+                    <div className="module_wrapper whiteBG">
                         <ScrollAnimation animateIn='bounceInLeft' duration={1} animateOnce={true}> 
                             <div className="module_content">
                                 <h1>Submit Candidate</h1>
@@ -44,7 +44,7 @@ class LandingSection3 extends Component {
                             </div> 
                         </ScrollAnimation>
                     </div>
-                    <div className="module_wrapper">
+                    <div className="module_wrapper whiteBG">
                         <ScrollAnimation animateIn='bounceInLeft' duration={1} animateOnce={true}>  
                             <div className="module_content">
                                 <h1>Engage</h1>
@@ -75,7 +75,7 @@ class LandingSection3 extends Component {
                             </div>
                         </ScrollAnimation>
                     </div>
-                    <div className="module_wrapper">
+                    <div className="module_wrapper whiteBG">
                         <ScrollAnimation animateIn='bounceInLeft' duration={1} animateOnce={true}>
                             <div className="module_img module_img2"></div>
                         </ScrollAnimation>
@@ -97,7 +97,7 @@ class LandingSection3 extends Component {
                             </div> 
                         </ScrollAnimation>
                     </div>
-                    <div className="module_wrapper">
+                    <div className="module_wrapper whiteBG">
                         <ScrollAnimation animateIn='bounceInLeft' duration={1} animateOnce={true}>  
                             <div className="module_img module_img4"></div>  
                         </ScrollAnimation>

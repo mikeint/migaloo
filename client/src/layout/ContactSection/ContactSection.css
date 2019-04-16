@@ -86,7 +86,7 @@
     transition: 0.3s; 
     z-index: 99;
 }
-.contactUsContainer .btn-secondary {
+#formSubmit{
     width: 180px; 
     padding: 10px;  
     font-size: 30px; 
@@ -97,9 +97,10 @@
     border: none;  
     transition: 0.3s;
     overflow: hidden; 
+    cursor: pointer;
 }
 
-.contactUsContainer .btn-secondary:hover {
+#formSubmit:hover {
     background:#ffffff;
     color: #2e2e2e; 
 }

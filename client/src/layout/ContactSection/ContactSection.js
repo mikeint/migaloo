@@ -1,7 +1,6 @@
-import React, { Component } from "react"; 
-import { Button, Form } from 'reactstrap';
+import React, { Component } from "react";  
 import axios from 'axios';
-import Whale from '../../components/Whale/Whale';
+//import Whale from '../../components/Whale/Whale';
 
 import Loader from '../../components/Loader/Loader';
 
@@ -51,71 +50,70 @@ class ContactSection extends Component {
 
 
     render() {
-        const whaleOptions={whaleImg:'whaleBs.png', sprayColor:'#fff'};
+        //const whaleOptions={whaleImg:'whaleBs.png', sprayColor:'#fff'};
 
         const buttonSpot = this.state.buttonState ?
             (<div id='formSubmitText'> Thank you for filling out the form.< br />  Your information has been successfully sent!</div>)
             :
-            (<Button id='formSubmit'>Submit</Button>)
+            (<button id='formSubmit'>Submit</button>)
 
 
         return (
             <div className="formBackground">  
-
-                <Form onSubmit={this.handleSubmit} id="theForm">
-                    <div className="contactUsContainer"> 
-                        <div className="whaleContactContainer">
-                            <Whale {...whaleOptions}/>
-                        </div>
-                        
-                        <h1>Contact Us</h1>
-                        <div className="layerBackground"></div>
-                        <div className="formSection">  
-                            <div className="input-2">
-                                <div className="i-2 il"> 
-                                    <input
-                                        id="fname"
-                                        type="text"
-                                        name="firstname"
-                                        placeholder="Your name"
-                                        required
-                                        onChange={this.handleChange}
-                                    />  
+                <form onSubmit={this.handleSubmit} id="theForm"> 
+                    <div className="contactUsContainer">   
+                            {/* <div className="whaleContactContainer">
+                                <Whale {...whaleOptions}/>
+                            </div> */}
+                            
+                            <h1>Contact Us</h1>
+                            <div className="layerBackground"></div>
+                            <div className="formSection">  
+                                <div className="input-2">
+                                    <div className="i-2 il"> 
+                                        <input
+                                            id="fname"
+                                            type="text"
+                                            name="firstname"
+                                            placeholder="Your name"
+                                            required
+                                            onChange={this.handleChange}
+                                        />  
+                                    </div>
+                                    <div className="i-2"> 
+                                        <input
+                                            id="email"
+                                            type="email"
+                                            name="email"
+                                            placeholder="Your email"
+                                            required
+                                            onChange={this.handleChange}
+                                        /> 
+                                    </div> 
                                 </div>
-                                <div className="i-2"> 
-                                    <input
-                                        id="email"
-                                        type="email"
-                                        name="email"
-                                        placeholder="Your email"
+
+                                <div className="input-2">  
+                                    <textarea
+                                        id="message" 
+                                        type="textarea"
+                                        name="message"
+                                        placeholder="Your Message"
                                         required
                                         onChange={this.handleChange}
                                     /> 
-                                </div> 
+                                </div>
+                            </div> 
+                            <div className="submitContainer">
+                                {this.state.sending ?
+                                <Loader sprayColor="#fff" />
+                                :
+                                buttonSpot
+                                }
                             </div>
-
-                            <div className="input-2">  
-                                <textarea
-                                    id="message" 
-                                    type="textarea"
-                                    name="message"
-                                    placeholder="Your Message"
-                                    required
-                                    onChange={this.handleChange}
-                                /> 
-                            </div>
-                        </div> 
-                        <div className="submitContainer">
-                            {this.state.sending ?
-                               <Loader sprayColor="#fff" />
-                            :
-                            buttonSpot
-                            }
+                            <div className="copyRight">© 2019 by Migaloo.</div> 
                         </div>
-                        <div className="copyRight">© 2019 by Migaloo.</div>
-                    </div>
-                </Form>
-            </div>
+                    </form>
+                </div>
         );
     }
 }

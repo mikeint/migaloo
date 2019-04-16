@@ -6,7 +6,7 @@
     opacity: 1;
     border-bottom: 1px solid #fff;
     /* background: #fff; */
-    transition: 0.3s;
+    transition: 00.3s;
     position: fixed;
 }
 .white {
@@ -67,7 +67,7 @@
     padding: 20px; 
     position: absolute; 
     z-index: 9;
-    transition: 0.3s;
+    transition: 00.3s;
     padding-top: 210px;
     text-shadow: -1px 1px 0px #263c54;
 }
@@ -89,7 +89,7 @@
     font-weight: bold; 
     margin-top: 10px;
     margin-left: 10px;
-    transition: 0.3s;
+    transition: 00.3s;
 }
 
 #navBar {
@@ -98,7 +98,7 @@
 #navBar li {
     position: relative;
     line-height: 100px;
-    transition: 0.3s;
+    transition: 00.3s;
     font-size: 28px;
     list-style-type: none;
     float: left;
@@ -137,10 +137,10 @@
     -moz-transform: rotate(0deg);
     -o-transform: rotate(0deg);
     transform: rotate(0deg);
-    -webkit-transition: .3s ease-in-out;
-    -moz-transition: .3s ease-in-out;
-    -o-transition: .3s ease-in-out;
-    transition: .3s ease-in-out; 
+    -webkit-transition: 0.3s;
+    -moz-transition: 0.3s;
+    -o-transition: 0.3s;
+    transition: 0.3s; 
     right: 0;
     padding-right: 10px;
     z-index: 10;
@@ -150,7 +150,7 @@
     display: block;
     position: absolute;
     height: 6px;
-    width: 50px;
+    width: 45px;
     background: #fff;
     border-radius: 9px;
     left: -15px;
@@ -160,10 +160,10 @@
     -moz-transform: rotate(0deg);
     -o-transform: rotate(0deg);
     transform: rotate(0deg);
-    -webkit-transition: .3s ease-in-out;
-    -moz-transition: .3s ease-in-out;
-    -o-transition: .3s ease-in-out;
-    transition: .3s ease-in-out;
+    -webkit-transition: 0.3s;
+    -moz-transition: 0.3s;
+    -o-transition: 0.3s;
+    transition: 0.3s;
 }
 
 .open span {
@@ -178,15 +178,15 @@
     cursor: pointer;
 }
 #nav-icon1 span:nth-child(1) {
-    top: 0px;
+    top: 5px;
 }
 
 #nav-icon1 span:nth-child(2) {
-    top: 18px;
+    top: 20px;
 }
 
 #nav-icon1 span:nth-child(3) {
-    top: 36px;
+    top: 35px;
 }
 
 #nav-icon1.open span:nth-child(1) {

@@ -52,7 +52,7 @@ class AboutSection extends Component {
                                     </div>
                                 </div> 
                                 <div className="name">Michael Marcucci</div>
-                                <div className="title">CTO</div>
+                                <div className="title">Lead Developer</div>
                             </div>
                         </div> 
                     </div>

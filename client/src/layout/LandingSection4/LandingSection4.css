@@ -2,8 +2,16 @@
     width: 100%;
     float: left;
     overflow: hidden;
-    position: relative;
-} 
+    position: relative; 
+}
+.sp_parallax {
+    height: 310px;
+    background-image: url("../../files/images/landingPage/sectionParralax.png");
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: 100% 310px;
+    background-position: bottom;
+}
 .sp_contain {
     width: 100%;
     height: 100%;
@@ -20,6 +28,7 @@
     font-size: 24px;
     float: left; 
     position: relative;
+    padding: 20px;
 } 
  
 .sp_choose{
@@ -82,4 +91,12 @@
 } 
 
 @media only screen and (max-width: 768px) {
+    .landingSection4 { 
+        padding-bottom: 45px;
+    }
+    .sp_parallax {
+        height: 380px;
+        background-image: url("../../files/images/landingPage/sectionParralaxM.png");
+        background-size: 100% calc(380px + 45px); 
+    }
 }

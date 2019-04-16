@@ -42,13 +42,14 @@ class NavBar extends Component {
                 <div id="navBar">
                     {this.props.page==="home" ?
                         <React.Fragment>  
-                            <a href="#landingSection2"><li className="navBarA">Overview</li></a>
+                            {/* <a href="#landingSection2"><li className="navBarA">Overview</li></a> */}
                             <a href="#landingSection3"><li className="navBarA">How it Works</li></a>
-                            <a href="#contactSection"><li className="navBarA">Contact</li></a> 
+                            {/* <a href="#contactSection"><li className="navBarA">Contact us</li></a>  */}
                             <Link to='/about'><li className="navBarA">About</li></Link>
+                            <a href="#landingSection4"><li className="navBarA">Sign Up</li></a>
                         </React.Fragment> 
                     : 
-                        <Link to='/' onClick={this.toggleMobileMenu}><li>Home</li></Link> 
+                        <Link to='/' onClick={this.callAddOverlay}><li>Home</li></Link> 
                     }
                 </div>
 
@@ -70,14 +71,15 @@ class NavBar extends Component {
                     <div className="side-menu">
                         {this.props.page==="home" ?
                             <React.Fragment>
-                                <a href="#landingSection2" onClick={this.toggleMobileMenu}><li>Overview</li></a>
-                                <a href="#landingSection3" onClick={this.toggleMobileMenu}><li>How it Works</li></a>
-                                <a href="#contactSection" onClick={this.toggleMobileMenu}><li>Contact Us</li></a> 
-                                <Link to='/about' onClick={this.toggleMobileMenu}><li>About</li></Link>
+                                {/* <a href="#landingSection2" onClick={this.callAddOverlay}><li>Overview</li></a> */}
+                                <a href="#landingSection3" onClick={this.callAddOverlay}><li>How it Works</li></a>
+                                {/* <a href="#contactSection" onClick={this.callAddOverlay}><li>Contact Us</li></a>  */}
+                                <Link to='/about' onClick={this.callAddOverlay}><li>About</li></Link>
+                                <a href="#landingSection4" onClick={this.callAddOverlay}><li>Sign Up</li></a>
                             </React.Fragment>
                             : 
                             <React.Fragment>
-                                <Link to='/' onClick={this.toggleMobileMenu}><li>Home</li></Link> 
+                                <Link to='/' onClick={this.callAddOverlay}><li>Home</li></Link> 
                             </React.Fragment>
                         }
                         </div>
