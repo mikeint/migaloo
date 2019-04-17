@@ -11,14 +11,18 @@ import PlacesAutocomplete, {
 } from 'react-places-autocomplete';
 
 const styles = theme => ({
-    textField:{
+    textField1:{
+        width: 600,
+    },
+    textField2:{
         width: 400,
     },
     info:{
         marginTop: "16px"
     },
     alignment:{
-        display: "flex"
+        display: "flex",
+        justifyContent: "center"
     },
     secondaryAddress:{
         marginLeft: "30px"
@@ -44,7 +48,8 @@ class AddressInput extends Component {
             countryCode: props.countryCode || '', 
             postalCode: props.postalCode || '', 
             lat: props.lat, // Nullable
-            lon: props.lon // Nullable
+            lon: props.lon, // Nullable
+            error: false
         };
     }
     handleChange = address => {
@@ -67,7 +72,7 @@ class AddressInput extends Component {
                 return this.getAddress(results[0])
             })
             .then(addressData => {
-                this.setState({ ...addressData });
+                this.setState({ ...addressData, error: false });
                 this.state.onChange(this.state);
             })
             .catch(error => console.error('Error', error));
@@ -119,25 +124,34 @@ class AddressInput extends Component {
         if(!this.state.hasBlur)
             this.setState({hasBlur: true})
     }
+    shouldComponentUpdate(nextProps, nextState) {
+        const change = this.state.error !== nextProps.error
+        if(change){
+            this.setState({ error: nextProps.error });
+        }
+        if(this.state !== nextState)
+            return true
+        return change;
+    }
     isValid(){
         return this.state.placeId != null
     }
     render(){  
-        const { classes, onClose } = this.props;
+        const { classes, className } = this.props;
         const inputProps = {
             label: "Address",
             placeholder: "Address",
             margin: "normal",
             variant: "outlined",
             onBlur: this.blurredOnce.bind(this),
-            className: `location-search-input ${classes.textField}`
+            className: `location-search-input ${classes.textField1}`
         }
-        if(!this.state.placeId && this.state.hasBlur){
+        if((!this.state.placeId && this.state.hasBlur) || this.state.error){
             inputProps.error = true;
             inputProps.helperText="Please select an item from the drop down"
         }
         return (
-            <div className={classes.alignment}>
+            <div className={classes.alignment+" "+className}>
                 <PlacesAutocomplete
                     value={this.state.address}
                     onChange={this.handleChange}
@@ -159,14 +173,14 @@ class AddressInput extends Component {
                                     {...getSuggestionItemProps}
                                     selected={false}
                                     component="div"
-                                    className={classes.textField}
+                                    className={classes.textField1}
                                     style={{
                                         fontWeight: 400,
                                     }}>
                                 Loading...
                             </MenuItem>}
                             {suggestions.map((suggestion, i) => {
-                                const className = classes.textField;
+                                const className = classes.textField1;
                                 // inline style for demonstration purpose
                                 const style = {
                                     fontWeight: suggestion.active ? 500 : 400,
@@ -191,7 +205,7 @@ class AddressInput extends Component {
                     label="Address Line 2"
                     placeholder="Address Line 2 (Optional)"
                     defaultValue={this.state.addressLine2}
-                    className={classes.textField+" "+classes.secondaryAddress}
+                    className={classes.textField2+" "+classes.secondaryAddress}
                     onChange={this.handleAddr2Change.bind(this)}
                     margin="normal"
                     variant="outlined"

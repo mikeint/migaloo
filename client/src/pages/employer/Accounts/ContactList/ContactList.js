@@ -11,6 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import GetAccountManager from '../../../../components/GetAccountManager/GetAccountManager';
 import ModifiableProfileImage from '../../../../components/ModifiableProfileImage/ModifiableProfileImage';
 import AddressInput from '../../../../components/AddressInput/AddressInput';
+import FormValidation from '../../../../FormValidation';
 
 const styles = theme => ({
     button:{ 
@@ -59,6 +60,20 @@ const styles = theme => ({
         position: "relative"
     }
 });
+const errorText = [
+    {
+        stateName: "company_name",
+        errorText: "Please enter a name for the employer"
+    },
+    {
+        stateName: "department",
+        errorText: "Please enter a departement for the employer"
+    },
+    {
+        stateName: "addressChange.placeId",
+        errorText: "Please select an address for the employer"
+    }
+]
 class ContactList extends React.Component{
 
     constructor(props) {
@@ -73,8 +88,10 @@ class ContactList extends React.Component{
             showGetAccountManager: false,
             onClose: props.onClose,
             isModified: false,
-            didSave: false
+            didSave: false,
+            errors:{}
         };
+        this.formValidation = new FormValidation(this, errorText);
     }
     componentWillUnmount = () => {
         ApiCalls.cancel();
@@ -142,17 +159,19 @@ class ContactList extends React.Component{
         )
     }
     saveEmployer = (user) => {
-        ApiCalls.post(`/api/employer/setEmployerProfile`,
-            {employerId:this.state.employer.employer_id, company_name:this.state.company_name})
-        .then((res)=>{
-            if(res && res.data.success){
-                this.setState({didSave: true, isModified:false})
-                this.getContactList();
-            }
-        })
-        .catch(errors => 
-            console.log(errors.response.data)
-        )
+        if(this.formValidation.isValid()){
+            ApiCalls.post(`/api/employer/setEmployerProfile`,
+                {employerId:this.state.employer.employer_id, company_name:this.state.company_name, department:this.state.department})
+            .then((res)=>{
+                if(res && res.data.success){
+                    this.setState({didSave: true, isModified:false})
+                    this.getContactList();
+                }
+            })
+            .catch(errors => 
+                console.log(errors.response.data)
+            )
+        }
     }
     handlePageClick = selected => {
         this.setState({ page: selected }, () => {
@@ -200,10 +219,27 @@ class ContactList extends React.Component{
                         onChange={this.handleChange}
                         margin="normal"
                         variant="outlined"
+                        {...this.formValidation.hasError("company_name")}
                     />
                     </div>
                     <div>
-                        <AddressInput {...this.state.employer} onChange={this.handleAddressChange.bind(this)}/>
+                    <TextField
+                        name="department"
+                        label="Department"
+                        className={classes.textField}
+                        defaultValue={this.state.department}
+                        required
+                        onChange={this.handleChange}
+                        margin="normal"
+                        variant="outlined"
+                        {...this.formValidation.hasError("department")}
+                    />
+                    </div>
+                    <div>
+                        <AddressInput
+                        {...this.state.employer}
+                        onChange={this.handleAddressChange.bind(this)}
+                        {...(this.formValidation.hasError("addressChange.placeId").error?{error:true}:{})}/>
                     </div>
                     <Button
                         className={classes.button}
@@ -219,7 +255,7 @@ class ContactList extends React.Component{
                         <div className={classes.tableCell}>Last Name</div>
                         <div className={classes.tableCell}>Phone Number</div>
                         <div className={classes.tableCell}>Account Active</div>
-                        <div className={classes.tableCell}>Is Administrator</div>
+                        <div className={classes.tableCell}>Is Primary</div>
                         {this.state.iAmAdmin && <div className={classes.tableCell}>Remove</div>}
                     </div>
                     {

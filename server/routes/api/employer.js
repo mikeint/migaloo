@@ -102,7 +102,7 @@ router.post('/addEmployer', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:"Must be an account manager for this"})
     }
     postgresdb.tx(t => {
-        var fields = ['company_name'];
+        var fields = ['company_name', 'department'];
         var addressFields = ['address_line_1', 'address_line_2', 'city', 'state', 'country'];
         var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:null);
         var addrFieldUpdates = addressFields.map(f=> bodyData[f] != null?bodyData[f]:null);
@@ -116,7 +116,7 @@ router.post('/addEmployer', passport.authentication,  (req, res) => {
         return q1.then((addr_ret)=>{
             return t.one('INSERT INTO login(user_type_id) VALUES (4) RETURNING user_id')
             .then((user_ret) => {
-                const q3 = t.none('INSERT INTO employer(employer_id, company_name, address_id) VALUES ($1, $2, $3)',
+                const q3 = t.none('INSERT INTO employer(employer_id, company_name, department, address_id) VALUES ($1, $2, $3, $4)',
                                 [user_ret.user_id, ...fieldUpdates, addr_ret.address_id]);
                 const q4 = t.none('INSERT INTO employer_contact(employer_id, employer_contact_id, isAdmin) VALUES ($1, $2, true)',
                                 [user_ret.user_id, jwtPayload.id]);
@@ -168,9 +168,9 @@ router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:"Must be an account manager for this"})
     }
     postgresdb.tx(t => {
-        var fields = ['company_name'];
+        var fields = ['company_name', 'department'];
         var addressFields = ['address_line_1', 'address_line_2', 'city', 'state', 'country'];
-        return t.one('SELECT ec.employer_id, first_name, last_name, phone_number, company_name, e.address_id, address_line_1, address_line_2, city, state, country \
+        return t.one('SELECT ec.employer_id, first_name, last_name, phone_number, company_name, department, e.address_id, address_line_1, address_line_2, city, state, country \
                         FROM employer e \
                         INNER JOIN employer_contact ec ON ec.employer_id = e.employer_id AND ec.isAdmin \
                         INNER JOIN account_manager ac ON ac.account_manager_id = ec.employer_contact_id \
@@ -192,7 +192,7 @@ router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
             }
             return q1.then((addr_ret)=>{
                 addressId = addressIdExists ? addressId : addr_ret.address_id
-                const q2 = t.none('UPDATE employer SET company_name=$1, address_id=$2 WHERE employer_id = $3',
+                const q2 = t.none('UPDATE employer SET company_name=$1, department=$2 address_id=$3 WHERE employer_id = $4',
                                 [...fieldUpdates, addressId, employer_id]);
                 return q2
                     .then(() => {

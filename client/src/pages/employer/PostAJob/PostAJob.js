@@ -15,6 +15,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import FormValidation from '../../../FormValidation';
 
 const styles = theme => ({
     textField: {
@@ -37,6 +38,32 @@ const styles = theme => ({
         margin: "10px"
     }
 })
+const errorText = [
+    {
+        stateName: "caption",
+        errorText: "Please enter a description for the job posting"
+    },
+    {
+        stateName: "title",
+        errorText: "Please enter a title for the job posting"
+    },
+    {
+        stateName: "salary",
+        errorText: "Please select the salary range"
+    },
+    {
+        stateName: "employer",
+        errorText: "Please select an employer for the job posting"
+    },
+    {
+        stateName: "experience",
+        errorText: "Please select the experience required"
+    },
+    {
+        stateName: "tagIds",
+        errorText: "Please select some tags related to the job"
+    }
+]
 class PostAJob extends React.Component{
     constructor() {
         super();
@@ -53,6 +80,7 @@ class PostAJob extends React.Component{
             errors: {}
         }
         this.Auth = new AuthFunctions();
+        this.formValidation = new FormValidation(this, errorText);
     }
     loadData(){
         ApiCalls.get('/api/autocomplete/salary')
@@ -93,11 +121,11 @@ class PostAJob extends React.Component{
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value })
+        this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
     }
 
     handleSubmit = () => {
-        if(this.isValid()){
+        if(this.formValidation.isValid()){
             ApiCalls.post('/api/employerPostings/create', this.state)
             .then((res) => { 
                 if(res && res.data.success) {
@@ -110,36 +138,6 @@ class PostAJob extends React.Component{
             });
         }
     }
-    isValid(){
-        const errors = {};
-        if(!this.state.caption || this.state.caption.lengh === 0){
-            errors.caption = "Please enter a description for the job posting";
-        }
-        if(!this.state.title || this.state.title.lengh === 0){
-            errors.title = "Please enter a title for the job posting";
-        }
-        if(!this.state.salary || this.state.salary.lengh === 0){
-            errors.salary = "Please select the salary range";
-        }
-        if(!this.state.employer || this.state.employer.lengh === 0){
-            errors.employer = "Please select an employer for the job posting";
-        }
-        if(!this.state.experience || this.state.experience.lengh === 0){
-            errors.experience = "Please select the experience required";
-        }
-        if(!this.state.tagIds || this.state.tagIds.lengh === 0){
-            errors.tags = "Please select some tags related to the job";
-        }
-        this.setState({errors:errors});
-        return Object.keys(errors).length === 0
-    }
-    hasError(id){
-        const errorMessage = this.state.errors[id];
-        if(errorMessage == null)
-            return {};
-        else
-            return {error: true, helperText: errorMessage};
-    }
     render(){   
         const { classes } = this.props;
         return (
@@ -151,7 +149,7 @@ class PostAJob extends React.Component{
                         <div className="input-2">  
                             <FormControl
                                     className={classes.selectFormControl}
-                                    {...(this.hasError("employer").error?{error:true}:{})}>
+                                    {...(this.formValidation.hasError("employer").error?{error:true}:{})}>
                                 <InputLabel htmlFor="employer-helper">Employer</InputLabel>
                                 <Select
                                     value={this.state.employer}
@@ -168,7 +166,7 @@ class PostAJob extends React.Component{
                                         <MenuItem key={i} value={d.id}>{d.name}</MenuItem>
                                     )}
                                 </Select>
-                                <FormHelperText>{this.hasError("employer").helperText}</FormHelperText>
+                                <FormHelperText>{this.formValidation.hasError("employer").helperText}</FormHelperText>
                             </FormControl>
                         </div>
                         <div className="input-2">
@@ -180,7 +178,7 @@ class PostAJob extends React.Component{
                                 onBlur={this.handleChange}
                                 margin="normal"
                                 variant="outlined"
-                                {...this.hasError("title")}
+                                {...this.formValidation.hasError("title")}
                             />
                         </div>  
                         <div className="input-2">
@@ -196,17 +194,17 @@ class PostAJob extends React.Component{
                                 onBlur={this.handleChange}
                                 margin="normal"
                                 variant="outlined"
-                                {...this.hasError("caption")}
+                                {...this.formValidation.hasError("caption")}
                             />
                         </div>  
                         <div  className={classes.tagSearch}>
-                            <TagSearch onChange={(tags)=>this.setState({tagIds:tags})}
-                                    {...this.hasError("tags")}/>
+                            <TagSearch onChange={(tags)=>this.setState({tagIds:tags}, this.formValidation.shouldRevalidate)}
+                                    {...this.formValidation.hasError("tagIds")}/>
                         </div>
                         <div className="input-2">
                             <FormControl
                                     className={classes.selectFormControl}
-                                    {...(this.hasError("salary").error?{error:true}:{})} >
+                                    {...(this.formValidation.hasError("salary").error?{error:true}:{})} >
                                 <InputLabel htmlFor="salary-helper">Salary</InputLabel>
                                 <Select
                                     value={this.state.salary}
@@ -223,11 +221,11 @@ class PostAJob extends React.Component{
                                         <MenuItem key={i} value={d.salary_type_id}>{d.salary_type_name}</MenuItem>
                                     )}
                                 </Select>
-                                <FormHelperText>{this.hasError("salary").helperText}</FormHelperText>
+                                <FormHelperText>{this.formValidation.hasError("salary").helperText}</FormHelperText>
                             </FormControl>
                             <FormControl
                                     className={classes.selectFormControl}
-                                    {...(this.hasError("experience").error?{error:true}:{})} >
+                                    {...(this.formValidation.hasError("experience").error?{error:true}:{})} >
                                 <InputLabel htmlFor="experience-helper">Experience</InputLabel>
                                 <Select
                                     value={this.state.experience}
@@ -244,7 +242,7 @@ class PostAJob extends React.Component{
                                         <MenuItem key={i} value={d.experience_type_id}>{d.experience_type_name}</MenuItem>
                                     )}
                                 </Select>
-                                <FormHelperText>{this.hasError("experience").helperText}</FormHelperText>
+                                <FormHelperText>{this.formValidation.hasError("experience").helperText}</FormHelperText>
                             </FormControl>
                         </div>
                         <Button 

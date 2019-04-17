@@ -7,13 +7,15 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import AddressInput from '../../../../components/AddressInput/AddressInput';
+import FormValidation from '../../../../FormValidation';
 
 const styles = theme => ({
     button:{ 
         width: "80%",
     },
     contents:{
-        margin: "10px"
+        margin: "10px",
+        textAlign: "center"
     },
     textField: {
         width: "50%",
@@ -38,6 +40,20 @@ const styles = theme => ({
         position: "relative"
     }
 });
+const errorText = [
+    {
+        stateName: "company_name",
+        errorText: "Please enter a name for the employer"
+    },
+    {
+        stateName: "department",
+        errorText: "Please enter a departement for the employer"
+    },
+    {
+        stateName: "address.placeId",
+        errorText: "Please select an address for the employer"
+    }
+]
 class AddEmployer extends React.Component{
 
     constructor(props) {
@@ -45,28 +61,33 @@ class AddEmployer extends React.Component{
 		this.state = {
             onClose: props.onClose,
             company_name: '',
-            address:{}
+            department: '',
+            address:{},
+            errors: {}
         };
+        this.formValidation = new FormValidation(this, errorText);
     }
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value })
+        this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
     }
     addEmployer = () => {
-        const data = {
-            company_name:this.state.company_name,
-            ...this.state.address
-        }
-        ApiCalls.post(`/api/employer/addEmployer`, data)
-        .then((res)=>{
-            if(res && res.data.success){
-                this.state.onClose(true)
+        if(this.formValidation.isValid()){
+            const data = {
+                company_name:this.state.company_name,
+                ...this.state.address
             }
-        }).catch(errors => {
-            console.log(errors.response.data)
-        })
+            ApiCalls.post(`/api/employer/addEmployer`, data)
+            .then((res)=>{
+                if(res && res.data.success){
+                    this.state.onClose(true)
+                }
+            }).catch(errors => {
+                console.log(errors.response.data)
+            })
+        }
     }
     handleAddressChange(address){
-        this.setState({address:address})
+        this.setState({address:address}, this.formValidation.shouldRevalidate)
     }
     render(){
         const { classes } = this.props; 
@@ -79,18 +100,34 @@ class AddEmployer extends React.Component{
                     </IconButton>
                 </div>
                 <div className={classes.contents}>
-                    <TextField
-                        name="company_name"
-                        label="Company Name"
-                        className={classes.textField}
-                        required
-                        onChange={this.handleChange}
-                        margin="normal"
-                        variant="outlined"
-                    />
                     <div>
-                        <AddressInput onChange={this.handleAddressChange.bind(this)}/>
+                        <TextField
+                            name="company_name"
+                            label="Company Name"
+                            className={classes.textField}
+                            required
+                            onChange={this.handleChange}
+                            margin="normal"
+                            variant="outlined"
+                            {...this.formValidation.hasError("company_name")}
+                        />
                     </div>
+                    <div>
+                        <TextField
+                            name="department"
+                            label="Department"
+                            className={classes.textField}
+                            required
+                            onChange={this.handleChange}
+                            margin="normal"
+                            variant="outlined"
+                            {...this.formValidation.hasError("department")}
+                        />
+                    </div>
+                    <AddressInput
+                        onChange={this.handleAddressChange.bind(this)}
+                        {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
+                        />
                 </div>
                 <div className={classes.center}>
                     <Button
