@@ -26,6 +26,7 @@ DROP TABLE IF EXISTS login;
 DROP TABLE IF EXISTS user_type;
 DROP TABLE IF EXISTS salary_type;
 DROP TABLE IF EXISTS experience_type;
+DROP TABLE IF EXISTS tags_equality;
 DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS tag_type;
 DROP TABLE IF EXISTS location_type;
@@ -72,7 +73,8 @@ CREATE TABLE address (
 CREATE TABLE employer (
     employer_id bigserial REFERENCES login(user_id),
     address_id bigint REFERENCES address(address_id),
-    company_name  varchar(128) NULL,
+    company_name  varchar(128) NOT NULL,
+    department  varchar(128) NOT NULL,
     company_name_search tsvector,
     image_id varchar(128),
     active boolean default true,
@@ -561,9 +563,9 @@ INSERT INTO address (address_line_1, city, state_code, country_code, state, coun
 INSERT INTO address (address_line_1, address_line_2, city, state_code, country_code, state, country, lat, lon) VALUES
     ('654 York Rd.', 'Suite 203', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.65325, -79.38312),
     ('1325 York Rd.', 'Building 3', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.65324, -79.38328);
-INSERT INTO employer (employer_id, company_name, address_id) VALUES
-    (500, 'Google Inc.', 1), 
-    (501, 'Microsoft Inc.', 2);
+INSERT INTO employer (employer_id, company_name, department, address_id) VALUES
+    (500, 'Google Inc.', 'IT Services', 1), 
+    (501, 'Microsoft Inc.', 'Information Technology Division', 2);
 INSERT INTO account_manager (account_manager_id, first_name, last_name, phone_number) VALUES
     (100, 'Steve', 'Smith', '905-555-8942'), 
     (101, 'Jerry', 'McGuire', '905-555-0425'),

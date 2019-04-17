@@ -7,7 +7,7 @@ def jobTitles = new JsonSlurper().parseText(new File("${dbscriptsPath}jobTitles.
 def jobDescriptions = new File("${dbscriptsPath}jobDescriptions.txt").readLines().collect{StringEscapeUtils.unescapeHtml(it.replaceAll(/'/, "''"))}
 def lines = new File("${dbscriptsPath}FakeNames.txt").readLines()
 def out = new File("${dbscriptsPath}fakeData.pgsql")
-def addressQuery = "INSERT INTO address (address_id, address_line_1, city, state, country, lat_lon) VALUES \n\t"
+def addressQuery = "INSERT INTO address (address_id, address_line_1, city, state, country, lat, lon) VALUES \n\t"
 def addressData = []
 def addressId = 5000
 
@@ -24,7 +24,7 @@ def recrutierCandidateQuery = "INSERT INTO recruiter_candidate (candidate_id, re
 def recrutierCandidateData = []
 def candidateId = 10000
 
-def employerQuery = "INSERT INTO employer (employer_id, company_name, address_id) VALUES \n\t"
+def employerQuery = "INSERT INTO employer (employer_id, company_name, department, address_id) VALUES \n\t"
 def employerData = []
 def employerId = 1000000
 
@@ -59,7 +59,7 @@ lines.drop(1).take(1000).each{line->
     def exp = (Integer)(Math.random()*expierenceCount+1)
     def recruiter = (Integer)(Math.random()*recruiterCount+1)
     def tag = getTags()
-    addressData << "(${addressId}, '${d.StreetAddress}', '${d.City}', '${d.State}', '${d.Country}', point(${d.Latitude}, ${d.Longitude}))"
+    addressData << "(${addressId}, '${d.StreetAddress}', '${d.City}', '${d.State}', '${d.Country}', ${d.Latitude}, ${d.Longitude})"
     loginData << "(${candidateId}, '${d.EmailAddress}', current_date - interval '${daysBack}' day, 3)"
     candidateData << "(${candidateId}, '${d.GivenName}', '${d.Surname}', '${d.TelephoneNumber}', ${exp}, ${salary}, ${addressId})"
     candidateTagsData << tag.collect{"(${candidateId}, ${it})"}.unique().join(", ")
@@ -80,8 +80,8 @@ lines.drop(1001).take(1000).each{line->
     def caption = getCaption()
     loginData << "(${employerContactId}, '${d.EmailAddress}', current_date - interval '${daysBack}' day, 2)"
     loginData << "(${employerId}, null, current_date - interval '${daysBack}' day, 4)"
-    addressData << "(${addressId}, '${d.StreetAddress}', '${d.City}', '${d.State}', '${d.Country}', point(${d.Latitude}, ${d.Longitude}))"
-    employerData << "(${employerId}, '${d.Company}', ${addressId})"
+    addressData << "(${addressId}, '${d.StreetAddress}', '${d.City}', '${d.State}', '${d.Country}', ${d.Latitude}, ${d.Longitude})"
+    employerData << "(${employerId}, '${d.Company}', 'Unknown', ${addressId})"
     employerContactData << "(${employerContactId}, ${employerId}, true)"
     accountManagerData << "(${employerContactId}, '${d.GivenName}', '${d.Surname}', '${d.TelephoneNumber}')"
     jobPostingData << "(${postId}, ${employerId}, current_date - interval '${daysBack}' day, '${title}', '${caption}', ${exp}, ${salary})"
