@@ -62,7 +62,7 @@ router.get('/listEmployers', passport.authentication,  (req, res) => {
     
     postgresdb.any('\
         SELECT \
-            e.employer_id, company_name, e.image_id, \
+            e.employer_id, company_name, department, e.image_id, \
             address_line_1 as "addressLine1", \
             address_line_2 as "addressLine2", \
             city, state, country, lat, lon, \

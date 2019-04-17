@@ -82,6 +82,7 @@ class ContactList extends React.Component{
             contactList: [],
             employer: props.employer,
             company_name: props.employer.company_name,
+            department: props.employer.department,
             page: 1,
             pageCount: 1,
             loading: true,
