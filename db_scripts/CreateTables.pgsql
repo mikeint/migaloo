@@ -347,6 +347,13 @@ CREATE TABLE tags (
 );
 CREATE INDEX tag_name_lower_idx ON tags ((lower(tag_name)));
 
+CREATE TABLE tags_equality (
+    tag_id_1 bigint REFERENCES tags(tag_id),
+    tag_id_2 bigint REFERENCES tags(tag_id),
+    similarity float,
+    PRIMARY KEY(tag_id_1, tag_id_2)
+);
+
 CREATE TABLE posting_tags (
     post_id bigint REFERENCES job_posting(post_id),
     tag_id bigint REFERENCES tags(tag_id),

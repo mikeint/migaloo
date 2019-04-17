@@ -330,7 +330,7 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
         INNER JOIN recruiter r ON r.recruiter_id = cp.recruiter_id \
         INNER JOIN login rl ON r.recruiter_id = rl.user_id \
         WHERE j.post_id = $1 AND ec.employer_contact_id = $2 AND j.active \
-        ORDER BY cp.coins DESC', [postId, jwtPayload.id])
+        ORDER BY cp.created_on DESC', [postId, jwtPayload.id])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
