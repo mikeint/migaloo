@@ -18,6 +18,7 @@ import Business from '@material-ui/icons/Business';
 import Gavel from '@material-ui/icons/Gavel';
 import Assignment from '@material-ui/icons/Assignment';
 import LocationOn from '@material-ui/icons/LocationOn';
+import ImportContacts from '@material-ui/icons/ImportContacts';
 import ListFilter from './FilterComponents/ListFilter';
 import SearchFilter from './FilterComponents/SearchFilter';
 import DistanceFilter from './FilterComponents/DistanceFilter';
@@ -125,7 +126,7 @@ class Filters extends React.Component{
             (<ListFilter
                 text={"Contact Type"}
                 id={"contactType"}
-                icon={<Business />}
+                icon={<ImportContacts />}
                 type={"radio"}
                 dataFunc={contactTypeDataCall}
                 onChange={this.handleFilterChange}
