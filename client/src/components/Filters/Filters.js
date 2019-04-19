@@ -96,8 +96,8 @@ function employerDataCall(){
 }
 function contactTypeDataCall(){
     this.setState({data: [
-        {id:1, name:"Primary"},
-        {id:2, name:"Secondary"}
+        {id:true, name:"Primary"},
+        {id:false, name:"Secondary"}
     ]});
 }
 

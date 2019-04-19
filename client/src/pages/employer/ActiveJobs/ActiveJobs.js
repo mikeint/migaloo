@@ -38,7 +38,8 @@ class ActiveJobs extends React.Component{
             postId: '',
             jobList: '', 
             page: 1,
-            pageCount: 1
+            pageCount: 1,
+            filters: {}
         };
         this.Auth = new AuthFunctions();
     }
@@ -61,28 +62,19 @@ class ActiveJobs extends React.Component{
                 }
             })
         }
-        this.getEmployers();
-    } 
-    getEmployers(){
-        ApiCalls.get('/api/employer/listEmployers')
-        .then((res) => {
-            if(res && res.data.success) {
-                this.setState({employers:res.data.employers.map(d=>{return {id:d.employer_id, name:d.company_name}})});
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
     }
     callOverlay = (postId) => {
         this.setState({ showOverlay : !this.state.showOverlay })
         this.setState({ postId : postId })
     }
 
-
+    handleFilterChange = (filters) =>{
+        console.log(filters)
+        this.setState({filters:filters}, ()=>this.getJobList())
+    }
     getJobList = () => {
-        ApiCalls.get('/api/employerPostings/list/'+this.state.page)
-        .then((res)=>{    
+        ApiCalls.getWithParams('/api/employerPostings/list/'+this.state.page, this.state.filters)
+        .then((res)=>{
             if(res == null) return
             this.setState({ jobList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 })
         }).catch(errors => 
@@ -113,7 +105,11 @@ class ActiveJobs extends React.Component{
         return (
             <React.Fragment>
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
-                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} filterOptions={['employer', 'contactType']} />
+                <Filters
+                onChange={this.handleFilterChange}
+                onClose={this.handleDrawerClose}
+                open={this.state.filterOpen}
+                filterOptions={['employer', 'contactType']} />
 
                 <div className='activeJobContainer'>
                     <div className="pageHeading">Active Jobs

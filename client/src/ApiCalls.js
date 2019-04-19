@@ -36,14 +36,28 @@ const cancel = () =>{
 }
 const get = (url) => {
     return axios.get(url, axiosConfig)
-    .catch(handleErrors)
+        .catch(handleErrors);
+}
+const getWithParams = (url, params) => {
+    const stringBuilder = [];
+    Object.keys(params).forEach(k => {
+        const v = params[k];
+        stringBuilder.push(`${k}=${JSON.stringify(v)}`);
+    });
+    if(stringBuilder.length === 0){
+        return get(url);
+    }else{
+        return axios.get(url+`?${stringBuilder.join('&')}`, axiosConfig)
+            .catch(handleErrors);
+    }
 }
 const post = (url, args) => {
     return axios.post(url, args, axiosConfig)
-    .catch(handleErrors)
+        .catch(handleErrors);
 }
 module.exports = {
     get:get,
+    getWithParams:getWithParams,
     post:post,
     cancel:cancel,
     getNewAuthToken:getNewAuthToken

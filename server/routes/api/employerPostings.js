@@ -98,13 +98,27 @@ router.get('/list', passport.authentication, postListing);
 router.get('/list/:page', passport.authentication, postListing);
 function postListing(req, res){
     var page = req.params.page;
+    console.log(req.query)
     if(page == null)
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
         return res.status(400).json({success:false, error:"Must be an employer to look at postings"})
     }
-
+    // Define the filters
+    const filters = {
+        'employer':'AND j.employer_id in (${employer:csv})',
+        'contactType':'AND ec.is_primary in (${contactType:csv})'
+    }
+    const validKeys = Object.keys(filters).filter(d=>Object.keys(req.query).includes(d))
+    const paramsToAdd = {};
+    validKeys.forEach(k=>{
+        const v = JSON.parse(req.query[k])
+        if(v.length > 0)
+            paramsToAdd[k] = v
+    })
+    const filtersToAdd = Object.keys(paramsToAdd).map(k=>filters[k]).join(" ")
+    
     postgresdb.any('\
         SELECT j.post_id, title, caption, experience_type_name, salary_type_name, tag_names, tag_ids, new_posts_cnt, \
             posts_cnt, j.created_on, (count(1) OVER())/10+1 AS page_count \
@@ -123,10 +137,10 @@ function postListing(req, res){
             FROM candidate_posting cp \
             GROUP BY post_id \
         ) cd ON cd.post_id = j.post_id \
-        WHERE ec.employer_contact_id = $1 AND j.active \
+        WHERE ec.employer_contact_id = ${contactId} AND j.active '+filtersToAdd+'\
         ORDER BY j.created_on DESC \
-        OFFSET $2 \
-        LIMIT 10', [jwtPayload.id, (page-1)*10])
+        OFFSET ${page} \
+        LIMIT 10', {contactId:jwtPayload.id, page:(page-1)*10, ...paramsToAdd})
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
