@@ -107,7 +107,7 @@ class ContactList extends React.Component{
             if(res && res.data.success){
                 const contactList = res.data.contactList
                 this.setState({
-                    iAmAdmin: contactList.find(d=>d.isMe).isadmin, 
+                    iAmAdmin: contactList.find(d=>d.isMe).is_primary, 
                     contactList: contactList,
                     pageCount: contactList.length>0?parseInt(contactList[0].page_count, 10):1 });
             }
@@ -118,12 +118,12 @@ class ContactList extends React.Component{
     }
     setAdmin = (e, employerContact) => {
         ApiCalls.post(`/api/employer/setContactAdmin`,
-            {employerContactId:employerContact.employer_contact_id, employerId:this.state.employer.employer_id, isAdmin:e.target.checked})
+            {employerContactId:employerContact.employer_contact_id, employerId:this.state.employer.employer_id, isPrimary:e.target.checked})
         .then((res)=>{
             if(res && res.data.success){
                 this.setState({ contactList: this.state.contactList.map(d=>{
                     if(employerContact.employer_contact_id === d.employer_contact_id)
-                        d.isadmin = !d.isadmin
+                        d.is_primary = !d.is_primary
                     return d;
                 }) })
             }
@@ -268,7 +268,7 @@ class ContactList extends React.Component{
                                 <div className={classes.tableCell}>{d.last_name}</div>
                                 <div className={classes.tableCell}>{d.phone_number}</div>
                                 <div className={classes.tableCell+" "+classes.center}>{d.account_active?"Yes":"Pending"}</div>
-                                <div className={classes.tableCell+" "+classes.center}><input type="checkbox" disabled={d.isMe} checked={d.isadmin} onChange={(e)=>this.setAdmin(e, d)} /></div>
+                                <div className={classes.tableCell+" "+classes.center}><input type="checkbox" disabled={d.isMe} checked={d.is_primary} onChange={(e)=>this.setAdmin(e, d)} /></div>
                                 {
                                     this.state.iAmAdmin && <div className={classes.tableCell+" "+classes.center}>
                                         <Button

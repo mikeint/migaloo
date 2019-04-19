@@ -28,7 +28,7 @@ def employerQuery = "INSERT INTO employer (employer_id, company_name, department
 def employerData = []
 def employerId = 1000000
 
-def employerContactQuery = "INSERT INTO employer_contact (employer_contact_id, employer_id, isAdmin) VALUES \n\t"
+def employerContactQuery = "INSERT INTO employer_contact (employer_contact_id, employer_id, is_primary) VALUES \n\t"
 def employerContactData = []
 def employerContactId = 10000000
 

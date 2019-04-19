@@ -110,7 +110,7 @@ CREATE TABLE account_manager (
 CREATE TABLE employer_contact (
     employer_id bigint REFERENCES employer(employer_id),
     employer_contact_id bigint REFERENCES login(user_id),
-    isAdmin boolean default false,
+    is_primary boolean default false,
     PRIMARY KEY(employer_id, employer_contact_id)
 );
 CREATE INDEX account_manager_order_idx ON account_manager(last_name ASC, first_name ASC);
@@ -592,7 +592,7 @@ INSERT INTO account_manager (account_manager_id, first_name, last_name, phone_nu
     (104, 'Adam', 'Steal', '905-555-9782'),
     (105, 'Kelly', 'Rogers', '905-555-6456'),
     (106, 'Rebecca', 'Brown', NULL);
-INSERT INTO employer_contact (employer_contact_id, employer_id, isAdmin) VALUES
+INSERT INTO employer_contact (employer_contact_id, employer_id, is_primary) VALUES
     (100, 500, true), 
     (100, 501, true), 
     (101, 501, true),
