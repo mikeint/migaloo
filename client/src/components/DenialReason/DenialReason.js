@@ -1,6 +1,5 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
 import ApiCalls from '../../ApiCalls';  
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -63,10 +62,10 @@ class DenialReason extends React.Component{
             denialReasonList: [],
             denialReasonId: null
         };
-        this.formValidation = new FormValidation(this, )
+        this.formValidation = new FormValidation(this, errorText)
     }
     componentDidMount = () => {
-        ApiCalls.get("/api/autocomple/denialReason")
+        ApiCalls.get("/api/autocomplete/denialReason")
         .then((res)=>{
             if(res == null) return
             this.setState({denialReasonList: res.data.denialReasonList})
@@ -100,14 +99,14 @@ class DenialReason extends React.Component{
                                 className={classes.textField}
                                 onChange={this.handleChange}
                                 required
-                                input={<Input name="denialReason" id="denial-reason-helper" />}
-                                value={this.state.denialReason}
+                                input={<Input name="denialReasonId" id="denial-reason-helper" />}
+                                value={this.state.denialReasonId}
                                 inputProps={{
-                                    id: 'denialReason',
+                                    id: 'denialReasonId',
                                 }}
                             >
-                                {this.state.reasonList.map((d, i)=>
-                                    <MenuItem key={i} value={d.denial_reason_id}>{d.denial_reason_name}</MenuItem>
+                                {this.state.denialReasonList.map((d, i)=>
+                                    <MenuItem key={i} value={d.denial_reason_id}>{d.denial_reason_text}</MenuItem>
                                 )}
                             </Select>
                         </FormControl>
