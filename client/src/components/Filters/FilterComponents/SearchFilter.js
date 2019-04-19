@@ -65,12 +65,10 @@ class SearchFilter extends React.Component{
         }else{
             selected.splice(i, 1)
         }
-        this.setState({selected: [...selected]});
-        this.state.onChange(this.state);
+        this.setState({selected: [...selected]}, ()=>this.state.onChange(this.state));
     }
     clearSelected(){
-        this.setState({selected: []});
-        this.state.onChange(this.state);
+        this.setState({selected: []}, ()=>this.state.onChange(this.state));
     }
     clearSearch(){
         this.searchRef.current.value = '';
@@ -112,12 +110,12 @@ class SearchFilter extends React.Component{
                             className={classes.nested}>
                             <ListItemIcon><Search /></ListItemIcon>
                             <Input
-                                placeholder="Tag Search"
+                                placeholder={this.state.text+" Search"}
                                 className={classes.input}
                                 defaultValue={this.state.defaultSearch}
                                 inputRef={this.searchRef}
                                 inputProps={{
-                                    'aria-label': 'Tag Search',
+                                    'aria-label': this.state.text+" Search",
                                 }}
                                 endAdornment={
                                     <InputAdornment position="end">

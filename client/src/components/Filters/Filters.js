@@ -177,8 +177,8 @@ class Filters extends React.Component{
     }
     handleFilterChange(event){
         const filters = this.state.filters
-        filters[event.id] = event.selected;
-        this.setState({ filters: filters }, this.onChange);
+        filters[event.id] = event.selected.map(d=>d.id);
+        this.setState({ filters: filters }, ()=>this.onChange());
     }
     handleDrawerToggle = () => {
         if(!this.state.filterOpen)

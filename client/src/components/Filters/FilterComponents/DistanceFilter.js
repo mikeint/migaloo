@@ -39,16 +39,13 @@ class DistanceFilter extends React.Component{
         this.setState({collapse: !this.state.collapse});
     }
     select(i){
-        this.setState({selected: i});
-        this.state.onChange(this.state);
+        this.setState({selected: i}, ()=>this.state.onChange(this.state));
     }
     rangeSelect(e){
-        this.setState({selected: e.target.value, rangeValue:e.target.value});
-        this.state.onChange(this.state);
+        this.setState({selected: e.target.value, rangeValue:e.target.value}, ()=>this.state.onChange(this.state));
     }
     clearSelected(){
-        this.setState({selected: null});
-        this.state.onChange(this.state);
+        this.setState({selected: null}, ()=>this.state.onChange(this.state));
     }
   
     render(){

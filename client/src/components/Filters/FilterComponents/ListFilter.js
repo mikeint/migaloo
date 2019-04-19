@@ -53,12 +53,10 @@ class ListFilter extends React.Component{
         }else{
             selected.splice(i, 1)
         }
-        this.setState({selected: [...selected]});
-        this.state.onChange(this.state);
+        this.setState({selected: [...selected]}, ()=>this.state.onChange(this.state));
     }
     clearSelected(){
-        this.setState({selected: []});
-        this.state.onChange(this.state);
+        this.setState({selected: []}, ()=>this.state.onChange(this.state));
     }
     isSelected(item){
         return this.state.selected.some(d=> d.id === item.id)
