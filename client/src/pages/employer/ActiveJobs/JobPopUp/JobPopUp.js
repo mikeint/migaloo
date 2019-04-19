@@ -7,13 +7,23 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';  
 import Close from '@material-ui/icons/Close';
-  
+import red from '@material-ui/core/colors/red';
+import classNames from 'classnames';
+
 const styles = theme => ({
     button:{ 
-        width: "80%",
+        width: "40%",
+    },
+    redButton: {
+      color: theme.palette.getContrastText(red[500]),
+      backgroundColor: red[500],
+      '&:hover': {
+        backgroundColor: red[700],
+      },
     },
     buttonContainer:{
-        textAlign:"center",
+        display:"flex",
+        placeContent:"space-evenly",
         marginTop:"10px",
         marginBottom:"10px"
     },
@@ -92,6 +102,35 @@ class JobPopUp extends React.Component{
             } 
           })
     }
+    hideJob = () => {
+        this.state.onClose();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'This will stop all future candidate postings.',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, hide it!',
+            cancelButtonText: 'No, keep it'
+          }).then((result) => {
+            if (result.value) { 
+                ApiCalls.post('/api/employerPostings/hide', {postId:this.state.postId})
+                .then((res)=>{
+                    if(res && res.data.success){
+                        if(this.props.removedCallback != null){
+                            this.props.removedCallback();
+                        }
+                        Swal.fire(
+                            'Delisted!',
+                            'Your job file has been delisted.',
+                            'success'
+                        )
+                    }
+                }).catch(errors => 
+                    console.log(errors.response.data)
+                )  
+            } 
+          })
+    }
     render(){ 
 
         const { classes } = this.props; 
@@ -123,7 +162,12 @@ class JobPopUp extends React.Component{
                         variant="contained"
                         color="primary"
                         className={classes.button}
-                        onClick={this.removeJob.bind(this)}>Remove Job Posting</Button>
+                        onClick={this.hideJob.bind(this)}>Delist Job Posting</Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        className={classNames(classes.button, classes.redButton)}
+                        onClick={this.removeJob.bind(this)}>Delete Job Posting</Button>
                 </div>
             </div> 
         )

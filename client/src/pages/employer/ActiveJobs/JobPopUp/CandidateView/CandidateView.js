@@ -176,7 +176,7 @@ class CandidateView extends React.Component{
                                 <ThumbDown className={this.trueFalseNull(this.state.rowObj.migaloo_accepted, classes.notselected, classes.selected, '')}/>&nbsp;Reject
                             </Button>
                         </div>
-                        {this.state.rowObj.migaloo_accepted != null && 
+                        {this.state.rowObj.migaloo_accepted === true && 
                             <React.Fragment>
                                 <NavLink to={`/employer/chat/${this.props.job.post_id}/${this.props.obj.candidate_id}`}>
                                     <Button
@@ -201,7 +201,7 @@ class CandidateView extends React.Component{
                                         <NoInterview className={this.trueFalseNull(this.state.rowObj.employer_accepted, classes.notselected, classes.selected, '')}/>&nbsp;Rejects
                                     </Button>
                                 </div>
-                                {this.state.rowObj.employer_accepted != null && 
+                                {this.state.rowObj.employer_accepted === true && 
                                     <div className={classes.flexColumn}>
                                         <Button
                                             variant="contained" 
