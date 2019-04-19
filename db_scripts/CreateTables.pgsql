@@ -15,6 +15,7 @@ DROP TABLE IF EXISTS posting_tags;
 DROP TABLE IF EXISTS candidate_tags;
 DROP TABLE IF EXISTS recruiter_candidate;
 DROP TABLE IF EXISTS candidate_posting;
+DROP TABLE IF EXISTS denial_reason;
 DROP TABLE IF EXISTS job_posting;
 DROP TABLE IF EXISTS recruiter;
 DROP TABLE IF EXISTS candidate;
@@ -156,6 +157,7 @@ CREATE TABLE job_posting (
 	created_on timestamp default NOW(),
     experience_type_id int REFERENCES experience_type(experience_type_id),
     active boolean default true,
+    is_visible boolean default true,
     posting_search tsvector,
     PRIMARY KEY(post_id)
 );
@@ -203,16 +205,25 @@ CREATE TABLE recruiter_candidate (
 	created_on timestamp default NOW(),
     PRIMARY KEY(candidate_id, recruiter_id)
 );
+CREATE TABLE denial_reason (
+    denial_reason_id serial,
+    denial_reason_text varchar(256),
+    PRIMARY KEY(denial_reason_id)
+);
 CREATE TABLE candidate_posting (
     candidate_id bigint REFERENCES candidate(candidate_id),
     post_id bigint REFERENCES job_posting(post_id),
     recruiter_id bigint REFERENCES recruiter(recruiter_id),
     created_on timestamp default NOW(),
-    responded_on timestamp,
-    accepted boolean default false,
-    not_accepted boolean default false,
+    migaloo_responded_on timestamp,
+    employer_responded_on timestamp,
+    job_responded_on timestamp,
+    migaloo_accepted boolean default NULL,
+    employer_accepted boolean default NULL,
+    job_accepted boolean default NULL,
     has_seen_post boolean default false,
     has_seen_response boolean default false,
+    denial_reason_id int REFERENCES denial_reason(denial_reason_id),
     comment varchar(512),
     coins int NOT NULL CHECK (coins > 0),
     PRIMARY KEY(candidate_id, post_id, recruiter_id)
@@ -390,6 +401,12 @@ LEFT JOIN employer e ON e.employer_id = l.user_id
 LEFT JOIN account_manager ac ON ac.account_manager_id = l.user_id;
 
 -- DATA START
+INSERT INTO denial_reason (denial_reason_text) VALUES
+    ('Rejected before the interview'),
+    ('Rejected following the interview'),
+    ('Other candidate chosen'),
+    ('Failed background check'),
+    ('Failed drug screening');
 INSERT INTO messages_type (message_type_id, message_type_name) VALUES
     (1, 'Chat'),
     (2, 'Calander');
@@ -427,6 +444,7 @@ INSERT INTO tag_type (tag_type_name) VALUES
     ('Operating System'),
     ('Programs'),
     ('Management Style');
+    
 INSERT INTO tags (tag_name, tag_type_id) VALUES
     ('A# .NET', 2), ('A-0 System', 2), ('A+', 2), ('A++', 2), ('ABAP', 2), ('ABC', 2),
     ('ABSET', 2), ('ABSYS', 2), ('ACC', 2), ('Accent', 2), ('Ace DASL', 2), ('ACL2', 2),
@@ -616,21 +634,21 @@ INSERT INTO job_posting (post_id, employer_id, created_on, title, caption, exper
     (4, 501, NOW() - interval '1' day, 'IT Director', 'The primary directive of the IT Director is to ensure that the technology and computing needs of the company are met. The candidate will work with executive leadership to help develop and maintain an IT roadmap keeping the company�s future objectives in mind. This position requires significant hands-on technical knowledge and expertise coupled with solid business knowledge. The IT Director must be able to collaborate with internal customers to identify and prioritize business requirements and deliver business and technology solutions with a focus on process transformation from planning through implementation. They will support the organizational initiative of process re-engineering by involving client departments in process flow analysis and work re-design. ', 3, 7);
 
 
-INSERT INTO candidate_posting (post_id, candidate_id, recruiter_id, coins, created_on, responded_on, has_seen_post, has_seen_response, accepted, not_accepted, comment) VALUES
-    (1, 1000, 1, 10, NOW() - interval '1' day, NOW() - interval '0' day, true, false, true, false, 'I think this Sarah would be great for the job'),
-    (1, 1001, 2, 5, NOW() - interval '2' day, NOW() - interval '1' day, true, false, false, true, 'Amanda has all of the skills you need'),
-    (1, 1002, 3, 1, NOW() - interval '1' day, NULL, false, false, false, false, 'Beth is very respectable and I think she will be a great addition to your team'),
-    (2, 1003, 1, 2, NOW() - interval '3' day, NOW() - interval '2' day, true, true, true, false, 'Stephanie meets your criteria exactly, please have a look at her resume'),
-    (2, 1004, 1, 20, NOW() - interval '4' day, NOW() - interval '3' day, true, false, true, false, null),
-    (2, 1005, 2, 30, NOW() - interval '2', NULL, false, false, false, false, null),
-    (3, 1006, 3, 6, NOW() - interval '5' day, NOW() - interval '4' day, true, true, true, false, null),
-    (3, 1007, 1, 7, NOW() - interval '3' day, NOW() - interval '1' day, true, false, false, true, null),
-    (3, 1000, 1, 4, NOW() - interval '2' day, NULL, false, false, false, false, 'I think this Sarah would be great for the job'),
-    (3, 1001, 2, 4, NOW() - interval '1' day, NOW() - interval '0' day, true, true, true, false, 'Amanda has all of the skills you need'),
-    (4, 1002, 3, 20, NOW() - interval '3' day, NOW() - interval '2' day, true, false, false, true, 'Beth is very respectable and I think she will be a great addition to your team'),
-    (4, 1003, 1, 9, NOW() - interval '4' day, NOW() - interval '3' day, true, true, true, false, 'Stephanie meets your criteria exactly, please have a look at her resume'),
-    (4, 1004, 1, 8, NOW() - interval '5' day, NOW() - interval '4' day, true, false, false, true, null),
-    (4, 1000, 1, 1, NOW() - interval '2' day, NULL, false, false, false, false, 'I think this Sarah would be great for the position you have open');
+INSERT INTO candidate_posting (post_id, candidate_id, recruiter_id, coins, created_on, migaloo_responded_on, has_seen_post, has_seen_response, migaloo_accepted, comment) VALUES
+    (1, 1000, 1, 10, NOW() - interval '1' day, NOW() - interval '0' day, true, false, true, 'I think this Sarah would be great for the job'),
+    (1, 1001, 2, 5, NOW() - interval '2' day, NOW() - interval '1' day, true, false, false, 'Amanda has all of the skills you need'),
+    (1, 1002, 3, 1, NOW() - interval '1' day, NULL, false, false, null, 'Beth is very respectable and I think she will be a great addition to your team'),
+    (2, 1003, 1, 2, NOW() - interval '3' day, NOW() - interval '2' day, true, true, true, 'Stephanie meets your criteria exactly, please have a look at her resume'),
+    (2, 1004, 1, 20, NOW() - interval '4' day, NOW() - interval '3' day, true, false, true, null),
+    (2, 1005, 2, 30, NOW() - interval '2', NULL, false, false, null, null),
+    (3, 1006, 3, 6, NOW() - interval '5' day, NOW() - interval '4' day, true, true, true, null),
+    (3, 1007, 1, 7, NOW() - interval '3' day, NOW() - interval '1' day, true, false, false, null),
+    (3, 1000, 1, 4, NOW() - interval '2' day, NULL, false, false, null, 'I think this Sarah would be great for the job'),
+    (3, 1001, 2, 4, NOW() - interval '1' day, NOW() - interval '0' day, true, true, true, 'Amanda has all of the skills you need'),
+    (4, 1002, 3, 20, NOW() - interval '3' day, NOW() - interval '2' day, true, false, false, 'Beth is very respectable and I think she will be a great addition to your team'),
+    (4, 1003, 1, 9, NOW() - interval '4' day, NOW() - interval '3' day, true, true, true, 'Stephanie meets your criteria exactly, please have a look at her resume'),
+    (4, 1004, 1, 8, NOW() - interval '5' day, NOW() - interval '4' day, true, false, false, null),
+    (4, 1000, 1, 1, NOW() - interval '2' day, NULL, false, false, null, 'I think this Sarah would be great for the position you have open');
 INSERT INTO posting_tags (post_id, tag_id) VALUES
     (1, 1),
     (1, 2),

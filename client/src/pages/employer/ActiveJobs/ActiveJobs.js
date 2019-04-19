@@ -10,7 +10,7 @@ import Add from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
 import Filters from '../../../components/Filters/Filters';
 
-import BuildActiveJobs from './BuildActiveJobs/BuildActiveJobs';
+import JobPopUp from './JobPopUp/JobPopUp';
 import Pagination from "react-js-pagination";
 import '../../../constants/AnimateMigalooOverlay';
 import Button from '@material-ui/core/Button';
@@ -113,7 +113,7 @@ class ActiveJobs extends React.Component{
         return (
             <React.Fragment>
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
-                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} filterOptions={['employer']} />
+                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} filterOptions={['employer', 'contactType']} />
 
                 <div className='activeJobContainer'>
                     <div className="pageHeading">Active Jobs
@@ -162,7 +162,7 @@ class ActiveJobs extends React.Component{
                                     onClose={()=>this.setState({"showOverlay":false})}
                                     onOpen={()=>this.setState({"showOverlay":true})}
                                 > 
-                                    <BuildActiveJobs
+                                    <JobPopUp
                                         obj={this.state.jobList[this.state.postId]}
                                         removedCallback={this.jobRemoved.bind(this)} 
                                         onClose={()=>this.setState({"showOverlay":false})} />

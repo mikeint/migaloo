@@ -94,6 +94,12 @@ function employerDataCall(){
         console.log(error);
     });
 }
+function contactTypeDataCall(){
+    this.setState({data: [
+        {id:1, name:"Primary"},
+        {id:2, name:"Secondary"}
+    ]});
+}
 
 class Filters extends React.Component{
 
@@ -114,6 +120,14 @@ class Filters extends React.Component{
                 icon={<Business />}
                 type={"radio"}
                 dataFunc={employerDataCall}
+                onChange={this.handleFilterChange}
+                clearSubject={clearFilterSubject.asObservable()} />),
+            (<ListFilter
+                text={"Contact Type"}
+                id={"contactType"}
+                icon={<Business />}
+                type={"radio"}
+                dataFunc={contactTypeDataCall}
                 onChange={this.handleFilterChange}
                 clearSubject={clearFilterSubject.asObservable()} />),
             (<ListFilter
@@ -143,7 +157,8 @@ class Filters extends React.Component{
             filterOpen: props.open,
             onClose: props.onClose,
             filterList: filterList,
-            filters: {}
+            filters: {},
+            onChange: props.onChange
         };
     }
 
@@ -156,10 +171,14 @@ class Filters extends React.Component{
             return true
         return change;
     }
+    onChange(){
+        if(this.state.onChange != null)
+            this.state.onChange(this.state.filters)
+    }
     handleFilterChange(event){
         const filters = this.state.filters
         filters[event.id] = event.selected;
-        this.setState({ filters: filters });
+        this.setState({ filters: filters }, this.onChange);
     }
     handleDrawerToggle = () => {
         if(!this.state.filterOpen)

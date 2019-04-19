@@ -69,6 +69,8 @@ class MeetingPicker extends React.Component{
         };
         this.onStartTimeChange = this.onStartTimeChange.bind(this);
         this.onEndTimeChange = this.onEndTimeChange.bind(this);
+    }
+    componentDidMount = () => {
         ApiCalls.get("/api/message/locations")
         .then((res)=>{
             if(res == null) return

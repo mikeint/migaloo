@@ -27,7 +27,8 @@ export default class FormValidation {
         const state = this.getParentState();
         this.errorText.forEach(d=>{
             const value = this.getStateValue(state, d)
-            if(!value || value.length === 0){
+            const isString = typeof value === "string"
+            if(value == null || (isString && value.length === 0)){
                 errors[d.stateName] = d.errorText
             }
         })

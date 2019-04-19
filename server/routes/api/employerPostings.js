@@ -170,22 +170,17 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
         SELECT 1 \
         FROM job_posting jp \
         INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
-        INNER JOIN candidate_posting cp ON jp.post_id = cp.post_id \
         WHERE ec.employer_contact_id = $1 AND jp.active \
         LIMIT 1', [jwtPayload.id])
-    .then(d=>{
-        if(d.length > 0){
-            postgresdb.none('UPDATE candidate_posting SET has_seen_post=true  WHERE candidate_id = $1 AND post_id = $2', [candidateId, postId])
-            .then((data) => {
-                res.json({success:true})
-            })
-            .catch(err => {
-                console.log(err)
-                res.status(400).json(err)
-            });
-        }else{
-            res.status(400).json({success:false, error:"Mismatched posting"})
-        }
+    .then(()=>{
+        postgresdb.none('UPDATE candidate_posting SET has_seen_post=true  WHERE candidate_id = $1 AND post_id = $2', [candidateId, postId])
+        .then((data) => {
+            res.json({success:true})
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).json(err)
+        });
     })
     .catch(err => {
         console.log(err)
@@ -193,15 +188,15 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
     });
 });
 /**
- * Set posting to be considered accepted or not accepted
- * @route POST api/postings/setAcceptedState/:postId/:candidateId/:recruiterId
+ * Set posting to be considered accepted or not accepted by the account manager
+ * @route POST api/postings/setAcceptedPhase1/:postId/:candidateId/:recruiterId
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/setAcceptedState/:postId/:candidateId/:recruiterId', passport.authentication,  (req, res) => {
+router.post('/setAccepted/migaloo/:postId/:candidateId/:recruiterId', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     var postId = req.params.postId;
     var candidateId = req.params.candidateId;
@@ -217,49 +212,190 @@ router.post('/setAcceptedState/:postId/:candidateId/:recruiterId', passport.auth
         return res.status(400).json({success:false, error:"Missing Candidate Id"})
     }
     if(recruiterId == null){
-        return res.status(400).json({success:false, error:"Missing Candidate Id"})
+        return res.status(400).json({success:false, error:"Missing Recruiter Id"})
     }
     recruiterId = parseInt(recruiterId, 10);
     postgresdb.one('\
         SELECT jp.employer_id \
         FROM job_posting jp \
         INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
-        INNER JOIN candidate_posting cp ON jp.post_id = cp.post_id \
         WHERE ec.employer_contact_id = $1 AND jp.active AND jp.post_id = $2 \
         LIMIT 1', [jwtPayload.id, postId])
-    .then(d=>{
-        if(d.length > 0){
-            postgresdb.none('UPDATE candidate_posting SET accepted=$1, not_accepted=$2, has_seen_response=NULL, responded_on=NOW()\
-                WHERE candidate_id = $3 AND post_id = $4', [accepted, !accepted, candidateId, postId])
-            .then((data) => {
-                if(accepted){
-                    var userId1, userId2;
-                    if(recruiterId < d.employerId){
-                        userId1 = recruiterId;
-                        userId2 = d.employerId;
-                    }else{
-                        userId1 = d.employerId;
-                        userId2 = recruiterId;
-                    }
-                    postgresdb.none('INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id) VALUES \
-                            ($1, $2, $3, $4)', [userId1, userId2, candidateId, postId])
-                    .then((data) => {
-                        res.json({success:true})
-                    })
-                    .catch(err => {
-                        console.log(err)
-                        res.json({success:true}) // If this subject was already created just skip the error
-                    });
-                }else
+    .then(()=>{
+        postgresdb.none('UPDATE candidate_posting SET migaloo_accepted=$1, has_seen_response=NULL, migaloo_responded_on=NOW()\
+            WHERE candidate_id = $2 AND post_id = $3 AND recruiter_id = $4', [accepted, candidateId, postId, recruiterId])
+        .then((data) => {
+            if(accepted){
+                var userId1, userId2;
+                if(recruiterId < d.employerId){
+                    userId1 = recruiterId;
+                    userId2 = d.employerId;
+                }else{
+                    userId1 = d.employerId;
+                    userId2 = recruiterId;
+                }
+                postgresdb.none('INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id) VALUES \
+                        ($1, $2, $3, $4)', [userId1, userId2, candidateId, postId])
+                .then((data) => {
                     res.json({success:true})
-            })
-            .catch(err => {
-                console.log(err)
-                res.status(400).json(err)
-            });
-        }else{
-            res.status(400).json({success:false, error:"Must be a contact for this posting"})
-        }
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.json({success:true}) // If this subject was already created just skip the error
+                });
+            }else
+                res.json({success:true})
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).json(err)
+        });
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
+/**
+ * Set posting to be considered accepted or not accepted by the employer
+ * @route POST api/postings/setAcceptedState/:postId/:candidateId/:recruiterId
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/setAccepted/employer/:postId/:candidateId/:recruiterId', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    var postId = req.params.postId;
+    var candidateId = req.params.candidateId;
+    var recruiterId = req.params.recruiterId;
+    var accepted = req.body.accepted
+    var denialReasonId = req.body.denialReasonId;
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an employer to look at postings"})
+    }
+    if(postId == null){
+        return res.status(400).json({success:false, error:"Missing Post Id"})
+    }
+    if(candidateId == null){
+        return res.status(400).json({success:false, error:"Missing Candidate Id"})
+    }
+    if(recruiterId == null){
+        return res.status(400).json({success:false, error:"Missing Recruiter Id"})
+    }
+    if(denialReasonId == null)
+        denialReasonId = null;
+    recruiterId = parseInt(recruiterId, 10);
+    postgresdb.one('\
+        SELECT jp.employer_id \
+        FROM job_posting jp \
+        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
+        WHERE ec.employer_contact_id = $1 AND jp.active AND jp.post_id = $2 \
+        LIMIT 1', [jwtPayload.id, postId])
+    .then(()=>{
+        postgresdb.none('UPDATE candidate_posting SET employer_accepted=$1, denial_reason_id=$2, employer_responded_on=NOW()\
+            WHERE candidate_id = $3 AND post_id = $4 AND recruiter_id = $5', [accepted, denialReasonId, candidateId, postId, recruiterId])
+        .then((data) => {
+            res.json({success:true})
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).json(err)
+        });
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
+/**
+ * Set posting to be considered accepted or not accepted by the job
+ * @route POST api/postings/setAcceptedState/:postId/:candidateId/:recruiterId
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/setAccepted/job/:postId/:candidateId/:recruiterId', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    var postId = req.params.postId;
+    var candidateId = req.params.candidateId;
+    var recruiterId = req.params.recruiterId;
+    var accepted = req.body.accepted;
+    var denialReasonId = req.body.denialReasonId;
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an employer to look at postings"})
+    }
+    if(postId == null){
+        return res.status(400).json({success:false, error:"Missing Post Id"})
+    }
+    if(candidateId == null){
+        return res.status(400).json({success:false, error:"Missing Candidate Id"})
+    }
+    if(recruiterId == null){
+        return res.status(400).json({success:false, error:"Missing Recruiter Id"})
+    }
+    if(denialReasonId == null)
+        denialReasonId = null;
+    recruiterId = parseInt(recruiterId, 10);
+    postgresdb.one('\
+        SELECT jp.employer_id \
+        FROM job_posting jp \
+        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
+        WHERE ec.employer_contact_id = $1 AND jp.active AND jp.post_id = $2 \
+        LIMIT 1', [jwtPayload.id, postId])
+    .then(()=>{
+        postgresdb.none('UPDATE candidate_posting SET job_accepted=$1, denial_reason_id=$2, job_responded_on=NOW()\
+            WHERE candidate_id = $4 AND post_id = $5 AND recruiter_id = $6', [accepted, denialReasonId, candidateId, postId, recruiterId])
+        .then((data) => {
+            res.json({success:true})
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).json(err)
+        });
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
+/**
+ * Set posting to be hidden
+ * @route POST api/postings/hide
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/hide', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    var postId = req.body.postId
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an employer to look at postings"})
+    }
+    if(postId == null){
+        return res.status(400).json({success:false, error:"Missing Post Id"})
+    }
+    postgresdb.one('\
+        SELECT jp.employer_id \
+        FROM job_posting jp \
+        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
+        WHERE ec.employer_contact_id = $1 AND jp.active AND jp.post_id = $2 \
+        LIMIT 1', [jwtPayload.id, postId])
+    .then(()=>{
+        // TODO: Return all coins that have not been accepted or rejected
+        postgresdb.none('UPDATE job_posting SET is_valid=false WHERE post_id = $1', [postId])
+        .then((data) => {
+            res.json({success:true})
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).json(err)
+        });
     })
     .catch(err => {
         console.log(err)
@@ -284,9 +420,15 @@ router.post('/remove', passport.authentication,  (req, res) => {
     if(postId == null){
         return res.status(400).json({success:false, error:"Missing Post Id"})
     }
-    postgresdb.one('SELECT employer_id FROM employer_contact ec WHERE ec.employer_contact_id = $1 AND ec.active', [jwtPayload.id]).then((employer_data)=>{
+    postgresdb.one('\
+        SELECT jp.employer_id \
+        FROM job_posting jp \
+        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
+        WHERE ec.employer_contact_id = $1 AND jp.active AND jp.post_id = $2 \
+        LIMIT 1', [jwtPayload.id, postId])
+    .then(()=>{
         // TODO: Return all coins that have not been accepted or rejected
-        postgresdb.none('UPDATE job_posting SET active=false WHERE employer_id = $1 AND post_id = $2', [employer_data.employer_id, postId])
+        postgresdb.none('UPDATE job_posting SET active=false WHERE post_id = $1', [postId])
         .then((data) => {
             res.json({success:true})
         })
@@ -321,8 +463,8 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
     }
 
     postgresdb.any(' \
-        SELECT c.candidate_id, cp.coins, r.first_name, r.last_name, r.phone_number, r.recruiter_id, rl.email, cp.accepted, cp.not_accepted,\
-            cp.has_seen_post, c.first_name as candidate_first_name, j.created_on as posted_on, c.resume_id \
+        SELECT c.candidate_id, r.first_name, r.last_name, r.phone_number, r.recruiter_id, rl.email, cp.migaloo_accepted, cp.employer_accepted,\
+            cp.job_accepted, cp.has_seen_post, c.first_name as candidate_first_name, j.created_on as posted_on, c.resume_id \
         FROM job_posting j \
         INNER JOIN employer_contact ec ON j.employer_id = ec.employer_id \
         INNER JOIN candidate_posting cp ON cp.post_id = j.post_id \

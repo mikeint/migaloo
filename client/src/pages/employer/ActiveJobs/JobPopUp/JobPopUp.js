@@ -1,9 +1,8 @@
 import React from 'react';
 import ApiCalls from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions';  
-import './BuildActiveJobs.css';  
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
-import ExpandableRow from './ExpandableRow/ExpandableRow';
+import CandidateView from './CandidateView/CandidateView';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';  
@@ -32,9 +31,15 @@ const styles = theme => ({
         fontSize: "24px",
         fontWeight: "bold", 
         position: "relative"
+    },
+    jobPostingContainer:{
+        padding: "0px 10px 0px 10px"
+    },
+    activeJobContainer:{
+        overflow: "auto"
     }
 });
-class BuildActiveJobs extends React.Component{
+class JobPopUp extends React.Component{
 
     constructor(props) {
         super(props);
@@ -93,23 +98,23 @@ class BuildActiveJobs extends React.Component{
 
         const jobObj = this.props.obj; 
         return ( 
-            <div className="activeJobContainer"> 
+            <div className={classes.activeJobContainer}> 
                 <div className={classes.alertTitle} color="primary">
                     <span>{jobObj.title}</span>
                     <IconButton color="inherit" className={classes.alertClose} onClick={this.state.onClose}>
                         <Close />
                     </IconButton>
                 </div>
-                <div className="jobPostingContainer">
+                <div className={classes.jobPostingContainer}>
                     <p>{jobObj.caption}</p>
                     <h3>{jobObj.experience_type_name}</h3> 
                     {jobObj.tag_names?<p>Tags: {jobObj.tag_names.join(", ")}</p>:''}
                     <p>Created: {jobObj.created}</p>
                 </div> 
-                <div className="applicantsAppliedContainer">
+                <div>
                     {
                         this.state.candidateList.map((d, i)=>{
-                            return <ExpandableRow obj={d} job={jobObj} key={i}/>
+                            return <CandidateView obj={d} job={jobObj} key={i}/>
                         })
                     }
                 </div>
@@ -126,4 +131,4 @@ class BuildActiveJobs extends React.Component{
 }
  
 
-export default withStyles(styles)(BuildActiveJobs);
+export default withStyles(styles)(JobPopUp);

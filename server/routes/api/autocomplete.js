@@ -151,5 +151,39 @@ router.get('/salary', passport.authentication, (req, res) => {
         res.status(400).json({success:false, error:err})
     });
 });
+/**
+ * Get denial reason by autocomplete
+ * @route GET api/autocomplete/denialReason
+ * @group autocomplete - Autocomplete
+ * @returns {object} 200 - A list of maps containing autocompletes
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/denialReason/:find', passport.authentication, (req, res) => {
+    postgresdb.any('SELECT denial_reason_text, denial_reason_id \
+            FROM denial_reason \
+            WHERE lower(denial_reason_text) LIKE $1 \
+            ORDER BY denial_reason_id ASC \
+            LIMIT 10', "%"+req.params.find.toLowerCase()+"%")
+    .then(data => {
+        res.json({success:true, denialReasonList: data});
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json({success:false, error:err})
+    });
+});
+router.get('/denialReason', passport.authentication, (req, res) => {
+    postgresdb.any('SELECT denial_reason_text, denial_reason_id \
+            FROM denial_reason \
+            ORDER BY denial_reason_id ASC')
+    .then(data => {
+        res.json({success:true, denialReasonList: data});
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json({success:false, error:err})
+    });
+});
 
 module.exports = router;
