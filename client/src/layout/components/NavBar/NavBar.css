@@ -52,29 +52,7 @@
     color: #fff;
 }
  
- 
-.heroContainer {
-    width: 100%;   
-    position: relative; 
-    background: #abacc0;
-} 
-.heroText {
-    width: 100%;
-    text-align: center;
-    font-size: 50px;
-    color: #ffffff;
-    font-weight: bold; 
-    padding: 20px; 
-    position: absolute; 
-    z-index: 9;
-    transition: 00.3s;
-    padding-top: 210px;
-    text-shadow: -1px 1px 0px #263c54;
-}
-.animated.heroTxtFull {
-    width: 100%; 
-    overflow: hidden;
-}
+  
 
 #logoContainer {  
     float: left;     
@@ -245,12 +223,7 @@
     .smallHeader #navBarMobile { 
         width: 90px;
         height: 50px; 
-    }
-    .heroText {
-        font-size: 60px; 
-        padding-top: 160px;
-        text-shadow: 0px 1px 0px #263c54;
-    }  
+    } 
 } 
 
 @media only screen and (max-width: 768px) {
@@ -259,9 +232,6 @@
         margin: auto;
         border: 0px;
         text-align: center;
-    } 
-    .heroText { 
-        font-size: 27px;  
     }  
 } 
  

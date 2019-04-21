@@ -1,0 +1,57 @@
+.heroCoverContain {
+    width: 100%;
+    max-width: 1400px;
+    height: 500px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    position: absolute; 
+    z-index: 9; 
+}
+ 
+.hc_text1{ 
+    font-size: 45px;
+    color: #ffffff;
+    padding-top: 20px;
+    font-weight: bold;   
+}
+.hc_text2{ 
+    font-size: 20px;
+    padding-top: 20px;
+    color: #ffffff; 
+}
+
+.hc_left { 
+    width: 50%;
+    height: 500px; 
+    float: left;
+    background: #263c5473;
+    padding: 50px;  
+} 
+.hc_right { 
+    width: 50%;
+    height: 500px; 
+    float: left;
+    background: #263c5473;
+    padding: 50px; 
+}
+.hc_text3{
+    font-size: 20px;
+    padding-top: 20px;
+    color: #ffffff; 
+    text-align: center;
+}
+
+@media only screen and (max-width: 1024px) { 
+    .heroText {
+        font-size: 60px; 
+        padding-top: 160px;
+        text-shadow: 0px 1px 0px #263c54;
+    }  
+} 
+
+@media only screen and (max-width: 768px) { 
+    .heroText { 
+        font-size: 27px;  
+    }  
+} 

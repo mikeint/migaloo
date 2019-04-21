@@ -30,9 +30,6 @@ class HeroContainer extends Component {
     } 
 
     render() {   
- 
-  
-
         return (
             <div className="heroContainer">
                 <div className="heroAnimation">

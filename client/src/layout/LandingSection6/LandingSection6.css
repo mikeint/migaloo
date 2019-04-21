@@ -1,0 +1,77 @@
+.landingSection6 {
+    width: 100%;  
+    float: left;
+    background: #263c54;
+    display: table-cell;  
+    vertical-align: middle;
+    text-align: center;
+}
+.calloutSectionMid {
+    display: inline-block;  
+    padding: 350px 0px; 
+    max-width: 680px;
+}
+.calloutSectionText1 {  
+    width: 100%;
+    float: left;   
+    font-size: 45px;
+    padding: 20px;
+    color: #fff;
+}
+.calloutSectionText2 {
+    width: 100%;
+    float: left;   
+    font-size: 25px;
+    padding: 10px;
+    color: #fff; 
+}
+.calloutSectionText3{
+    width: 100%;
+    float: left;   
+    font-size: 15px;
+    padding: 10px;
+    color: #6f90a1; 
+}
+
+
+
+.coImg_container {
+    width: 100%;      
+    max-width: 1400px;  
+}
+.co_section {
+    width: 25%;  
+    float: left;
+    padding: 20px 0px;
+}
+.calloutImg{
+    width: 150px;
+    height: 100px; 
+    background:#fff;
+    border-radius: 10px;    
+    margin: auto;
+    transition: 0.3s;
+}
+.co_section p {
+    width: 100%;  
+    text-align: center;
+    color: #fff;
+    transition: 0.3s;
+}
+ 
+@media only screen and (max-width: 1024px) { 
+    .calloutSectionMid {
+        padding: 250px 0px;
+    } 
+}
+
+@media only screen and (max-width: 768px) { 
+    .full_COsection {
+        width: 100%; 
+        float: left; 
+    }
+    .co_section {
+        width: 50%;
+        padding: 5px 0px;
+    }
+}

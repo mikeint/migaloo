@@ -1,7 +1,7 @@
 .heroContainer {
     width: 100%; 
-    height: 500px; 
-    background-color: #cecece;
+    height: 500px;  
+    background: #263c54;
     position: relative;
     overflow: hidden;
 }

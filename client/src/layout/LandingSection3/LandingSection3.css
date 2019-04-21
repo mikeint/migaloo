@@ -55,24 +55,31 @@
 .module_wrapper {
     width: 100%;
     float: left;
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-} 
-.animated,
-.animated_third,
+    position: relative; 
+}
+.module_max {
+    max-width: 1400px;
+    margin: auto;
+}
+.module_max .aos-animate {
+    width: 50%;
+    float: left; 
+}
+ 
 .animated_half {
-    width: 100%;
+    width: 50%;
     position: relative;
+    float: left; 
+} 
+.animated_third {
+    width: 33.3333%;
     float: left;
-    flex: 25% 1; 
 }
 .animated_half {
     width: 50%;
 }
+
+
 .module_content { 
     width: 100%;
     height: 100%;
@@ -113,7 +120,7 @@
     .module_wrapper {
         display: inline-block;
     }
-    .animated,
+    .aos-animate,
     .animated_third,
     .animated_half {
         width: 100%;

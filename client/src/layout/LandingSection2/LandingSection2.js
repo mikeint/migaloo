@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import './LandingSection2.css';
-//import ScrollAnimation from 'react-animate-on-scroll';
+import './LandingSection2.css'; 
 import Slider from 'react-slick';
  
 import carouselImg2 from '../../files/images/landingPage/carousel-2.png';
@@ -46,27 +45,16 @@ class LandingSection2 extends Component {
         return (
         <div className="landingSection2">  
             <Slider {...settings}>
-				{/* <ScrollAnimation animateIn='bounceInLeft' duration={2} animateOnce={true}> */}
-                   {/*  <div>
-                        <img src={carouselImg1} alt="" />
-                        <h1 className="mc_4_text">Real Recruitment Platform</h1>
-                        <p>The first and only platform connecting employers directly to third-party recruiters.</p>
-                    </div> */}
-                {/* </ScrollAnimation> */}
-				{/* <ScrollAnimation animateIn='flipInY' duration={2} animateOnce={true}> */}
-                    <div>
-                        <img src={carouselImg2} alt="" />
-                        <h1 className="mc_4_text">Top Talent</h1>
-                        <p>Recruiters have the opportunity to showcase their most qualified candidates. Employers get a shortlist of vetted candidates from migaloo within 72&nbsp;hours.</p>
-                    </div>
-                {/* </ScrollAnimation> */}
-				{/* <ScrollAnimation animateIn='bounceInRight' duration={2} animateOnce={true}> */}
-                    <div>
-                        <img src={carouselImg3} alt="" />
-                        <h1 className="mc_4_text">Efficient</h1>
-                        <p>Employers only view top talent that they would otherwise not have access to. Moreover, the shortlist is further distilled by migaloo ensuring that the employer is left with a tough hiring&nbsp;decision.</p>
-                    </div>
-                {/* </ScrollAnimation> */} 
+                <div>
+                    <img src={carouselImg2} alt="" />
+                    <h1 className="mc_4_text">Top Talent</h1>
+                    <p>Recruiters have the opportunity to showcase their most qualified candidates. Employers get a shortlist of vetted candidates from migaloo within 72&nbsp;hours.</p>
+                </div>
+                <div>
+                    <img src={carouselImg3} alt="" />
+                    <h1 className="mc_4_text">Efficient</h1>
+                    <p>Employers only view top talent that they would otherwise not have access to. Moreover, the shortlist is further distilled by migaloo ensuring that the employer is left with a tough hiring&nbsp;decision.</p>
+                </div>
                 <div>
                     <img src={carouselImg4} alt="" />
                     <h1 className="mc_4_text">Concierge Service</h1>

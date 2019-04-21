@@ -1,5 +1,4 @@
-import React, { Component } from "react";  
-import ScrollAnimation from 'react-animate-on-scroll';
+import React, { Component } from "react";   
 import './AboutTeam.css'; 
 import NavBar from '../components/NavBar/NavBar'
 import SocialSide from "../SocialSide/SocialSide";  
@@ -16,10 +15,8 @@ class AboutTeam extends Component {
             <div className="aboutTeamPage">  
                 <SocialSide />
                 <NavBar page="AboutPage" />
-                <div className="theWhalesText"> 
-					<ScrollAnimation className="heroTxtFull" animateIn='fadeIn' initiallyVisible={false} animateOnce={true}> 
-						The whales
-					</ScrollAnimation>
+                <div className="theWhalesText">  
+					The whales 
 				</div>
                 <HeroContainer />  
                 <AboutSection />

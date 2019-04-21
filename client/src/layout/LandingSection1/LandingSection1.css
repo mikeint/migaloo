@@ -1,10 +1,11 @@
 .landingSection1 {
     width: 100%;
-    float: left;
+    max-width: 1400px;
+    margin: auto; 
     color: #000;  
-    background: #d8dce0;
+    background: #fff; /* #d8dce0 */
     overflow: hidden; 
-/*     box-shadow: inset 0 -2px 10px 2px #969a9f; */
+/*  box-shadow: inset 0 -2px 10px 2px #969a9f; */
 }
 .csImg img { 
     width: 100px;
@@ -33,8 +34,7 @@
 .csImg_mobile{
     display: none;
 }
-
-
+ 
 @media only screen and (max-width: 1024px) {
     .csImg_desktop{display: none;}
     .csImg_mobile{display: block;}  

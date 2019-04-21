@@ -22,8 +22,8 @@
 
 .whaleSpray {
     position: absolute;
-    margin-left: 282px;
-    margin-top: 11px;
+    margin-left: 281px;
+    margin-top: 12px;
     transition: 0.3s;
     z-index: 1;
 }
@@ -36,8 +36,8 @@
         margin-left: 0px;
     } 
     .whaleSpray { 
-        margin-left: 205px;
-        margin-top: -2px;    
+        margin-left: 206px;
+        margin-top: -5px;
     }
 }
 
