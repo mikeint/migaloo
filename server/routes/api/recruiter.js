@@ -187,24 +187,24 @@ router.get('/alerts', passport.authentication,  (req, res) => {
     }
     
     postgresdb.any('\
-        SELECT cp.candidate_id, post_id, accepted, not_accepted, responded_on, coins, alert_count, c.first_name, c.last_name \
+        SELECT cp.candidate_id, post_id, migaloo_accepted, migaloo_responded_on, coins, alert_count, c.first_name, c.last_name \
         FROM candidate_posting cp \
         LEFT JOIN (SELECT recruiter_id, count(1) as alert_count \
             FROM candidate_posting cpi \
-            WHERE responded_on IS NOT NULL AND NOT has_seen_response AND cpi.recruiter_id = $1 \
+            WHERE migaloo_responded_on IS NOT NULL AND NOT has_seen_response AND cpi.recruiter_id = $1 \
             GROUP BY cpi.recruiter_id \
         ) t ON t.recruiter_id = cp.recruiter_id \
         INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
-        WHERE responded_on IS NOT NULL AND NOT has_seen_response AND cp.recruiter_id = $1 \
-        ORDER BY responded_on DESC \
+        WHERE migaloo_responded_on IS NOT NULL AND NOT has_seen_response AND cp.recruiter_id = $1 \
+        ORDER BY migaloo_responded_on DESC \
         LIMIT 10', [jwtPayload.id])
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
-            var timestamp = moment(m.responded_on);
+            var timestamp = moment(m.migaloo_responded_on);
             var ms = timestamp.diff(moment());
             m.responded = moment.duration(ms).humanize() + " ago";
-            m.responded_on = timestamp.format("x");
+            m.migaloo_responded_on = timestamp.format("x");
             return m
         })
         res.json({success:true, alertList:data})

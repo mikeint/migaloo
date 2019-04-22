@@ -125,11 +125,11 @@ function listCandidates(req, res){
         LEFT JOIN ( \
             SELECT cp.candidate_id, \
                 SUM(1) as posted_count, \
-                SUM(cast(accepted as int)) as accepted_count, \
-                SUM(cast(not_accepted as int)) as not_accepted_count, \
+                SUM(cast(migaloo_accepted as int)) as accepted_count, \
+                SUM(cast(migaloo_accepted as int)) as not_accepted_count, \
                 SUM(coins) as coins_spent, \
-                SUM(CASE WHEN NOT has_seen_response AND accepted THEN 1 ELSE 0 END) as new_accepted_count, \
-                SUM(CASE WHEN NOT has_seen_response AND not_accepted THEN 1 ELSE 0 END) as new_not_accepted_count \
+                SUM(CASE WHEN NOT has_seen_response AND migaloo_accepted THEN 1 ELSE 0 END) as new_accepted_count, \
+                SUM(CASE WHEN NOT has_seen_response AND NOT migaloo_accepted THEN 1 ELSE 0 END) as new_not_accepted_count \
             FROM candidate_posting cp\
             WHERE cp.recruiter_id = $1 \
             GROUP BY cp.candidate_id \

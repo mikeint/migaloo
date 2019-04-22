@@ -74,6 +74,9 @@ class JobList extends React.Component{
             })
         }
     }
+    handleFilterChange = (filters) =>{
+        this.setState({filters:filters}, ()=>this.getJobList())
+    }
     callNewJobPage = (postId) => {
         this.setState({postId : postId, openJob:true}) 
     }
@@ -81,8 +84,8 @@ class JobList extends React.Component{
 
     getJobList = (searchString) => {
         (this.state.candidateId?
-            ApiCalls.get('/api/recruiterJobs/listForCandidate/'+this.state.candidateId+'/'+this.state.page+(searchString?`/${searchString}`:'')):
-            ApiCalls.get('/api/recruiterJobs/list/'+this.state.page+(searchString?`/${searchString}`:'')))
+            ApiCalls.getWithParams('/api/recruiterJobs/listForCandidate/'+this.state.candidateId+'/'+this.state.page+(searchString?`/${searchString}`:''), this.state.filters):
+            ApiCalls.getWithParams('/api/recruiterJobs/list/'+this.state.page+(searchString?`/${searchString}`:''), this.state.filters))
         .then((res)=>{
             if(res && res.data.success){
                 const jobList = res.data.jobList;
@@ -131,7 +134,11 @@ class JobList extends React.Component{
             <React.Fragment>
                 { this.state.openJob && <Redirect to={"/recruiter/jobList/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidate_id:'')} />}
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
-                <Filters onClose={this.handleDrawerClose} open={this.state.filterOpen} filterOptions={['salary', 'location', 'experience', 'tags']} />
+                <Filters 
+                    onChange={this.handleFilterChange}
+                    onClose={this.handleDrawerClose}
+                    open={this.state.filterOpen}
+                    filterOptions={['salary', 'location', 'experience', 'tags']} />
                 <div className='jobListClassContainer'> 
                    <div className="pageHeading">
                         Active Jobs Postings  

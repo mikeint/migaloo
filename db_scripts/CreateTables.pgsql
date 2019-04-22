@@ -32,6 +32,26 @@ DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS tag_type;
 DROP TABLE IF EXISTS location_type;
 
+CREATE OR REPLACE FUNCTION array_intersects(a1 bigint[], a2 bigint[]) returns boolean as $$
+declare
+    ret boolean;
+BEGIN
+    -- The reason for the kludgy NULL handling comes later.
+    if a1 is null then
+        return false;
+    elseif a2 is null then
+        return false;
+    end if;
+    select min(e) is not null into ret
+    from (
+        select unnest(a1)
+        intersect
+        select unnest(a2)
+    ) as dt(e);
+    return ret;
+END;
+$$ language plpgsql;
+
 CREATE TABLE user_type (
     user_type_id serial,
     user_type_name varchar(128) NOT NULL,
@@ -548,7 +568,7 @@ INSERT INTO tags (tag_name, tag_type_id) VALUES
     ('XPL0', 2), ('XQuery', 2), ('XSB', 2), ('XSharp', 2), ('XSLT', 2), ('Xtend', 2),
     ('Yorick', 2), ('YQL', 2), ('Yoix', 2), ('Z', 2), ('Z notation', 2), ('Zebra', 2),
     ('ZetaLisp', 2), ('ZOPL', 2), ('Zsh', 2), ('ZPL', 2), ('Z++', 2),
-    ('Linux', 3), ('Redhat', 3),
+    ('Linux', 3), ('Redhat', 3), ('Debian', 3), ('Windows', 3),
     ('Microsoft Excel', 4), ('Microsoft Office', 4),
     ('Architecture Design', 5), ('Agile', 5), ('Project Management', 5), ('Leadership', 5), ('Waterfall', 5);
 -- FAKE DATA START

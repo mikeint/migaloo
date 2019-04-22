@@ -7,6 +7,11 @@ const validateCandidatePosting = require('../../validation/jobs');
 const postgresdb = require('../../config/db').postgresdb
 
 
+const listFilters = {
+    'salary':'AND j.salary_type_id in (${salary:csv})',
+    'experience':'AND j.experience_type_id in (${experience:csv})',
+    'tags':'AND array_intersects(tg.tag_ids, ${tags:list}::bigint[])'
+}
 /**
  * List all available job postings
  * @route GET api/jobs/listJobs
@@ -29,11 +34,21 @@ function getJobs(req, res){
     if(jwtPayload.userType != 1){
         return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
     }
-    var sqlArgs = [(page-1)*10]
+    var sqlArgs = {page:(page-1)*10}
     if(search != null)
-        sqlArgs.push(search.split(' ').map(d=>d+":*").join(" & "))
+        sqlArgs['search'] = search.split(' ').map(d=>d+":*").join(" & ")
     if(jobId != null)
-        sqlArgs.push(jobId)
+        sqlArgs['jobId'] = jobId
+        
+    // Define the filters
+    const validKeys = Object.keys(listFilters).filter(d=>Object.keys(req.query).includes(d))
+    const paramsToAdd = {};
+    validKeys.forEach(k=>{
+        const v = JSON.parse(req.query[k])
+        if(v.length > 0)
+            paramsToAdd[k] = v
+    })
+    const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.any('\
         SELECT j.employer_id, j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, \
             address_line_1, address_line_2, city, state, country, tag_ids, \
@@ -51,16 +66,16 @@ function getJobs(req, res){
         ) tg ON tg.post_id = j.post_id \
         '+
         (jobId != null ?
-           'WHERE j.post_id = $2'
+           'WHERE j.post_id = ${jobId} '+filtersToAdd
         :
         (search ? 
-            'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', $2)) \
-            ORDER BY ts_rank_cd(company_name_search || posting_search, to_tsquery(\'simple\', $2)) DESC'
+            'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) '+filtersToAdd+'\
+            ORDER BY ts_rank_cd(company_name_search || posting_search, to_tsquery(\'simple\', ${search})) DESC'
         :
-            'ORDER BY j.created_on DESC'
+            'WHERE true '+filtersToAdd+' ORDER BY j.created_on DESC'
         ))+' \
-        OFFSET $1 \
-        LIMIT 10', sqlArgs)
+        OFFSET ${page} \
+        LIMIT 10', {...sqlArgs, ...paramsToAdd})
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
@@ -104,6 +119,15 @@ function getJobsForCandidate(req, res){
     if(jwtPayload.userType != 1){
         return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
     }
+    // Define the filters
+    const validKeys = Object.keys(listFilters).filter(d=>Object.keys(req.query).includes(d))
+    const paramsToAdd = {};
+    validKeys.forEach(k=>{
+        const v = JSON.parse(req.query[k])
+        if(v.length > 0)
+            paramsToAdd[k] = v
+    })
+    const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.task(t => {
         return t.one('SELECT c.candidate_id, first_name, last_name, st.salary_type_name, et.experience_type_name, tg.tag_names \
             FROM recruiter_candidate rc \
@@ -118,11 +142,11 @@ function getJobsForCandidate(req, res){
             ) tg ON tg.candidate_id = rc.candidate_id \
             WHERE rc.recruiter_id = $1 AND c.candidate_id = $2', [jwtPayload.id, candidateId])
         .then(candidate_data=>{
-            var sqlArgs = [candidateId, (page-1)*10]
+            var sqlArgs = {candidateId:candidateId, page:(page-1)*10}
             if(search != null)
-                sqlArgs.push(search.split(' ').map(d=>d+":*").join(" & "))
+                sqlArgs['search'] = search.split(' ').map(d=>d+":*").join(" & ")
             if(jobId != null)
-                sqlArgs.push(jobId)
+                sqlArgs['jobId'] = jobId
             return t.any('\
                 SELECT j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, j.employer_id, \
                     address_line_1, address_line_2, city, state, country, tag_ids, tag_names, \
@@ -147,26 +171,26 @@ function getJobsForCandidate(req, res){
                             SELECT COUNT(1)+count(distinct ci.experience_type_id)+count(distinct ci.salary_type_id) \
                             FROM candidate_tags cti \
                             INNER JOIN candidate ci ON ci.candidate_id = cti.candidate_id \
-                            WHERE cti.candidate_id = $1 \
+                            WHERE cti.candidate_id = ${candidateId} \
                         ) as total_score \
                     FROM candidate_tags ct \
                     INNER JOIN posting_tags pt ON pt.tag_id = ct.tag_id \
                     INNER JOIN job_posting j ON j.post_id = pt.post_id \
                     INNER JOIN candidate ci ON ci.candidate_id = ct.candidate_id \
-                    WHERE ci.candidate_id = $1 \
+                    WHERE ci.candidate_id = ${candidateId} \
                     GROUP BY j.post_id \
                 ) jc ON jc.post_id = j.post_id \
                 '+
                 (jobId?
-                    'WHERE j.post_id = $3'
+                    'WHERE j.post_id = ${jobId} '+filtersToAdd
                 :
                 (search ? 
-                    'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', $3))'
-                :'')
+                    'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) '+filtersToAdd
+                :'WHERE true '+filtersToAdd)
                 )+' \
                 ORDER BY tag_score DESC, j.created_on DESC \
-                OFFSET $2 \
-                LIMIT 10', sqlArgs)
+                OFFSET ${page} \
+                LIMIT 10', {...sqlArgs, ...paramsToAdd})
                 
                 // WHERE NOT EXISTS (SELECT 1 FROM candidate_posting cp WHERE cp.candidate_id = $1) \
             .then((data) => {

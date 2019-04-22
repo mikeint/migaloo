@@ -10,13 +10,12 @@ class AlertItem extends React.Component{
         };
     }
     // candidate_id, post_id, posted_on, c.first_name, coins, alert_count, title
-    // cp.candidate_id, post_id, accepted, not_accepted, responded_on, coins, alert_count, c.first_name, c.last_name
+    // cp.candidate_id, post_id, migaloo_accepted, migaloo_responded_on, coins, alert_count, c.first_name, c.last_name
     render(){
         const alert = this.props.alert;
         var row1, row2, row3;
         if(alert.userType === 1){ // Recuiter
-            row1 = `${alert.first_name} ${alert.last_name} has ${alert.accepted?'':'not '} been accepted`;
-            row2 = `Your ${alert.coins} coin${alert.coins>1?'s have':' has'} been ${alert.accepted?'returned':'lost'}`;
+            row1 = `${alert.first_name} ${alert.last_name} has ${alert.migaloo_accepted?'':'not '} been accepted`;
             row3 = alert.responded;
         }else{ // Employer
             var title = alert.title;
