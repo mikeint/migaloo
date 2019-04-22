@@ -32,7 +32,7 @@ class PostCandidateToJob extends React.Component{
             handleClose: this.props.handleClose,
             postId: props.job.post_id,
             comment: '',
-            coins:1,
+            // coins:1,
             profileInfo: {},
             candidateSubmitted: false,
         }
@@ -42,13 +42,13 @@ class PostCandidateToJob extends React.Component{
         this.getProfileInfo();
     } 
     handleChange = (e) => {
-        if(e.target.name === "coins"){
-            var value = parseInt(e.target.value, 10);
-            if(value > this.state.profileInfo.coins)
-                e.target.value = this.state.profileInfo.coins;
-            else if(value < 1)
-                e.target.value = 1;
-        }
+        // if(e.target.name === "coins"){
+        //     var value = parseInt(e.target.value, 10);
+        //     if(value > this.state.profileInfo.coins)
+        //         e.target.value = this.state.profileInfo.coins;
+        //     else if(value < 1)
+        //         e.target.value = 1;
+        // }
         this.setState({ [e.target.name]: e.target.value })
     }
 
@@ -130,30 +130,6 @@ class PostCandidateToJob extends React.Component{
                     <br/>
                     <div className="formSection">
                         <div className="input-2">
-                            <div className="i-1-4 il">
-                                <div className="user-input-wrp">
-                                    <div className="numberCircle">
-                                        <img className="numberCoin" src={coin} alt=""/>
-                                        <span className="number">{this.state.profileInfo.coins}</span>
-                                    </div>
-                                </div>
-                                <Input
-                                    name="coins"
-                                    label="Coins"
-                                    type="number"
-                                    required
-                                    onBlur={this.handleChange}
-                                    margin="normal"
-                                    min="1"
-                                    onChange={this.handleChange}
-                                    value={this.state.coins}
-                                    max={this.state.profileInfo.coins}
-                                    variant="outlined"
-                                />
-                                <div className="user-input-wrp">
-                                    Coins Left After Posting: {`${this.state.profileInfo.coins} - ${this.state.coins} = ${this.state.profileInfo.coins - this.state.coins}`}
-                                </div>
-                            </div>
                             <div>
                                 <TextField
                                     name="comment"

@@ -251,15 +251,15 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
         const q1 = t.one('SELECT 1 FROM recruiter_candidate WHERE candidate_id = $1 AND recruiter_id = $2',
                             [body.candidateId, jwtPayload.id])
 
-        const q2 = t.none('INSERT INTO candidate_posting (candidate_id, post_id, recruiter_id, coins, comment) VALUES ($1, $2, $3, $4, $5)',
-                            [body.candidateId, body.postId, jwtPayload.id, body.coins, body.comment])
+        const q2 = t.none('INSERT INTO candidate_posting (candidate_id, post_id, recruiter_id, comment) VALUES ($1, $2, $3, $4, $5)',
+                            [body.candidateId, body.postId, jwtPayload.id, body.comment])
 
-        const q3 = t.one('UPDATE recruiter SET coins = coins - $1 WHERE recruiter_id = $2 RETURNING coins',
-                            [body.coins, jwtPayload.id])
-        return t.batch([q1, q2, q3])
+        // const q3 = t.one('UPDATE recruiter SET coins = coins - $1 WHERE recruiter_id = $2 RETURNING coins',
+        //                     [body.coins, jwtPayload.id])
+        return t.batch([q1, q2])
         .then((d)=>{
-            console.log("Posted candidate for "+body.coins+" coins")
-            res.json({success: true, coinsLeft:d[2].coins})
+            console.log("Posted candidate")
+            res.json({success: true})
         })
         .catch(err => {
             
