@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Route, BrowserRouter, Switch } from "react-router-dom";
-import Landing from './layout/Landing/Landing';
+import Landing from './landing/Landing';
 import Login from './pages/Login/Login'; 
 
 import { PrivateEmployerRoute, PrivateRecruiterRoute } from './PrivateRoute';

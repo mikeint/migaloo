@@ -1,4 +1,4 @@
-#header {
+.lp1_navBar #header {
     width: 100%; 
     height: 100px;  
     top: 0;
@@ -9,21 +9,21 @@
     transition: 00.3s;
     position: fixed;
 }
-.white {
+.lp1_navBar .white {
     color: #fff;
 }
-.smallHeader {
+.lp1_navBar .smallHeader {
     height: 50px !important;
     background: #263c54;
 }
-.smallHeader li {
+.lp1_navBar .smallHeader li {
     line-height: 50px !important; 
 }
-.smallHeader#header {
+.lp1_navBar .smallHeader#header {
     border-bottom: 1px solid #fff;
     box-shadow: 0px 0px 2px 2px #000000;
 }
-.smallHeader .logo {
+.lp1_navBar .smallHeader .logo {
     padding: 3px 15px; 
     font-size: 25px; 
     border: 3px solid;  
@@ -31,33 +31,33 @@
     margin-left: 5px;
     color: #263c54;
 }
-.smallHeader #nav-icon1 { 
+.lp1_navBar .smallHeader #nav-icon1 { 
     margin-top: -22px;
 }
-.smallHeader #nav-icon1 span {
+.lp1_navBar .smallHeader #nav-icon1 span {
     width: 40px;
 }
-.smallHeader #nav-icon1 span:nth-child(1) {
+.lp1_navBar .smallHeader #nav-icon1 span:nth-child(1) {
     top: 4px;
 }
-.smallHeader #nav-icon1 span:nth-child(2) {
+.lp1_navBar .smallHeader #nav-icon1 span:nth-child(2) {
     top: 16px;
 }
-.smallHeader #nav-icon1 span:nth-child(3) {
+.lp1_navBar .smallHeader #nav-icon1 span:nth-child(3) {
     top: 28px;
 }
 
-.smallHeader #navBar li,
-.smallHeader .navBarA a {
+.lp1_navBar .smallHeader #navBar li,
+.lp1_navBar .smallHeader .navBarA a {
     color: #fff;
 }
  
   
 
-#logoContainer {  
+.lp1_navBar #logoContainer {  
     float: left;     
 } 
-.logo {
+.lp1_navBar .logo {
     float: left;
     padding: 10px 25px;
     color: #fff;
@@ -70,10 +70,10 @@
     transition: 00.3s;
 }
 
-#navBar {
+.lp1_navBar #navBar {
     float: right;
 }
-#navBar li {
+.lp1_navBar #navBar li {
     position: relative;
     line-height: 100px;
     transition: 00.3s;
@@ -83,31 +83,31 @@
     padding: 0px 15px;
 } 
 
-#navBar li:hover { 
+.lp1_navBar #navBar li:hover { 
     background: #6f90a1e8; 
 }
 .smallHeader #navBar li:hover { 
     background: #6f90a175;
 }
-#navBar li,
-.navBarA a {
+.lp1_navBar #navBar li,
+.lp1_navBar .navBarA a {
     text-decoration: none; 
     color: #fff;
 } 
-#navBarMobile {
+.lp1_navBar #navBarMobile {
     display: none;
 }  
-.side-menu li {
+.lp1_navBar .side-menu li {
     font-size: 26px;
     text-align: center;
     list-style-type: none;
     color: #263c54;
     padding: 20px 80px;
 }
-.side-menu a {
+.lp1_navBar .side-menu a {
     color: #fff;
 } 
-#nav-icon1 {
+.lp1_navBar #nav-icon1 {
     width: 50px;
     height: 75px;
     position: absolute;
@@ -124,7 +124,7 @@
     z-index: 10;
 }
 
-#nav-icon1 span {
+.lp1_navBar #nav-icon1 span {
     display: block;
     position: absolute;
     height: 6px;
@@ -144,30 +144,30 @@
     transition: 0.3s;
 }
 
-.open span {
+.lp1_navBar .open span {
     background: #fff !important; 
 }
 
-.nav-iconAnimate {
+.lp1_navBar .nav-iconAnimate {
     margin-top: 7px !important;
 }
 
-.hmbSpanA {
+.lp1_navBar .hmbSpanA {
     cursor: pointer;
 }
-#nav-icon1 span:nth-child(1) {
+.lp1_navBar #nav-icon1 span:nth-child(1) {
     top: 5px;
 }
 
-#nav-icon1 span:nth-child(2) {
+.lp1_navBar #nav-icon1 span:nth-child(2) {
     top: 20px;
 }
 
-#nav-icon1 span:nth-child(3) {
+.lp1_navBar #nav-icon1 span:nth-child(3) {
     top: 35px;
 }
 
-#nav-icon1.open span:nth-child(1) {
+.lp1_navBar #nav-icon1.open span:nth-child(1) {
     top: 18px;
     -webkit-transform: rotate(135deg);
     -moz-transform: rotate(135deg);
@@ -175,12 +175,12 @@
     transform: rotate(135deg);
 }
 
-#nav-icon1.open span:nth-child(2) {
+.lp1_navBar #nav-icon1.open span:nth-child(2) {
     opacity: 0;
     left: -60px;
 }
 
-#nav-icon1.open span:nth-child(3) {
+.lp1_navBar #nav-icon1.open span:nth-child(3) {
     top: 18px;
     -webkit-transform: rotate(-135deg);
     -moz-transform: rotate(-135deg);
@@ -190,44 +190,44 @@
 
 
 
-.smallHeader .whaleContainer { 
+.lp1_navBar .smallHeader .whaleContainer { 
     background-image: url("../../../files/images/landingPage/whaleMobileNav.png");
     width: 130px;
     height: 45px;
     background-position-y: 12px; 
 }
-.smallHeader .migalooLogoText {
+.lp1_navBar .smallHeader .migalooLogoText {
     padding-left: 10px;
     display: block;
 }
-.smallHeader .whaleSpray {
+.lp1_navBar .smallHeader .whaleSpray {
     display: none;
 }
 
 
 
 @media only screen and (max-width: 1024px) {
-    .heroContainer .heroHome {
+    .lp1_navBar .heroContainer .heroHome {
         height: 400px;
     }
-    #navBar {
+    .lp1_navBar #navBar {
         display: none;
     }
-    #navBarMobile {
+    .lp1_navBar #navBarMobile {
         display: block; 
         width: 100px;
         height: 100px;
         right: 0;
         position: absolute; 
     }
-    .smallHeader #navBarMobile { 
+    .lp1_navBar .smallHeader #navBarMobile { 
         width: 90px;
         height: 50px; 
     } 
 } 
 
 @media only screen and (max-width: 768px) {
-    .side-menu li {
+    .lp1_navBar .side-menu li {
         width: 100%; 
         margin: auto;
         border: 0px;
@@ -236,7 +236,7 @@
 } 
  
 @media only screen and (max-width: 600px) { 
-    .smallHeader .whaleContainer {  
+    .lp1_navBar .smallHeader .whaleContainer {  
         margin-top: 4px;
         margin-left: 20px;
     } 

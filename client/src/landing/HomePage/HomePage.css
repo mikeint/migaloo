@@ -1,0 +1,135 @@
+.lp2_HomePage .HomePage {
+    width: 100%; 
+    height: 100vh;
+    background: #263c54;
+    position: relative;
+    overflow: hidden;
+}
+.lp2_HomePage .heroAnimation{
+    position: absolute;
+    left: 0px;
+    top: 0px; 
+}
+.lp2_HomePage .heroLayer {  
+    height: 400px; 
+    width: 16000px;
+    background-repeat: repeat-x;
+    background-clip: border-box;
+    background-size: auto 100%;
+    position: absolute;
+}
+ 
+.lp2_HomePage #heroLayer0{
+    background-image: url("../../files/images/landingPage/layer0.png");   
+}
+.lp2_HomePage #heroLayer1{
+    background-image: url("../../files/images/landingPage/layer1.png");
+    animation: moveHeroDesktop1 125s infinite linear;
+}
+.lp2_HomePage #heroLayer2{
+    background-image: url("../../files/images/landingPage/layer2.png");
+    animation: moveHeroDesktop2 100s infinite linear;
+}
+.lp2_HomePage #heroLayer3{
+    background-image: url("../../files/images/landingPage/layer3.png");
+    animation: moveHeroDesktop3 75s infinite linear;
+}
+
+@keyframes moveHeroDesktop1 {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-4680px, 0, 0); }
+}
+@keyframes moveHeroDesktop2 {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-4680px, 0, 0); }
+}
+@keyframes moveHeroDesktop3 {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-4680px, 0, 0); }
+}
+
+
+@media only screen and (max-width: 1024px) { 
+    .lp2_HomePage .heroLayer {  
+        height: 200px;
+    } 
+    @keyframes moveHeroMobile { 
+        0% { transform: translate3d(0, 0, 0); }
+        100% { transform: translate3d(-3744px, 0, 0); }
+    }
+}
+
+
+
+
+
+/* HERO CONTENT */
+.heroContent { 
+    background:#263c54;
+    padding: 380px 100px 0px 100px;
+}
+.heroContent .flex { 
+    display: flex;
+    flex-direction: row;
+} 
+.heroContent .hiText {
+    z-index: 1;
+    color: #fff;
+    display: flex;    
+    font-size: 60px;
+    margin-top: 22px;
+    transition: 0.3s; 
+}
+.heroContent .heroContentWhale {
+    display: flex;
+    flex: 1 0 0;
+}
+.heroContent .paddingTop {
+    padding-top:20px;
+}
+.heroContent .heroP {
+    color: #fff; 
+    margin: 0px;
+    font-size: 28px;
+}
+.selectBtnContainer {
+    width: 200px;
+    height: 60px;
+    color: #fff;
+    font-size: 25px;
+    border-radius: 10px;
+    transition: 0.3s;
+    border: 3px solid #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.selectBtnContainer:nth-child(1) {
+    margin-right: 20px;
+}
+.selectBtnContainer:hover {
+    background: #fff;
+    color: #263c54;
+
+}
+
+@media only screen and (max-width: 1024px) {
+    .heroContent {      
+        padding: 180px 20px 0px 20px;
+    } 
+    .heroContent .heroP {
+        font-size: 18px;
+    }
+    .selectBtnContainer {
+        margin-right: 5px;
+        border: 2px solid #fff;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .heroContent .hiText {
+        font-size: 38px;
+        margin-top: 15px;
+    }
+}
+/* HERO CONTENT */

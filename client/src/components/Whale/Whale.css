@@ -2,42 +2,28 @@
 /* ----- WHAlE LOGO */
  
 .whaleContainer {
-    background-image: url("../../files/images/landingPage/whaleWs.png");
-    background-repeat: no-repeat;
-    background-size: contain; 
-    height: 93px; 
-    width: 350px;
-    z-index: 1; 
+    width: 300px;
     transition: 0.3s;
     position: relative;
 }
-.whaleContainer span {
-    text-decoration: none;
-    color: #fff;
+.whaleContainer img {
+    width: 100%;
 }
-
-.migalooLogoText {
-    display: none;
-}
-
 .whaleSpray {
     position: absolute;
-    margin-left: 281px;
-    margin-top: 12px;
+    margin-left: -59px;
+    margin-top: 4px;
     transition: 0.3s;
     z-index: 1;
-}
+} 
 
-
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 768px) {
     .whaleContainer {
-        width: 260px;
-        margin-top: 16px;
-        margin-left: 0px;
+        width: 200px;
     } 
     .whaleSpray { 
-        margin-left: 205px;
-        margin-top: -1px;
+        margin-left: -46px;
+        margin-top: -2px;
     }
 }
 

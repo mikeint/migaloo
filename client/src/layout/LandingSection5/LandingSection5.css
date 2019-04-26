@@ -32,3 +32,11 @@
 .skillSectionL { 
     margin-top: -20px;
 }
+
+
+
+@media only screen and (max-width: 1024px) {  
+    .techInfoContainer { 
+        padding: 250px 0px; 
+    }
+}

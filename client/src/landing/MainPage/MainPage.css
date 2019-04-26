@@ -1,0 +1,26 @@
+.lp2_MainPage .container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    margin: 0 auto; 
+    overflow: hidden;
+} 
+.lp2_MainPage .menu {
+    flex-basis: 10%;
+    background: #263c54; 
+} 
+.lp2_MainPage .body {
+    flex: 0 0 100%; 
+    background: #546f82;
+}
+
+
+@media only screen and (max-width: 1024px) { 
+    .lp2_MainPage .container {
+        display: unset;
+    }
+    .lp2_MainPage .body {
+        height: calc(100vh - 50px);
+    }
+}

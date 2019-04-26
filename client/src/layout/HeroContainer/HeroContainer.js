@@ -31,12 +31,14 @@ class HeroContainer extends Component {
 
     render() {   
         return (
-            <div className="heroContainer">
-                <div className="heroAnimation">
-                  <div id="heroLayer0" className="heroLayer"></div>
-                  <div id="heroLayer1" className="heroLayer"></div>
-                  <div id="heroLayer2" className="heroLayer"></div>
-                  <div id="heroLayer3" className="heroLayer"></div> 
+            <div className="lp1_heroContainer">
+                <div className="heroContainer">
+                    <div className="heroAnimation">
+                    <div id="heroLayer0" className="heroLayer"></div>
+                    <div id="heroLayer1" className="heroLayer"></div>
+                    <div id="heroLayer2" className="heroLayer"></div>
+                    <div id="heroLayer3" className="heroLayer"></div> 
+                    </div>
                 </div>
             </div>
         );

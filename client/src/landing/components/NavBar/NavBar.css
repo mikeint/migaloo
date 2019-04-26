@@ -1,0 +1,113 @@
+.lp2_navBar #navBar {
+    width: 400px;
+    height: 100vh;
+    padding: 10px 30px;
+    background:#263c54;
+}
+.lp2_navBar #navBar .whaleContainer {
+    padding-top: 20px;
+}
+.lp2_navBar #navBarMobile { 
+    height: 50px;
+    color:#fff;
+}
+.lp2_navBar .whaleClick {
+    cursor: pointer; 
+}
+
+
+.lp2_navBar .mobileWhaleContainer .whaleContainer {
+    width: 170px;
+}
+.lp2_navBar .mobileWhaleContainer .whaleWater {
+    transform: scale(2);
+} 
+.lp2_navBar .mobileWhaleContainer .whaleSpray { 
+    margin-left: -44px;
+    margin-top: -1px; 
+}
+
+
+
+
+#nav-icon3 {
+    width: 45px;
+    height: 45px;
+    position: relative; 
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transition: .5s ease-in-out;
+    -moz-transition: .5s ease-in-out;
+    -o-transition: .5s ease-in-out;
+    transition: .5s ease-in-out;
+    cursor: pointer;
+    margin: auto 10px auto auto;
+}
+#nav-icon3 span {
+    display: block;
+    position: absolute;
+    height: 5px;
+    width: 100%;
+    background: #fff;
+    border-radius: 5px;
+    opacity: 1;
+    left: 0;
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+    -webkit-transition: .25s ease-in-out;
+    -moz-transition: .25s ease-in-out;
+    -o-transition: .25s ease-in-out;
+    transition: .25s ease-in-out;
+}
+/* Icon 3 */
+#nav-icon3 span:nth-child(1) {
+    top: 8px;
+}
+#nav-icon3 span:nth-child(2),#nav-icon3 span:nth-child(3) {
+    top: 20px;
+}
+#nav-icon3 span:nth-child(4) {
+    top: 32px;
+}
+#nav-icon3.open span:nth-child(1) {
+    top: 18px;
+    width: 0%;
+    left: 50%;
+}
+#nav-icon3.open span:nth-child(2) {
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+#nav-icon3.open span:nth-child(3) {
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+}
+#nav-icon3.open span:nth-child(4) {
+    top: 18px;
+    width: 0%;
+    left: 50%;
+}
+
+
+
+
+@media only screen and (max-width: 1024px) {
+    .lp2_navBar #navBar {
+        display: none;
+    }
+    .lp2_navBar #navBarMobile {
+        display: flex;
+    }
+} 
+
+@media only screen and (max-width: 768px) {
+} 
+ 

@@ -2,6 +2,11 @@
     transform: scale(5);
   }
   
+  @media only screen and (max-width: 768px) {
+    .whaleWater { 
+        transform: scale(3);
+      } 
+  }
   /* Spray Streams */
   .sprays path { 
       animation-iteration-count: infinite;
