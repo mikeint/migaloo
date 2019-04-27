@@ -103,7 +103,7 @@ const navMappings = {
 }
 class NavBar extends React.Component{
     getBasePath(path){
-        const i = path.lastIndexOf('/');
+        const i = path.indexOf('/', 1);
         if(i === 0)
             return path;
         return path.slice(0, i);

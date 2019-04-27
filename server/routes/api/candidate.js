@@ -176,17 +176,18 @@ router.get('/listForJob/:postId', passport.authentication, listCandidatesForJob)
 router.get('/listForJob/:postId/:page', passport.authentication, listCandidatesForJob);
 router.get('/listForJob/:postId/:page/:search', passport.authentication, listCandidatesForJob);
 function listCandidatesForJob(req, res){
-    var search = req.params.search;
+    const search = req.params.search;
     var page = req.params.page;
     if(page == null)
         page = 1;
-    var jwtPayload = req.body.jwtPayload;
+    const jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         return res.status(400).json({success:false, error:"Must be an recruiter to look at canidates"})
     }
-    var postId = req.params.postId
+    const postId = req.params.postId
     if(postId == null)
         return res.status(400).json({success:false, error:"Missing post Id"})
+    const recruiterId = jwtPayload.id;
     
 
     postgresdb.task(t => {
@@ -200,11 +201,11 @@ function listCandidatesForJob(req, res){
                 INNER JOIN tags t ON t.tag_id = pt.tag_id \
                 GROUP BY post_id \
             ) tg ON tg.post_id = jp.post_id \
-            WHERE jp.post_id = $1', [postId])
+            WHERE jp.post_id = ${postId} AND jp.recruiter_id = ${recruiterId}', {postId:postId, recruiterId:recruiterId})
         .then(job_data=>{
-            var sqlArgs = [jwtPayload.id, postId, (page-1)*10]
+            var sqlArgs = {recruiterId:jwtPayload.id, postId:postId, page:(page-1)*10}
             if(search != null)
-                sqlArgs.push(search.split(' ').map(d=>d+":*").join(" & "))
+                sqlArgs['search'] = search.split(' ').map(d=>d+":*").join(" & ")
             return t.any(' \
                 SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, et.experience_type_name, \
                     coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
@@ -231,7 +232,7 @@ function listCandidatesForJob(req, res){
                         SUM(CASE WHEN NOT has_seen_response AND accepted THEN 1 ELSE 0 END) as new_accepted_count, \
                         SUM(CASE WHEN NOT has_seen_response AND not_accepted THEN 1 ELSE 0 END) as new_not_accepted_count \
                     FROM candidate_posting cp\
-                    WHERE cp.recruiter_id = $1 \
+                    WHERE cp.recruiter_id = ${recruiterId} \
                     GROUP BY cp.candidate_id \
                 ) cpd ON cpd.candidate_id = c.candidate_id \
                 INNER JOIN ( \
@@ -241,22 +242,22 @@ function listCandidatesForJob(req, res){
                         ( \
                             SELECT COUNT(1)+count(distinct ci.experience_type_id)+count(distinct ci.salary_type_id) \
                             FROM posting_tags cti \
-                            WHERE cti.post_id = $1 \
+                            WHERE cti.post_id = ${postId} \
                         ) as total_score \
                     FROM candidate_tags ct \
                     INNER JOIN posting_tags pt ON pt.tag_id = ct.tag_id \
                     INNER JOIN job_posting j ON j.post_id = pt.post_id \
                     INNER JOIN candidate ci ON ci.candidate_id = ct.candidate_id \
-                    WHERE j.post_id = $2 \
+                    WHERE j.post_id = ${postId} AND j.recruiter_id = ${recruiterId} \
                     GROUP BY ci.candidate_id \
                 ) jc ON jc.candidate_id = rc.candidate_id \
-                WHERE rc.recruiter_id = $1 AND c.active \
+                WHERE rc.recruiter_id = ${recruiterId} AND c.active \
                 '+
                 (search ? 
-                    'AND (name_search @@ to_tsquery(\'simple\', $4))'
+                    'AND (name_search @@ to_tsquery(\'simple\', ${search}))'
                 :'')+' \
                 ORDER BY tag_score DESC, c.last_name ASC, c.first_name ASC \
-                OFFSET $3 \
+                OFFSET ${page} \
                 LIMIT 10', sqlArgs)
             .then((data) => {
                 // Marshal data

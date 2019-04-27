@@ -62,15 +62,15 @@ const styles = theme => ({
 const errorText = [
     {
         stateName: "company_name",
-        errorText: "Please enter a name for the company"
+        errorText: "Please enter a name for the recruiter"
     },
     {
         stateName: "department",
-        errorText: "Please enter a departement for the company"
+        errorText: "Please enter a departement for the recruiter"
     },
     {
         stateName: "addressChange.placeId",
-        errorText: "Please select an address for the company"
+        errorText: "Please select an address for the recruiter"
     }
 ]
 class ContactList extends React.Component{
@@ -81,7 +81,6 @@ class ContactList extends React.Component{
             contactList: [],
             company: props.company,
             company_name: props.company.company_name,
-            department: props.company.department,
             page: 1,
             pageCount: 1,
             loading: true,
@@ -100,7 +99,7 @@ class ContactList extends React.Component{
         this.getContactList();
     }
     getContactList = () => {
-        ApiCalls.get(`/api/company/getCompanyContactList/${this.state.company.company_id}/${this.state.page}`)
+        ApiCalls.get(`/api/recruiter/getRecruiterContactList/${this.state.employer.company_id}/${this.state.page}`)
         .then((res)=>{
             this.setState({loading: false});
             if(res && res.data.success){
@@ -115,13 +114,13 @@ class ContactList extends React.Component{
             console.log(errors.response.data)
         })
     }
-    setAdmin = (e, companyContact) => {
-        ApiCalls.post(`/api/company/setContactAdmin`,
-            {companyContactId:companyContact.company_contact_id, companyId:this.state.company.company_id, isPrimary:e.target.checked})
+    setAdmin = (e, recruiterContact) => {
+        ApiCalls.post(`/api/recruiter/setContactAdmin`,
+            {recruiterContactId:recruiterContact.company_contact_id, employerId:this.state.company.company_id, isPrimary:e.target.checked})
         .then((res)=>{
             if(res && res.data.success){
                 this.setState({ contactList: this.state.contactList.map(d=>{
-                    if(companyContact.company_contact_id === d.company_contact_id)
+                    if(recruiterContact.company_contact_id === d.company_contact_id)
                         d.is_primary = !d.is_primary
                     return d;
                 }) })
@@ -134,8 +133,8 @@ class ContactList extends React.Component{
     addContact = (users) => {
         const userIds = users.map(d=>d.id)
         if(userIds.length > 0){
-            ApiCalls.post(`/api/company/addContactToCompany`,
-                {userIds:userIds, companyId:this.state.company.company_id})
+            ApiCalls.post(`/api/recruiter/addContactToRecruiter`,
+                {userIds:userIds, recruiterId:this.state.employer.company_id})
             .then((res)=>{
                 if(res && res.data.success){
                     this.getContactList();
@@ -147,8 +146,8 @@ class ContactList extends React.Component{
         }
     }
     removeContact = (user) => {
-        ApiCalls.post(`/api/company/removeContactFromCompany`,
-            {userId:user.company_contact_id, companyId:this.state.company.company_id})
+        ApiCalls.post(`/api/recruiter/removeContactFromRecruiter`,
+            {userId:user.company_contact_id, recruiterId:this.state.employer.company_id})
         .then((res)=>{
             if(res && res.data.success){
                 this.getContactList();
@@ -158,10 +157,10 @@ class ContactList extends React.Component{
             console.log(errors.response.data)
         )
     }
-    saveCompany = (user) => {
+    saveRecruiter = (user) => {
         if(this.formValidation.isValid()){
-            ApiCalls.post(`/api/company/setCompanyProfile`,
-                {companyId:this.state.company.company_id, company_name:this.state.company_name, department:this.state.department})
+            ApiCalls.post(`/api/recruiter/setRecruiterProfile`,
+                {recruiterId:this.state.employer.company_id, company_name:this.state.company_name, department:this.state.department})
             .then((res)=>{
                 if(res && res.data.success){
                     this.setState({didSave: true, isModified:false})
@@ -246,7 +245,7 @@ class ContactList extends React.Component{
                         color="primary"
                         variant="contained"
                         disabled={!this.state.isModified}
-                        onClick={this.saveCompany}>Save Changes</Button>
+                        onClick={this.saveRecruiter}>Save Changes</Button>
                 </div>
                 <div className={classes.tableBody}>
                     <div className={classes.tableHeading}>

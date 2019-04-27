@@ -1,6 +1,5 @@
 import React from 'react';
 import ApiCalls from '../../../../ApiCalls';  
-import './AddEmployer.css';  
 import { withStyles } from '@material-ui/core/styles';  
 import Close from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
@@ -43,18 +42,18 @@ const styles = theme => ({
 const errorText = [
     {
         stateName: "company_name",
-        errorText: "Please enter a name for the employer"
+        errorText: "Please enter a name for the company"
     },
     {
         stateName: "department",
-        errorText: "Please enter a departement for the employer"
+        errorText: "Please enter a departement for the company"
     },
     {
         stateName: "address.placeId",
-        errorText: "Please select an address for the employer"
+        errorText: "Please select an address for the company"
     }
 ]
-class AddEmployer extends React.Component{
+class AddCompany extends React.Component{
 
     constructor(props) {
         super(props);
@@ -70,13 +69,13 @@ class AddEmployer extends React.Component{
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
     }
-    addEmployer = () => {
+    addCompany = () => {
         if(this.formValidation.isValid()){
             const data = {
                 company_name:this.state.company_name,
                 ...this.state.address
             }
-            ApiCalls.post(`/api/employer/addEmployer`, data)
+            ApiCalls.post(`/api/company/addCompany`, data)
             .then((res)=>{
                 if(res && res.data.success){
                     this.state.onClose(true)
@@ -94,7 +93,7 @@ class AddEmployer extends React.Component{
         return ( 
             <React.Fragment> 
                 <div className={classes.alertTitle} color="primary">
-                    <span>Add New Employer</span>
+                    <span>Add New Company</span>
                     <IconButton color="inherit" className={classes.alertClose} onClick={()=>this.state.onClose()}>
                         <Close />
                     </IconButton>
@@ -134,7 +133,7 @@ class AddEmployer extends React.Component{
                         className={classes.button}
                         color="primary"
                         variant="contained"
-                        onClick={this.addEmployer}>Add Employer</Button>
+                        onClick={this.addCompany}>Add Company</Button>
                 </div>
                 <br/>
             </React.Fragment> 
@@ -143,4 +142,4 @@ class AddEmployer extends React.Component{
 }
  
 
-export default withStyles(styles)(AddEmployer);
+export default withStyles(styles)(AddCompany);

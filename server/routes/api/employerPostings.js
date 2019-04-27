@@ -41,13 +41,13 @@ router.post('/create', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:"Must be an employer to add a posting"})
     }
 
-    postgresdb.one('SELECT employer_id \
-            FROM employer_contact ec \
-            INNER JOIN account_manager ac ON ac.account_manager_id = ec.employer_contact_id \
-            WHERE ec.employer_contact_id = $1 AND ac.active AND employer_id = $2', [jwtPayload.id, body.employer]).then(()=>{
+    postgresdb.one('SELECT company_id \
+            FROM company_contact ec \
+            INNER JOIN account_manager ac ON ac.account_manager_id = ec.company_contact_id \
+            WHERE ec.company_contact_id = $1 AND ac.active AND company_id = $2', [jwtPayload.id, body.employer]).then(()=>{
         postgresdb.tx(t => {
             // creating a sequence of transaction queries:
-            const q1 = t.one('INSERT INTO job_posting (employer_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING post_id',
+            const q1 = t.one('INSERT INTO job_posting (company_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING post_id',
                                 [body.employer, body.title, body.caption, body.experience, body.salary])
             return q1.then((post_ret)=>{
                 if(body.tagIds != null && body.tagIds.length > 0){
@@ -107,7 +107,7 @@ function postListing(req, res){
     }
     // Define the filters
     const filters = {
-        'employer':'AND j.employer_id in (${employer:csv})',
+        'employer':'AND j.company_id in (${employer:csv})',
         'contactType':'AND ec.is_primary in (${contactType:csv})'
     }
     const validKeys = Object.keys(filters).filter(d=>Object.keys(req.query).includes(d))
@@ -118,12 +118,12 @@ function postListing(req, res){
             paramsToAdd[k] = v
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>filters[k]).join(" ")
-    
+
     postgresdb.any('\
         SELECT j.post_id, title, caption, experience_type_name, salary_type_name, tag_names, tag_ids, new_posts_cnt, \
             posts_cnt, j.created_on, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting j \
-        INNER JOIN employer_contact ec ON j.employer_id = ec.employer_id \
+        INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
         LEFT JOIN ( \
@@ -137,7 +137,7 @@ function postListing(req, res){
             FROM candidate_posting cp \
             GROUP BY post_id \
         ) cd ON cd.post_id = j.post_id \
-        WHERE ec.employer_contact_id = ${contactId} AND j.active '+filtersToAdd+'\
+        WHERE ec.company_contact_id = ${contactId} AND j.active '+filtersToAdd+'\
         ORDER BY j.created_on DESC \
         OFFSET ${page} \
         LIMIT 10', {contactId:jwtPayload.id, page:(page-1)*10, ...paramsToAdd})
@@ -183,8 +183,8 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
     postgresdb.any('\
         SELECT 1 \
         FROM job_posting jp \
-        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
-        WHERE ec.employer_contact_id = $1 AND jp.active \
+        INNER JOIN company_contact ec ON jp.company_id = ec.company_id \
+        WHERE ec.company_contact_id = $1 AND jp.active \
         LIMIT 1', [jwtPayload.id])
     .then(()=>{
         postgresdb.none('UPDATE candidate_posting SET has_seen_post=true  WHERE candidate_id = $1 AND post_id = $2', [candidateId, postId])
@@ -230,10 +230,10 @@ router.post('/setAccepted/migaloo/:postId/:candidateId/:recruiterId', passport.a
     }
     recruiterId = parseInt(recruiterId, 10);
     postgresdb.one('\
-        SELECT jp.employer_id \
+        SELECT jp.company_id \
         FROM job_posting jp \
-        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
-        WHERE ec.employer_contact_id = $1 AND jp.active AND jp.post_id = $2 \
+        INNER JOIN company_contact ec ON jp.company_id = ec.company_id \
+        WHERE ec.company_contact_id = $1 AND jp.active AND jp.post_id = $2 \
         LIMIT 1', [jwtPayload.id, postId])
     .then(()=>{
         postgresdb.none('UPDATE candidate_posting SET migaloo_accepted=$1, has_seen_response=NULL, migaloo_responded_on=NOW()\
@@ -302,10 +302,10 @@ router.post('/setAccepted/employer/:postId/:candidateId/:recruiterId', passport.
         denialReasonId = null;
     recruiterId = parseInt(recruiterId, 10);
     postgresdb.one('\
-        SELECT jp.employer_id \
+        SELECT jp.company_id \
         FROM job_posting jp \
-        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
-        WHERE ec.employer_contact_id = $1 AND jp.active AND jp.post_id = $2 \
+        INNER JOIN company_contact ec ON jp.company_id = ec.company_id \
+        WHERE ec.company_contact_id = $1 AND jp.active AND jp.post_id = $2 \
         LIMIT 1', [jwtPayload.id, postId])
     .then(()=>{
         postgresdb.none('UPDATE candidate_posting SET employer_accepted=$1, denial_reason_id=$2, employer_responded_on=NOW()\
@@ -355,10 +355,10 @@ router.post('/setAccepted/job/:postId/:candidateId/:recruiterId', passport.authe
         denialReasonId = null;
     recruiterId = parseInt(recruiterId, 10);
     postgresdb.one('\
-        SELECT jp.employer_id \
+        SELECT jp.company_id \
         FROM job_posting jp \
-        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
-        WHERE ec.employer_contact_id = $1 AND jp.active AND jp.post_id = $2 \
+        INNER JOIN company_contact ec ON jp.company_id = ec.company_id \
+        WHERE ec.company_contact_id = $1 AND jp.active AND jp.post_id = $2 \
         LIMIT 1', [jwtPayload.id, postId])
     .then(()=>{
         postgresdb.none('UPDATE candidate_posting SET job_accepted=$1, denial_reason_id=$2, job_responded_on=NOW()\
@@ -395,10 +395,10 @@ router.post('/hide', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:"Missing Post Id"})
     }
     postgresdb.one('\
-        SELECT jp.employer_id \
+        SELECT jp.company_id \
         FROM job_posting jp \
-        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
-        WHERE ec.employer_contact_id = $1 AND jp.active AND jp.post_id = $2 \
+        INNER JOIN company_contact ec ON jp.company_id = ec.company_id \
+        WHERE ec.company_contact_id = $1 AND jp.active AND jp.post_id = $2 \
         LIMIT 1', [jwtPayload.id, postId])
     .then(()=>{
         // TODO: Return all coins that have not been accepted or rejected
@@ -435,10 +435,10 @@ router.post('/remove', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:"Missing Post Id"})
     }
     postgresdb.one('\
-        SELECT jp.employer_id \
+        SELECT jp.company_id \
         FROM job_posting jp \
-        INNER JOIN employer_contact ec ON jp.employer_id = ec.employer_id \
-        WHERE ec.employer_contact_id = $1 AND jp.active AND jp.post_id = $2 \
+        INNER JOIN company_contact ec ON jp.company_id = ec.company_id \
+        WHERE ec.company_contact_id = $1 AND jp.active AND jp.post_id = $2 \
         LIMIT 1', [jwtPayload.id, postId])
     .then(()=>{
         // TODO: Return all coins that have not been accepted or rejected
@@ -480,12 +480,12 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
         SELECT c.candidate_id, r.first_name, r.last_name, r.phone_number, r.recruiter_id, rl.email, cp.migaloo_accepted, cp.employer_accepted,\
             cp.job_accepted, cp.has_seen_post, c.first_name as candidate_first_name, j.created_on as posted_on, c.resume_id \
         FROM job_posting j \
-        INNER JOIN employer_contact ec ON j.employer_id = ec.employer_id \
+        INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         INNER JOIN candidate_posting cp ON cp.post_id = j.post_id \
         INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
         INNER JOIN recruiter r ON r.recruiter_id = cp.recruiter_id \
         INNER JOIN login rl ON r.recruiter_id = rl.user_id \
-        WHERE j.post_id = $1 AND ec.employer_contact_id = $2 AND j.active \
+        WHERE j.post_id = $1 AND ec.company_contact_id = $2 AND j.active \
         ORDER BY cp.created_on DESC', [postId, jwtPayload.id])
     .then((data) => {
         // Marshal data

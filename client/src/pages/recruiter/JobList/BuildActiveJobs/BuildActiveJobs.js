@@ -65,7 +65,7 @@ class BuildActiveJobs extends React.Component{
     }
 
     getImage = () => {
-        ApiCalls.get(`/api/profileImage/view/2/${this.state.jobObj.employer_id}/small`)
+        ApiCalls.get(`/api/profileImage/view/2/${this.state.jobObj.company_id}/small`)
         .then((res)=>{
             if(res == null) return
             if(res.data.success){

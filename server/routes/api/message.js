@@ -50,12 +50,12 @@ router.post('/create', passport.authentication,  (req, res) => {
             SELECT 1 \
             FROM messages_subject m \
             '+(jwtPayload.userType == 2?
-                'LEFT JOIN employer_contact ec1 ON m.user_id_1 = ec1.employer_id \
-                LEFT JOIN employer_contact ec2 ON m.user_id_2 = ec2.employer_id \
+                'LEFT JOIN company_contact ec1 ON m.user_id_1 = ec1.company_id \
+                LEFT JOIN company_contact ec2 ON m.user_id_2 = ec2.company_id \
             ':'')+
             'WHERE '+(jwtPayload.userType == 1 ? 
                 '(m.user_id_1 = $1 OR m.user_id_2 = $1) AND m.message_subject_id = $2' :
-                '(ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1) AND m.message_subject_id = $2')+
+                '(ec1.company_contact_id = $1 OR ec2.company_contact_id = $1) AND m.message_subject_id = $2')+
             ' \
             LIMIT 1 \
             ', [userId, body.messageSubjectId])
@@ -114,12 +114,12 @@ router.post('/setResponse', passport.authentication,  (req, res) => {
             SELECT 1 \
             FROM messages_subject ms \
             '+(jwtPayload.userType == 2?
-            'LEFT JOIN employer_contact ec1 ON ms.user_id_1 = ec1.employer_id \
-            LEFT JOIN employer_contact ec2 ON ms.user_id_2 = ec2.employer_id \
+            'LEFT JOIN company_contact ec1 ON ms.user_id_1 = ec1.company_id \
+            LEFT JOIN company_contact ec2 ON ms.user_id_2 = ec2.company_id \
             ':'')+
             'WHERE '+(jwtPayload.userType == 1 ? 
                 '(ms.user_id_1 = $1 OR ms.user_id_2 = $1) AND ms.message_subject_id = $2' :
-                '(ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1) AND ms.message_subject_id = $2')+
+                '(ec1.company_contact_id = $1 OR ec2.company_contact_id = $1) AND ms.message_subject_id = $2')+
             ' \
             LIMIT 1', [userId, messageSubjectId])
     .then(d=>{ 
@@ -166,8 +166,8 @@ function listMessages(req, res){
             (jwtPayload.userType == 1 ? 
                 '$1 as my_id' :
                 'CASE \
-                    WHEN ec1.employer_id IS NULL AND ec2.employer_id IS NOT NULL THEN ec1.employer_id \
-                    WHEN ec1.employer_id IS NOT NULL AND ec2.employer_id IS NULL THEN ec2.employer_id \
+                    WHEN ec1.company_id IS NULL AND ec2.company_id IS NOT NULL THEN ec1.company_id \
+                    WHEN ec1.company_id IS NOT NULL AND ec2.company_id IS NULL THEN ec2.company_id \
                     ELSE 0 \
                 END as my_id')+
             ' \
@@ -188,12 +188,12 @@ function listMessages(req, res){
         LEFT JOIN user_master um1 ON um1.user_id = ms.user_id_1 \
         LEFT JOIN user_master um2 ON um2.user_id = ms.user_id_2 \
         '+(jwtPayload.userType == 2?
-        'LEFT JOIN employer_contact ec1 ON ms.user_id_1 = ec1.employer_id \
-        LEFT JOIN employer_contact ec2 ON ms.user_id_2 = ec2.employer_id \
+        'LEFT JOIN company_contact ec1 ON ms.user_id_1 = ec1.company_id \
+        LEFT JOIN company_contact ec2 ON ms.user_id_2 = ec2.company_id \
         ':'')+
         'WHERE '+(jwtPayload.userType == 1 ? 
             'ms.user_id_1 = $1 OR ms.user_id_2 = $1' :
-            'ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1')+
+            'ec1.company_contact_id = $1 OR ec2.company_contact_id = $1')+
         ' \
         ORDER BY coalesce(m.created_on, ms.created_on) DESC \
         OFFSET $2 \
@@ -202,8 +202,8 @@ function listMessages(req, res){
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
-            m.toMe = m.to_id == userId;
-            let contactName = userId === m.user_id_1?
+            m.toMe = m.to_id == m.my_id;
+            let contactName = m.my_id === m.user_id_1?
                 (m.user_2_company_name?m.user_2_company_name:(m.user_2_first_name+" "+m.user_2_last_name)):
                 (m.user_1_company_name?m.user_1_company_name:(m.user_1_first_name+" "+m.user_1_last_name));
             m.contactName = contactName;
@@ -255,7 +255,6 @@ function listConversationMessages(req, res){
     var userId = jwtPayload.id;
     if(page == null)
         page = 1;
-
     postgresdb.any('\
         SELECT m.message_id, ms.post_id, m.to_id, m.created_on, m.responded, \
             m.message, m.has_seen, m.date_offer, m.response, m.minute_length, m.location_type_name, m.meeting_subject, \
@@ -267,8 +266,8 @@ function listConversationMessages(req, res){
             (jwtPayload.userType == 1 ? 
                 '$1 as my_id' :
                 'CASE \
-                    WHEN ec1.employer_id IS NULL AND ec2.employer_id IS NOT NULL THEN ec1.employer_id \
-                    WHEN ec1.employer_id IS NOT NULL AND ec2.employer_id IS NULL THEN ec2.employer_id \
+                    WHEN ec1.company_id IS NULL AND ec2.company_id IS NOT NULL THEN ec1.company_id \
+                    WHEN ec1.company_id IS NOT NULL AND ec2.company_id IS NULL THEN ec2.company_id \
                     ELSE 0 \
                 END as my_id')+
             ' \
@@ -278,12 +277,12 @@ function listConversationMessages(req, res){
         INNER JOIN user_master um1 ON um1.user_id = m.user_id_1 \
         INNER JOIN user_master um2 ON um2.user_id = m.user_id_2 \
         '+(jwtPayload.userType == 2?
-        'LEFT JOIN employer_contact ec1 ON ms.user_id_1 = ec1.employer_id \
-        LEFT JOIN employer_contact ec2 ON ms.user_id_2 = ec2.employer_id \
+        'LEFT JOIN company_contact ec1 ON ms.user_id_1 = ec1.company_id \
+        LEFT JOIN company_contact ec2 ON ms.user_id_2 = ec2.company_id \
         ':'')+
         'WHERE '+(jwtPayload.userType == 1 ? 
             '(ms.user_id_1 = $1 OR ms.user_id_2 = $1) AND m.message_subject_id = $2' :
-            '(ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1) AND m.message_subject_id = $2')+
+            '(ec1.company_contact_id = $1 OR ec2.company_contact_id = $1) AND m.message_subject_id = $2')+
         ' \
         ORDER BY m.created_on DESC \
         OFFSET $3 \
@@ -291,8 +290,9 @@ function listConversationMessages(req, res){
         ', [userId, messageSubjectId, (page-1)*10])
     .then((data) => {
         // Marshal data
+        console.log(data[0])
         data = data.map(m=>{
-            m.toMe = m.to_id == userId;
+            m.toMe = m.to_id == m.my_id;
             var dateOfferTimestamp = moment(m.date_offer);
             m.date_offer_str = dateOfferTimestamp.format("LLL");
             var timestamp = moment(m.created_on);

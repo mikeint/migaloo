@@ -146,11 +146,11 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                                     res.status(400).json({success: false, error:err})
                                 });
                         }else if(type == 2){ // Employer
-                            var q2 = t.one('INSERT INTO employer (company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING employer_id',
+                            var q2 = t.one('INSERT INTO employer (company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING company_id',
                                     [body.companyName, null])
                             return q2.then((employer_data) => {
-                                var q3 = t.none('INSERT INTO employer_contact (employer_contact_id, employer_id, first_name, last_name, phone_number) VALUES ($1, $2, $3, $4, $5)',
-                                    [login_ret.user_id, employer_data.employer_id, body.firstName, body.lastName, body.phoneNumber])
+                                var q3 = t.none('INSERT INTO company_contact (company_contact_id, company_id, first_name, last_name, phone_number) VALUES ($1, $2, $3, $4, $5)',
+                                    [login_ret.user_id, employer_data.company_id, body.firstName, body.lastName, body.phoneNumber])
                                 return q3.then(() => {
                                     createJWT(login_ret.user_id, body.email, type).then((token)=>{
                                         res.status(200).json(token)

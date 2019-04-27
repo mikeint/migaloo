@@ -24,15 +24,15 @@ def recrutierCandidateQuery = "INSERT INTO recruiter_candidate (candidate_id, re
 def recrutierCandidateData = []
 def candidateId = 10000
 
-def employerQuery = "INSERT INTO employer (employer_id, company_name, department, address_id) VALUES \n\t"
+def employerQuery = "INSERT INTO employer (company_id, company_name, department, address_id) VALUES \n\t"
 def employerData = []
 def employerId = 1000000
 
-def employerContactQuery = "INSERT INTO employer_contact (employer_contact_id, employer_id, is_primary) VALUES \n\t"
+def employerContactQuery = "INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES \n\t"
 def employerContactData = []
 def employerContactId = 10000000
 
-def jobPostingQuery = "INSERT INTO job_posting (post_id, employer_id, created_on, title, caption, experience_type_id, salary_type_id) VALUES \n\t"
+def jobPostingQuery = "INSERT INTO job_posting (post_id, company_id, created_on, title, caption, experience_type_id, salary_type_id) VALUES \n\t"
 def jobPostingData = []
 def postId = 100
 

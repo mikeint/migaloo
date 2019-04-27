@@ -1,5 +1,4 @@
 import React from 'react';
-import './Accounts.css';    
 import ApiCalls from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import { withStyles } from '@material-ui/core/styles';
@@ -9,7 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
 import ContactList from './ContactList/ContactList';
-import AddEmployer from './AddEmployer/AddEmployer';
+import AddCompany from './AddCompany/AddCompany';
 
 const styles = theme => ({
     createdTime:{ 
@@ -31,10 +30,10 @@ class Accounts extends React.Component{
     constructor(props) {
         super(props);
 		this.state = {
-            employerList: [],
+            companyList: [],
             openContact: false,
-            openAddEmployer: false,
-            clickedEmployer: null
+            openAddCompany: false,
+            clickedCompany: null
         };
         this.Auth = new AuthFunctions();
     }
@@ -44,22 +43,22 @@ class Accounts extends React.Component{
     }
 
     componentDidMount = () => {
-        this.getEmployers();
+        this.getCompanys();
     }
 
-    getEmployers = () => {
-        ApiCalls.get('/api/employer/listEmployers')
+    getCompanys = () => {
+        ApiCalls.get('/api/company/listCompanys')
         .then((res)=>{    
             if(res == null) return
-            this.setState({ employerList: res.data.employers })
+            this.setState({ companyList: res.data.companys })
         }).catch(errors => 
             console.log(errors.response.data)
         )
     }
-    openContactList(employer){
+    openContactList(company){
         this.setState({
             openContact: true,
-            clickedEmployer:employer
+            clickedCompany:company
         })
     }
     handleContactsClose(didChange) {
@@ -67,21 +66,21 @@ class Accounts extends React.Component{
             openContact: false
         })
         if(didChange){
-            this.getEmployers();
+            this.getCompanys();
         }
     }
-    openAddEmployer(){
+    openAddCompany(){
         this.setState({
-            openAddEmployer: true
+            openAddCompany: true
         })
     }
-    handleAddEmployerClose(didChange) {
+    handleAddCompanyClose(didChange) {
         this.setState({
-            openAddEmployer: false,
-            clickedEmployer: false
+            openAddCompany: false,
+            clickedCompany: false
         })
         if(didChange){
-            this.getEmployers();
+            this.getCompanys();
         }
     }
 
@@ -92,14 +91,14 @@ class Accounts extends React.Component{
             <React.Fragment>
 
                 <div>
-                    <div className="pageHeading">Employers
-                    <IconButton onClick={()=>this.openAddEmployer()}><Add/></IconButton>
+                    <div className="pageHeading">Companys
+                    <IconButton onClick={()=>this.openAddCompany()}><Add/></IconButton>
                     </div> 
                     {
-                        this.state.employerList ?
+                        this.state.companyList ?
                             <div>
                                 {
-                                    this.state.employerList.map((item, i) => {
+                                    this.state.companyList.map((item, i) => {
                                         return <Button key={i} className={classes.row} onClick={()=>this.openContactList(item)}>
                                             {item.company_name}
                                             <span className={classes.createdTime}>{item.created}</span>
@@ -117,16 +116,16 @@ class Accounts extends React.Component{
                     onClose={this.handleContactsClose.bind(this)}
                     >
                     <ContactList
-                        employer={this.state.clickedEmployer}
+                        company={this.state.clickedCompany}
                         onClose={this.handleContactsClose.bind(this)} />
                 </Drawer>
                 <Drawer
                     anchor="bottom"
-                    open={this.state.openAddEmployer}
-                    onClose={this.handleAddEmployerClose.bind(this)}
+                    open={this.state.openAddCompany}
+                    onClose={this.handleAddCompanyClose.bind(this)}
                     >
-                    <AddEmployer
-                        onClose={this.handleAddEmployerClose.bind(this)} />
+                    <AddCompany
+                        onClose={this.handleAddCompanyClose.bind(this)} />
                 </Drawer>
             </React.Fragment>
         );

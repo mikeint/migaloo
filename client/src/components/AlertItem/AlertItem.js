@@ -21,8 +21,8 @@ class AlertItem extends React.Component{
             var title = alert.title;
             title = title.length > 30 ? title.substring(0, 27).replace(/(^[^A-Za-z0-9]+|[^A-Za-z0-9]+$)/g, '').trim()+'...': title; // Limit the title to 30 characters
             row1 = `${alert.first_name} has been posted to`;
-            // row2 = `${title} for ${alert.coins} coin${alert.coins>1?'s':''}`;
-            row2 = alert.created;
+            row2 = `${title}`;
+            row3 = alert.created;
         }
         return (
             <React.Fragment>

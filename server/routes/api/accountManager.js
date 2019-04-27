@@ -35,7 +35,7 @@ const generateImageFileNameAndValidation = (req, res, next) => {
  */
 router.post('/uploadImage', passport.authentication, generateImageFileNameAndValidation, upload.any('filepond'), (req, res) => {
     var jwtPayload = req.params.jwtPayload;
-    postgresdb.none('UPDATE employer SET image_id=$1 WHERE employer_id = $2', [req.params.finalFileName, jwtPayload.id])
+    postgresdb.none('UPDATE employer SET image_id=$1 WHERE company_id = $2', [req.params.finalFileName, jwtPayload.id])
     .then((data) => {
         res.json({success:true, image_id:req.params.finalFileName})
     })
@@ -130,12 +130,12 @@ router.get('/alerts', passport.authentication,  (req, res) => {
     postgresdb.any('\
         SELECT c.candidate_id, jp.post_id, cp.created_on, c.first_name, coins, count(1) OVER() AS alert_count, jp.title \
         FROM candidate_posting cp \
-        INNER JOIN job_posting jp ON cp.post_id = jp.post_id \
+        INNER JOIN job_posting_all jp ON cp.post_id = jp.post_id \
         INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
-        INNER JOIN employer_contact ec ON ec.employer_id = jp.employer_id \
-        WHERE NOT cp.has_seen_post AND ec.employer_contact_id = ${employer_contact_id} \
+        INNER JOIN company_contact ec ON ec.company_id = jp.company_id \
+        WHERE NOT cp.has_seen_post AND ec.company_contact_id = ${company_contact_id} \
         ORDER BY created_on DESC \
-        LIMIT 10', {employer_contact_id:jwtPayload.id})
+        LIMIT 10', {company_contact_id:jwtPayload.id})
     .then((data) => {
         // Marshal data
         data = data.map(m=>{

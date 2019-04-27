@@ -83,11 +83,11 @@ function tagsDataCall(searchString){
     })
 }
 function employerDataCall(){
-    ApiCalls.get('/api/employer/listEmployers')
+    ApiCalls.get('/api/company/list')
     .then((res) => {
         if(res && res.data.success) {
-            const data = res.data.employers
-                    .map(d=>{return {name:d.company_name, id:d.employer_id}})
+            const data = res.data.companies
+                    .map(d=>{return {name:d.company_name, id:d.company_id}})
             this.setState({data: data});
         }
     })
