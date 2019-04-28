@@ -115,6 +115,9 @@
 .heroContent .paddingTop {
     padding-top:20px;
 }
+.heroContent .paddingBottom {
+    padding-bottom:20px;
+}
 .heroContent .heroP {
     color: #fff; 
     margin: 0px;
@@ -122,7 +125,7 @@
 }
 .selectBtnContainer {
     width: 200px;
-    height: 60px;
+    height: 60px; 
     color: #fff;
     font-size: 25px;
     border-radius: 10px;
@@ -157,7 +160,10 @@
 @media only screen and (max-width: 768px) {
     .heroContent .hiText {
         font-size: 38px;
-        margin-top: 15px;
+        margin-top: 25px;
+    }
+    .selectBtnContainer {
+        width: 150px;
     }
 }
 /* HERO CONTENT */

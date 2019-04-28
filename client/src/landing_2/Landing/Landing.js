@@ -1,11 +1,10 @@
-import React, { Component } from "react";  
-import './Landing.css';
-import { Link } from "react-router-dom";
-import Whale from '../../components/Whale/Whale'
+import React, { Component } from "react"
+import './Landing.css'
+import { Link } from "react-router-dom"
+import WhaleHead from '../components/WhaleHead/WhaleHead'
  
 class Landing extends Component {  
     render() {
-        const whaleOptions={whaleImg:'whaleBs.png', sprayColor:'#fff'};
 
         return (
             <div className="lp2_HomePage">
@@ -20,14 +19,14 @@ class Landing extends Component {
  
                     <div className="heroContent">
                         <div className="flex">
-                            <div className="hiText">Hi, im</div>
-                            <div className="heroContentWhale"><Whale {...whaleOptions}/></div>
+                            <div className="hiText">Hi, im Migaloo.</div>
+                            <div className="heroContentWhale"><WhaleHead sprayColor='#fff'/></div>
                         </div>
                         <div className="flex">
                             <p className="heroP paddingTop">An app connecting employers to passive&nbsp;talent.</p>
                         </div>
                         <div className="flex">
-                            <p className="heroP">Lets get to know each&nbsp;other...</p>
+                            <p className="heroP paddingBottom">Lets get to know each&nbsp;other...</p>
                         </div> 
                         <div className="flex">
                             <Link to="/recruiterPage"><div className="selectBtnContainer">Recruiter</div></Link>
