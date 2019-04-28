@@ -2,9 +2,9 @@ import React from 'react';
 import './PostCandidateToJob.css'; 
 import { Redirect } from 'react-router-dom';
 import ApiCalls from '../../ApiCalls';  
-import coin from '../../files/images/coin.png'
+//import coin from '../../files/images/coin.png'
 import TextField from '@material-ui/core/TextField';
-import Input from '@material-ui/core/Input';
+//import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Close from '@material-ui/icons/Close';

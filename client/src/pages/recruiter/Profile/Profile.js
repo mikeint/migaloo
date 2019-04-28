@@ -5,7 +5,7 @@ import ApiCalls from '../../../ApiCalls';
 import AuthFunctions from '../../../AuthFunctions';  
 import { Redirect } from 'react-router-dom';
 import UploadImage from '../../../components/UploadImage/UploadImage'; 
-import coin from '../../../files/images/coin.png'
+//import coin from '../../../files/images/coin.png'
 import defaultProfileImage from '../../../files/images/profile.png'
 
 class Profile extends React.Component{

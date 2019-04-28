@@ -1,8 +1,9 @@
-import React, { Component } from 'react';  
-import './NavBar.css';
+import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+import './NavBar.css'
 
-import Whale from '../../../components/Whale/Whale';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Whale from '../../../components/Whale/Whale'
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 
 class NavBar extends Component {
    
@@ -25,12 +26,12 @@ class NavBar extends Component {
 		return ( 
             <div className="lp2_navBar">  
                 <div id="navBar">
-                    <div className="whaleClick" onClick={() => this.props.selectPage("home")}><Whale {...whaleOptions}/></div> 
+                    <Link to="/"><div className="whaleClick"><Whale {...whaleOptions}/></div></Link>
                     {this.props.page}
                 </div>
 
                 <div id="navBarMobile"> 
-                    <div className="whaleClick mobileWhaleContainer" onClick={() => this.props.selectPage("home")}><Whale {...whaleOptions}/></div> 
+                    <Link to="/"><div className="whaleClick mobileWhaleContainer"><Whale {...whaleOptions}/></div></Link>
                     <div id="nav-icon3" className={this.state.menuOpen ? "open" : ""} onClick={this.callAddOverlay}>
                         <span></span>
                         <span></span>
@@ -48,10 +49,7 @@ class NavBar extends Component {
                     <div className="side-menu">
                         some nav items here     
                     </div>
-                </SwipeableDrawer>
-
-
-                
+                </SwipeableDrawer> 
             </div> 
         ) 
   	}

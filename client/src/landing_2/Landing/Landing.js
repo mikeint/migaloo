@@ -1,8 +1,9 @@
 import React, { Component } from "react";  
-import './HomePage.css';
+import './Landing.css';
+import { Link } from "react-router-dom";
 import Whale from '../../components/Whale/Whale'
  
-class HomePage extends Component {  
+class Landing extends Component {  
     render() {
         const whaleOptions={whaleImg:'whaleBs.png', sprayColor:'#fff'};
 
@@ -29,8 +30,8 @@ class HomePage extends Component {
                             <p className="heroP">Lets get to know each&nbsp;other...</p>
                         </div> 
                         <div className="flex">
-                            <p className="selectBtnContainer" onClick={() => this.props.selectPage("recruiter")}>Recruiter</p>
-                            <p className="selectBtnContainer" onClick={() => this.props.selectPage("employer")}>Employer</p>
+                            <Link to="/recruiterPage"><div className="selectBtnContainer">Recruiter</div></Link>
+                            <Link to="/employerPage"><div className="selectBtnContainer">Employer</div></Link>
                         </div> 
                     </div>
                     
@@ -40,4 +41,4 @@ class HomePage extends Component {
     }
 }
 
-export default HomePage;
+export default Landing;

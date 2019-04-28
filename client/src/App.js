@@ -1,15 +1,22 @@
 import React, { Component } from "react";
 import { Route, BrowserRouter, Switch } from "react-router-dom";
-import Landing from './landing/Landing';
-import Login from './pages/Login/Login'; 
-
 import { PrivateEmployerRoute, PrivateRecruiterRoute } from './PrivateRoute';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'; 
+
+//App routes
+import Login from './pages/Login/Login';
 import RecruiterRouter from './pages/recruiter/RecruiterRouter';
 import EmployerRouter from './pages/employer/EmployerRouter';
-import AboutTeamPage from './layout/AboutTeamPage/AboutTeam';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'; 
-import SignUpFormEmployer from './layout/components/SignUpFormEmployer/SignUpFormEmployer';
-import SignUpFormRecruiter from './layout/components/SignUpFormRecruiter/SignUpFormRecruiter';
+
+//Landing page 1 routes
+import AboutTeamPage from './landing_1/AboutTeamPage/AboutTeam';
+import SignUpFormEmployer from './landing_1/components/SignUpFormEmployer/SignUpFormEmployer';
+import SignUpFormRecruiter from './landing_1/components/SignUpFormRecruiter/SignUpFormRecruiter';
+
+//Landing page 2 routes
+import Landing from './landing_2/Landing/Landing';
+import RecruiterPage from './landing_2/Recruiter/Recruiter';
+import EmployerPage from './landing_2/Employer/Employer';
 
 import './App.css';
 
@@ -69,6 +76,9 @@ class App extends Component {
                         <Route exact path='/login' render={ () => (<Login />) } />
                         <Route exact path="/" component={Landing} />
                         <Route exact path="/about" component={AboutTeamPage} /> 
+                        <Route exact path="/recruiterPage" component={RecruiterPage} />
+                        <Route exact path="/employerPage" component={EmployerPage} />
+
                         <Route exact path="/signUpFormEmployer" component={SignUpFormEmployer} /> 
                         <Route exact path="/signUpFormRecruiter" component={SignUpFormRecruiter} /> 
                     </React.Fragment>

@@ -33,7 +33,7 @@
 .lp2_HomePage #heroLayer3{
     background-image: url("../../files/images/landingPage/layer3.png");
     animation: moveHeroDesktop3 75s infinite linear;
-}
+} 
 
 @keyframes moveHeroDesktop1 {
     0% { transform: translate3d(0, 0, 0); }
@@ -60,6 +60,34 @@
 }
 
 
+
+
+/* LANDING STRUCTURE */
+.lp2_container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    margin: 0 auto; 
+    overflow: hidden;
+} 
+.lp2_menu {
+    flex-basis: 10%;
+    background: #263c54; 
+} 
+.lp2_body {
+    flex: 0 0 100%; 
+    background: #546f82;
+}
+@media only screen and (max-width: 1024px) { 
+    .lp2_container {
+        display: unset;
+    }
+    .lp2_body {
+        height: calc(100vh - 50px);
+    }
+}
+/* LANDING STRUCTURE */
 
 
 
