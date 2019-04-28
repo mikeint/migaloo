@@ -17,6 +17,9 @@ import Tab from '@material-ui/core/Tab';
 function LinkTab(props) {
     return <Tab component={NavLink} {...props} />;
 }
+function getByPath(object, path) {
+    return path.reduce((t,a)=>t == null || t[a] == null ? null : t[a], object)
+};
 const styles = theme => ({
     tabsContainer:{
         width: "100%"
@@ -65,6 +68,12 @@ const navMappings = {
                 icon:<AccountCircle />,
                 link:"/recruiter/profile",
                 className: 'leftButton'
+            },
+            {
+                icon:<AccountBalance />,
+                link:"/recruiter/account",
+                className: 'smallButton',
+                showOnState: ['user', 'isPrimary']
             }
         ]
     },
@@ -117,7 +126,8 @@ class NavBar extends React.Component{
     constructor(props){
         super(props);
         this.Auth = new AuthFunctions();
-        const userType = this.Auth.getUser().userType;
+        const user = this.Auth.getUser();
+        const userType = user.userType;
         const path = window.location.pathname;
         const basePath = this.getBasePath(path);
         const page = navMappings[userType][basePath].findIndex(d=>path.startsWith(d.link));
@@ -125,7 +135,7 @@ class NavBar extends React.Component{
             page: page,
             userType: userType,
             basePath: basePath,
-            user: {}
+            user: user
         }
         const { history } = this.props;
         history.listen((location, action) => {
@@ -159,7 +169,7 @@ class NavBar extends React.Component{
                             classes={{indicator:classes.tabsIndicator}}
                             onChange={this.handleChange}>
                             {
-                                this.getNavMappings().map((d, i)=>{
+                                this.getNavMappings().filter(d=>d.showOnState == null ||  getByPath(this.state, d.showOnState)).map((d, i)=>{
                                     return <LinkTab className={classes[d.className]} label={d.name} icon={d.icon} key={i} to={d.link} />
                                 })
                             }

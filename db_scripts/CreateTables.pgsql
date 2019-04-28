@@ -135,12 +135,6 @@ CREATE TABLE account_manager (
     name_search tsvector,
     PRIMARY KEY(account_manager_id)
 );
-CREATE TABLE company_contact (
-    company_id bigint REFERENCES company(company_id),
-    company_contact_id bigint REFERENCES login(user_id),
-    is_primary boolean default false,
-    PRIMARY KEY(company_id, company_contact_id)
-);
 CREATE INDEX account_manager_order_idx ON account_manager(last_name ASC, first_name ASC);
 CREATE INDEX account_manager_active_idx ON account_manager(active);
 CREATE INDEX account_manager_tsv_idx ON account_manager USING gin(name_search);
@@ -149,6 +143,14 @@ BEFORE INSERT OR UPDATE
 ON account_manager
 FOR EACH ROW EXECUTE PROCEDURE
 tsvector_update_trigger (name_search, 'pg_catalog.simple', last_name, first_name);
+
+CREATE TABLE company_contact (
+    company_id bigint REFERENCES company(company_id),
+    company_contact_id bigint REFERENCES login(user_id),
+    is_primary boolean default false,
+    PRIMARY KEY(company_id, company_contact_id)
+);
+CREATE INDEX company_contact_active_idx ON company_contact(company_contact_id);
 
 CREATE TABLE recruiter (
     recruiter_id bigint REFERENCES login(user_id),
@@ -435,13 +437,19 @@ SELECT
     coalesce(c.rating, r.rating, e.rating) as rating,
     coalesce(c.active, r.active, ac.active) as active,
     coalesce(c.image_id, r.image_id, ac.image_id) as image_id,
-    (CASE WHEN l.passwordhash IS NULL THEN false ELSE true END) as account_active
+    (CASE WHEN l.passwordhash IS NULL THEN false ELSE true END) as account_active,
+    is_primary
 FROM login l
 INNER JOIN user_type ut ON ut.user_type_id = l.user_type_id
 LEFT JOIN candidate c ON c.candidate_id = l.user_id
 LEFT JOIN recruiter r ON r.recruiter_id = l.user_id
 LEFT JOIN company e ON e.company_id = l.user_id
-LEFT JOIN account_manager ac ON ac.account_manager_id = l.user_id;
+LEFT JOIN account_manager ac ON ac.account_manager_id = l.user_id
+LEFT JOIN (
+    SELECT bool_or(is_primary) as is_primary, company_contact_id
+    FROM company_contact
+    GROUP BY company_contact_id
+) ip ON ip.company_contact_id = l.user_id;
 
 -- DATA START
 INSERT INTO denial_reason (denial_reason_text) VALUES
@@ -665,14 +673,9 @@ INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES
     (104, 500, false),
     (105, 500, false),
     (106, 500, false),
-    (1000, 502, true),
-    (1001, 502, false),
-    (1002, 503, true),
-    (1003, 503, false),
-    (1004, 503, true),
-    (1005, 504, true),
-    (1006, 504, false),
-    (1007, 504, false);
+    (1, 503, true),
+    (2, 503, false),
+    (3, 504, true);
 INSERT INTO recruiter_candidate (candidate_id, recruiter_id, created_on) VALUES
     (1000, 1, NOW() - interval '1' day),
     (1001, 1, NOW() - interval '2' day),

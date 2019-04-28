@@ -11,8 +11,15 @@ import PlacesAutocomplete, {
 } from 'react-places-autocomplete';
 
 const styles = theme => ({
+    textField1Container:{
+        display: "flex",
+        whiteSpace: "nowrap",
+        flex: "1 1"
+    },
     textField1:{
-        width: 600,
+        display: "flex",
+        minWidth: 300,
+        flex: "1 1"
     },
     textField2:{
         width: 400,
@@ -22,10 +29,13 @@ const styles = theme => ({
     },
     alignment:{
         display: "flex",
-        justifyContent: "center"
+        justifyContent: "center",
+        flexWrap: "wrap"
     },
     secondaryAddress:{
-        marginLeft: "30px"
+    },
+    toolTip:{
+        marginRight: "30px"
     }
 })
 class AddressInput extends Component {
@@ -161,11 +171,11 @@ class AddressInput extends Component {
                     searchOptions={{types: ['address']}}
                 >
                 {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                    <div>
+                    <div className={classes.textField1Container}>
                         <TextField
                             {...getInputProps(inputProps)}
                         />
-                        <Tooltip title="An item must be selected from the drop down search" aria-label="Search">
+                        <Tooltip className={classes.toolTip} title="An item must be selected from the drop down search" aria-label="Search">
                             <Info className={classes.info}/>
                         </Tooltip>
                         <Paper className={classes.paper} square>

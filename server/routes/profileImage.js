@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../../config/passport');
-const db = require('../../config/db')
+const passport = require('../config/passport');
+const db = require('../config/db')
 const postgresdb = db.postgresdb
 const useAWS = process.env.AWS ? true : false;
 const aws = require('aws-sdk');

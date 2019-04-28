@@ -1,14 +1,7 @@
 import React from 'react';
 import ApiCalls from '../../../ApiCalls';  
-import AuthFunctions from '../../../AuthFunctions'; 
 import { withStyles } from '@material-ui/core/styles';
-import Loader from '../../../components/Loader/Loader';
-import Add from '@material-ui/icons/Add';
-import IconButton from '@material-ui/core/IconButton';
-import Drawer from '@material-ui/core/Drawer';
-import Button from '@material-ui/core/Button';
 import ContactList from './ContactList/ContactList';
-import AddRecruiter from './AddRecruiter/AddRecruiter';
 
 const styles = theme => ({
     createdTime:{ 
@@ -25,15 +18,13 @@ const styles = theme => ({
     }
 });
 
-class Accounts extends React.Component{
+class Account extends React.Component{
 
     constructor(props) {
         super(props);
 		this.state = {
-            employer: {},
-            clickedRecruiter: null
+            company: null
         };
-        this.Auth = new AuthFunctions();
     }
 
     componentWillUnmount = () => {
@@ -41,31 +32,17 @@ class Accounts extends React.Component{
     }
 
     componentDidMount = () => {
-        this.getEmployer();
+        this.getCompany();
     }
 
-    getEmployer = () => {
-        ApiCalls.get('/api/company/recruiter/list')
+    getCompany = () => {
+        ApiCalls.get('/api/company/list')
         .then((res)=>{    
             if(res == null) return
-            this.setState({ employer: res.data.employers[0] })
+            this.setState({ company: res.data.companies[0] })
         }).catch(errors => 
             console.log(errors.response.data)
         )
-    }
-    openAddRecruiter(){
-        this.setState({
-            openAddRecruiter: true
-        })
-    }
-    handleAddRecruiterClose(didChange) {
-        this.setState({
-            openAddRecruiter: false,
-            clickedRecruiter: false
-        })
-        if(didChange){
-            this.getRecruiters();
-        }
     }
 
     render(){ 
@@ -73,25 +50,11 @@ class Accounts extends React.Component{
         const { classes } = this.props; 
         return (
             <React.Fragment>
-
-                <div>
-                    <div className="pageHeading">Recruiters
-                        <IconButton onClick={()=>this.openAddRecruiter()}><Add/></IconButton>
-                    </div> 
-                    <ContactList
-                        company={this.state.company} />
-                </div>
-                <Drawer
-                    anchor="bottom"
-                    open={this.state.openAddRecruiter}
-                    onClose={this.handleAddRecruiterClose.bind(this)}
-                    >
-                    <AddRecruiter
-                        onClose={this.handleAddRecruiterClose.bind(this)} />
-                </Drawer>
+                {this.state.company != null && <ContactList
+                    company={this.state.company} />}
             </React.Fragment>
         );
     }
 };
 
-export default withStyles(styles)(Accounts);
+export default withStyles(styles)(Account);

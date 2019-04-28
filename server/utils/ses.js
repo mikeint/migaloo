@@ -27,6 +27,32 @@ function sendEmployerContactVerification(parms){
         else     console.log(data);           // successful response
     });
 }
+function sendUserInvite(user_id, email, company){
+    const params = {
+        "Source":"signup@migaloo.io",
+        "Template":"VerifyOrganizationEmail",
+        "Destinations":[
+          {
+            "Destination":{
+              "ToAddresses":[
+                "success@simulator.amazonses.com"
+                // email
+              ]
+            },
+            "TemplateData":JSON.stringify({ 
+              "companyName":company,
+              "verifyLink":"https://migaloo.io/link?token=dsfdsgsfdg",
+              "resendLink":"https://migaloo.io/link?token=dsfdsgsfdg",
+              "year":new Date().getFullYear()
+            })
+          }
+        ]
+    }
+    ses.sendTemplatedEmail(params, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else     console.log(data);           // successful response
+    });
+}
 function sendRecruiterVerification(parms){
     const params = {
         "Source":"signup@migaloo.io",
@@ -83,5 +109,6 @@ function sendSignupEmail(parms){
 module.exports = {
     sendEmployerContactVerification:sendEmployerContactVerification,
     sendRecruiterVerification:sendRecruiterVerification,
-    sendSignupEmail:sendSignupEmail
+    sendSignupEmail:sendSignupEmail,
+    sendUserInvite:sendUserInvite
 };

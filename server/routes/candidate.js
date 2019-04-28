@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../../config/passport');
+const passport = require('../config/passport');
 const moment = require('moment');
-const validateCandidateInput = require('../../validation/candidate');  
+const validateCandidateInput = require('../validation/candidate');  
 
-const db = require('../../config/db')
+const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const candidateTagsInsertHelper = new pgp.helpers.ColumnSet(['candidate_id', 'tag_id'], {table: 'candidate_tags'});

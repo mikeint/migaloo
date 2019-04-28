@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer'); 
-const sesRoute = require('./api/sesRoute');   
+const ses = require('./ses');   
 
 router.post("/", (req, res) => {
     //console.log(req.body);
@@ -51,7 +51,7 @@ router.post("/signup", (req, res) => {
         name: req.body.name,
         companyName: req.body.companyName
     }
-    sesRoute.sendSignupEmail(params)
+    ses.sendSignupEmail(params)
     res.json({success:true})
 })
 module.exports = router;

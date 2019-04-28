@@ -1,28 +1,63 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../../config/passport');
+const passport = require('../config/passport');
 const moment = require('moment');
 
 //load input validation
-const validateCompanyInput = require('../../validation/company');  
+const validateEmployerInput = require('../validation/employer');  
 
-const db = require('../../config/db')
+const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
+const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
+const upload = generateUploadMiddleware('profile_image/')
+
+const generateImageFileNameAndValidation = (req, res, next) => {
+    // Validate this candidate is with this recruiter
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+    }
+    var now = Date.now()
+    req.params.fileName = jwtPayload.id+"_image_"+now.toString()
+    req.params.jwtPayload = jwtPayload
+    next()
+}
 
 /**
- * List company accounts
- * @route GET api/company/listCompanys
- * @group company - Company
+ * Upload recruiter profile image
+ * @route GET api/employer/uploadImage
+ * @group employer - Employer
  * @param {Object} body.optional
  * @returns {object} 200 - A map of profile information
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.get('/list', passport.authentication,  (req, res) => {
-    const jwtPayload = req.body.jwtPayload;
-    if(jwtPayload.userType !== 2 || jwtPayload.userType !== 1){
-        return res.status(400).json({success:false, error:"Invalid user"})
+router.post('/uploadImage', passport.authentication, generateImageFileNameAndValidation, upload.any('filepond'), (req, res) => {
+    var jwtPayload = req.params.jwtPayload;
+    postgresdb.none('UPDATE employer SET image_id=$1 WHERE company_id = $2', [req.params.finalFileName, jwtPayload.id])
+    .then((data) => {
+        res.json({success:true, image_id:req.params.finalFileName})
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
+
+/**
+ * List employer accounts
+ * @route GET api/employer/listEmployers
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/listEmployers', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 2){
+        return res.status(400).json({success:false, error:"Must be an account manager for this"})
     }
     
     postgresdb.any('\
@@ -33,14 +68,12 @@ router.get('/list', passport.authentication,  (req, res) => {
             city, state, country, lat, lon, \
             state_code as "stateCode", \
             country_code as "countryCode" \
-        FROM login l \
-        INNER JOIN company_contact ec ON ec.company_contact_id = l.user_id \
-        INNER JOIN company e ON e.company_id = l.user_id \
-        INNER JOIN user_master e ON e.company_id = l.user_id \
+        FROM employer e \
+        INNER JOIN company_contact ec ON ec.company_id = e.company_id \
         LEFT JOIN address a ON a.address_id = e.address_id \
         WHERE ec.company_contact_id = $1', [jwtPayload.id])
     .then((data) => {
-        res.json({success:true, companies:data})
+        res.json({success:true, employers:data})
     })
     .catch(err => {
         console.log(err)
@@ -49,16 +82,16 @@ router.get('/list', passport.authentication,  (req, res) => {
 });
 
 /**
- * Add company account
- * @route POST api/company/addCompany
- * @group company - Company
+ * Add employer account
+ * @route POST api/employer/addEmployer
+ * @group employer - Employer
  * @param {Object} body.optional
  * @returns {object} 200 - An array of user info
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/addCompany', passport.authentication,  (req, res) => {
-    const { errors, isValid } = validateCompanyInput(req.body);
+router.post('/addEmployer', passport.authentication,  (req, res) => {
+    const { errors, isValid } = validateEmployerInput(req.body);
     //check Validation
     if(!isValid) {
         return res.status(400).json(errors);
@@ -83,7 +116,7 @@ router.post('/addCompany', passport.authentication,  (req, res) => {
         return q1.then((addr_ret)=>{
             return t.one('INSERT INTO login(user_type_id) VALUES (4) RETURNING user_id')
             .then((user_ret) => {
-                const q3 = t.none('INSERT INTO company(company_id, company_name, department, address_id) VALUES ($1, $2, $3, $4)',
+                const q3 = t.none('INSERT INTO employer(company_id, company_name, department, address_id) VALUES ($1, $2, $3, $4)',
                                 [user_ret.user_id, ...fieldUpdates, addr_ret.address_id]);
                 const q4 = t.none('INSERT INTO company_contact(company_id, company_contact_id, is_primary) VALUES ($1, $2, true)',
                                 [user_ret.user_id, jwtPayload.id]);
@@ -115,16 +148,16 @@ router.post('/addCompany', passport.authentication,  (req, res) => {
     });
 });
 /**
- * Set company profile information
- * @route POST api/company/setCompanyProfile
- * @group company - Company
+ * Set employer profile information
+ * @route POST api/employer/setEmployerProfile
+ * @group employer - Employer
  * @param {Object} body.optional
  * @returns {object} 200 - An array of user info
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
-    const { errors, isValid } = validateCompanyInput(req.body);
+router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
+    const { errors, isValid } = validateEmployerInput(req.body);
     //check Validation
     if(!isValid) {
         return res.status(400).json(errors);
@@ -138,12 +171,12 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
         var fields = ['company_name', 'department'];
         var addressFields = ['address_line_1', 'address_line_2', 'city', 'state', 'country'];
         return t.one('SELECT ec.company_id, first_name, last_name, phone_number, company_name, department, e.address_id, address_line_1, address_line_2, city, state, country \
-                        FROM company e \
+                        FROM employer e \
                         INNER JOIN company_contact ec ON ec.company_id = e.company_id AND ec.is_primary \
                         INNER JOIN account_manager ac ON ac.account_manager_id = ec.company_contact_id \
                         LEFT JOIN address a ON e.address_id = a.address_id\
-                        WHERE ec.company_contact_id = $1 AND e.company_id = $2', [jwtPayload.id, bodyData.companyId]).then((data)=>{
-            var company_id = bodyData.companyId;
+                        WHERE ec.company_contact_id = $1 AND e.company_id = $2', [jwtPayload.id, bodyData.employerId]).then((data)=>{
+            var company_id = bodyData.employerId;
             var addressId = data.address_id;
             var addressIdExists = (data.address_id != null);
             var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:data[f]);
@@ -159,7 +192,7 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
             }
             return q1.then((addr_ret)=>{
                 addressId = addressIdExists ? addressId : addr_ret.address_id
-                const q2 = t.none('UPDATE company SET company_name=$1, department=$2 address_id=$3 WHERE company_id = $4',
+                const q2 = t.none('UPDATE employer SET company_name=$1, department=$2 address_id=$3 WHERE company_id = $4',
                                 [...fieldUpdates, addressId, company_id]);
                 return q2
                     .then(() => {
@@ -189,18 +222,18 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
     });
 });
 
-const companyContactHelper = new pgp.helpers.ColumnSet(['company_contact_id', 'company_id'], {table: 'company_contact'});
+const employerContactHelper = new pgp.helpers.ColumnSet(['company_contact_id', 'company_id'], {table: 'company_contact'});
 /**
- * Add a new contact to an company, must be an admin for the company to do so
- * @route POST api/company/addContactToCompany
- * @group company - Company
+ * Add a new contact to an employer, must be an admin for the employer to do so
+ * @route POST api/employer/addContactToEmployer
+ * @group employer - Employer
  * @param {Object} body.optional
  * @returns {object} 200 - An array of user info
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/addContactToCompany', passport.authentication,  (req, res) => {
-    // const { errors, isValid } = validateCompanyInput(req.body);
+router.post('/addContactToEmployer', passport.authentication,  (req, res) => {
+    // const { errors, isValid } = validateEmployerInput(req.body);
     //check Validation
     // if(!isValid) {
     //     return res.status(400).json(errors);
@@ -208,7 +241,7 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
     /**
      * Input: Must be admin
      * userIds <list>
-     * companyId
+     * employerId
      */
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
@@ -220,15 +253,15 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
         return t.one('SELECT ec.company_id \
                         FROM company_contact ec \
                         WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
-                        {company_contact_id:jwtPayload.id, company_id:bodyData.companyId})
+                        {company_contact_id:jwtPayload.id, company_id:bodyData.employerId})
             .then(()=>{
                 const data = bodyData.userIds.map(id=>{
                     return {
                         company_contact_id: id,
-                        company_id: bodyData.companyId
+                        company_id: bodyData.employerId
                     }
                 })
-                const query = pgp.helpers.insert(data, companyContactHelper);
+                const query = pgp.helpers.insert(data, employerContactHelper);
                 return t.none(query)
                 .then(()=>{
                     // TODO: send request email to contact to make a password
@@ -242,7 +275,7 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
             })
             .catch(err => {
                 console.log(err)
-                res.status(400).json({success: false, error:"Either not with this company, or not an admin"})
+                res.status(400).json({success: false, error:"Either not with this employer, or not an admin"})
             });
     })
     .then(() => {
@@ -252,8 +285,8 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
         return res.status(500).json({success: false, error:err})
     });
 });
-router.post('/removeContactFromCompany', passport.authentication,  (req, res) => {
-    // const { errors, isValid } = validateCompanyInput(req.body);
+router.post('/removeContactFromEmployer', passport.authentication,  (req, res) => {
+    // const { errors, isValid } = validateEmployerInput(req.body);
     //check Validation
     // if(!isValid) {
     //     return res.status(400).json(errors);
@@ -261,7 +294,7 @@ router.post('/removeContactFromCompany', passport.authentication,  (req, res) =>
     /**
      * Input: Must be admin
      * userId
-     * companyId
+     * employerId
      */
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
@@ -275,11 +308,11 @@ router.post('/removeContactFromCompany', passport.authentication,  (req, res) =>
         return t.one('SELECT ec.company_id \
                         FROM company_contact ec \
                         WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
-                        {company_contact_id:jwtPayload.id, company_id:bodyData.companyId})
+                        {company_contact_id:jwtPayload.id, company_id:bodyData.employerId})
             .then(()=>{
                 return t.none('DELETE FROM company_contact \
                 WHERE company_contact_id = ${company_contact_id} AND company_id = ${company_id}',
-                {company_contact_id:bodyData.userId, company_id:bodyData.companyId})
+                {company_contact_id:bodyData.userId, company_id:bodyData.employerId})
                 .then(()=>{
                     // TODO: send request email to contact to make a password
                     res.status(200).json({success: true})
@@ -292,7 +325,7 @@ router.post('/removeContactFromCompany', passport.authentication,  (req, res) =>
             })
             .catch(err => {
                 console.log(err)
-                res.status(400).json({success: false, error:"Either not with this company, or not an admin"})
+                res.status(400).json({success: false, error:"Either not with this employer, or not an admin"})
             });
     })
     .then(() => {
@@ -305,24 +338,24 @@ router.post('/removeContactFromCompany', passport.authentication,  (req, res) =>
 
 /**
  * Change contact's admin status
- * @route POST api/company/setContactAdmin
- * @group company - Company
+ * @route POST api/employer/setContactAdmin
+ * @group employer - Employer
  * @param {Object} body.optional
  * @returns {object} 200 - An array of user info
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
 router.post('/setContactAdmin', passport.authentication,  (req, res) => {
-    // const { errors, isValid } = validateCompanyInput(req.body);
+    // const { errors, isValid } = validateEmployerInput(req.body);
     //check Validation
     // if(!isValid) {
     //     return res.status(400).json(errors);
     // }
     /**
      * Input: Must be admin
-     * companyContactId
+     * employerContactId
      * isPrimary
-     * companyId
+     * employerId
      */
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
@@ -330,10 +363,10 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:"Must be an account manager for this"})
     }
     
-    var companyContactId = req.body.companyContactId
-    if(companyContactId == null)
-        return res.status(400).json({success:false, error:"Missing companyContactId field"})
-    if(companyContactId == jwtPayload.id)
+    var employerContactId = req.body.employerContactId
+    if(employerContactId == null)
+        return res.status(400).json({success:false, error:"Missing employerContactId field"})
+    if(employerContactId == jwtPayload.id)
         return res.status(400).json({success:false, error:"Can't change your own administrator setting"})
     var isPrimary = req.body.isPrimary
     if(isPrimary == null)
@@ -343,10 +376,10 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
         return t.one('SELECT ec.company_id \
                         FROM company_contact ec \
                         WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
-                        {company_contact_id:jwtPayload.id, company_id:bodyData.companyId})
+                        {company_contact_id:jwtPayload.id, company_id:bodyData.employerId})
             .then(()=>{
-                return t.none('UPDATE company_contact SET is_primary=${is_primary} WHERE company_contact_id = ${companyContactId}',
-                    {is_primary:isPrimary, companyContactId:companyContactId})
+                return t.none('UPDATE company_contact SET is_primary=${is_primary} WHERE company_contact_id = ${employerContactId}',
+                    {is_primary:isPrimary, employerContactId:employerContactId})
                 .then(()=>{
                     // TODO: send request email to contact to make a password
                     res.status(200).json({success: true})
@@ -360,7 +393,7 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
             })
             .catch(err => {
                 console.log(err)
-                res.status(400).json({success: false, error:"Either not with this company, or not an admin"})
+                res.status(400).json({success: false, error:"Either not with this employer, or not an admin"})
             });
     })
     .then(() => {
@@ -372,17 +405,17 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
 });
 
 /**
- * Get company contact list
- * @route GET api/company/getCompanyContactList
- * @group company - Company
+ * Get employer contact list
+ * @route GET api/employer/getEmployerContactList
+ * @group employer - Employer
  * @param {Object} body.optional
  * @returns {object} 200 - A list of contacts
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.get('/getCompanyContactList/:companyId', passport.authentication,  getCompanyContactList)
-router.get('/getCompanyContactList/:companyId/:page', passport.authentication,  getCompanyContactList)
-function getCompanyContactList(req, res) {
+router.get('/getEmployerContactList/:employerId', passport.authentication,  getEmployerContactList)
+router.get('/getEmployerContactList/:employerId/:page', passport.authentication,  getEmployerContactList)
+function getEmployerContactList(req, res) {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
         return res.status(400).json({success:false, error:"Must be an account manager for this"})
@@ -394,7 +427,7 @@ function getCompanyContactList(req, res) {
         return t.one('SELECT ec.company_id \
                         FROM company_contact ec \
                         WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
-                        {company_contact_id:jwtPayload.id, company_id:req.params.companyId})
+                        {company_contact_id:jwtPayload.id, company_id:req.params.employerId})
             .then(()=>{
                 return t.any('\
                     SELECT ec.company_contact_id, um.email, um.first_name, um.last_name, \
@@ -406,7 +439,7 @@ function getCompanyContactList(req, res) {
                     WHERE ec.company_id = ${company_id} AND um.active \
                     ORDER BY um.last_name ASC, um.first_name ASC \
                     OFFSET ${page} \
-                    LIMIT 10', {company_id:req.params.companyId, page:(page-1)*10})
+                    LIMIT 10', {company_id:req.params.employerId, page:(page-1)*10})
                 .then((data) => {
                     // Marshal data
                     data = data.map(m=>{
@@ -426,7 +459,7 @@ function getCompanyContactList(req, res) {
             })
             .catch(err => {
                 console.log(err)
-                res.status(400).json({success: false, error:"Either not with this company, or not an admin"})
+                res.status(400).json({success: false, error:"Either not with this employer, or not an admin"})
             });
     })
     .then((data) => { })
@@ -437,9 +470,9 @@ function getCompanyContactList(req, res) {
 }
 
 /**
- * Get company contact list
- * @route GET api/company/getCompanyContactList
- * @group company - Company
+ * Get employer contact list
+ * @route GET api/employer/getEmployerContactList
+ * @group employer - Employer
  * @param {Object} body.optional
  * @returns {object} 200 - A list of contacts
  * @returns {Error}  default - Unexpected error

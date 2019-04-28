@@ -2,23 +2,18 @@ const express = require('express');
 const router = express.Router();
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
-const passport = require('../../config/passport');
+const passport = require('../config/passport');
 
-const postgresdb = require('../../config/db').postgresdb;
+const postgresdb = require('../config/db').postgresdb;
 
 //load input validation
-const validateRegisterInput = require('../../validation/register'); 
-const validateLoginInput = require('../../validation/login');
+const validateRegisterInput = require('../validation/register'); 
+const validateLoginInput = require('../validation/login');
 
 // TODO: encrypt JWT with public key
-function createJWT(userId, email, type){
+function createJWT(payload){
     return new Promise((resolve, reject)=>{
         //create jwt payload
-        const payload = {
-            id: userId,
-            userType: type,
-            email: email
-        }
         //make JWT token (sign token) (payload obj, secretKey, expires obj) 
         passport.signToken(payload).then((token)=>{
             resolve({
@@ -57,11 +52,16 @@ router.post('/login', (req, res) => {
         }
     }else{
         const password = req.body.password;
-        postgresdb.one('SELECT user_id, passwordhash, l.user_type_id, ut.user_type_name\
+        postgresdb.one('SELECT l.user_id, l.passwordhash, l.user_type_id, um.user_type_name, um.is_primary\
                 FROM login l \
-                INNER JOIN user_type ut ON l.user_type_id = ut.user_type_id \
-                WHERE email = $1', email).then(user => {
-            console.log(user)
+                INNER JOIN user_master um ON l.user_id = um.user_id \
+                WHERE l.email = $1', email).then(user => {
+            const payload = {
+                id: user.user_id,
+                userType: user.user_type_id,
+                email: email,
+                isPrimary: user.is_primary
+            }
             if (!user) {
                 errors.email = 'Email not registered';
                 console.log('Email not registered');
@@ -69,7 +69,7 @@ router.post('/login', (req, res) => {
             } else {
                 bcrypt.compare(password, user.passwordhash).then(isMatch => {
                     if(isMatch) {
-                        createJWT(user.user_id, email, user.user_type_id).then((token)=>{
+                        createJWT(payload).then((token)=>{
                             res.status(200).json(token)
                         })
                         .catch(err => {
@@ -126,33 +126,46 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                     const q1 = t.one('INSERT INTO login (email, passwordhash, user_type_id) VALUES ($1, $2, $3) RETURNING user_id',
                                     [body.email, hash, type]);
                     return q1.then((login_ret)=>{
-                        console.log(login_ret)
+                        const payload = {
+                            id: login_ret.user_id,
+                            userType: type,
+                            email: body.email,
+                            isPrimary: true
+                        }
                         if(type == 1){ // Recruiter
-                            var q2 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
-                                    [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
+                            var q2 = t.one('INSERT INTO company (company_name, address_id) VALUES ($1, $2) RETURNING company_id',
+                                    [body.companyName, null])
                             return q2
-                                .then(() => {
-                                    createJWT(login_ret.user_id, body.email, type).then((token)=>{
-                                        res.status(200).json(token)
+                                .then((employer_data) => {
+                                    var q3 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
+                                            [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
+                                    var q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
+                                        [login_ret.user_id, employer_data.company_id])
+                                    return t.batch([q3, q4]).then(() => {
+                                        return q3.then(() => {
+                                            createJWT(payload).then((token)=>{
+                                                res.status(200).json(token)
+                                            })
+                                            .catch(err => {
+                                                console.log(err)
+                                                res.status(400).json({success: false, error:err})
+                                            });
+                                            return []
+                                        })
                                     })
-                                    .catch(err => {
-                                        console.log(err)
-                                        res.status(400).json({success: false, error:err})
-                                    });
-                                    return []
                                 })
                                 .catch(err => {
                                     console.log(err)
                                     res.status(400).json({success: false, error:err})
                                 });
                         }else if(type == 2){ // Employer
-                            var q2 = t.one('INSERT INTO employer (company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING company_id',
+                            var q2 = t.one('INSERT INTO company (company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING company_id',
                                     [body.companyName, null])
                             return q2.then((employer_data) => {
-                                var q3 = t.none('INSERT INTO company_contact (company_contact_id, company_id, first_name, last_name, phone_number) VALUES ($1, $2, $3, $4, $5)',
+                                var q3 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
                                     [login_ret.user_id, employer_data.company_id, body.firstName, body.lastName, body.phoneNumber])
                                 return q3.then(() => {
-                                    createJWT(login_ret.user_id, body.email, type).then((token)=>{
+                                    createJWT(payload).then((token)=>{
                                         res.status(200).json(token)
                                     })
                                     .catch(err => {

@@ -4,6 +4,7 @@ import RecruiterProfile from './Profile/Profile';
 import JobList from './JobList/JobList';
 import CandidateList from './CandidateList/CandidateList';
 import AddCandidate from './AddCandidate/AddCandidate';
+import Account from './Account/Account';
 import NavBar from '../../components/NavBar/NavBar';
 import Chat from '../../components/Chat/Chat';
 import BuildActiveJobs from './JobList/BuildActiveJobs/BuildActiveJobs';
@@ -15,6 +16,7 @@ function RecruiterRouter({ match }) {
             <div className="mainContainer">
                 <Switch>
                     <Route strict path="/recruiter/profile" component={RecruiterProfile} />
+                    <Route strict path="/recruiter/account" component={Account} />
                     <Route strict path="/recruiter/candidateList/:postId" component={CandidateList} />
                     <Route strict path="/recruiter/candidate/:candidateId" component={CandidateList} />
                     <Route strict path="/recruiter/candidateList" component={CandidateList} />

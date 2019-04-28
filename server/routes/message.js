@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../../config/passport');
+const passport = require('../config/passport');
 const moment = require('moment');
 
-const validateMessageInput = require('../../validation/message');  
-const db = require('../../config/db')
+const validateMessageInput = require('../validation/message');  
+const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const messagesInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'message'], {table: 'messages'});
@@ -192,7 +192,7 @@ function listMessages(req, res){
         LEFT JOIN company_contact ec2 ON ms.user_id_2 = ec2.company_id \
         ':'')+
         'WHERE '+(jwtPayload.userType == 1 ? 
-            'ms.user_id_1 = $1 OR ms.user_id_2 = $1' :
+            '(ms.user_id_1 = $1 OR ms.user_id_2 = $1) AND jp.recruiter_id = $1' :
             'ec1.company_contact_id = $1 OR ec2.company_contact_id = $1')+
         ' \
         ORDER BY coalesce(m.created_on, ms.created_on) DESC \

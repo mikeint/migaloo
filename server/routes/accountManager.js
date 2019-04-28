@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../../config/passport');
+const passport = require('../config/passport');
 const moment = require('moment');
 
 //load input validation
-const validateEmployerInput = require('../../validation/employer');  
+const validateEmployerInput = require('../validation/employer');  
 
-const db = require('../../config/db')
+const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
-const generateUploadMiddleware = require('../upload').generateUploadMiddleware
+const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
 const upload = generateUploadMiddleware('profile_image/')
 
 const generateImageFileNameAndValidation = (req, res, next) => {
