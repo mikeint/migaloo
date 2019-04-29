@@ -10,7 +10,7 @@ class Employer extends Component {
                     <NavBar />
                 </div>
                 <div className="lp2_body">
-                    Body
+                    Employer
                 </div>
             </div>
         );

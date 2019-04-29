@@ -1,5 +1,4 @@
-.lp2_navBar #navBar {
-    width: 400px;
+.lp2_navBar #navBar { 
     height: 100vh;
     padding: 10px 30px;
     background:#263c54;
@@ -18,18 +17,37 @@
 
 .lp2_navBar .mobileWhaleContainer .whaleContainer {
     width: 170px;
+    margin-top: 4px;
+    margin-left: 4px;
 }
 .lp2_navBar .mobileWhaleContainer .whaleWater {
     transform: scale(2);
 } 
 .lp2_navBar .mobileWhaleContainer .whaleSpray { 
-    margin-left: -44px;
-    margin-top: -1px; 
+    margin-left: -37px;
+    margin-top: -5px;
+}
+ 
+.lp2_navBar #navBar a {
+    display: flex;
+    color: #ffffffa1;
+    font-size: 28px; 
+    padding-bottom: 20px;
+}
+.lp2_navBar #navBar a:hover {
+    color: #ffffff;
+}
+
+.navBarMobileItem a { 
+    display: flex;
+    color: #263c54;
+    font-size: 22px;
+    font-weight: bold; 
+    padding: 15px 40px; 
 }
 
 
-
-
+/* NAV-HAMBURGER */
 #nav-icon3 {
     width: 45px;
     height: 45px;
@@ -63,7 +81,6 @@
     -o-transition: .25s ease-in-out;
     transition: .25s ease-in-out;
 }
-/* Icon 3 */
 #nav-icon3 span:nth-child(1) {
     top: 8px;
 }
@@ -95,7 +112,7 @@
     width: 0%;
     left: 50%;
 }
-
+/* end NAV-HAMBURGER */
 
 
 

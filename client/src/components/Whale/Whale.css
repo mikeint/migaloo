@@ -11,19 +11,22 @@
 }
 .whaleSpray {
     position: absolute;
-    margin-left: -59px;
-    margin-top: 4px;
+    margin-left: -49px;
+    margin-top: 3px;
     transition: 0.3s;
     z-index: 1;
 } 
+.whaleContainer svg {
+    transform: scale(4);
+}
 
 @media only screen and (max-width: 768px) {
     .whaleContainer {
         width: 200px;
     } 
     .whaleSpray { 
-        margin-left: -46px;
-        margin-top: -2px;
+        margin-left: -37px;
+        margin-top: -5px;
     }
 }
 

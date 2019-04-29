@@ -1,20 +1,20 @@
 import React, { Component } from "react";  
-import './Recruiter.css';
+import './Team.css';
 import NavBar from "../components/NavBar/NavBar"
  
-class Recruiter extends Component { 
+class Team extends Component { 
     render() {
-        return ( 
+        return (
             <div className="lp2_container">
                 <div className="lp2_menu">
                     <NavBar />
                 </div>
                 <div className="lp2_body">
-                    Recruiter
+                    Team
                 </div>
-            </div> 
+            </div>
         );
     }
 }
 
-export default Recruiter;
+export default Team;

@@ -17,6 +17,11 @@ import SignUpFormRecruiter from './landing_1/components/SignUpFormRecruiter/Sign
 import Landing from './landing_2/Landing/Landing';
 import RecruiterPage from './landing_2/Recruiter/Recruiter';
 import EmployerPage from './landing_2/Employer/Employer';
+import HowItWorks from './landing_2/HowItWorks/HowItWorks';
+import Pricing from './landing_2/Pricing/Pricing';
+import Contact from './landing_2/Contact/Contact';
+import About from './landing_2/About/About';
+import Team from './landing_2/Team/Team';
 
 import './App.css';
 
@@ -75,9 +80,15 @@ class App extends Component {
                         </Switch>
                         <Route exact path='/login' render={ () => (<Login />) } />
                         <Route exact path="/" component={Landing} />
-                        <Route exact path="/about" component={AboutTeamPage} /> 
+                        <Route exact path="/AboutTeamPage" component={AboutTeamPage} /> 
+
                         <Route exact path="/recruiterPage" component={RecruiterPage} />
                         <Route exact path="/employerPage" component={EmployerPage} />
+                        <Route exact path="/howItWorks" component={HowItWorks} />
+                        <Route exact path="/pricing" component={Pricing} />
+                        <Route exact path="/contact" component={Contact} />
+                        <Route exact path="/about" component={About} />
+                        <Route exact path="/team" component={Team} />
 
                         <Route exact path="/signUpFormEmployer" component={SignUpFormEmployer} /> 
                         <Route exact path="/signUpFormRecruiter" component={SignUpFormRecruiter} /> 

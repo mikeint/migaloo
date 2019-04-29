@@ -27,6 +27,13 @@ class NavBar extends Component {
             <div className="lp2_navBar">  
                 <div id="navBar">
                     <Link to="/"><div className="whaleClick"><Whale {...whaleOptions}/></div></Link>
+                    <Link to="/employerPage">For Employers</Link>
+                    <Link to="/recruiterPage">For Recruiters</Link>
+                    <Link to="/howItWorks">How it works</Link>
+                    <Link to="/pricing">Pricing</Link>
+                    <Link to="/contact">Contact</Link>
+                    <Link to="/about">About</Link>
+                    <Link to="/team">Team</Link>
                     {this.props.page}
                 </div>
 
@@ -42,12 +49,19 @@ class NavBar extends Component {
 
                 <SwipeableDrawer
                     anchor="left" 
+                    className="navBarMobileItem"
                     open={this.state.showOverlay}
                     onClose={()=>this.setState({"showOverlay":false, menuOpen: !this.state.menuOpen})}
                     onOpen={()=>this.setState({"showOverlay":true,  menuOpen: !this.state.menuOpen})}
                 >  
                     <div className="side-menu">
-                        some nav items here     
+                        <Link to="/employerPage">For Employers</Link>
+                        <Link to="/recruiterPage">For Recruiters</Link>
+                        <Link to="/howItWorks">How it works</Link>
+                        <Link to="/pricing">Pricing</Link>
+                        <Link to="/contact">Contact</Link>
+                        <Link to="/about">About</Link>
+                        <Link to="/team">Team</Link>  
                     </div>
                 </SwipeableDrawer> 
             </div> 
