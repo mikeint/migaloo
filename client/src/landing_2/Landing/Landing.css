@@ -76,8 +76,14 @@
     background: #263c54; 
 } 
 .lp2_body {
-    flex: 0 0 100%; 
-    background: #546f82;
+    flex: 0 0 calc(100% - 300px); 
+    background: #fff;
+    background-image: url("../../files/images/landingPage/lp2_bottomS.png");
+    background-position: bottom;
+    background-repeat: no-repeat;
+    background-size: auto;
+    overflow-y: scroll;
+    background-color: #263c5417;
 }
 @media only screen and (max-width: 1024px) { 
     .lp2_container {

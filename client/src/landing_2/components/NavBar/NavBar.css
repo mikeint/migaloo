@@ -1,5 +1,6 @@
 .lp2_navBar #navBar { 
     height: 100vh;
+    width: 300px;
     padding: 10px 30px;
     background:#263c54;
 }
@@ -31,11 +32,15 @@
 .lp2_navBar #navBar a {
     display: flex;
     color: #ffffffa1;
-    font-size: 28px; 
+    font-size: 24px; 
     padding-bottom: 20px;
 }
 .lp2_navBar #navBar a:hover {
     color: #ffffff;
+}
+
+#navBarMobile {
+    display: none;
 }
 
 .navBarMobileItem a { 

@@ -1,0 +1,130 @@
+.lp2_recruiter .fywText {
+    width: 260px;
+    text-align: center;
+    background-color: #263c54;
+    color: white;
+    font-size: 30px;
+    padding-bottom:5px; 
+    font-weight: bold;
+    float: right;
+    margin-right: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    transition: 0.3s;
+}
+
+.lp2_recruiter .fullRecruiterText {
+    width: 100%;
+    font-size: 32px;
+    display: inline-block;
+    color: #FFFFFF;
+}
+.lp2_recruiter .r1_Background {
+    width: 709px;
+    height: 39px;
+    background-color: #263c54;
+    color: #FFFFFF;
+    margin-bottom: 3px;
+    font-size: 40px;
+    font-weight: bold;
+    padding-left: 5px;
+}
+.lp2_recruiter .r1_BackgroundLong {
+    margin-top: 20px;
+}
+.lp2_recruiter .r1_BackgroundShorter {
+    width: 600px;
+}
+
+.lp2_recruiter .flex {
+    display: flex;
+    justify-content: center;
+    flex: 1 0;
+    padding: 20px;
+    flex-wrap: wrap;
+    font-size: 25px;
+    max-width: 1400px;
+    margin: auto;
+}
+.lp2_recruiter .r_para {
+    margin: 10px;
+    border-radius: 10px;
+    background: #6f90a112;
+}
+
+.lp2_recruiter .sc_Background {
+    width: 350px;
+    height: 39px;
+    background-color: #263c54;
+    color: #FFFFFF;
+    margin-bottom: 3px;
+    font-size: 40px;
+    font-weight: bold;
+    padding-left: 5px; 
+}
+.lp2_recruiter .opacBackground { 
+    padding: 50px 10px;
+}
+
+.lp2_recruiter .whaleCool { 
+    justify-content: center;
+    align-items: flex-end;
+}
+.lp2_recruiter .soundCool { 
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+.lp2_recruiter .flexCenter {
+    text-align: center;
+}
+
+.lp2_recruiter .whaleCool img {
+    width: 230px; 
+    margin-bottom: -4px;
+}
+
+.signUpBtnHome {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    color: #fff;
+    background: #263c54;
+    cursor: pointer;
+    font-size: 32px;
+    transition: 0.3s;
+    animation: fadein 1.3s;
+    -moz-animation: fadein 1.3s; /* Firefox */
+    -webkit-animation: fadein 1.3s; /* Safari and Chrome */
+    -o-animation: fadein 1.3s; /* Opera */
+    float: left;
+} 
+.signUpBtnHome img {
+    width: 40px;
+    float: right;
+    margin-top: -9px;
+}  
+.signUpBtnHome:hover {
+    background-color: #5a718194; 
+}  
+@keyframes fadein {from { opacity:0; } to { opacity:1; }}
+@-moz-keyframes fadein {from { opacity:0; } to { opacity:1; }}/* Firefox */
+@-webkit-keyframes fadein {from { opacity:0; } to { opacity:1; }}/* Safari and Chrome */
+@-o-keyframes fadein {from { opacity:0; } to { opacity: 1; }}/* Opera */
+
+
+@media (max-width: 1024px){
+    .lp2_recruiter .r1_Background {
+        width: 100%;
+        text-align: center;
+        font-size: 30px;
+        height: 30px;
+    }
+    .lp2_recruiter .flex { 
+        flex: 1 0 100%;
+    } 
+    .lp2_recruiter .fywText {
+        width: 160px;
+        font-size: 22px;
+    }
+}

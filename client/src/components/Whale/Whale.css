@@ -2,17 +2,18 @@
 /* ----- WHAlE LOGO */
  
 .whaleContainer {
-    width: 300px;
+    width: 230px;
     transition: 0.3s;
     position: relative;
+    overflow: hidden;
 }
 .whaleContainer img {
     width: 100%;
 }
 .whaleSpray {
     position: absolute;
-    margin-left: -49px;
-    margin-top: 3px;
+    margin-left: -43px;
+    margin-top: -6px;
     transition: 0.3s;
     z-index: 1;
 } 
