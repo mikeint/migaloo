@@ -63,7 +63,7 @@
     padding-left: 5px; 
 }
 .lp2_recruiter .opacBackground { 
-    padding: 50px 10px;
+    padding: 20px 10px;
 }
 
 .lp2_recruiter .whaleCool { 
@@ -84,7 +84,7 @@
     margin-bottom: -4px;
 }
 
-.signUpBtnHome {
+.lp2_recruiter .signUpBtnHome {
     width: 100%;
     text-align: center;
     padding: 20px;
@@ -93,32 +93,24 @@
     cursor: pointer;
     font-size: 32px;
     transition: 0.3s;
-    animation: fadein 1.3s;
-    -moz-animation: fadein 1.3s; /* Firefox */
-    -webkit-animation: fadein 1.3s; /* Safari and Chrome */
-    -o-animation: fadein 1.3s; /* Opera */
-    float: left;
+    margin-bottom: 100px;
 } 
-.signUpBtnHome img {
+.lp2_recruiter .signUpBtnHome img {
     width: 40px;
     float: right;
     margin-top: -9px;
 }  
-.signUpBtnHome:hover {
+.lp2_recruiter .signUpBtnHome:hover {
     background-color: #5a718194; 
 }  
-@keyframes fadein {from { opacity:0; } to { opacity:1; }}
-@-moz-keyframes fadein {from { opacity:0; } to { opacity:1; }}/* Firefox */
-@-webkit-keyframes fadein {from { opacity:0; } to { opacity:1; }}/* Safari and Chrome */
-@-o-keyframes fadein {from { opacity:0; } to { opacity: 1; }}/* Opera */
-
+ 
 
 @media (max-width: 1024px){
     .lp2_recruiter .r1_Background {
         width: 100%;
         text-align: center;
-        font-size: 30px;
-        height: 30px;
+        font-size: 24px;
+        height: 24px;
     }
     .lp2_recruiter .flex { 
         flex: 1 0 100%;

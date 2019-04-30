@@ -77,20 +77,22 @@
 } 
 .lp2_body {
     flex: 0 0 calc(100% - 300px); 
-    background: #fff;
+    background: #263c5417;
     background-image: url("../../files/images/landingPage/lp2_bottomS.png");
     background-position: bottom;
     background-repeat: no-repeat;
     background-size: auto;
-    overflow-y: scroll;
-    background-color: #263c5417;
 }
 @media only screen and (max-width: 1024px) { 
     .lp2_container {
-        display: unset;
+        display: unset; 
     }
-    .lp2_body {
-        height: calc(100vh - 50px);
+    .lp2_body { 
+        flex: 0 0 calc(100% - 50px); 
+        background-image: url("../../files/images/landingPage/lp2_bottomSM.png");
+        background-position: bottom;
+        background-repeat: no-repeat;
+        background-size: contain;
     }
 }
 /* LANDING STRUCTURE */
