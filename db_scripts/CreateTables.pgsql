@@ -80,6 +80,7 @@ CREATE TABLE login (
     passwordhash varchar(128),
     created_on timestamp default NOW(),
     last_login timestamp,
+    email_verified boolean default false,
     user_type_id int REFERENCES user_type(user_type_id),
     PRIMARY KEY(user_id)
 );

@@ -3,6 +3,7 @@ const router = express.Router();
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const passport = require('../config/passport');
+const ses = require('../utils/ses');
 
 const postgresdb = require('../config/db').postgresdb;
 
@@ -33,7 +34,7 @@ router.post('/saml/callback', passport.passportObject.authenticate('saml', {
   }), function (req, res) {
     res.redirect('/')
   })
-// @route       GET api/user/login
+// @route       GET api/auth/login
 // @desc        Login user route
 // @access      Public
 router.post('/login', (req, res) => {
@@ -102,7 +103,7 @@ function checkEmailExists(email){
     })
 }
 
-// @route       GET api/user/register
+// @route       GET api/auth/register
 // @desc        Register route
 // @access      Public
 router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
@@ -207,7 +208,27 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
     });
 });
 
-// @route       GET api/user/current
+// @route       POST api/auth/resetPassword
+// @desc        Reset password route
+// @access      Public
+router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+    var body = req.body;
+    passport.decodeToken(body.token).then(payload=>{
+        bcrypt.hash(body.password, 10).then((hash)=>{
+            postgresdb.none('UPDATE login SET passwordhash=${password} WHERE user_id=${user_id}',
+                            {user_id:payload.user_id, password: body.password})
+                .then(() => {
+                    res.json({success:true})
+                })
+        })
+    }).catch(err=>res.status(400).json(err))
+});
+router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+    const jwtPayload = req.body.jwtPayload;
+    ses.resetPasswordEmail({name:jwtPayload.name, user_id:jwtPayload.user_id, email:jwtPayload.email})
+});
+
+// @route       GET api/auth/current
 // @desc        return current user
 // @access      Private3
 router.get('/current', passport.authentication, (req, res) => {

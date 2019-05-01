@@ -6,12 +6,14 @@ import Login from './pages/Login/Login';
 import { PrivateEmployerRoute, PrivateRecruiterRoute } from './PrivateRoute';
 import RecruiterRouter from './pages/recruiter/RecruiterRouter';
 import EmployerRouter from './pages/employer/EmployerRouter';
+import AuthRouter from './pages/auth/AuthRouter';
 import AboutTeamPage from './layout/AboutTeamPage/AboutTeam';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'; 
 import SignUpFormEmployer from './layout/components/SignUpFormEmployer/SignUpFormEmployer';
 import SignUpFormRecruiter from './layout/components/SignUpFormRecruiter/SignUpFormRecruiter';
 
 import './App.css';
+import ResetPasswordRequest from "./pages/Login/ResetPasswordRequest/ResetPasswordRequest";
 
 const theme = createMuiTheme({
     typography: {
@@ -66,7 +68,11 @@ class App extends Component {
                             <PrivateEmployerRoute exact path="/employer" redirect="/employer/activeJobs" /> { /* Reroute to the first employer page */ }
                             <PrivateEmployerRoute strict path="/employer" component={EmployerRouter} />
                         </Switch>
-                        <Route exact path='/login' render={ () => (<Login />) } />
+                        <Switch>
+                            <Route exact path='/login/resetPasswordRequest' render={ () => (<ResetPasswordRequest />) } />
+                            <Route exact path='/login' render={ () => (<Login />) } />
+                        </Switch>
+                        <Route strict path="/auth" component={AuthRouter} />
                         <Route exact path="/" component={Landing} />
                         <Route exact path="/about" component={AboutTeamPage} /> 
                         <Route exact path="/signUpFormEmployer" component={SignUpFormEmployer} /> 
