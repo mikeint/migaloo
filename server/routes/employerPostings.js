@@ -122,7 +122,7 @@ function postListing(req, res){
     postgresdb.any('\
         SELECT j.post_id, title, caption, experience_type_name, salary_type_name, tag_names, tag_ids, new_posts_cnt, \
             posts_cnt, j.created_on, (count(1) OVER())/10+1 AS page_count \
-        FROM job_posting j \
+        FROM job_posting_all j \
         INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
@@ -479,7 +479,7 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
     postgresdb.any(' \
         SELECT c.candidate_id, r.first_name, r.last_name, r.phone_number, r.recruiter_id, rl.email, cp.migaloo_accepted, cp.employer_accepted,\
             cp.job_accepted, cp.has_seen_post, c.first_name as candidate_first_name, j.created_on as posted_on, c.resume_id \
-        FROM job_posting j \
+        FROM job_posting_all j \
         INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         INNER JOIN candidate_posting cp ON cp.post_id = j.post_id \
         INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \

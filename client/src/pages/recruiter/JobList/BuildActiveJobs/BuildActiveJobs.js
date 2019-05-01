@@ -167,7 +167,7 @@ class BuildActiveJobs extends React.Component{
                     className={classes.drawer}
                     open={this.state.showPostJob}
                     onClose={()=>this.setState({"showPostJob":false})}
-                    onOpen={()=>this.setState({"showPostJob":true})}
+                    // onOpen={()=>this.setState({"showPostJob":true})}
                 > 
                     <PostCandidateToJob candidate={this.state.candidateData}
                                                 job={this.state.jobObj}

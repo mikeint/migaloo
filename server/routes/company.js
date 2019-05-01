@@ -12,7 +12,7 @@ const pgp = db.pgp
 
 /**
  * List company accounts
- * @route GET api/company/listCompanys
+ * @route GET api/company/list
  * @group company - Company
  * @param {Object} body.optional
  * @returns {object} 200 - A map of profile information
@@ -33,12 +33,14 @@ router.get('/list', passport.authentication,  (req, res) => {
             address_line_2 as "addressLine2", \
             city, state, country, lat, lon, \
             state_code as "stateCode", \
-            country_code as "countryCode" \
+            country_code as "countryCode", \
+            ec.is_primary \
         FROM login l \
         INNER JOIN company_contact ec ON ec.company_contact_id = l.user_id \
         INNER JOIN company c ON c.company_id = ec.company_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
-        WHERE ec.company_contact_id = $1', [jwtPayload.id])
+        WHERE ec.company_contact_id = ${userId} \
+        ORDER BY company_name', {userId:jwtPayload.id})
     .then((data) => {
         res.json({success:true, companies:data})
     })
@@ -143,7 +145,7 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
                         INNER JOIN company_contact ec ON ec.company_id = e.company_id AND ec.is_primary \
                         INNER JOIN account_manager ac ON ac.account_manager_id = ec.company_contact_id \
                         LEFT JOIN address a ON e.address_id = a.address_id\
-                        WHERE ec.company_contact_id = $1 AND e.company_id = $2', [jwtPayload.id, bodyData.companyId]).then((data)=>{
+                        WHERE ec.company_contact_id = ${userId} AND e.company_id = ${companyId}', {userId:jwtPayload.id, companyId:bodyData.companyId}).then((data)=>{
             var company_id = bodyData.companyId;
             var addressId = data.address_id;
             var addressIdExists = (data.address_id != null);

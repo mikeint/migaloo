@@ -3,14 +3,18 @@ import ApiCalls from '../../../../ApiCalls';
 import Pagination from "react-js-pagination";
 import Loader from '../../../../components/Loader/Loader';
 import { withStyles } from '@material-ui/core/styles';  
-import Close from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import AddUserByEmail from '../../../../components/AddUserByEmail/AddUserByEmail';
 import ModifiableProfileImage from '../../../../components/ModifiableProfileImage/ModifiableProfileImage';
 import AddressInput from '../../../../components/AddressInput/AddressInput';
 import FormValidation from '../../../../FormValidation';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Checkbox from '@material-ui/core/Checkbox';
 
 const styles = theme => ({
     button:{ 
@@ -25,24 +29,28 @@ const styles = theme => ({
         display: "inline-block"
     },
     tableBody:{
-        display: "table",
-        marginTop: "15px",
+        // display: "table",
+        // marginTop: "15px",
         width: "80%",
-        margin: "40px auto 20px auto"
+        margin: "20px auto 20px auto"
     },
-    tableRow:{
-        display: "table-row"
-    },
+    // tableRow:{
+    //     display: "table-row"
+    // },
     tableHeading:{
         backgroundColor: "rgb(197, 197, 197)",
-        textAlign: "center",
-        display: "table-header-group",
+        // display: "table-header-group",
         fontWeight: "bold"
+    },
+    tableCellHeader:{
+        border: "1px solid #999999",
+        textAlign: "center",
+        padding: "0px 5px"
     },
     tableCell:{
         border: "1px solid #999999",
-        display: "table-cell",
-        padding: "3px 10px"
+        // display: "table-cell",
+        padding: "0px 5px"
     },
     center:{
         textAlign:"center"
@@ -241,40 +249,52 @@ class ContactList extends React.Component{
                         disabled={!this.state.isModified}
                         onClick={this.saveRecruiter}>Save Changes</Button>
                 </div>
-                <div className={classes.tableBody}>
-                    <div className={classes.tableHeading}>
-                        <div className={classes.tableCell}>Email</div>
-                        <div className={classes.tableCell}>First Name</div>
-                        <div className={classes.tableCell}>Last Name</div>
-                        <div className={classes.tableCell}>Phone Number</div>
-                        <div className={classes.tableCell}>Account Active</div>
-                        <div className={classes.tableCell}>Is Primary</div>
-                        {this.state.iAmAdmin && <div className={classes.tableCell}>Remove</div>}
-                    </div>
+                <Table className={classes.tableBody}>
+                    <TableHead className={classes.tableHeading}>
+                        <TableRow>
+                            <TableCell align="center" className={classes.tableCellHeader}>Email</TableCell>
+                            <TableCell align="center" className={classes.tableCellHeader}>First Name</TableCell>
+                            <TableCell align="center" className={classes.tableCellHeader}>Last Name</TableCell>
+                            <TableCell align="center" className={classes.tableCellHeader}>Phone Number</TableCell>
+                            <TableCell align="center" className={classes.tableCellHeader}>Account Active</TableCell>
+                            <TableCell align="center" className={classes.tableCellHeader}>Is Primary</TableCell>
+                            {this.state.iAmAdmin && <TableCell align="center" className={classes.tableCellHeader}>Remove</TableCell>}
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
                     {
                         this.state.loading ? <Loader/> :
                         this.state.contactList.map((d, i)=>{
-                            return <div key={i} className={classes.tableRow}>
-                                <div className={classes.tableCell}>{d.email}</div>
-                                <div className={classes.tableCell}>{d.first_name}</div>
-                                <div className={classes.tableCell}>{d.last_name}</div>
-                                <div className={classes.tableCell}>{d.phone_number}</div>
-                                <div className={classes.tableCell+" "+classes.center}>{d.account_active?"Yes":"Pending"}</div>
-                                <div className={classes.tableCell+" "+classes.center}><input type="checkbox" disabled={d.isMe} checked={d.is_primary} onChange={(e)=>this.setAdmin(e, d)} /></div>
+                            return <TableRow key={i} className={classes.tableRow}>
+                                <TableCell className={classes.tableCell}>{d.email}</TableCell>
+                                <TableCell className={classes.tableCell}>{d.first_name}</TableCell>
+                                <TableCell className={classes.tableCell}>{d.last_name}</TableCell>
+                                <TableCell className={classes.tableCell}>{d.phone_number}</TableCell>
+                                <TableCell align="center" className={classes.tableCell}>{d.account_active?"Yes":"Pending"}</TableCell>
+                                <TableCell align="center" className={classes.tableCell}>
+                                    <Checkbox
+                                        checked={d.is_primary}
+                                        disabled={d.isMe} 
+                                        onChange={e=>this.setAdmin(e, d)}
+                                        value="checked"
+                                        color="primary"
+                                    />
+                                </TableCell>
                                 {
-                                    this.state.iAmAdmin && <div className={classes.tableCell+" "+classes.center}>
+                                    this.state.iAmAdmin && <TableCell align="center" className={classes.tableCell}>
                                         <Button
                                             className={classes.button}
                                             color="primary"
                                             variant="contained"
                                             disabled={d.isMe}
                                             onClick={()=>this.removeContact(d)}>Remove</Button>
-                                    </div>
+                                    </TableCell>
                                 }
-                            </div>
+                            </TableRow>
                         })
                     }
-                </div>
+                    </TableBody>
+                </Table>
                 <div className="paginationContainer">
                     <Pagination
                         prevPageText={'Back'}
@@ -298,7 +318,6 @@ class ContactList extends React.Component{
                     onClick={()=>this.setState({showAddUser:true})}>Add Contact</Button>
                 </div>
                 <AddUserByEmail
-                    subject={this.state.company.company_name}
                     open={this.state.showAddUser}
                     onClose={this.handleCloseGetAccountManager}/>
                 <br/>

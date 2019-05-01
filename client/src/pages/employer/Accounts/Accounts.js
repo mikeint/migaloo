@@ -16,6 +16,15 @@ const styles = theme => ({
         marginLeft: 'auto',
         marginTop: '15px'
     },
+    isPrimary:{ 
+        marginLeft: 'auto'
+    },
+    isPrimaryBox:{
+        color: theme.palette.secondary.main,
+        border: "1px solid",
+        borderColor: theme.palette.secondary.main,
+        padding: "4px 10px"
+    },
     row:{
         padding: '10px 10px',
         fontSize: '15px',
@@ -47,10 +56,10 @@ class Accounts extends React.Component{
     }
 
     getCompanys = () => {
-        ApiCalls.get('/api/company/listCompanys')
+        ApiCalls.get('/api/company/list')
         .then((res)=>{    
             if(res == null) return
-            this.setState({ companyList: res.data.companys })
+            this.setState({ companyList: res.data.companies })
         }).catch(errors => 
             console.log(errors.response.data)
         )
@@ -102,6 +111,7 @@ class Accounts extends React.Component{
                                         return <Button key={i} className={classes.row} onClick={()=>this.openContactList(item)}>
                                             {item.company_name}
                                             <span className={classes.createdTime}>{item.created}</span>
+                                            <span className={classes.isPrimary}>{item.is_primary && <div className={classes.isPrimaryBox}>Primary</div>}</span>
                                         </Button>
                                     })
                                 }

@@ -175,7 +175,7 @@ class CandidateList extends React.Component{
                         className={classes.drawer}
                         open={this.state.showOverlay}
                         onClose={()=>this.setState({"showOverlay":false})}
-                        onOpen={()=>this.setState({"showOverlay":true})}
+                        // onOpen={()=>this.setState({"showOverlay":true})}
                     > 
                         <AddCandidate onClose={()=>this.setState({"showOverlay":false})} />
                     </Drawer>

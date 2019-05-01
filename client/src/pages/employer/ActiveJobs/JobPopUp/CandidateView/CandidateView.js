@@ -99,7 +99,7 @@ class CandidateView extends React.Component{
         this.setState({getReason: false, type:null, accepted:null});
     }
     handleResponse = (type, accepted) => {
-        if(!accepted && (type === 'job' || type === 'employer')){
+        if(!accepted){
             this.setState({getReason: true, type:type, accepted:accepted});
         }else{
             this.postResponse(type, accepted, null);

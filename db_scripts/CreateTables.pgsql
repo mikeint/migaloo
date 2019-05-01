@@ -260,10 +260,10 @@ CREATE TABLE candidate_posting (
     recruiter_id bigint REFERENCES recruiter(recruiter_id),
     created_on timestamp default NOW(),
     migaloo_responded_on timestamp,
-    company_responded_on timestamp,
+    employer_responded_on timestamp,
     job_responded_on timestamp,
     migaloo_accepted boolean default NULL,
-    company_accepted boolean default NULL,
+    employer_accepted boolean default NULL,
     job_accepted boolean default NULL,
     has_seen_post boolean default false,
     has_seen_response boolean default false,
@@ -293,6 +293,7 @@ CREATE TABLE messages_subject (
     subject_user_id bigint REFERENCES login(user_id),
     post_id bigint REFERENCES job_posting_all(post_id),
     unique (user_id_1, user_id_2, subject_user_id, post_id),
+    unique (post_id),
     PRIMARY KEY(message_subject_id)
 );
 CREATE TABLE messages_base (
@@ -753,8 +754,8 @@ INSERT INTO candidate_tags (candidate_id, tag_id) VALUES
     (1007, 5);
 INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id, created_on) VALUES
     (1, 500, 1000, 1, NOW() - interval '7' day), -- message_subject_id = 1
-    (3, 500, 1006, 3, NOW() - interval '11' day), -- message_subject_id = 2
-    (1, 500, 1001, 1, NOW() - interval '1' day); -- message_subject_id = 3
+    (3, 500, 1006, 2, NOW() - interval '11' day), -- message_subject_id = 2
+    (1, 500, 1001, 3, NOW() - interval '1' day); -- message_subject_id = 3
 INSERT INTO messages (message_type_id, to_id, message_subject_id, message, created_on) VALUES
     (1, 1, 1, 'We would like to hear more about sarah.', NOW() - interval '6' day),
     (1, 500, 1, 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', NOW() - interval '5' day),

@@ -38,7 +38,9 @@ class ConversationRow extends Component {
                         <div>{this.state.conversation.created}</div> 
                     </div>
                 </div>
-                <Conversation conversation={this.state.conversation} open={this.state.showChat} onClose={this.closeChat}/>
+                {this.state.showChat && 
+                    <Conversation conversation={this.state.conversation} open={this.state.showChat} onClose={this.closeChat}/>
+                }
             </React.Fragment>
         );
     }

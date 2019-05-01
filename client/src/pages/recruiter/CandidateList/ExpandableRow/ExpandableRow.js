@@ -139,7 +139,7 @@ class ExpandableRow extends React.Component{
                                         className={classes.drawer}
                                         open={this.state.showPostJob}
                                         onClose={()=>this.setState({"showPostJob":false})}
-                                        onOpen={()=>this.setState({"showPostJob":true})}
+                                        // onOpen={()=>this.setState({"showPostJob":true})}
                                     > 
                                         <PostCandidateToJob candidate={candidateData}
                                                                     job={postData}

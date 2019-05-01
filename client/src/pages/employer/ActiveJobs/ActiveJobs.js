@@ -156,12 +156,13 @@ class ActiveJobs extends React.Component{
                                     className={classes.drawer}
                                     open={this.state.showOverlay}
                                     onClose={()=>this.setState({"showOverlay":false})}
-                                    onOpen={()=>this.setState({"showOverlay":true})}
+                                    // onOpen={()=>this.setState({"showOverlay":true})}
                                 > 
                                     <JobPopUp
                                         obj={this.state.jobList[this.state.postId]}
                                         removedCallback={this.jobRemoved.bind(this)} 
-                                        onClose={()=>this.setState({"showOverlay":false})} />
+                                        onClose={()=>this.setState({"showOverlay":false})}
+                                         />
                                 </Drawer>
                             </div>
                         :
