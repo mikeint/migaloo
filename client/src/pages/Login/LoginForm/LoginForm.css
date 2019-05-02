@@ -26,11 +26,15 @@
 .formItem input::placeholder {
 	color: #fff; 
 }
-.forgot-password{
+.forgot-password-container{
 	text-align: left;
+} 
+.forgot-password{
+	color: white;
 	cursor: pointer;
     font-size: 12px;
-    padding-left: 30px;
+	padding-left: 30px;
+	margin-top: 20px;
 } 
 
 @media only screen and (max-width: 677px) {

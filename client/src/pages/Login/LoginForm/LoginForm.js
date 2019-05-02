@@ -1,6 +1,6 @@
 import React, { Component } from 'react';  
 import AuthFunctions from '../../../AuthFunctions';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import Whale from '../../../components/Whale/Whale';
 import ApiCalls from '../../../ApiCalls';   
 import Button from '@material-ui/core/Button';
@@ -85,9 +85,11 @@ class LoginForm extends Component {
                 <input onKeyPress={(event) => this.submit(event)} className={this.state.errorList.password ? "formControl error" : "formControl"} placeholder="Password" name='password' type='password' onChange={this.handleChange} value={password} required />
             </div>   
             <Button onClick={this.login} variant="contained" color="primary" className="loginBtn" >Login</Button>
-            <div className="forgot-password"> 
-                Forgot Password
-            </div>   
+            <div className="forgot-password-container"> 
+                <Link className="forgot-password" to='/auth/resetPasswordRequest'> 
+                    Forgot Password
+                </Link>
+            </div>
 		</React.Fragment> 
     );
   }

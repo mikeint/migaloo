@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import { Redirect } from 'react-router-dom';
+import FormValidation from '../../../FormValidation';
 
 const styles = theme => ({
     textField: {
@@ -23,15 +24,7 @@ const styles = theme => ({
     button: {
       width: "80%",
     },
-    root:{
-        backgroundImage: "linear-gradient(120deg, #96b4be 0%, #263c54 100%)",
-        animation: "Gradient 7s ease infinite",
-        textAlign: "center",
-        position: "fixed",
-        width: "100%",
-        height: "100%",
-        backgroundSize: "400% 400%"
-    },
+    root:theme.movingBackground,
     formItem:{
         margin: "20px 0px"
     },
@@ -43,6 +36,30 @@ const styles = theme => ({
     }
 });
 
+const errorText = [
+    {
+        stateName: "password",
+        errorText: "Please enter a password",
+        length: 8
+    },
+    {
+        stateName: "password2",
+        errorText: "Please repeat your password",
+        length: 8
+    },
+    {
+        stateName: "password",
+        stateName2: "password2",
+        errorText: "Passwords do not match",
+        type: "password"
+    },
+    {
+        stateName: "password",
+        errorText: "Must have at least 1 upper and 1 lower case character",
+        type: "regex",
+        regex: [/[A-Z]/, /[a-z]/]
+    }
+]
 class ResetPassword extends React.Component{
     constructor(props) {
         super(props);
@@ -53,8 +70,10 @@ class ResetPassword extends React.Component{
             showPassword: false,
             password: '',
             password2: '',
-            login: false
+            backToLogin: false,
+            errors: {}
         };
+        this.formValidation = new FormValidation(this, errorText);
     }
 
     componentWillUnmount = () => {
@@ -65,22 +84,22 @@ class ResetPassword extends React.Component{
 
     }
     handleChange = prop => event => {
-        this.setState({ [prop]: event.target.value });
+        this.setState({ [prop]: event.target.value }, this.formValidation.shouldRevalidate);
     };
   
     handleClickShowPassword = () => {
         this.setState({ showPassword: !this.state.showPassword });
     };
     handleSubmit = () => {
-        if(this.state.password === this.state.password2){
-            ApiCalls.post("/auth/resetPassword", {password:this.state.password, token: this.state.token}).then(()=>{
-                this.setState({ login: true });
+        if(this.formValidation.isValid()){
+            ApiCalls.post("/api/auth/resetPassword", {password:this.state.password, token: this.state.token}).then(()=>{
+                this.setState({ backToLogin: true });
             })
         }
     };
 
     render(){ 
-        if(this.state.login)
+        if(this.state.backToLogin)
             return <Redirect to='/login'/>
         const { classes } = this.props; 
         return (
@@ -102,7 +121,7 @@ class ResetPassword extends React.Component{
                         }}
                         InputProps={{
                             classes: {
-                              root: classes.cssOutlinedInput,
+                              root: classes.cssLabel,
                               notchedOutline: classes.notchedOutline,
                             },
                             endAdornment: (
@@ -117,6 +136,7 @@ class ResetPassword extends React.Component{
                             </InputAdornment>
                             ),
                         }}
+                        {...this.formValidation.hasError("password")}
                     />
 				</div>
 				<div className={classes.formItem}>
@@ -134,10 +154,11 @@ class ResetPassword extends React.Component{
                         }}
                         InputProps={{
                             classes: {
-                              root: classes.cssOutlinedInput,
+                              root: classes.cssLabel,
                               notchedOutline: classes.notchedOutline,
                             }
                         }}
+                        {...this.formValidation.hasError("password2")}
                     />
 				</div> 
                 <Button 

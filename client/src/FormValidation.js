@@ -2,6 +2,8 @@ export default class FormValidation {
     constructor(parent, errorText){
         errorText.forEach(d=>{
             d.statePath = d.stateName.split('.')
+            if(d.stateName2 != null)
+                d.statePath2 = d.stateName2.split('.')
         })
         this.errorText = errorText;
         this.parent = parent;
@@ -19,21 +21,37 @@ export default class FormValidation {
     getParentState(){
         return this.parent.state;
     }
-    getStateValue(state, d){
-        return d.statePath.reduce((t,x)=> t==null?null:t[x], state)
+    getStateValue(state, path){
+        return path.reduce((t,x)=> t==null?null:t[x], state);
     }
     isValid(){
         const errors = {};
         const state = this.getParentState();
         this.errorText.forEach(d=>{
-            const value = this.getStateValue(state, d)
-            const isString = typeof value === "string"
+            const value = this.getStateValue(state, d.statePath);
+            const isString = typeof value === 'string';
             if(value == null || (isString && value.length === 0)){
-                errors[d.stateName] = d.errorText
+                if(errors[d.stateName] == null)
+                    errors[d.stateName] = d.errorText;
+            }
+            else if (d.length != null && value.length < d.length){
+                if(errors[d.stateName] == null)
+                    errors[d.stateName] = `Must at least ${d.length} characters long`;
+            }
+            else if(d.type === 'password'){
+                const value2 = this.getStateValue(state, d.statePath2)
+                if(value !== value2 && errors[d.stateName2] == null)
+                    errors[d.stateName2] = d.errorText;
+            }
+            else if(d.type === 'regex'){
+                if(d.regex.some((re)=>re.exec(value) == null)){
+                    if(errors[d.stateName] == null)
+                        errors[d.stateName] = d.errorText;
+                }
             }
         })
         this.parent.setState({errors:errors});
-        return Object.keys(errors).length === 0
+        return Object.keys(errors).length === 0;
     }
     hasError(id){
         const errorMessage = this.parent.state.errors[id];

@@ -36,7 +36,7 @@ class ActiveJobs extends React.Component{
             migalooOverlay: false, 
             showOverlay: false,
             postId: '',
-            jobList: '', 
+            jobList: null, 
             page: 1,
             pageCount: 1,
             filters: {}

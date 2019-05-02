@@ -21,6 +21,9 @@ import whale from '../../../files/images/logo.png'
 const styles = theme => ({
     button: {
       float: 'right', 
+    },
+    noJobs: {
+      padding: '20px', 
     }
 });
 
@@ -156,12 +159,6 @@ class JobList extends React.Component{
                         this.state.jobList ?
                             <React.Fragment>
 
-                                <Tabs variant="fullWidth" value={this.state.index} onChange={this.changeTab}>
-                                    <Tab label="Job List" />
-                                    <Tab label="Sponsered" />
-                                    <Tab label="Favourite" />
-                                </Tabs>
-                                
                                 <input
                                     className="searchJobList"
                                     name="searchTerm"
@@ -170,67 +167,31 @@ class JobList extends React.Component{
                                     onChange={this.onSearchChange}
                                 /> 
  
-                                <div className={"jobListContainer "+this.state.enterSlide}>
-                                    <SwipeableViews enableMouseEvents index={this.state.index} onChangeIndex={this.handleChangeIndexTab}> 
-                                        <React.Fragment> 
-                                            {
-                                                this.state.jobList.map((item, i) => {
-                                                    return <div className="jobListItem" key={i} onClick={() => this.callNewJobPage(item.post_id)}> 
-                                                        <div className="jobInfo"> 
-                                                            <b>{item.company_name}</b>  
-                                                            <div className="jobShortDesc">{item.title}</div> 
-                                                            {
-                                                                item.tag_score &&
-                                                                    <span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>
-                                                                        {parseInt(item.tag_score, 10)+"%"}
-                                                                    </span>
-                                                            }
-                                                            <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
-                                                        </div> 
-                                                    </div> 
-                                                })
-                                            }
-                                        </React.Fragment>
-                                        <React.Fragment> 
-                                            {
-                                                this.state.jobList.map((item, i) => {
-                                                    return <div className="jobListItem" key={i} onClick={() => this.callNewJobPage(item.post_id)}> 
-                                                        <div className="jobInfo"> 
-                                                            <b>{item.company_name}</b>  
-                                                            <div className="jobShortDesc">{item.title}</div> 
-                                                            {
-                                                                item.tag_score &&
-                                                                    <span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>
-                                                                        {parseInt(item.tag_score, 10)+"%"}
-                                                                    </span>
-                                                            }
-                                                            <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
-                                                        </div> 
-                                                    </div> 
-                                                })
-                                            }
-                                        </React.Fragment>
-                                        
-                                        <React.Fragment> 
-                                            {
-                                                this.state.jobList.map((item, i) => {
-                                                    return <div className="jobListItem" key={i} onClick={() => this.callNewJobPage(item.post_id)}> 
-                                                        <div className="jobInfo"> 
-                                                            <b>{item.company_name}</b>  
-                                                            <div className="jobShortDesc">{item.title}</div> 
-                                                            {
-                                                                item.tag_score &&
-                                                                    <span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>
-                                                                        {parseInt(item.tag_score, 10)+"%"}
-                                                                    </span>
-                                                            }
-                                                            <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
-                                                        </div> 
-                                                    </div> 
-                                                })
-                                            }
-                                        </React.Fragment>
-                                    </SwipeableViews>
+                                <div className={"jobListContainer"}>
+                                    {
+                                        this.state.jobList.length === 0 ?
+                                            <div className={classes.noJobs}>
+                                            There are no jobs available at the moment.<br/>
+                                            We have plenty of job postings but to ensure fairness we post jobs to a limited number of recruiters<br/>
+                                            Please ensure you fill out your profile and add some candidates so we can assign you the best job postings to work on.
+                                            </div>
+                                        :
+                                        this.state.jobList.map((item, i) => {
+                                            return <div className="jobListItem" key={i} onClick={() => this.callNewJobPage(item.post_id)}> 
+                                                <div className="jobInfo"> 
+                                                    <b>{item.company_name}</b>  
+                                                    <div className="jobShortDesc">{item.title}</div> 
+                                                    {
+                                                        item.tag_score &&
+                                                            <span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>
+                                                                {parseInt(item.tag_score, 10)+"%"}
+                                                            </span>
+                                                    }
+                                                    <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
+                                                </div> 
+                                            </div> 
+                                        })
+                                    }
                                     <div className="paginationContainer"> 
                                         <Pagination
                                             activeClass={'active'}

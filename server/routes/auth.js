@@ -43,6 +43,7 @@ router.post('/login', (req, res) => {
     if (!isValid) {
         return res.status(400).json(errors);
     }
+    const loginIp = req.connection.remoteAddress;
     const email = req.body.email;
     if(req.body.email.endsWith("@migaloo.io")){
         console.log("saml")
@@ -53,7 +54,7 @@ router.post('/login', (req, res) => {
         }
     }else{
         const password = req.body.password;
-        postgresdb.one('SELECT l.user_id, l.passwordhash, l.user_type_id, um.user_type_name, um.is_primary\
+        postgresdb.one('SELECT l.user_id, l.passwordhash, l.user_type_id, um.user_type_name, um.is_primary, l.email_verified \
                 FROM login l \
                 INNER JOIN user_master um ON l.user_id = um.user_id \
                 WHERE l.email = $1', email).then(user => {
@@ -61,7 +62,8 @@ router.post('/login', (req, res) => {
                 id: user.user_id,
                 userType: user.user_type_id,
                 email: email,
-                isPrimary: user.is_primary
+                isPrimary: user.is_primary,
+                isVerified: user.email_verified
             }
             if (!user) {
                 errors.email = 'Email not registered';
@@ -71,6 +73,7 @@ router.post('/login', (req, res) => {
                 bcrypt.compare(password, user.passwordhash).then(isMatch => {
                     if(isMatch) {
                         createJWT(payload).then((token)=>{
+                            console.log(`Successful login from ${loginIp} for ${email}`)
                             res.status(200).json(token)
                         })
                         .catch(err => {
@@ -78,6 +81,7 @@ router.post('/login', (req, res) => {
                             res.status(400).json({success: false, error:err})
                         });
                     } else {
+                        console.log(`Failed login from ${loginIp} for ${email}`)
                         errors.password = "Password Incorrect";
                         return res.status(400).json(errors)
                     }
@@ -126,39 +130,36 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                     // creating a sequence of transaction queries:
                     const q1 = t.one('INSERT INTO login (email, passwordhash, user_type_id) VALUES ($1, $2, $3) RETURNING user_id',
                                     [body.email, hash, type]);
-                    return q1.then((login_ret)=>{
+                    const qc = t.one('INSERT INTO login (user_type_id) VALUES (4) RETURNING user_id', []);
+                    return t.batch([q1, qc]).then((ret)=>{
+                        const login_ret = ret[0];
+                        const company_login_ret = ret[1];
                         const payload = {
                             id: login_ret.user_id,
                             userType: type,
                             email: body.email,
-                            isPrimary: true
+                            isPrimary: true,
+                            isVerified: false
                         }
                         if(type == 1){ // Recruiter
-                            var q2 = t.one('INSERT INTO company (company_name, address_id) VALUES ($1, $2) RETURNING company_id',
-                                    [body.companyName, null])
-                            return q2
-                                .then((employer_data) => {
-                                    var q3 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
-                                            [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
-                                    var q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
-                                        [login_ret.user_id, employer_data.company_id])
-                                    return t.batch([q3, q4]).then(() => {
-                                        return q3.then(() => {
-                                            createJWT(payload).then((token)=>{
-                                                res.status(200).json(token)
-                                            })
-                                            .catch(err => {
-                                                console.log(err)
-                                                res.status(400).json({success: false, error:err})
-                                            });
-                                            return []
-                                        })
+                            const q2 = t.one('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3) RETURNING company_id',
+                                    [company_login_ret.user_id, body.companyName, null])
+                            var q3 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
+                                    [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
+                            var q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
+                                [login_ret.user_id, company_login_ret.user_id])
+                            return t.batch([q2, q3, q4]).then(() => {
+                                return q3.then(() => {
+                                    createJWT(payload).then((token)=>{
+                                        res.status(200).json(token)
                                     })
+                                    .catch(err => {
+                                        console.log(err)
+                                        res.status(400).json({success: false, error:err})
+                                    });
+                                    return []
                                 })
-                                .catch(err => {
-                                    console.log(err)
-                                    res.status(400).json({success: false, error:err})
-                                });
+                            })
                         }else if(type == 2){ // Employer
                             var q2 = t.one('INSERT INTO company (company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING company_id',
                                     [body.companyName, null])
@@ -207,7 +208,6 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
         return res.status(500).json({success: false, error:err})
     });
 });
-
 // @route       POST api/auth/resetPassword
 // @desc        Reset password route
 // @access      Public
@@ -215,8 +215,8 @@ router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt toek
     var body = req.body;
     passport.decodeToken(body.token).then(payload=>{
         bcrypt.hash(body.password, 10).then((hash)=>{
-            postgresdb.none('UPDATE login SET passwordhash=${password} WHERE user_id=${user_id}',
-                            {user_id:payload.user_id, password: body.password})
+            postgresdb.none('UPDATE login SET passwordhash=${password} WHERE lower(email) = ${email}',
+                            {email:payload.email, password: hash})
                 .then(() => {
                     res.json({success:true})
                 })
@@ -224,8 +224,52 @@ router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt toek
     }).catch(err=>res.status(400).json(err))
 });
 router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+    const email = req.body.email.trim();
+    
+    return postgresdb.one('\
+        SELECT concat(first_name, \' \', last_name) as display_name, user_id \
+        FROM user_master um \
+        WHERE lower(um.email) = ${email}', {email:email})
+    .then((data) => {
+        console.log(data)
+        ses.resetPasswordEmail({name:data.display_name, email:email})
+        .then(result=>{
+            console.log(result)
+            res.json({success:true})
+        })
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
+router.post('/verifyEmail', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+    var body = req.body;
+    passport.decodeToken(body.token).then(payload=>{
+        postgresdb.none('UPDATE login SET email_verified=true WHERE user_id = ${id}',
+                        {id:payload.user_id})
+            .then(() => {
+                res.json({success:true})
+            })
+    }).catch(err=>res.status(400).json(err))
+});
+router.post('/sendEmailVerification', passport.authentication, (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
     const jwtPayload = req.body.jwtPayload;
-    ses.resetPasswordEmail({name:jwtPayload.name, user_id:jwtPayload.user_id, email:jwtPayload.email})
+    return postgresdb.one('\
+        SELECT concat(first_name, \' \', last_name) as display_name \
+        FROM user_master um \
+        WHERE um.user_id = ${id}', {id:jwtPayload.id})
+    .then((data) => {
+        ses.sendEmailVerification({name:data.display_name, user_id:jwtPayload.id, email:jwtPayload.email})
+        .then(result=>{
+            console.log(result)
+            res.json({success:true})
+        })
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
 });
 
 // @route       GET api/auth/current

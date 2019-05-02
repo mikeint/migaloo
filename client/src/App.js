@@ -13,11 +13,19 @@ import SignUpFormEmployer from './layout/components/SignUpFormEmployer/SignUpFor
 import SignUpFormRecruiter from './layout/components/SignUpFormRecruiter/SignUpFormRecruiter';
 
 import './App.css';
-import ResetPasswordRequest from "./pages/Login/ResetPasswordRequest/ResetPasswordRequest";
 
 const theme = createMuiTheme({
     typography: {
         useNextVariants: true,
+    },
+    movingBackground:{
+        backgroundImage: "linear-gradient(120deg, #a6c4ce 0%, #465c74 100%)",
+        animation: "Gradient 7s ease infinite",
+        textAlign: "center",
+        position: "fixed",
+        width: "100%",
+        height: "100%",
+        backgroundSize: "400% 400%"
     },
     palette: {
         primary: {
@@ -68,10 +76,7 @@ class App extends Component {
                             <PrivateEmployerRoute exact path="/employer" redirect="/employer/activeJobs" /> { /* Reroute to the first employer page */ }
                             <PrivateEmployerRoute strict path="/employer" component={EmployerRouter} />
                         </Switch>
-                        <Switch>
-                            <Route exact path='/login/resetPasswordRequest' render={ () => (<ResetPasswordRequest />) } />
-                            <Route exact path='/login' render={ () => (<Login />) } />
-                        </Switch>
+                        <Route exact path='/login' render={ () => (<Login />) } />
                         <Route strict path="/auth" component={AuthRouter} />
                         <Route exact path="/" component={Landing} />
                         <Route exact path="/about" component={AboutTeamPage} /> 
