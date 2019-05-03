@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import './NavBar.css'
 
 import Whale from '../../../components/Whale/Whale'
+import arrow from '../../../files/images/landingPage/arrowDownB.png'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 
 class NavBar extends Component {
@@ -66,10 +67,17 @@ class NavBar extends Component {
                     onOpen={()=>this.setState({"showOverlay":true,  menuOpen: !this.state.menuOpen})}
                 >  
                     <div className="side-menu">
-                        <NavLink to="/employerPage">For Employers</NavLink>
-                        <NavLink to="/recruiterPage">For Recruiters</NavLink>
-                        <NavLink to="/howItWorks">How it works</NavLink>
-                        <NavLink to="/pricing">Pricing</NavLink>
+                        <NavLink to="/employerPage">For Employers<img src={arrow} className="arrowDown" alt="" /></NavLink>
+                        <div className="subNavBox"> 
+                            <NavLink to="/howItWorks_employer">How it works</NavLink>
+                            <NavLink to="/pricing_employer">Pricing</NavLink>
+                        </div>
+                        <NavLink to="/recruiterPage">For Recruiters<img src={arrow} className="arrowDown" alt="" /></NavLink>
+                        <div className="subNavBox"> 
+                            <NavLink to="/howItWorks_recruiter">How it works</NavLink>
+                            <NavLink to="/pricing_recruiter">Pricing</NavLink>
+                        </div>
+                        
                         <NavLink to="/contact">Contact</NavLink>
                         <NavLink to="/about">About</NavLink>
                         <NavLink to="/team">Team</NavLink>  

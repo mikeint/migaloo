@@ -6,8 +6,6 @@ import { Link } from 'react-router-dom'
 import NavBar from "../components/NavBar/NavBar"
  
 import whaleCool from "../../files/images/landingPage/whaleCool.png"
-import pinkWhale from "../../files/images/landingPage/pinkWhale.png"
-
 import Spray from '../../components/Loader/Loader'
  
 class Recruiter extends Component {
