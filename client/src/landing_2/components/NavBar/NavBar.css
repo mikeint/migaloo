@@ -1,9 +1,8 @@
 .lp2_navBar #navBar { 
     height: 100vh;
-    width: 300px;
-    padding: 10px 30px;
+    width: 300px; 
     background:#263c54;
-}
+} 
 .lp2_navBar #navBar .whaleContainer {
     padding-top: 20px;
 }
@@ -14,7 +13,6 @@
 .lp2_navBar .whaleClick {
     cursor: pointer; 
 }
-
 
 .lp2_navBar .mobileWhaleContainer .whaleContainer {
     width: 170px;
@@ -28,21 +26,56 @@
     margin-left: -37px;
     margin-top: -5px;
 }
+
  
 .lp2_navBar #navBar a {
     display: flex;
     color: #ffffffa1;
     font-size: 24px; 
-    padding-bottom: 20px;
+    padding: 20px;  
 }
 .lp2_navBar #navBar a:hover {
     color: #ffffff;
+} 
+.lp2_navBar #navBar a.active {
+    color: #ffffff; 
 }
+.lp2_navBar .topSubItem.active + .subNavBox{  
+    height: 140px;
+    max-height: 140px;
+    box-shadow: inset 0px 0px 5px #2a2c2d;
+    animation-name: slideDropDown;
+    animation-duration: 0.5s;
+} 
+@keyframes slideDropDown {
+    from {height: 0px;}
+    to {height: 140px;}
+} 
+.lp2_navBar .subNavBox { 
+   padding-left: 40px;
+   background: #546f8270;
+
+   height: 0px; 
+   max-height: 0;
+   overflow: hidden; 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #navBarMobile {
     display: none;
 }
-
 .navBarMobileItem a { 
     display: flex;
     color: #263c54;
@@ -50,6 +83,8 @@
     font-weight: bold; 
     padding: 15px 40px; 
 }
+  
+
 
 
 /* NAV-HAMBURGER */

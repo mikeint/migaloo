@@ -4,8 +4,8 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Link } from 'react-router-dom';
 
-import empImg from "../../files/images/employer_pick.png";
-import recImg from "../../files/images/recruiter_pick.png"; 
+import empImg from "../../files/images/landingPage/employer_pick.png";
+import recImg from "../../files/images/landingPage/recruiter_pick.png"; 
 
  
 class LandingSection4 extends Component {

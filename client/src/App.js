@@ -83,9 +83,11 @@ class App extends Component {
                         <Route exact path="/AboutTeamPage" component={AboutTeamPage} /> 
 
                         <Route exact path="/recruiterPage" component={RecruiterPage} />
-                        <Route exact path="/employerPage" component={EmployerPage} />
+                        <Route exact path="/employerPage" component={EmployerPage} /> 
                         <Route exact path="/howItWorks" component={HowItWorks} />
                         <Route exact path="/pricing" component={Pricing} />
+
+
                         <Route exact path="/contact" component={Contact} />
                         <Route exact path="/about" component={About} />
                         <Route exact path="/team" component={Team} />

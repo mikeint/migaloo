@@ -12,7 +12,6 @@
     border-bottom-right-radius: 10px;
     transition: 0.3s;
 }
-
 .lp2_recruiter .fullRecruiterText {
     width: 100%;
     font-size: 32px;
@@ -62,8 +61,9 @@
     font-weight: bold;
     padding-left: 5px; 
 }
-.lp2_recruiter .opacBackground { 
+.lp2_recruiter .recruiterContent { 
     padding: 20px 10px;
+    overflow: hidden;
 }
 
 .lp2_recruiter .whaleCool { 
@@ -85,24 +85,31 @@
 }
 
 .lp2_recruiter .signUpBtnHome {
-    width: 100%;
+    cursor: pointer;  
+    padding: 10px 25px; 
     text-align: center;
-    padding: 20px;
+    cursor: pointer;
+    outline: none;
     color: #fff;
     background: #263c54;
-    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 9px #999;
     font-size: 32px;
     transition: 0.3s;
-    margin-bottom: 100px;
+    margin-bottom: 100px; 
 } 
-.lp2_recruiter .signUpBtnHome img {
-    width: 40px;
+.lp2_recruiter .signUpBtnHome svg {
+    width: 50px;
     float: right;
-    margin-top: -9px;
+    transform: scale(3);
 }  
 .lp2_recruiter .signUpBtnHome:hover {
-    background-color: #5a718194; 
-}  
+    background-color: #96b4be;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+    background-color: #96b4be
+  }
  
 
 @media (max-width: 1024px){
@@ -118,5 +125,8 @@
     .lp2_recruiter .fywText {
         width: 160px;
         font-size: 22px;
+    }
+    .lp2_recruiter .signUpBtnHome {
+        width: 100%;
     }
 }
