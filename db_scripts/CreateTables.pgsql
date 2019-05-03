@@ -203,12 +203,13 @@ tsvector_update_trigger (posting_search, 'pg_catalog.simple', title, caption);
 CREATE TABLE job_recruiter_posting (
     post_id bigint REFERENCES job_posting_all(post_id),
     recruiter_id bigint REFERENCES recruiter(recruiter_id),
+	created_on timestamp default NOW(),
     PRIMARY KEY(post_id, recruiter_id)
 );
 CREATE INDEX job_recruiter_posting_idx ON job_recruiter_posting(post_id);
 
 CREATE VIEW job_posting AS 
-SELECT jpa.*, jrp.recruiter_id
+SELECT jpa.*, jrp.recruiter_id, jrp.created_on as recruiter_created_on
 FROM job_posting_all jpa
 INNER JOIN job_recruiter_posting jrp ON jpa.post_id = jrp.post_id
 WHERE active AND is_visible;
@@ -606,31 +607,31 @@ INSERT INTO tags (tag_name, tag_type_id) VALUES
     ('Microsoft Excel', 4), ('Microsoft Office', 4),
     ('Architecture Design', 5), ('Agile', 5), ('Project Management', 5), ('Leadership', 5), ('Waterfall', 5);
 -- FAKE DATA START
-INSERT INTO login (user_id, email, passwordhash, created_on, user_type_id) VALUES 
-    (1, 'r1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-17 10:23:54', 1), -- Add Recruiter, pass: test
-    (2, 'r2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-11-25 10:23:54', 1), -- Add Recruiter, pass: test
-    (3, 'r3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-12-25 10:23:54', 1), -- Add Recruiter, pass: test
-    (100, 'e1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-01-21 10:23:54', 2), -- Add Account Manager, pass: test
-    (101, 'e2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
-    (102, 'e3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
-    (103, 'e4@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
-    (104, 'e5@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
-    (105, 'e6@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
-    (106, 'e7@test.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
-    (500, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4), -- Dummy Employer, pass: test
-    (501, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4), -- Dummy Employer, pass: test
-    (502, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4), -- Dummy Employer, pass: test
-    (503, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4), -- Dummy Employer, pass: test
-    (504, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4); -- Dummy Employer, pass: test
-INSERT INTO login (user_id, email, created_on, user_type_id) VALUES 
-    (1000, 'c1@test.com', TIMESTAMP '2019-02-17 10:23:54', 3), -- Add candidate
-    (1001, 'c2@test.com', TIMESTAMP '2018-11-25 10:23:54', 3), -- Add candidate
-    (1002, 'c3@test.com', TIMESTAMP '2018-12-25 10:23:54', 3), -- Add candidate
-    (1003, 'c4@test.com', TIMESTAMP '2019-01-21 10:23:54', 3), -- Add candidate
-    (1004, 'c5@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
-    (1005, 'c6@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
-    (1006, 'c7@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
-    (1007, 'c8@test.com', TIMESTAMP '2019-02-20 10:23:54', 3); -- Add candidate
+INSERT INTO login (user_id, email, passwordhash, created_on, user_type_id, email_verified) VALUES 
+    (1, 'r1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-17 10:23:54', 1, true), -- Add Recruiter, pass: test
+    (2, 'r2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-11-25 10:23:54', 1, true), -- Add Recruiter, pass: test
+    (3, 'r3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-12-25 10:23:54', 1, true), -- Add Recruiter, pass: test
+    (100, 'e1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-01-21 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (101, 'e2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (102, 'e3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (103, 'e4@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (104, 'e5@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (105, 'e6@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (106, 'e7@test.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Employer, pass: test
+    (500, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
+    (501, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
+    (502, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
+    (503, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
+    (504, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true); -- Dummy Employer, pass: test
+INSERT INTO login (user_id, email, created_on, user_type_id, email_verified) VALUES 
+    (1000, 'c1@test.com', TIMESTAMP '2019-02-17 10:23:54', 3, true), -- Add candidate
+    (1001, 'c2@test.com', TIMESTAMP '2018-11-25 10:23:54', 3, true), -- Add candidate
+    (1002, 'c3@test.com', TIMESTAMP '2018-12-25 10:23:54', 3, true), -- Add candidate
+    (1003, 'c4@test.com', TIMESTAMP '2019-01-21 10:23:54', 3, true), -- Add candidate
+    (1004, 'c5@test.com', TIMESTAMP '2019-02-20 10:23:54', 3, true), -- Add candidate
+    (1005, 'c6@test.com', TIMESTAMP '2019-02-20 10:23:54', 3, true), -- Add candidate
+    (1006, 'c7@test.com', TIMESTAMP '2019-02-20 10:23:54', 3, true), -- Add candidate
+    (1007, 'c8@test.com', TIMESTAMP '2019-02-20 10:23:54', 3, true); -- Add candidate
 INSERT INTO address (address_line_1, city, state_code, country_code, state, country, lat, lon) VALUES 
     ('123 Main St.', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.6531, -79.3831),
     ('4312 Dundas Rd.', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.6533, -79.3833),
