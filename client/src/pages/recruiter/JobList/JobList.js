@@ -6,10 +6,6 @@ import ApiCalls from '../../../ApiCalls';
 import { NavLink, Redirect } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 
-import SwipeableViews from 'react-swipeable-views';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-
 import Pagination from "react-js-pagination";
 import { withStyles } from '@material-ui/core/styles'; 
 import Button from '@material-ui/core/Button';

@@ -1,5 +1,5 @@
 import React from 'react';
-import './BuildActiveJobs.css'; 
+import './JobDescription.css'; 
 import ApiCalls from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import {Redirect} from 'react-router-dom';
@@ -20,7 +20,7 @@ const styles = theme => ({
         float: "right",
     }
 });
-class BuildActiveJobs extends React.Component{
+class JobDescription extends React.Component{
 
     constructor(props){
         super(props);
@@ -173,9 +173,14 @@ class BuildActiveJobs extends React.Component{
                                                 job={this.state.jobObj}
                                                 handleClose={()=>this.setState({showPostJob:false})} />
                 </Drawer>
+                <div>
+                    <div>Feedback</div>
+                    <div>Im Working On It</div>
+                    <div>Im Working On It</div>
+                </div>
             </React.Fragment>
         )
     }
 }
  
-export default withStyles(styles)(BuildActiveJobs);
+export default withStyles(styles)(JobDescription);
