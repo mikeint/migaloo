@@ -22,25 +22,25 @@ class Recruiter extends Component {
                     <NavBar />
                 </div>
                 <div className="lp2_body lp2_recruiter">
-                    <div className="fywText">for.recruiters</div>
+                    <div className="fywText">For Recruiters</div>
 
-                    <div className="fullRecruiterText">
-                        <div className="r1_Background r1_BackgroundLong" data-aos="fade-right">HI THERE ! I'M MIGALOO</div>
-                        <div className="r1_Background r1_BackgroundShorter" data-aos="fade-right">THE WHALE OF RECRUITMENT</div>
-                    </div>
+
                     
-                    <div className="recruiterContent">
+                    <div className="fullRecruiterText">
+                        <div data-aos="fade-down">Hi there ! I'm Migaloo,</div>
+                        <div data-aos="fade-up">the whale of recruitment</div>
+                    </div>
+  
+                    <div className="recruiterContent"> 
                         <div className="flex">
-                            <div className="flex r_para" data-aos="fade-right" data-aos-offset="-200">
+                            <div className="flex r_para" data-aos="flip-up" data-aos-offset="-200">
                                 I'm here to help you save time & make more placements. 
                                 I believe every great recruiter deserves 
                                 a whale on their side who can who can add relevant, 
-                                retained jobs to their pipeline. 
-                            </div>
-                            <div className="flex r_para" data-aos="fade-left" data-aos-offset="-200">
+                                retained jobs to their pipeline.
                                 I will Deliver job reqs based on your 
                                 specialization from top companies who
-                                desperatley need you help but, who sadly, 
+                                desperatley need your help but, who sadly, 
                                 dont have enough time to properly manage 
                                 recruiter relationships.
                             </div>
@@ -51,16 +51,16 @@ class Recruiter extends Component {
                                 <img src={whaleCool} alt="" />
                             </div> 
                             <div className="soundCool">
-                                <div className="sc_Background" data-aos="zoom-in">SOUND COOL?</div>
+                                <div className="sc_Background" data-aos="zoom-in">Sound cool?</div>
                             </div>
                         </div>
 
                         <div className="flex" data-aos="zoom-in">
-                            Im inviting you to make an even bigger splash in your market.<br/>
+                            Im inviting you to make an even bigger splash in your market<br/>
                             & join the whales of recruitment.
                         </div>
                         <div className="flex">
-                            <Link to='signUpFormRecruiter'><div className="signUpBtnHome">Recruiter RSVP</div></Link>
+                            <Link to='signUpFormRecruiter'><div className="signUpBtnHome" data-aos="fade-in" data-aos-delay="300">Recruiter RSVP</div></Link>
                         </div>
                     </div>
 

@@ -88,6 +88,7 @@
         display: unset; 
     }
     .lp2_body { 
+        height: calc(100% - 50px);
         flex: 0 0 calc(100% - 50px); 
         background-image: url("../../files/images/landingPage/lp2_bottomSM.png");
         background-position: bottom;

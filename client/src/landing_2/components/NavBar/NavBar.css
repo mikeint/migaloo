@@ -9,24 +9,14 @@
 .lp2_navBar #navBarMobile { 
     height: 50px;
     color:#fff;
-}
-.lp2_navBar .whaleClick {
-    cursor: pointer; 
-}
-
-.lp2_navBar .mobileWhaleContainer .whaleContainer {
-    width: 170px;
-    margin-top: 4px;
-    margin-left: 4px;
-}
-.lp2_navBar .mobileWhaleContainer .whaleWater {
-    transform: scale(2);
 } 
-.lp2_navBar .mobileWhaleContainer .whaleSpray { 
-    margin-left: -37px;
-    margin-top: -5px;
-}
 
+.lp2_navBar .mobileWhaleContainer img {
+    width: 40px;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-top: 7px;
+}
  
 .lp2_navBar #navBar a {
     display: flex;
@@ -93,7 +83,7 @@
 
 /* NAV-HAMBURGER */
 #nav-icon3 {
-    width: 45px;
+    width: 32px;
     height: 45px;
     position: relative; 
     -webkit-transform: rotate(0deg);
@@ -110,7 +100,7 @@
 #nav-icon3 span {
     display: block;
     position: absolute;
-    height: 5px;
+    height: 4px;
     width: 100%;
     background: #fff;
     border-radius: 5px;
@@ -126,13 +116,13 @@
     transition: .25s ease-in-out;
 }
 #nav-icon3 span:nth-child(1) {
-    top: 8px;
+    top: 10px;
 }
 #nav-icon3 span:nth-child(2),#nav-icon3 span:nth-child(3) {
     top: 20px;
 }
 #nav-icon3 span:nth-child(4) {
-    top: 32px;
+    top: 30px;
 }
 #nav-icon3.open span:nth-child(1) {
     top: 18px;

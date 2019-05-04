@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import './NavBar.css'
 
 import Whale from '../../../components/Whale/Whale'
+import tail from '../../../files/images/landingPage/tail.png'
 import arrow from '../../../files/images/landingPage/arrowDownB.png'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 
@@ -27,7 +28,7 @@ class NavBar extends Component {
 		return ( 
             <div className="lp2_navBar">  
                 <div id="navBar">
-                    <NavLink to="/" className="whaleClick"><Whale {...whaleOptions}/></NavLink> 
+                    <NavLink to="/"><Whale {...whaleOptions}/></NavLink> 
  
                     <NavLink to="/employerPage" className="topSubItem">For Employers</NavLink>
                     <div className="subNavBox"> 
@@ -50,7 +51,7 @@ class NavBar extends Component {
                 </div>
 
                 <div id="navBarMobile"> 
-                    <NavLink to="/"><div className="whaleClick mobileWhaleContainer"><Whale {...whaleOptions}/></div></NavLink>
+                    <NavLink to="/"><div className="mobileWhaleContainer"><img src={tail} alt="tail" /></div></NavLink>
                     <div id="nav-icon3" className={this.state.menuOpen ? "open" : ""} onClick={this.callAddOverlay}>
                         <span></span>
                         <span></span>
