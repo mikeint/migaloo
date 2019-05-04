@@ -7,6 +7,7 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import Login from './pages/Login/Login'
 import RecruiterRouter from './pages/recruiter/RecruiterRouter'
 import EmployerRouter from './pages/employer/EmployerRouter'
+import AuthRouter from './pages/auth/AuthRouter'
 
 //Landing page 1 routes
 import AboutTeamPage from './landing_1/AboutTeamPage/AboutTeam'
