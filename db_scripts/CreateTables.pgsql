@@ -1,7 +1,9 @@
 DROP TABLE IF EXISTS job_posting_contact; -- To Remove
+DROP TABLE IF EXISTS rate_employer; -- To Remove
+DROP TABLE IF EXISTS employer_contact; -- To Remove
 
 DROP VIEW IF EXISTS user_master;
-DROP TABLE IF EXISTS rate_employer;
+DROP TABLE IF EXISTS rate_company;
 DROP TABLE IF EXISTS rate_recruiter;
 DROP TABLE IF EXISTS rate_candidate;
 DROP VIEW IF EXISTS messages;
@@ -16,12 +18,16 @@ DROP TABLE IF EXISTS candidate_tags;
 DROP TABLE IF EXISTS recruiter_candidate;
 DROP TABLE IF EXISTS candidate_posting;
 DROP TABLE IF EXISTS denial_reason;
-DROP TABLE IF EXISTS job_posting;
+DROP VIEW IF EXISTS job_posting;
+DROP TABLE IF EXISTS job_recruiter_posting;
+DROP TABLE IF EXISTS job_posting; -- To Remove
+DROP TABLE IF EXISTS job_posting_all;
+DROP TABLE IF EXISTS company_contact;
+DROP TABLE IF EXISTS company;
 DROP TABLE IF EXISTS recruiter;
 DROP TABLE IF EXISTS candidate;
-DROP TABLE IF EXISTS employer_contact;
 DROP TABLE IF EXISTS account_manager;
-DROP TABLE IF EXISTS employer;
+DROP TABLE IF EXISTS employer; -- To Remove
 DROP TABLE IF EXISTS address;
 DROP TABLE IF EXISTS login;
 DROP TABLE IF EXISTS user_type;
@@ -31,6 +37,7 @@ DROP TABLE IF EXISTS tags_equality;
 DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS tag_type;
 DROP TABLE IF EXISTS location_type;
+
 
 CREATE OR REPLACE FUNCTION array_intersects(a1 bigint[], a2 bigint[]) returns boolean as $$
 declare
@@ -73,6 +80,7 @@ CREATE TABLE login (
     passwordhash varchar(128),
     created_on timestamp default NOW(),
     last_login timestamp,
+    email_verified boolean default false,
     user_type_id int REFERENCES user_type(user_type_id),
     PRIMARY KEY(user_id)
 );
@@ -91,30 +99,31 @@ CREATE TABLE address (
     lon float,
     PRIMARY KEY(address_id)
 );
-CREATE TABLE employer (
-    employer_id bigserial REFERENCES login(user_id),
+
+CREATE TABLE company (
+    company_id bigserial REFERENCES login(user_id),
     address_id bigint REFERENCES address(address_id),
     company_name  varchar(128) NOT NULL,
-    department  varchar(128) NOT NULL,
+    department  varchar(128),
     company_name_search tsvector,
     image_id varchar(128),
     active boolean default true,
     rating float default null,
-    PRIMARY KEY(employer_id)
+    PRIMARY KEY(company_id)
 );
-CREATE INDEX employer_active_idx ON employer(active);
-CREATE INDEX employer_tsv_idx ON employer USING gin(company_name_search);
-CREATE TRIGGER employer_search_vector_update
+CREATE INDEX company_active_idx ON company(active);
+CREATE INDEX company_tsv_idx ON company USING gin(company_name_search);
+CREATE TRIGGER company_search_vector_update
 BEFORE INSERT OR UPDATE
-ON employer
+ON company
 FOR EACH ROW EXECUTE PROCEDURE
 tsvector_update_trigger (company_name_search, 'pg_catalog.simple', company_name);
 
-CREATE TABLE rate_employer (
-    employer_id bigint REFERENCES employer(employer_id),
+CREATE TABLE rate_company (
+    company_id bigint REFERENCES company(company_id),
     user_id bigint REFERENCES login(user_id),
     rating int NOT NULL,
-    PRIMARY KEY(employer_id, user_id)
+    PRIMARY KEY(company_id, user_id)
 );
 CREATE TABLE account_manager (
     account_manager_id bigint REFERENCES login(user_id),
@@ -127,12 +136,6 @@ CREATE TABLE account_manager (
     name_search tsvector,
     PRIMARY KEY(account_manager_id)
 );
-CREATE TABLE employer_contact (
-    employer_id bigint REFERENCES employer(employer_id),
-    employer_contact_id bigint REFERENCES login(user_id),
-    is_primary boolean default false,
-    PRIMARY KEY(employer_id, employer_contact_id)
-);
 CREATE INDEX account_manager_order_idx ON account_manager(last_name ASC, first_name ASC);
 CREATE INDEX account_manager_active_idx ON account_manager(active);
 CREATE INDEX account_manager_tsv_idx ON account_manager USING gin(name_search);
@@ -141,6 +144,14 @@ BEFORE INSERT OR UPDATE
 ON account_manager
 FOR EACH ROW EXECUTE PROCEDURE
 tsvector_update_trigger (name_search, 'pg_catalog.simple', last_name, first_name);
+
+CREATE TABLE company_contact (
+    company_id bigint REFERENCES company(company_id),
+    company_contact_id bigint REFERENCES login(user_id),
+    is_primary boolean default false,
+    PRIMARY KEY(company_id, company_contact_id)
+);
+CREATE INDEX company_contact_active_idx ON company_contact(company_contact_id);
 
 CREATE TABLE recruiter (
     recruiter_id bigint REFERENCES login(user_id),
@@ -168,9 +179,9 @@ CREATE TABLE rate_recruiter (
     rating int NOT NULL,
     PRIMARY KEY(recruiter_id, user_id)
 );
-CREATE TABLE job_posting (
+CREATE TABLE job_posting_all (
     post_id bigserial,
-    employer_id bigint REFERENCES employer(employer_id),
+    company_id bigint REFERENCES company(company_id),
     salary_type_id int REFERENCES salary_type(salary_type_id),
     title varchar(255) NOT NULL,
     caption text NOT NULL,
@@ -181,13 +192,28 @@ CREATE TABLE job_posting (
     posting_search tsvector,
     PRIMARY KEY(post_id)
 );
-CREATE INDEX job_posting_active_idx ON job_posting(active);
-CREATE INDEX job_posting_tsv_idx ON job_posting USING gin(posting_search);
-CREATE TRIGGER job_posting_search_vector_update
+CREATE INDEX job_posting_all_active_idx ON job_posting_all(active);
+CREATE INDEX job_posting_all_tsv_idx ON job_posting_all USING gin(posting_search);
+CREATE TRIGGER job_posting_all_search_vector_update
 BEFORE INSERT OR UPDATE
-ON job_posting
+ON job_posting_all
 FOR EACH ROW EXECUTE PROCEDURE
 tsvector_update_trigger (posting_search, 'pg_catalog.simple', title, caption);
+
+CREATE TABLE job_recruiter_posting (
+    post_id bigint REFERENCES job_posting_all(post_id),
+    recruiter_id bigint REFERENCES recruiter(recruiter_id),
+	created_on timestamp default NOW(),
+    PRIMARY KEY(post_id, recruiter_id)
+);
+CREATE INDEX job_recruiter_posting_idx ON job_recruiter_posting(post_id);
+
+CREATE VIEW job_posting AS 
+SELECT jpa.*, jrp.recruiter_id, jrp.created_on as recruiter_created_on
+FROM job_posting_all jpa
+INNER JOIN job_recruiter_posting jrp ON jpa.post_id = jrp.post_id
+WHERE active AND is_visible;
+
 
 CREATE TABLE candidate (
     candidate_id bigint REFERENCES login(user_id),
@@ -232,7 +258,7 @@ CREATE TABLE denial_reason (
 );
 CREATE TABLE candidate_posting (
     candidate_id bigint REFERENCES candidate(candidate_id),
-    post_id bigint REFERENCES job_posting(post_id),
+    post_id bigint REFERENCES job_posting_all(post_id),
     recruiter_id bigint REFERENCES recruiter(recruiter_id),
     created_on timestamp default NOW(),
     migaloo_responded_on timestamp,
@@ -245,6 +271,7 @@ CREATE TABLE candidate_posting (
     has_seen_response boolean default false,
     denial_reason_id int REFERENCES denial_reason(denial_reason_id),
     comment varchar(512),
+    denial_comment varchar(512),
     coins int NOT NULL CHECK (coins > 0),
     PRIMARY KEY(candidate_id, post_id, recruiter_id)
 );
@@ -266,8 +293,9 @@ CREATE TABLE messages_subject (
     user_id_2 bigint REFERENCES login(user_id) NOT NULL,
     created_on timestamp default NOW(),
     subject_user_id bigint REFERENCES login(user_id),
-    post_id bigint REFERENCES job_posting(post_id),
+    post_id bigint REFERENCES job_posting_all(post_id),
     unique (user_id_1, user_id_2, subject_user_id, post_id),
+    unique (post_id),
     PRIMARY KEY(message_subject_id)
 );
 CREATE TABLE messages_base (
@@ -388,7 +416,7 @@ CREATE TABLE tags_equality (
 );
 
 CREATE TABLE posting_tags (
-    post_id bigint REFERENCES job_posting(post_id),
+    post_id bigint REFERENCES job_posting_all(post_id),
     tag_id bigint REFERENCES tags(tag_id),
     PRIMARY KEY(post_id, tag_id)
 );
@@ -412,16 +440,23 @@ SELECT
     coalesce(c.rating, r.rating, e.rating) as rating,
     coalesce(c.active, r.active, ac.active) as active,
     coalesce(c.image_id, r.image_id, ac.image_id) as image_id,
-    (CASE WHEN l.passwordhash IS NULL THEN false ELSE true END) as account_active
+    (CASE WHEN l.passwordhash IS NULL THEN false ELSE true END) as account_active,
+    is_primary
 FROM login l
 INNER JOIN user_type ut ON ut.user_type_id = l.user_type_id
 LEFT JOIN candidate c ON c.candidate_id = l.user_id
 LEFT JOIN recruiter r ON r.recruiter_id = l.user_id
-LEFT JOIN employer e ON e.employer_id = l.user_id
-LEFT JOIN account_manager ac ON ac.account_manager_id = l.user_id;
+LEFT JOIN company e ON e.company_id = l.user_id
+LEFT JOIN account_manager ac ON ac.account_manager_id = l.user_id
+LEFT JOIN (
+    SELECT bool_or(is_primary) as is_primary, company_contact_id
+    FROM company_contact
+    GROUP BY company_contact_id
+) ip ON ip.company_contact_id = l.user_id;
 
 -- DATA START
 INSERT INTO denial_reason (denial_reason_text) VALUES
+    ('Other candidates are better'),
     ('Rejected before the interview'),
     ('Rejected following the interview'),
     ('Other candidate chosen'),
@@ -572,38 +607,45 @@ INSERT INTO tags (tag_name, tag_type_id) VALUES
     ('Microsoft Excel', 4), ('Microsoft Office', 4),
     ('Architecture Design', 5), ('Agile', 5), ('Project Management', 5), ('Leadership', 5), ('Waterfall', 5);
 -- FAKE DATA START
-INSERT INTO login (user_id, email, passwordhash, created_on, user_type_id) VALUES 
-    (1, 'r1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-17 10:23:54', 1), -- Add Recruiter, pass: test
-    (2, 'r2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-11-25 10:23:54', 1), -- Add Recruiter, pass: test
-    (3, 'r3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-12-25 10:23:54', 1), -- Add Recruiter, pass: test
-    (100, 'e1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-01-21 10:23:54', 2), -- Add Account Manager, pass: test
-    (101, 'e2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
-    (102, 'e3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
-    (103, 'e4@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
-    (104, 'e5@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
-    (105, 'e6@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Account Manager, pass: test
-    (106, 'e7@test.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 2), -- Add Employer, pass: test
-    (500, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4), -- Dummy Employer, pass: test
-    (501, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4); -- Dummy Employer, pass: test
-INSERT INTO login (user_id, email, created_on, user_type_id) VALUES 
-    (1000, 'c1@test.com', TIMESTAMP '2019-02-17 10:23:54', 3), -- Add candidate
-    (1001, 'c2@test.com', TIMESTAMP '2018-11-25 10:23:54', 3), -- Add candidate
-    (1002, 'c3@test.com', TIMESTAMP '2018-12-25 10:23:54', 3), -- Add candidate
-    (1003, 'c4@test.com', TIMESTAMP '2019-01-21 10:23:54', 3), -- Add candidate
-    (1004, 'c5@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
-    (1005, 'c6@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
-    (1006, 'c7@test.com', TIMESTAMP '2019-02-20 10:23:54', 3), -- Add candidate
-    (1007, 'c8@test.com', TIMESTAMP '2019-02-20 10:23:54', 3); -- Add candidate
+INSERT INTO login (user_id, email, passwordhash, created_on, user_type_id, email_verified) VALUES 
+    (1, 'r1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-17 10:23:54', 1, true), -- Add Recruiter, pass: test
+    (2, 'r2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-11-25 10:23:54', 1, true), -- Add Recruiter, pass: test
+    (3, 'r3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2018-12-25 10:23:54', 1, true), -- Add Recruiter, pass: test
+    (100, 'e1@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-01-21 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (101, 'e2@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (102, 'e3@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (103, 'e4@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (104, 'e5@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (105, 'e6@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
+    (106, 'e7@test.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Employer, pass: test
+    (500, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
+    (501, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
+    (502, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
+    (503, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
+    (504, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true); -- Dummy Employer, pass: test
+INSERT INTO login (user_id, email, created_on, user_type_id, email_verified) VALUES 
+    (1000, 'c1@test.com', TIMESTAMP '2019-02-17 10:23:54', 3, true), -- Add candidate
+    (1001, 'c2@test.com', TIMESTAMP '2018-11-25 10:23:54', 3, true), -- Add candidate
+    (1002, 'c3@test.com', TIMESTAMP '2018-12-25 10:23:54', 3, true), -- Add candidate
+    (1003, 'c4@test.com', TIMESTAMP '2019-01-21 10:23:54', 3, true), -- Add candidate
+    (1004, 'c5@test.com', TIMESTAMP '2019-02-20 10:23:54', 3, true), -- Add candidate
+    (1005, 'c6@test.com', TIMESTAMP '2019-02-20 10:23:54', 3, true), -- Add candidate
+    (1006, 'c7@test.com', TIMESTAMP '2019-02-20 10:23:54', 3, true), -- Add candidate
+    (1007, 'c8@test.com', TIMESTAMP '2019-02-20 10:23:54', 3, true); -- Add candidate
 INSERT INTO address (address_line_1, city, state_code, country_code, state, country, lat, lon) VALUES 
     ('123 Main St.', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.6531, -79.3831),
     ('4312 Dundas Rd.', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.6533, -79.3833),
-    ('21 Backersfield Rd.', 'North York', 'ON', 'CA', 'Ontario', 'Canada', 43.65335, -79.38325);
+    ('21 Backersfield Rd.', 'North York', 'ON', 'CA', 'Ontario', 'Canada', 43.65335, -79.38325),
+    ('711 North Ave.', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.65334, -79.38318);
 INSERT INTO address (address_line_1, address_line_2, city, state_code, country_code, state, country, lat, lon) VALUES
     ('654 York Rd.', 'Suite 203', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.65325, -79.38312),
     ('1325 York Rd.', 'Building 3', 'Toronto', 'ON', 'CA', 'Ontario', 'Canada', 43.65324, -79.38328);
-INSERT INTO employer (employer_id, company_name, department, address_id) VALUES
+INSERT INTO company (company_id, company_name, department, address_id) VALUES
     (500, 'Google Inc.', 'IT Services', 1), 
-    (501, 'Microsoft Inc.', 'Information Technology Division', 2);
+    (501, 'Microsoft Inc.', 'Information Technology Division', 2),
+    (502, '123 Recruiters', null, 3),
+    (503, 'Alegis Group', null, 4),
+    (504, 'Robert Half', null, 5);
 INSERT INTO account_manager (account_manager_id, first_name, last_name, phone_number) VALUES
     (100, 'Steve', 'Smith', '905-555-8942'), 
     (101, 'Jerry', 'McGuire', '905-555-0425'),
@@ -612,15 +654,6 @@ INSERT INTO account_manager (account_manager_id, first_name, last_name, phone_nu
     (104, 'Adam', 'Steal', '905-555-9782'),
     (105, 'Kelly', 'Rogers', '905-555-6456'),
     (106, 'Rebecca', 'Brown', NULL);
-INSERT INTO employer_contact (employer_contact_id, employer_id, is_primary) VALUES
-    (100, 500, true), 
-    (100, 501, true), 
-    (101, 501, true),
-    (102, 500, false),
-    (103, 500, false),
-    (104, 500, false),
-    (105, 500, false),
-    (106, 500, false);
 INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, coins, address_id) VALUES
     (1, 'John', 'Macabee', '443-555-8234', 25, 3),
     (2, 'Milton', 'Walker', '443-555-6456', 50, 4),
@@ -634,6 +667,18 @@ INSERT INTO candidate (candidate_id, first_name, last_name, experience_type_id, 
     (1005, 'Anton', 'Moore', 3, 6),
     (1006, 'Chris', 'Roth', 2, 5),
     (1007, 'Lukas', 'Page', 1, 4);
+INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES
+    (100, 500, true), 
+    (100, 501, true), 
+    (101, 501, true),
+    (102, 500, false),
+    (103, 500, false),
+    (104, 500, false),
+    (105, 500, false),
+    (106, 500, false),
+    (1, 503, true),
+    (2, 503, false),
+    (3, 504, true);
 INSERT INTO recruiter_candidate (candidate_id, recruiter_id, created_on) VALUES
     (1000, 1, NOW() - interval '1' day),
     (1001, 1, NOW() - interval '2' day),
@@ -647,12 +692,15 @@ INSERT INTO recruiter_candidate (candidate_id, recruiter_id, created_on) VALUES
     (1007, 1, NOW() - interval '8' day),
     (1007, 2, NOW() - interval '8' day),
     (1007, 3, NOW() - interval '8' day);
-INSERT INTO job_posting (post_id, employer_id, created_on, title, caption, experience_type_id, salary_type_id) VALUES
+INSERT INTO job_posting_all (post_id, company_id, created_on, title, caption, experience_type_id, salary_type_id) VALUES
     (1, 500, NOW() - interval '5' minute, 'Senior Software Developer - Working on exciting projects', 'We are a small company that develops solutions to protect national security and everyday folks. That includes OS integration, programming in C, C++, Java, Scala, Python, JS, or whatever the job calls for, writing security policies, and everything in between.', 2, 4),
     (2, 501, NOW() - interval '1' hour, 'Software Developer', 'As a software developer, you will be a key individual contributor on a sprint team building the future software at the core of the business. The role is for a full stack developer with the ability to develop solutions for the user interface, business logic, persistence layer and data store. Developers are responsible for implementing well-defined requirements as part of the sprint team including unit tests.', null, 5),
     (3, 500, NOW() - interval '3' hour, 'Director of Technical Support', 'As Director of Technical Support for Tenable, you will provide strategic direction, leadership, development and management with our Americas Technical Support team. The Director of Technical Support is an experienced, enthusiastic, hands-on leader focused on building a world class Technical Support organization that is focused on delivering customer success. You will be the conduit between the Technical Support team, Customer Success Management team, Product and Development teams, and other internal stakeholders developing a trusted advisor relationship that enables rapid, focused, resolution for our customers. To be successful in this role, the Director of Technical Support must have the right combination of strategy, leadership and operational skills to manage a growing team of dedicated Technical Support Engineers.', 3, 6),
     (4, 501, NOW() - interval '1' day, 'IT Director', 'The primary directive of the IT Director is to ensure that the technology and computing needs of the company are met. The candidate will work with executive leadership to help develop and maintain an IT roadmap keeping the company�s future objectives in mind. This position requires significant hands-on technical knowledge and expertise coupled with solid business knowledge. The IT Director must be able to collaborate with internal customers to identify and prioritize business requirements and deliver business and technology solutions with a focus on process transformation from planning through implementation. They will support the organizational initiative of process re-engineering by involving client departments in process flow analysis and work re-design. ', 3, 7);
-
+INSERT INTO job_recruiter_posting(post_id, recruiter_id) VALUES 
+    (1, 1),(2, 1),(3, 1),(4, 1),
+    (2, 2),(3, 2),(4, 2),
+    (1, 3),(3, 3),(4, 3);
 
 INSERT INTO candidate_posting (post_id, candidate_id, recruiter_id, coins, created_on, migaloo_responded_on, has_seen_post, has_seen_response, migaloo_accepted, comment) VALUES
     (1, 1000, 1, 10, NOW() - interval '1' day, NOW() - interval '0' day, true, false, true, 'I think this Sarah would be great for the job'),
@@ -708,8 +756,8 @@ INSERT INTO candidate_tags (candidate_id, tag_id) VALUES
     (1007, 5);
 INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id, created_on) VALUES
     (1, 500, 1000, 1, NOW() - interval '7' day), -- message_subject_id = 1
-    (3, 500, 1006, 3, NOW() - interval '11' day), -- message_subject_id = 2
-    (1, 500, 1001, 1, NOW() - interval '1' day); -- message_subject_id = 3
+    (3, 500, 1006, 2, NOW() - interval '11' day), -- message_subject_id = 2
+    (1, 500, 1001, 3, NOW() - interval '1' day); -- message_subject_id = 3
 INSERT INTO messages (message_type_id, to_id, message_subject_id, message, created_on) VALUES
     (1, 1, 1, 'We would like to hear more about sarah.', NOW() - interval '6' day),
     (1, 500, 1, 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', NOW() - interval '5' day),
@@ -740,9 +788,9 @@ UPDATE messages SET response = 2 WHERE message_id = 22;
 
 SELECT setval(pg_get_serial_sequence('login', 'user_id'), max(user_id)) FROM login;
 SELECT setval(pg_get_serial_sequence('address', 'address_id'), max(address_id)) FROM address;
-SELECT setval(pg_get_serial_sequence('employer', 'employer_id'), max(employer_id)) FROM employer;
+SELECT setval(pg_get_serial_sequence('company', 'company_id'), max(company_id)) FROM company;
 SELECT setval(pg_get_serial_sequence('candidate', 'candidate_id'), max(candidate_id)) FROM candidate;
-SELECT setval(pg_get_serial_sequence('job_posting', 'post_id'), max(post_id)) FROM job_posting;
+SELECT setval(pg_get_serial_sequence('job_posting_all', 'post_id'), max(post_id)) FROM job_posting_all;
 SELECT setval(pg_get_serial_sequence('recruiter', 'recruiter_id'), max(recruiter_id)) FROM recruiter;
 SELECT setval(pg_get_serial_sequence('account_manager', 'account_manager_id'), max(account_manager_id)) FROM account_manager;
 

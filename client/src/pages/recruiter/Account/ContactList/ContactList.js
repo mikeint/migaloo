@@ -3,11 +3,9 @@ import ApiCalls from '../../../../ApiCalls';
 import Pagination from "react-js-pagination";
 import Loader from '../../../../components/Loader/Loader';
 import { withStyles } from '@material-ui/core/styles';  
-import Close from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import GetAccountManager from '../../../../components/GetAccountManager/GetAccountManager';
+import AddUserByEmail from '../../../../components/AddUserByEmail/AddUserByEmail';
 import ModifiableProfileImage from '../../../../components/ModifiableProfileImage/ModifiableProfileImage';
 import AddressInput from '../../../../components/AddressInput/AddressInput';
 import FormValidation from '../../../../FormValidation';
@@ -21,11 +19,14 @@ import Checkbox from '@material-ui/core/Checkbox';
 const styles = theme => ({
     button:{ 
         width: "80%",
-        display: "inline-block"
     },
     textField: {
         width: "50%",
         margin: "10px"
+    },
+    addressField:{
+        width: "80%",
+        display: "inline-block"
     },
     tableBody:{
         // display: "table",
@@ -53,10 +54,6 @@ const styles = theme => ({
     },
     center:{
         textAlign:"center"
-    },
-    addressField:{
-        width: "80%",
-        display: "inline-block"
     },
     alertClose: {
         position: "absolute",
@@ -96,12 +93,10 @@ class ContactList extends React.Component{
             contactList: [],
             company: props.company,
             company_name: props.company.company_name,
-            department: props.company.department,
             page: 1,
             pageCount: 1,
             loading: true,
-            showGetAccountManager: false,
-            onClose: props.onClose,
+            showAddUser: false,
             isModified: false,
             didSave: false,
             errors:{}
@@ -130,17 +125,13 @@ class ContactList extends React.Component{
             console.log(errors.response.data)
         })
     }
-    setAdmin = (e, companyContact) => {
-        ApiCalls.post(`/api/company/setContactAdmin`,
-            {
-                companyContactId:companyContact.company_contact_id,
-                companyId:this.state.company.company_id,
-                isPrimary:e.target.checked
-            })
+    setAdmin = (e, recruiterContact) => {
+        ApiCalls.post(`/api/recruiter/setContactAdmin`,
+            {recruiterContactId:recruiterContact.company_contact_id, employerId:this.state.company.company_id, isPrimary:e.target.checked})
         .then((res)=>{
             if(res && res.data.success){
                 this.setState({ contactList: this.state.contactList.map(d=>{
-                    if(companyContact.company_contact_id === d.company_contact_id)
+                    if(recruiterContact.company_contact_id === d.company_contact_id)
                         d.is_primary = !d.is_primary
                     return d;
                 }) })
@@ -153,8 +144,8 @@ class ContactList extends React.Component{
     addContact = (users) => {
         const userIds = users.map(d=>d.id)
         if(userIds.length > 0){
-            ApiCalls.post(`/api/company/addContactToCompany`,
-                {userIds:userIds, companyId:this.state.company.company_id})
+            ApiCalls.post(`/api/recruiter/addContactToRecruiter`,
+                {userIds:userIds, recruiterId:this.state.company.company_id})
             .then((res)=>{
                 if(res && res.data.success){
                     this.getContactList();
@@ -166,8 +157,8 @@ class ContactList extends React.Component{
         }
     }
     removeContact = (user) => {
-        ApiCalls.post(`/api/company/removeContactFromCompany`,
-            {userId:user.company_contact_id, companyId:this.state.company.company_id})
+        ApiCalls.post(`/api/recruiter/removeContactFromRecruiter`,
+            {userId:user.company_contact_id, recruiterId:this.state.company.company_id})
         .then((res)=>{
             if(res && res.data.success){
                 this.getContactList();
@@ -177,10 +168,10 @@ class ContactList extends React.Component{
             console.log(errors.response.data)
         )
     }
-    saveCompany = (user) => {
+    saveRecruiter = (user) => {
         if(this.formValidation.isValid()){
-            ApiCalls.post(`/api/company/setCompanyProfile`,
-                {companyId:this.state.company.company_id, company_name:this.state.company_name, department:this.state.department})
+            ApiCalls.post(`/api/recruiter/setRecruiterProfile`,
+                {recruiterId:this.state.company.company_id, company_name:this.state.company_name, department:this.state.department})
             .then((res)=>{
                 if(res && res.data.success){
                     this.setState({didSave: true, isModified:false})
@@ -198,7 +189,7 @@ class ContactList extends React.Component{
         });
     };
     handleCloseGetAccountManager = (ret) => {
-        this.setState({showGetAccountManager:false})
+        this.setState({showAddUser:false})
         if(ret){
             this.addContact(ret.filter(d=>!this.state.contactList.some(c=>d.id === c.company_contact_id)))
         }
@@ -206,22 +197,13 @@ class ContactList extends React.Component{
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value, isModified:this.state.isModified||this.state[e.target.name]!==e.target.value })
     }
-    closeSelf(){
-        this.state.onClose(this.state.didSave)
-    }
     handleAddressChange(address){
         this.setState({addressChange:address})
     }
     render(){
         const { classes } = this.props; 
         return ( 
-            <div> 
-                <div className={classes.alertTitle} color="primary">
-                    <span>{this.state.company.company_name + ' - Contact List'}</span>
-                    <IconButton color="inherit" className={classes.alertClose} onClick={this.closeSelf.bind(this)}>
-                        <Close />
-                    </IconButton>
-                </div>
+            <div>
                 <div className={classes.center}>
                     <br/>
                     <div>
@@ -265,7 +247,7 @@ class ContactList extends React.Component{
                         color="primary"
                         variant="contained"
                         disabled={!this.state.isModified}
-                        onClick={this.saveCompany}>Save Changes</Button>
+                        onClick={this.saveRecruiter}>Save Changes</Button>
                 </div>
                 <Table className={classes.tableBody}>
                     <TableHead className={classes.tableHeading}>
@@ -333,11 +315,10 @@ class ContactList extends React.Component{
                     className={classes.button}
                     color="primary"
                     variant="contained"
-                    onClick={()=>this.setState({showGetAccountManager:true})}>Add Contact</Button>
+                    onClick={()=>this.setState({showAddUser:true})}>Add Contact</Button>
                 </div>
-                <GetAccountManager
-                    subject={this.state.company.company_name}
-                    open={this.state.showGetAccountManager}
+                <AddUserByEmail
+                    open={this.state.showAddUser}
                     onClose={this.handleCloseGetAccountManager}/>
                 <br/>
             </div> 

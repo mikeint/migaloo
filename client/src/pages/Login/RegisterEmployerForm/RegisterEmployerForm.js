@@ -81,7 +81,7 @@ class RegisterEmployerForm extends Component {
 
 	if(this.Auth.loggedIn()){
         if (this.state.user)
-            return <Redirect to='/activeJobs' />
+            return <Redirect to='/employer' />
     }  
 	
     return (

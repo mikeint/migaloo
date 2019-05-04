@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../../config/passport');
-const db = require('../../config/db')
+const passport = require('../config/passport');
+const db = require('../config/db')
 const postgresdb = db.postgresdb
 const useAWS = process.env.AWS ? true : false;
 const aws = require('aws-sdk');
@@ -30,7 +30,7 @@ router.get('/view/:size', passport.authentication, (req, res) => {
         query = '\
         SELECT image_id \
         FROM employer r \
-        WHERE r.employer_id = $1'
+        WHERE r.company_id = $1'
     }else if(jwtPayload.userType == 3){
         query = '\
         SELECT image_id \
@@ -84,8 +84,8 @@ router.get('/view/:type/:id/:size', passport.authentication, (req, res) => {
     }else if(req.params.type == 2){
         query = '\
             SELECT image_id \
-            FROM employer_contact r \
-            WHERE r.employer_contact_id = $1'
+            FROM company_contact r \
+            WHERE r.company_contact_id = $1'
     }else if(req.params.type == 3){
         query = '\
             SELECT image_id \

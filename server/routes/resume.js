@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../../config/passport');
+const passport = require('../config/passport');
 
-const postgresdb = require('../../config/db').postgresdb
-const generateUploadMiddleware = require('../upload').generateUploadMiddleware
+const postgresdb = require('../config/db').postgresdb
+const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
 const upload = generateUploadMiddleware('resumes/')
 const useAWS = process.env.AWS ? true : false;
 const aws = require('aws-sdk');

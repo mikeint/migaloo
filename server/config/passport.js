@@ -31,11 +31,19 @@ function init(app){
         }
     ));
 }
-function signToken(payload){
+function signToken(payload, expiresIn="1d"){
     return new Promise((resolve, reject)=>{
-        jwt.sign(payload, keys.secretOrKey, { expiresIn: "1d" }, (err, token) => {
+        jwt.sign(payload, keys.secretOrKey, { expiresIn: expiresIn }, (err, token) => {
             if(err) return reject(err)
             resolve(token)
+        });
+    })
+}
+function decodeToken(token){
+    return new Promise((resolve, reject)=>{
+        jwt.verify(token, keys.secretOrKey, (err, decoded) => {
+            if(err) return reject(err)
+            resolve(decoded)
         });
     })
 }
@@ -43,6 +51,7 @@ module.exports = {
     init: init,
     signToken: signToken,
     passportObject: passport,
+    decodeToken: decodeToken,
     authentication: function(req, res, next) {
         passport.authenticate('jwt',  { session: false }, function(err, jwtPayload) {
             if (err) { return next(err); }

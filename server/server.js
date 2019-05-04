@@ -1,20 +1,21 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
-const auth = require('./routes/api/auth');
-const mailto = require('./routes/mailto');  
-const recruiterJobs = require('./routes/api/recruiterJobs');  
-const employerPostings = require('./routes/api/employerPostings');
-const accountManager = require('./routes/api/accountManager');
-const employer = require('./routes/api/employer'); 
-const recruiter = require('./routes/api/recruiter');
-const candidate = require('./routes/api/candidate');  
-const profileImage = require('./routes/api/profileImage');  
-const message = require('./routes/api/message');  
+const auth = require('./routes/auth');
+const mailto = require('./utils/mailto');  
+const recruiterJobs = require('./routes/recruiterJobs');  
+const employerPostings = require('./routes/employerPostings');
+const accountManager = require('./routes/accountManager');
+const employer = require('./routes/employer'); 
+const company = require('./routes/company'); 
+const recruiter = require('./routes/recruiter');
+const candidate = require('./routes/candidate');  
+const profileImage = require('./routes/profileImage');  
+const message = require('./routes/message');  
 
-const resume = require('./routes/api/resume');  
-const autocomplete = require('./routes/api/autocomplete');  
-//const testAPI = require('./routes/api/testAPI'); 
+const resume = require('./routes/resume');  
+const autocomplete = require('./routes/autocomplete');  
+//const testAPI = require('./routes/testAPI'); 
 const passport = require('./config/passport'); 
 const cors = require('cors');
 const methodOverride = require('method-override');
@@ -35,8 +36,6 @@ app.use(methodOverride('_method'));
 passport.init(app);
 app.use('/api/public/', express.static(path.join(`${__dirname}/public/`)))
 
-app.get('/', (req, res) => res.send("Hello World"));
-
 // USE routes
 app.use('/api/auth', auth);
 app.use('/api/mailto', mailto);
@@ -44,13 +43,14 @@ app.use('/api/recruiterJobs', recruiterJobs);
 app.use('/api/accountManager', accountManager);
 app.use('/api/employerPostings', employerPostings);
 app.use('/api/employer', employer);
+app.use('/api/company', company);
 app.use('/api/recruiter', recruiter);
 app.use('/api/candidate', candidate);
 app.use('/api/profileImage', profileImage);
 app.use('/api/autocomplete', autocomplete);
 app.use('/api/resume', resume);
 app.use('/api/message', message);
-//app.use('/api/testAPI', testAPI);
+//app.use('/testAPI', testAPI);
 
 
  

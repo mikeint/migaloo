@@ -6,6 +6,10 @@ export default class AuthService {
         const token = this.getToken() // Getting token from localstorage
         return !!token;// handwaiving here
     }
+    isVerified() {
+        // Checks if the user has verified their email
+        return this.getUser().isVerified;
+    }
 
     setToken(token, callback) {
         localStorage.setItem('token', token);

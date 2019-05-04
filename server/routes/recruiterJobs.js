@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../../config/passport');
+const passport = require('../config/passport');
 const moment = require('moment');
-const validateCandidatePosting = require('../../validation/jobs');  
+const validateCandidatePosting = require('../validation/jobs');  
 
-const postgresdb = require('../../config/db').postgresdb
+const postgresdb = require('../config/db').postgresdb
 
 
 const listFilters = {
@@ -34,7 +34,7 @@ function getJobs(req, res){
     if(jwtPayload.userType != 1){
         return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
     }
-    var sqlArgs = {page:(page-1)*10}
+    var sqlArgs = {page:(page-1)*10, recruiterId: jwtPayload.id}
     if(search != null)
         sqlArgs['search'] = search.split(' ').map(d=>d+":*").join(" & ")
     if(jobId != null)
@@ -50,13 +50,13 @@ function getJobs(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.any('\
-        SELECT j.employer_id, j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, \
+        SELECT j.company_id, j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, \
             address_line_1, address_line_2, city, state, country, tag_ids, \
             tag_names, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting j \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
-        INNER JOIN employer e ON j.employer_id = e.employer_id \
+        INNER JOIN company e ON j.company_id = e.company_id \
         LEFT JOIN address a ON a.address_id = e.address_id \
         LEFT JOIN ( \
             SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
@@ -66,13 +66,13 @@ function getJobs(req, res){
         ) tg ON tg.post_id = j.post_id \
         '+
         (jobId != null ?
-           'WHERE j.post_id = ${jobId} '+filtersToAdd
+           'WHERE j.post_id = ${jobId} AND j.recruiter_id = ${recruiterId} '+filtersToAdd
         :
         (search ? 
-            'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) '+filtersToAdd+'\
+            'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) AND j.recruiter_id = ${recruiterId} '+filtersToAdd+'\
             ORDER BY ts_rank_cd(company_name_search || posting_search, to_tsquery(\'simple\', ${search})) DESC'
         :
-            'WHERE true '+filtersToAdd+' ORDER BY j.created_on DESC'
+            'WHERE  j.recruiter_id = ${recruiterId} '+filtersToAdd+' ORDER BY j.created_on DESC'
         ))+' \
         OFFSET ${page} \
         LIMIT 10', {...sqlArgs, ...paramsToAdd})
@@ -142,19 +142,19 @@ function getJobsForCandidate(req, res){
             ) tg ON tg.candidate_id = rc.candidate_id \
             WHERE rc.recruiter_id = $1 AND c.candidate_id = $2', [jwtPayload.id, candidateId])
         .then(candidate_data=>{
-            var sqlArgs = {candidateId:candidateId, page:(page-1)*10}
+            var sqlArgs = {candidateId:candidateId, page:(page-1)*10, recruiterId:jwtPayload.id}
             if(search != null)
                 sqlArgs['search'] = search.split(' ').map(d=>d+":*").join(" & ")
             if(jobId != null)
                 sqlArgs['jobId'] = jobId
             return t.any('\
-                SELECT j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, j.employer_id, \
+                SELECT j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, j.company_id, \
                     address_line_1, address_line_2, city, state, country, tag_ids, tag_names, \
-                    score, total_score, score/total_score*100.0 as tag_score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
+                    coalesce(score, 0.0) as score, total_score, coalesce(score, 0.0)/total_score*100.0 as tag_score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
                 FROM job_posting j \
                 LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
                 LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
-                INNER JOIN employer e ON j.employer_id = e.employer_id \
+                INNER JOIN company e ON j.company_id = e.company_id \
                 LEFT JOIN address a ON a.address_id = e.address_id \
                 LEFT JOIN ( \
                     SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
@@ -163,7 +163,7 @@ function getJobsForCandidate(req, res){
                     GROUP BY post_id \
                 ) tg ON tg.post_id = j.post_id \
                 \
-                INNER JOIN ( \
+                LEFT JOIN ( \
                     SELECT j.post_id, (COUNT(1) + \
                         (CASE WHEN count(j.experience_type_id) = 0 OR count(ci.experience_type_id) = 0 THEN 0 ELSE greatest(2-abs(least(max(j.experience_type_id - ci.experience_type_id), 0)), 0)/2.0 END) + \
                         (CASE WHEN count(j.salary_type_id) = 0 OR count(ci.salary_type_id) = 0 THEN 0 ELSE greatest(5-abs(least(max(j.salary_type_id - ci.salary_type_id), 0)), 0)/5.0 END)) as score, \
@@ -177,18 +177,18 @@ function getJobsForCandidate(req, res){
                     INNER JOIN posting_tags pt ON pt.tag_id = ct.tag_id \
                     INNER JOIN job_posting j ON j.post_id = pt.post_id \
                     INNER JOIN candidate ci ON ci.candidate_id = ct.candidate_id \
-                    WHERE ci.candidate_id = ${candidateId} \
+                    WHERE ci.candidate_id = ${candidateId} AND j.recruiter_id = ${recruiterId} \
                     GROUP BY j.post_id \
                 ) jc ON jc.post_id = j.post_id \
                 '+
                 (jobId?
-                    'WHERE j.post_id = ${jobId} '+filtersToAdd
+                    'WHERE j.post_id = ${jobId} AND j.recruiter_id = ${recruiterId} '+filtersToAdd
                 :
                 (search ? 
-                    'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) '+filtersToAdd
-                :'WHERE true '+filtersToAdd)
+                    'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) AND j.recruiter_id = ${recruiterId} '+filtersToAdd
+                :'WHERE j.recruiter_id = ${recruiterId} '+filtersToAdd)
                 )+' \
-                ORDER BY tag_score DESC, j.created_on DESC \
+                ORDER BY tag_score DESC NULLS LAST, j.created_on DESC \
                 OFFSET ${page} \
                 LIMIT 10', {...sqlArgs, ...paramsToAdd})
                 

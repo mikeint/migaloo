@@ -2,23 +2,19 @@ const express = require('express');
 const router = express.Router();
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
-const passport = require('../../config/passport');
+const passport = require('../config/passport');
+const ses = require('../utils/ses');
 
-const postgresdb = require('../../config/db').postgresdb;
+const postgresdb = require('../config/db').postgresdb;
 
 //load input validation
-const validateRegisterInput = require('../../validation/register'); 
-const validateLoginInput = require('../../validation/login');
+const validateRegisterInput = require('../validation/register'); 
+const validateLoginInput = require('../validation/login');
 
 // TODO: encrypt JWT with public key
-function createJWT(userId, email, type){
+function createJWT(payload){
     return new Promise((resolve, reject)=>{
         //create jwt payload
-        const payload = {
-            id: userId,
-            userType: type,
-            email: email
-        }
         //make JWT token (sign token) (payload obj, secretKey, expires obj) 
         passport.signToken(payload).then((token)=>{
             resolve({
@@ -38,7 +34,7 @@ router.post('/saml/callback', passport.passportObject.authenticate('saml', {
   }), function (req, res) {
     res.redirect('/')
   })
-// @route       GET api/user/login
+// @route       GET api/auth/login
 // @desc        Login user route
 // @access      Public
 router.post('/login', (req, res) => {
@@ -47,6 +43,7 @@ router.post('/login', (req, res) => {
     if (!isValid) {
         return res.status(400).json(errors);
     }
+    const loginIp = req.connection.remoteAddress;
     const email = req.body.email;
     if(req.body.email.endsWith("@migaloo.io")){
         console.log("saml")
@@ -57,11 +54,17 @@ router.post('/login', (req, res) => {
         }
     }else{
         const password = req.body.password;
-        postgresdb.one('SELECT user_id, passwordhash, l.user_type_id, ut.user_type_name\
+        postgresdb.one('SELECT l.user_id, l.passwordhash, l.user_type_id, um.user_type_name, um.is_primary, l.email_verified \
                 FROM login l \
-                INNER JOIN user_type ut ON l.user_type_id = ut.user_type_id \
-                WHERE email = $1', email).then(user => {
-            console.log(user)
+                INNER JOIN user_master um ON l.user_id = um.user_id \
+                WHERE l.email = $1', email).then(user => {
+            const payload = {
+                id: user.user_id,
+                userType: user.user_type_id,
+                email: email,
+                isPrimary: user.is_primary,
+                isVerified: user.email_verified
+            }
             if (!user) {
                 errors.email = 'Email not registered';
                 console.log('Email not registered');
@@ -69,7 +72,8 @@ router.post('/login', (req, res) => {
             } else {
                 bcrypt.compare(password, user.passwordhash).then(isMatch => {
                     if(isMatch) {
-                        createJWT(user.user_id, email, user.user_type_id).then((token)=>{
+                        createJWT(payload).then((token)=>{
+                            console.log(`Successful login from ${loginIp} for ${email}`)
                             res.status(200).json(token)
                         })
                         .catch(err => {
@@ -77,6 +81,7 @@ router.post('/login', (req, res) => {
                             res.status(400).json({success: false, error:err})
                         });
                     } else {
+                        console.log(`Failed login from ${loginIp} for ${email}`)
                         errors.password = "Password Incorrect";
                         return res.status(400).json(errors)
                     }
@@ -102,7 +107,7 @@ function checkEmailExists(email){
     })
 }
 
-// @route       GET api/user/register
+// @route       GET api/auth/register
 // @desc        Register route
 // @access      Public
 router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
@@ -125,14 +130,27 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                     // creating a sequence of transaction queries:
                     const q1 = t.one('INSERT INTO login (email, passwordhash, user_type_id) VALUES ($1, $2, $3) RETURNING user_id',
                                     [body.email, hash, type]);
-                    return q1.then((login_ret)=>{
-                        console.log(login_ret)
+                    const qc = t.one('INSERT INTO login (user_type_id) VALUES (4) RETURNING user_id', []);
+                    return t.batch([q1, qc]).then((ret)=>{
+                        const login_ret = ret[0];
+                        const company_login_ret = ret[1];
+                        const payload = {
+                            id: login_ret.user_id,
+                            userType: type,
+                            email: body.email,
+                            isPrimary: true,
+                            isVerified: false
+                        }
                         if(type == 1){ // Recruiter
-                            var q2 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
+                            const q2 = t.one('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3) RETURNING company_id',
+                                    [company_login_ret.user_id, body.companyName, null])
+                            var q3 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
                                     [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
-                            return q2
-                                .then(() => {
-                                    createJWT(login_ret.user_id, body.email, type).then((token)=>{
+                            var q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
+                                [login_ret.user_id, company_login_ret.user_id])
+                            return t.batch([q2, q3, q4]).then(() => {
+                                return q3.then(() => {
+                                    createJWT(payload).then((token)=>{
                                         res.status(200).json(token)
                                     })
                                     .catch(err => {
@@ -141,18 +159,15 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                                     });
                                     return []
                                 })
-                                .catch(err => {
-                                    console.log(err)
-                                    res.status(400).json({success: false, error:err})
-                                });
+                            })
                         }else if(type == 2){ // Employer
-                            var q2 = t.one('INSERT INTO employer (company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING employer_id',
+                            var q2 = t.one('INSERT INTO company (company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING company_id',
                                     [body.companyName, null])
                             return q2.then((employer_data) => {
-                                var q3 = t.none('INSERT INTO employer_contact (employer_contact_id, employer_id, first_name, last_name, phone_number) VALUES ($1, $2, $3, $4, $5)',
-                                    [login_ret.user_id, employer_data.employer_id, body.firstName, body.lastName, body.phoneNumber])
+                                var q3 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
+                                    [login_ret.user_id, employer_data.company_id, body.firstName, body.lastName, body.phoneNumber])
                                 return q3.then(() => {
-                                    createJWT(login_ret.user_id, body.email, type).then((token)=>{
+                                    createJWT(payload).then((token)=>{
                                         res.status(200).json(token)
                                     })
                                     .catch(err => {
@@ -193,8 +208,71 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
         return res.status(500).json({success: false, error:err})
     });
 });
+// @route       POST api/auth/resetPassword
+// @desc        Reset password route
+// @access      Public
+router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+    var body = req.body;
+    passport.decodeToken(body.token).then(payload=>{
+        bcrypt.hash(body.password, 10).then((hash)=>{
+            postgresdb.none('UPDATE login SET passwordhash=${password} WHERE lower(email) = ${email}',
+                            {email:payload.email, password: hash})
+                .then(() => {
+                    res.json({success:true})
+                })
+        })
+    }).catch(err=>res.status(400).json(err))
+});
+router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+    const email = req.body.email.trim();
+    
+    return postgresdb.one('\
+        SELECT concat(first_name, \' \', last_name) as display_name, user_id \
+        FROM user_master um \
+        WHERE lower(um.email) = ${email}', {email:email})
+    .then((data) => {
+        console.log(data)
+        ses.resetPasswordEmail({name:data.display_name, email:email})
+        .then(result=>{
+            console.log(result)
+            res.json({success:true})
+        })
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
+router.post('/verifyEmail', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+    var body = req.body;
+    passport.decodeToken(body.token).then(payload=>{
+        postgresdb.none('UPDATE login SET email_verified=true WHERE user_id = ${id}',
+                        {id:payload.user_id})
+            .then(() => {
+                res.json({success:true})
+            })
+    }).catch(err=>res.status(400).json(err))
+});
+router.post('/sendEmailVerification', passport.authentication, (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+    const jwtPayload = req.body.jwtPayload;
+    return postgresdb.one('\
+        SELECT concat(first_name, \' \', last_name) as display_name \
+        FROM user_master um \
+        WHERE um.user_id = ${id}', {id:jwtPayload.id})
+    .then((data) => {
+        ses.sendEmailVerification({name:data.display_name, user_id:jwtPayload.id, email:jwtPayload.email})
+        .then(result=>{
+            console.log(result)
+            res.json({success:true})
+        })
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
 
-// @route       GET api/user/current
+// @route       GET api/auth/current
 // @desc        return current user
 // @access      Private3
 router.get('/current', passport.authentication, (req, res) => {

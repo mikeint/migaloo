@@ -7,11 +7,18 @@ const Auth = new AuthFunctions();
 class PrivateRecruiterRoute extends Route {
     render(){
         if(this.state.match){
-            return (this.props.redirect != null ? 
-                <Redirect to={this.props.redirect} /> :
-                (Auth.loggedIn() === true && Auth.getUser().userType === 1
-                    ? super.render()
-                    : <Redirect to='/login' />))
+            if(this.props.redirect != null)
+                return <Redirect to={this.props.redirect} />
+            else{
+                if(Auth.loggedIn() === true && Auth.getUser().userType === 1){
+                    if(Auth.isVerified())
+                        return super.render()
+                    else
+                        return <Redirect to='/auth/pendingVerification' />
+                }
+                else
+                    return <Redirect to='/login' />
+            }
         }else{
             return null
         }
@@ -20,11 +27,18 @@ class PrivateRecruiterRoute extends Route {
 class PrivateEmployerRoute extends Route {
     render(){
         if(this.state.match){
-            return (this.props.redirect != null ? 
-                <Redirect to={this.props.redirect} /> :
-                (Auth.loggedIn() === true && Auth.getUser().userType === 2
-                    ? super.render()
-                    : <Redirect to='/login' />))
+            if(this.props.redirect != null)
+                return <Redirect to={this.props.redirect} />
+            else{
+                if(Auth.loggedIn() === true && Auth.getUser().userType === 2){
+                    if(Auth.isVerified())
+                        return super.render()
+                    else
+                        return <Redirect to='/auth/pendingVerification' />
+                }
+                else
+                    return <Redirect to='/login' />
+            }
         }else{
             return null
         }

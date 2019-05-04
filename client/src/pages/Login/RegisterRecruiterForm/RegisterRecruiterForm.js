@@ -16,7 +16,8 @@ class RegisterRecruiterForm extends Component {
         email: '',
         password: '',
         password2: '', 
-        errorList: ''
+        errorList: '',
+        companyName: ''
 	};
 	this.Auth = new AuthFunctions();
     this.onChange = this.onChange.bind(this);
@@ -36,7 +37,8 @@ class RegisterRecruiterForm extends Component {
 			email: this.state.email,
 			type: 1, // Recruiter
 			password: this.state.password,
-			password2: this.state.password2
+            password2: this.state.password2,
+            companyName: this.state.companyName
 		}; 
         
         axios.post('/api/auth/register', newUser).then((res)=>{
@@ -70,11 +72,11 @@ class RegisterRecruiterForm extends Component {
 }
 
   render() {
-    const { firstName, lastName, email, password, password2 } = this.state;
+    const { firstName, lastName, email, password, password2, companyName } = this.state;
 
     if(this.Auth.loggedIn()){
         if (this.state.user)
-            return <Redirect to='/activeJobs' />
+            return <Redirect to='/recruiter' />
     }  
 	
     return (
@@ -90,6 +92,9 @@ class RegisterRecruiterForm extends Component {
             </div>
             <div className="formItem"> 
                 <input type="email" className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name="email" value={email} onChange={this.onChange} required />
+            </div>
+            <div className="formItem"> 
+                <input type="companyName" className={this.state.errorList.companyName ? "formControl error" : "formControl"} placeholder="Company Name" name="companyName" value={companyName} onChange={this.onChange} required />
             </div>
             <div className="formItem">
                 <input type="password" className={this.state.errorList.password ? "formControl error" : "formControl"} placeholder="Password" name="password" value={password} onChange={this.onChange} required />

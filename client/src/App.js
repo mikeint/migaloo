@@ -23,6 +23,15 @@ const theme = createMuiTheme({
     typography: {
         useNextVariants: true,
     },
+    movingBackground:{
+        backgroundImage: "linear-gradient(120deg, #a6c4ce 0%, #465c74 100%)",
+        animation: "Gradient 7s ease infinite",
+        textAlign: "center",
+        position: "fixed",
+        width: "100%",
+        height: "100%",
+        backgroundSize: "400% 400%"
+    },
     palette: {
         primary: {
           // light: will be calculated from palette.primary.main,
@@ -73,6 +82,7 @@ class App extends Component {
                             <PrivateEmployerRoute strict path="/employer" component={EmployerRouter} />
                         </Switch>
                         <Route exact path='/login' render={ () => (<Login />) } />
+                        <Route strict path="/auth" component={AuthRouter} />
                         <Route exact path="/" component={Landing} />
                         <Route exact path="/AboutTeamPage" component={AboutTeamPage} /> 
 

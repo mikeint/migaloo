@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../../config/passport');
+const passport = require('../config/passport');
 const moment = require('moment');
 
-const validateMessageInput = require('../../validation/message');  
-const db = require('../../config/db')
+const validateMessageInput = require('../validation/message');  
+const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const messagesInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'message'], {table: 'messages'});
@@ -50,15 +50,15 @@ router.post('/create', passport.authentication,  (req, res) => {
             SELECT 1 \
             FROM messages_subject m \
             '+(jwtPayload.userType == 2?
-                'LEFT JOIN employer_contact ec1 ON m.user_id_1 = ec1.employer_id \
-                LEFT JOIN employer_contact ec2 ON m.user_id_2 = ec2.employer_id \
+                'LEFT JOIN company_contact ec1 ON m.user_id_1 = ec1.company_id \
+                LEFT JOIN company_contact ec2 ON m.user_id_2 = ec2.company_id \
             ':'')+
             'WHERE '+(jwtPayload.userType == 1 ? 
-                '(m.user_id_1 = $1 OR m.user_id_2 = $1) AND m.message_subject_id = $2' :
-                '(ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1) AND m.message_subject_id = $2')+
+                '(m.user_id_1 = ${userId} OR m.user_id_2 = ${userId}) AND m.message_subject_id = ${messageSubjectId}' :
+                '(ec1.company_contact_id = ${userId} OR ec2.company_contact_id = ${userId}) AND m.message_subject_id = ${messageSubjectId}')+
             ' \
             LIMIT 1 \
-            ', [userId, body.messageSubjectId])
+            ', {userId:userId, messageSubjectId:body.messageSubjectId})
         .then((data) => {
             // Ensure the person is in this chain
             const makeMessage = {
@@ -114,14 +114,14 @@ router.post('/setResponse', passport.authentication,  (req, res) => {
             SELECT 1 \
             FROM messages_subject ms \
             '+(jwtPayload.userType == 2?
-            'LEFT JOIN employer_contact ec1 ON ms.user_id_1 = ec1.employer_id \
-            LEFT JOIN employer_contact ec2 ON ms.user_id_2 = ec2.employer_id \
+            'LEFT JOIN company_contact ec1 ON ms.user_id_1 = ec1.company_id \
+            LEFT JOIN company_contact ec2 ON ms.user_id_2 = ec2.company_id \
             ':'')+
             'WHERE '+(jwtPayload.userType == 1 ? 
-                '(ms.user_id_1 = $1 OR ms.user_id_2 = $1) AND ms.message_subject_id = $2' :
-                '(ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1) AND ms.message_subject_id = $2')+
+                '(ms.user_id_1 = ${userId} OR ms.user_id_2 = ${userId}) AND ms.message_subject_id = $2' :
+                '(ec1.company_contact_id = ${userId} OR ec2.company_contact_id = ${userId}) AND ms.message_subject_id = ${messageSubjectId}')+
             ' \
-            LIMIT 1', [userId, messageSubjectId])
+            LIMIT 1', {userId:userId, messageSubjectId:messageSubjectId})
     .then(d=>{ 
         postgresdb.none('UPDATE messages_calander SET response = $1 WHERE message_id_calander = $2', [response, messageId])
         .then((data) => {
@@ -156,21 +156,14 @@ function listMessages(req, res){
     
     var userId = jwtPayload.id;
     postgresdb.any('\
-        SELECT ms.post_id, jp.title as job_post_title, m.to_id, m.created_on, ms.created_on as subject_created_on, \
+        SELECT ms.post_id, jpa.title as job_post_title, m.to_id, m.created_on, ms.created_on as subject_created_on, \
             m.message, m.response, m.date_offer, m.has_seen, m.message_id, ms.message_subject_id, \
-            um.user_type_id as subject_user_type_id, um.user_type_name as subject_user_type_name, \
-            um.user_id as subject_user_id, um.first_name as subject_first_name, um.last_name as subject_last_name, \
-            ms.user_id_1, um1.user_type_name as user_1_type_name, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
-            ms.user_id_2, um2.user_type_name as user_2_type_name, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
-            (count(1) OVER())/10+1 AS page_count, '+
-            (jwtPayload.userType == 1 ? 
-                '$1 as my_id' :
-                'CASE \
-                    WHEN ec1.employer_id IS NULL AND ec2.employer_id IS NOT NULL THEN ec1.employer_id \
-                    WHEN ec1.employer_id IS NOT NULL AND ec2.employer_id IS NULL THEN ec2.employer_id \
-                    ELSE 0 \
-                END as my_id')+
-            ' \
+            umsub.user_type_id as subject_user_type_id, umsub.user_type_name as subject_user_type_name, \
+            umsub.user_id as subject_user_id, umsub.first_name as subject_first_name, umsub.last_name as subject_last_name, \
+            um1.user_type_name as user_1_type_name, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
+            um2.user_type_name as user_2_type_name, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
+            ms.user_id_2, ms.user_id_1, \
+            (count(1) OVER())/10+1 AS page_count, ${userId} as my_id \
         FROM messages_subject ms \
         LEFT JOIN ( \
             SELECT mo.* \
@@ -179,31 +172,32 @@ function listMessages(req, res){
                 ROW_NUMBER() OVER (PARTITION BY message_subject_id, user_id_1, user_id_2 \
                                     ORDER BY created_on DESC) AS rn \
                 FROM messages ml \
-                WHERE ml.user_id_1 = $1 OR ml.user_id_2 = $1 \
+                WHERE ml.user_id_1 = ${userId} OR ml.user_id_2 = ${userId} \
             ) mo \
             WHERE mo.rn = 1 \
         ) m ON ms.message_subject_id = m.message_subject_id \
-        INNER JOIN job_posting jp ON jp.post_id = ms.post_id \
-        INNER JOIN user_master um ON um.user_id = ms.subject_user_id \
-        LEFT JOIN user_master um1 ON um1.user_id = ms.user_id_1 \
+        INNER JOIN job_posting_all jpa ON jpa.post_id = ms.post_id \
+        INNER JOIN user_master umsub ON umsub.user_id = ms.subject_user_id \
+        LEFT JOIN user_master um1 ON um1.user_id = ms.user_id_2 \
         LEFT JOIN user_master um2 ON um2.user_id = ms.user_id_2 \
         '+(jwtPayload.userType == 2?
-        'LEFT JOIN employer_contact ec1 ON ms.user_id_1 = ec1.employer_id \
-        LEFT JOIN employer_contact ec2 ON ms.user_id_2 = ec2.employer_id \
-        ':'')+
-        'WHERE '+(jwtPayload.userType == 1 ? 
-            'ms.user_id_1 = $1 OR ms.user_id_2 = $1' :
-            'ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1')+
+        'INNER JOIN company_contact cc ON jpa.company_id = cc.company_id \
+        ':'\
+        INNER JOIN job_recruiter_posting jrp ON jpa.post_id = jrp.post_id \
+        ')+
+        'WHERE '+(jwtPayload.userType == 2 ? 
+            'cc.company_contact_id = ${userId}':
+            '(ms.user_id_1 = ${userId} OR ms.user_id_2 = ${userId}) AND jrp.recruiter_id = ${userId} AND jpa.active AND jpa.is_visible')+
         ' \
         ORDER BY coalesce(m.created_on, ms.created_on) DESC \
-        OFFSET $2 \
+        OFFSET ${page} \
         LIMIT 10 \
-        ', [userId, (page-1)*10])
+        ', {userId:userId, page:(page-1)*10})
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
-            m.toMe = m.to_id == userId;
-            let contactName = userId === m.user_id_1?
+            m.toMe = m.to_id == m.my_id;
+            let contactName = m.my_id === m.user_id_1?
                 (m.user_2_company_name?m.user_2_company_name:(m.user_2_first_name+" "+m.user_2_last_name)):
                 (m.user_1_company_name?m.user_1_company_name:(m.user_1_first_name+" "+m.user_1_last_name));
             m.contactName = contactName;
@@ -255,7 +249,6 @@ function listConversationMessages(req, res){
     var userId = jwtPayload.id;
     if(page == null)
         page = 1;
-
     postgresdb.any('\
         SELECT m.message_id, ms.post_id, m.to_id, m.created_on, m.responded, \
             m.message, m.has_seen, m.date_offer, m.response, m.minute_length, m.location_type_name, m.meeting_subject, \
@@ -265,10 +258,10 @@ function listConversationMessages(req, res){
             m.user_id_2, um2.user_type_name as user_2_type_name, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
             (count(1) OVER())/10+1 AS page_count, '+
             (jwtPayload.userType == 1 ? 
-                '$1 as my_id' :
+                '${userId} as my_id' :
                 'CASE \
-                    WHEN ec1.employer_id IS NULL AND ec2.employer_id IS NOT NULL THEN ec1.employer_id \
-                    WHEN ec1.employer_id IS NOT NULL AND ec2.employer_id IS NULL THEN ec2.employer_id \
+                    WHEN ec1.company_id IS NULL AND ec2.company_id IS NOT NULL THEN ec1.company_id \
+                    WHEN ec1.company_id IS NOT NULL AND ec2.company_id IS NULL THEN ec2.company_id \
                     ELSE 0 \
                 END as my_id')+
             ' \
@@ -278,21 +271,21 @@ function listConversationMessages(req, res){
         INNER JOIN user_master um1 ON um1.user_id = m.user_id_1 \
         INNER JOIN user_master um2 ON um2.user_id = m.user_id_2 \
         '+(jwtPayload.userType == 2?
-        'LEFT JOIN employer_contact ec1 ON ms.user_id_1 = ec1.employer_id \
-        LEFT JOIN employer_contact ec2 ON ms.user_id_2 = ec2.employer_id \
+        'LEFT JOIN company_contact ec1 ON ms.user_id_1 = ec1.company_id \
+        LEFT JOIN company_contact ec2 ON ms.user_id_2 = ec2.company_id \
         ':'')+
         'WHERE '+(jwtPayload.userType == 1 ? 
-            '(ms.user_id_1 = $1 OR ms.user_id_2 = $1) AND m.message_subject_id = $2' :
-            '(ec1.employer_contact_id = $1 OR ec2.employer_contact_id = $1) AND m.message_subject_id = $2')+
+            '(ms.user_id_1 = ${userId} OR ms.user_id_2 = ${userId}) AND m.message_subject_id = ${messageSubjectId}' :
+            '(ec1.company_contact_id = ${userId} OR ec2.company_contact_id = ${userId}) AND m.message_subject_id = ${messageSubjectId}')+
         ' \
         ORDER BY m.created_on DESC \
-        OFFSET $3 \
+        OFFSET ${page} \
         LIMIT 10 \
-        ', [userId, messageSubjectId, (page-1)*10])
+        ', {userId:userId, messageSubjectId:messageSubjectId, page:(page-1)*10})
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
-            m.toMe = m.to_id == userId;
+            m.toMe = m.to_id == m.my_id;
             var dateOfferTimestamp = moment(m.date_offer);
             m.date_offer_str = dateOfferTimestamp.format("LLL");
             var timestamp = moment(m.created_on);

@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../../config/passport');
+const passport = require('../config/passport');
 const moment = require('moment');
 
 //load input validation
-const validateEmployerInput = require('../../validation/employer');  
+const validateEmployerInput = require('../validation/employer');  
 
-const db = require('../../config/db')
+const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
-const generateUploadMiddleware = require('../upload').generateUploadMiddleware
+const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
 const upload = generateUploadMiddleware('profile_image/')
 
 const generateImageFileNameAndValidation = (req, res, next) => {
@@ -35,7 +35,7 @@ const generateImageFileNameAndValidation = (req, res, next) => {
  */
 router.post('/uploadImage', passport.authentication, generateImageFileNameAndValidation, upload.any('filepond'), (req, res) => {
     var jwtPayload = req.params.jwtPayload;
-    postgresdb.none('UPDATE employer SET image_id=$1 WHERE employer_id = $2', [req.params.finalFileName, jwtPayload.id])
+    postgresdb.none('UPDATE employer SET image_id=$1 WHERE company_id = $2', [req.params.finalFileName, jwtPayload.id])
     .then((data) => {
         res.json({success:true, image_id:req.params.finalFileName})
     })
@@ -62,16 +62,16 @@ router.get('/listEmployers', passport.authentication,  (req, res) => {
     
     postgresdb.any('\
         SELECT \
-            e.employer_id, company_name, department, e.image_id, \
+            e.company_id, company_name, department, e.image_id, \
             address_line_1 as "addressLine1", \
             address_line_2 as "addressLine2", \
             city, state, country, lat, lon, \
             state_code as "stateCode", \
             country_code as "countryCode" \
         FROM employer e \
-        INNER JOIN employer_contact ec ON ec.employer_id = e.employer_id \
+        INNER JOIN company_contact ec ON ec.company_id = e.company_id \
         LEFT JOIN address a ON a.address_id = e.address_id \
-        WHERE ec.employer_contact_id = $1', [jwtPayload.id])
+        WHERE ec.company_contact_id = $1', [jwtPayload.id])
     .then((data) => {
         res.json({success:true, employers:data})
     })
@@ -116,9 +116,9 @@ router.post('/addEmployer', passport.authentication,  (req, res) => {
         return q1.then((addr_ret)=>{
             return t.one('INSERT INTO login(user_type_id) VALUES (4) RETURNING user_id')
             .then((user_ret) => {
-                const q3 = t.none('INSERT INTO employer(employer_id, company_name, department, address_id) VALUES ($1, $2, $3, $4)',
+                const q3 = t.none('INSERT INTO employer(company_id, company_name, department, address_id) VALUES ($1, $2, $3, $4)',
                                 [user_ret.user_id, ...fieldUpdates, addr_ret.address_id]);
-                const q4 = t.none('INSERT INTO employer_contact(employer_id, employer_contact_id, is_primary) VALUES ($1, $2, true)',
+                const q4 = t.none('INSERT INTO company_contact(company_id, company_contact_id, is_primary) VALUES ($1, $2, true)',
                                 [user_ret.user_id, jwtPayload.id]);
                 return t.batch([q3, q4])
                     .then(() => {
@@ -170,13 +170,13 @@ router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
     postgresdb.tx(t => {
         var fields = ['company_name', 'department'];
         var addressFields = ['address_line_1', 'address_line_2', 'city', 'state', 'country'];
-        return t.one('SELECT ec.employer_id, first_name, last_name, phone_number, company_name, department, e.address_id, address_line_1, address_line_2, city, state, country \
+        return t.one('SELECT ec.company_id, first_name, last_name, phone_number, company_name, department, e.address_id, address_line_1, address_line_2, city, state, country \
                         FROM employer e \
-                        INNER JOIN employer_contact ec ON ec.employer_id = e.employer_id AND ec.is_primary \
-                        INNER JOIN account_manager ac ON ac.account_manager_id = ec.employer_contact_id \
+                        INNER JOIN company_contact ec ON ec.company_id = e.company_id AND ec.is_primary \
+                        INNER JOIN account_manager ac ON ac.account_manager_id = ec.company_contact_id \
                         LEFT JOIN address a ON e.address_id = a.address_id\
-                        WHERE ec.employer_contact_id = $1 AND e.employer_id = $2', [jwtPayload.id, bodyData.employerId]).then((data)=>{
-            var employer_id = bodyData.employerId;
+                        WHERE ec.company_contact_id = $1 AND e.company_id = $2', [jwtPayload.id, bodyData.employerId]).then((data)=>{
+            var company_id = bodyData.employerId;
             var addressId = data.address_id;
             var addressIdExists = (data.address_id != null);
             var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:data[f]);
@@ -192,8 +192,8 @@ router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
             }
             return q1.then((addr_ret)=>{
                 addressId = addressIdExists ? addressId : addr_ret.address_id
-                const q2 = t.none('UPDATE employer SET company_name=$1, department=$2 address_id=$3 WHERE employer_id = $4',
-                                [...fieldUpdates, addressId, employer_id]);
+                const q2 = t.none('UPDATE employer SET company_name=$1, department=$2 address_id=$3 WHERE company_id = $4',
+                                [...fieldUpdates, addressId, company_id]);
                 return q2
                     .then(() => {
                         res.status(200).json({success: true})
@@ -222,7 +222,7 @@ router.post('/setEmployerProfile', passport.authentication,  (req, res) => {
     });
 });
 
-const employerContactHelper = new pgp.helpers.ColumnSet(['employer_contact_id', 'employer_id'], {table: 'employer_contact'});
+const employerContactHelper = new pgp.helpers.ColumnSet(['company_contact_id', 'company_id'], {table: 'company_contact'});
 /**
  * Add a new contact to an employer, must be an admin for the employer to do so
  * @route POST api/employer/addContactToEmployer
@@ -250,15 +250,15 @@ router.post('/addContactToEmployer', passport.authentication,  (req, res) => {
     }
 
     postgresdb.tx(t => {
-        return t.one('SELECT ec.employer_id \
-                        FROM employer_contact ec \
-                        WHERE ec.employer_contact_id = ${employer_contact_id} AND ec.employer_id = ${employer_id} AND ec.is_primary',
-                        {employer_contact_id:jwtPayload.id, employer_id:bodyData.employerId})
+        return t.one('SELECT ec.company_id \
+                        FROM company_contact ec \
+                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
+                        {company_contact_id:jwtPayload.id, company_id:bodyData.employerId})
             .then(()=>{
                 const data = bodyData.userIds.map(id=>{
                     return {
-                        employer_contact_id: id,
-                        employer_id: bodyData.employerId
+                        company_contact_id: id,
+                        company_id: bodyData.employerId
                     }
                 })
                 const query = pgp.helpers.insert(data, employerContactHelper);
@@ -305,14 +305,14 @@ router.post('/removeContactFromEmployer', passport.authentication,  (req, res) =
         return res.status(400).json({success:false, error:"Can not remove yourself"})
     }
     postgresdb.tx(t => {
-        return t.one('SELECT ec.employer_id \
-                        FROM employer_contact ec \
-                        WHERE ec.employer_contact_id = ${employer_contact_id} AND ec.employer_id = ${employer_id} AND ec.is_primary',
-                        {employer_contact_id:jwtPayload.id, employer_id:bodyData.employerId})
+        return t.one('SELECT ec.company_id \
+                        FROM company_contact ec \
+                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
+                        {company_contact_id:jwtPayload.id, company_id:bodyData.employerId})
             .then(()=>{
-                return t.none('DELETE FROM employer_contact \
-                WHERE employer_contact_id = ${employer_contact_id} AND employer_id = ${employer_id}',
-                {employer_contact_id:bodyData.userId, employer_id:bodyData.employerId})
+                return t.none('DELETE FROM company_contact \
+                WHERE company_contact_id = ${company_contact_id} AND company_id = ${company_id}',
+                {company_contact_id:bodyData.userId, company_id:bodyData.employerId})
                 .then(()=>{
                     // TODO: send request email to contact to make a password
                     res.status(200).json({success: true})
@@ -373,12 +373,12 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:"Missing isPrimary field"})
 
     postgresdb.tx(t => {
-        return t.one('SELECT ec.employer_id \
-                        FROM employer_contact ec \
-                        WHERE ec.employer_contact_id = ${employer_contact_id} AND ec.employer_id = ${employer_id} AND ec.is_primary',
-                        {employer_contact_id:jwtPayload.id, employer_id:bodyData.employerId})
+        return t.one('SELECT ec.company_id \
+                        FROM company_contact ec \
+                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
+                        {company_contact_id:jwtPayload.id, company_id:bodyData.employerId})
             .then(()=>{
-                return t.none('UPDATE employer_contact SET is_primary=${is_primary} WHERE employer_contact_id = ${employerContactId}',
+                return t.none('UPDATE company_contact SET is_primary=${is_primary} WHERE company_contact_id = ${employerContactId}',
                     {is_primary:isPrimary, employerContactId:employerContactId})
                 .then(()=>{
                     // TODO: send request email to contact to make a password
@@ -424,26 +424,26 @@ function getEmployerContactList(req, res) {
     if(page == null)
         page = 1;
     postgresdb.tx(t => {
-        return t.one('SELECT ec.employer_id \
-                        FROM employer_contact ec \
-                        WHERE ec.employer_contact_id = ${employer_contact_id} AND ec.employer_id = ${employer_id} AND ec.is_primary',
-                        {employer_contact_id:jwtPayload.id, employer_id:req.params.employerId})
+        return t.one('SELECT ec.company_id \
+                        FROM company_contact ec \
+                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
+                        {company_contact_id:jwtPayload.id, company_id:req.params.employerId})
             .then(()=>{
                 return t.any('\
-                    SELECT ec.employer_contact_id, um.email, um.first_name, um.last_name, \
+                    SELECT ec.company_contact_id, um.email, um.first_name, um.last_name, \
                         um.phone_number, um.image_id, um.created_on, ec.is_primary, \
                         um.account_active, \
                         (count(1) OVER())/10+1 AS page_count \
-                    FROM employer_contact ec \
-                    INNER JOIN user_master um ON ec.employer_contact_id = um.user_id \
-                    WHERE ec.employer_id = ${employer_id} AND um.active \
+                    FROM company_contact ec \
+                    INNER JOIN user_master um ON ec.company_contact_id = um.user_id \
+                    WHERE ec.company_id = ${company_id} AND um.active \
                     ORDER BY um.last_name ASC, um.first_name ASC \
                     OFFSET ${page} \
-                    LIMIT 10', {employer_id:req.params.employerId, page:(page-1)*10})
+                    LIMIT 10', {company_id:req.params.employerId, page:(page-1)*10})
                 .then((data) => {
                     // Marshal data
                     data = data.map(m=>{
-                        m.isMe = (jwtPayload.id === m.employer_contact_id);
+                        m.isMe = (jwtPayload.id === m.company_contact_id);
                         var timestamp = moment(m.created_on);
                         var ms = timestamp.diff(moment());
                         m.created = moment.duration(ms).humanize() + " ago";

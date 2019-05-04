@@ -11,6 +11,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormValidation from '../../FormValidation';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
     container: {
@@ -26,6 +28,9 @@ const styles = theme => ({
         marginLeft: theme.spacing.unit,
         marginRight: theme.spacing.unit,
         width: 200,
+    },
+    textArea:{
+        width: "100%"
     },
     modal: {
         zIndex: 9999,
@@ -51,7 +56,11 @@ const styles = theme => ({
 const errorText = [
     {
         stateName: "denialReasonId",
-        errorText: "Please enter a description for the job posting"
+        errorText: "Please enter a reason for the denial"
+    },
+    {
+        stateName: "denialComment",
+        errorText: "Please enter a comment about the denial"
     }
 ]
 class DenialReason extends React.Component{ 
@@ -60,7 +69,9 @@ class DenialReason extends React.Component{
 		this.state = {
             error: null,
             denialReasonList: [],
-            denialReasonId: null
+            denialReasonId: "",
+            denialComment:"",
+            errors: {}
         };
         this.formValidation = new FormValidation(this, errorText)
     }
@@ -74,11 +85,17 @@ class DenialReason extends React.Component{
         })
     }
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value })
+        this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
     }
+    inputChange = (e) => {
+        const denialComment = e.target.value;
+        this.setState({denialComment: denialComment}, this.formValidation.shouldRevalidate);
+    };
 
     handleClose = (event, value) => {
-        this.props.onClose({response: event, value: value});
+        if((event === 1 && this.formValidation.isValid()) || event === 0){
+            this.props.onClose({response: event, value: value});
+        }
     };
 
     render(){  
@@ -87,13 +104,15 @@ class DenialReason extends React.Component{
             <React.Fragment>
                 <Dialog 
                         fullWidth={false}
+                        width="l"
                         disableBackdropClick={true}
                         onClose={this.handleClose}
                         aria-labelledby="dialog-title"
                         open={other.open}> 
                     <DialogTitle id="dialog-title">Please Specify the reason for Denial</DialogTitle>
                     <DialogContent>
-                        <FormControl className={classes.selectFormControl}>
+                        <FormControl className={classes.selectFormControl}
+                                    {...(this.formValidation.hasError("denialReasonId").error?{error:true}:{})}>
                             <InputLabel htmlFor="denial-reason-helper">Denial Reason</InputLabel>
                             <Select
                                 className={classes.textField}
@@ -109,16 +128,37 @@ class DenialReason extends React.Component{
                                     <MenuItem key={i} value={d.denial_reason_id}>{d.denial_reason_text}</MenuItem>
                                 )}
                             </Select>
+                            <FormHelperText>{this.formValidation.hasError("denialReasonId").helperText}</FormHelperText>
                         </FormControl>
-                        <Button
-                            className={classes.button}
-                            variant="contained"
-                            onClick={()=>this.handleClose(0, null)}>Cancel</Button>
-                        <Button
-                            className={classes.button}
-                            variant="contained"
-                            color="secondary"
-                            onClick={()=>this.handleClose(1, this.state)}>Confirm</Button>
+                        <br/>
+                        <TextField
+                            className={classes.textArea}
+                            inputRef={this.searchRef}
+                            defaultValue={""}
+                            multiline
+                            rowsMax={7}
+                            rows={2}
+                            label="Comment"
+                            margin="normal"
+                            variant="outlined"
+                            inputProps={{
+                                'aria-label': 'Comment',
+                            }}
+                            onChange={this.inputChange.bind(this)}
+                            {...this.formValidation.hasError("denialComment")}
+                        />
+                        <br/>
+                        <div>
+                            <Button
+                                className={classes.button}
+                                variant="contained"
+                                onClick={()=>this.handleClose(0, null)}>Cancel</Button>
+                            <Button
+                                className={classes.button}
+                                variant="contained"
+                                color="primary"
+                                onClick={()=>this.handleClose(1, this.state)}>Confirm</Button>
+                        </div>
                     </DialogContent>
                 </Dialog>
             </React.Fragment>
