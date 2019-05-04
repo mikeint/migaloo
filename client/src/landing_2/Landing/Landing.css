@@ -81,19 +81,43 @@
     background-position: bottom;
     background-repeat: no-repeat;
     background-size: auto;
-    overflow-y: scroll; 
+    overflow-y: scroll;  
 }
-@media only screen and (max-width: 1024px) { 
+
+.fywText {
+    width: auto;
+    text-align: center;
+    padding: 0px 30px 5px 30px;
+    background-color: #263c54;
+    color: white;
+    font-size: 32px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    transition: 0.3s;
+    position: absolute;
+    right: 0;
+    margin-right: 30px;
+}
+
+@media only screen and (max-width: 1024px) {   
+    .fywText {  
+        font-size: 22px;
+        margin-left: 10px;
+        margin-top: 50px;
+        left: 0;
+        min-width: 180px;
+    } 
     .lp2_container {
         display: unset; 
     }
-    .lp2_body { 
-        height: calc(100% - 50px);
+    .lp2_body {  
         flex: 0 0 calc(100% - 50px); 
         background-image: url("../../files/images/landingPage/lp2_bottomSM.png");
         background-position: bottom;
         background-repeat: no-repeat;
         background-size: contain;
+        padding-top: 70px;
+        padding-bottom: 70px;
     }
 }
 /* LANDING STRUCTURE */

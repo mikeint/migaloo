@@ -30,7 +30,7 @@
 .lp2_navBar #navBar a.active {
     color: #ffffff; 
 }
-.lp2_navBar .topSubItem.active + .subNavBox{  
+.lp2_navBar .topSubItem.active + .subNavBox {
     height: 140px;
     max-height: 140px;
     box-shadow: inset 0px 0px 5px #2a2c2d;

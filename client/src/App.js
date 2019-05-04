@@ -15,10 +15,14 @@ import SignUpFormRecruiter from './landing_1/components/SignUpFormRecruiter/Sign
 
 //Landing page 2 routes
 import Landing from './landing_2/Landing/Landing';
+
 import RecruiterPage from './landing_2/Recruiter/Recruiter';
+import HowItWorks_recruiter from './landing_2/Recruiter/HowItWorks/HowItWorks';
+import Pricing_recruiter from './landing_2/Recruiter/Pricing/Pricing';
 import EmployerPage from './landing_2/Employer/Employer';
-import HowItWorks from './landing_2/HowItWorks/HowItWorks';
-import Pricing from './landing_2/Pricing/Pricing';
+import HowItWorks_employer from './landing_2/Employer/HowItWorks/HowItWorks';
+import Pricing_employer from './landing_2/Employer/Pricing/Pricing';
+
 import Contact from './landing_2/Contact/Contact';
 import About from './landing_2/About/About';
 import Team from './landing_2/Team/Team';
@@ -83,9 +87,12 @@ class App extends Component {
                         <Route exact path="/AboutTeamPage" component={AboutTeamPage} /> 
 
                         <Route exact path="/recruiterPage" component={RecruiterPage} />
+                        <Route exact path="/howItWorks_recruiter" component={HowItWorks_recruiter} />
+                        <Route exact path="/pricing_recruiter" component={Pricing_recruiter} />
+
                         <Route exact path="/employerPage" component={EmployerPage} /> 
-                        <Route exact path="/howItWorks" component={HowItWorks} />
-                        <Route exact path="/pricing" component={Pricing} />
+                        <Route exact path="/howItWorks_employer" component={HowItWorks_employer} />
+                        <Route exact path="/pricing_employer" component={Pricing_employer} />
 
 
                         <Route exact path="/contact" component={Contact} />

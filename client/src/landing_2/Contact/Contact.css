@@ -1,0 +1,75 @@
+.lp2_contactContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.lp2_contactContainer .contactContainer { 
+    background-color: #6f90a112;
+    border-radius: 3px;
+    padding: 20px;
+} 
+.lp2_contactContainer .contactForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.lp2_contactContainer .contactForm input {
+    height: 40px;
+    width: 400px;
+    display: flex;
+    border:none;
+    padding: 20px;
+    font-size: 18px; 
+    border-bottom: 1px solid #fff;
+    margin-bottom: 10px;
+}
+
+.lp2_contactContainer #message { 
+    min-height: 200px;
+    min-width: 400px;
+    max-width: 400px;
+    display: flex;
+    border:none;
+    padding: 20px;
+    font-size: 18px; 
+    border-bottom: 1px solid #fff;
+    margin-bottom: 10px;
+}
+
+.lp2_contactContainer .contactBtnHome {
+    cursor: pointer;
+    padding: 10px 25px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background: #263c54;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 9px #999;
+    font-size: 32px;
+    transition: 0.3s;
+    margin: 20px;
+}
+.lp2_contactContainer .contactBtnHome:hover {
+    background-color: #96b4be;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+    background-color: #96b4be
+}
+
+
+@media only screen and (max-width: 1024px) { 
+    .lp2_contactContainer .contactForm input {
+        width: 300px;
+        margin: auto auto 10px auto;
+    }
+    .lp2_contactContainer #message { 
+        width: 300px; 
+        min-width: 300px;
+        max-width: 300px;
+        margin: auto auto 10px auto;
+    }
+}

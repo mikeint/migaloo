@@ -4,7 +4,7 @@ import './NavBar.css'
 
 import Whale from '../../../components/Whale/Whale'
 import tail from '../../../files/images/landingPage/tail.png'
-import arrow from '../../../files/images/landingPage/arrowDownB.png'
+//import arrow from '../../../files/images/landingPage/arrowDownB.png'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 
 class NavBar extends Component {
@@ -68,12 +68,12 @@ class NavBar extends Component {
                     onOpen={()=>this.setState({"showOverlay":true,  menuOpen: !this.state.menuOpen})}
                 >  
                     <div className="side-menu">
-                        <NavLink to="/employerPage">For Employers<img src={arrow} className="arrowDown" alt="" /></NavLink>
+                        <NavLink to="/employerPage">For Employers{/* <img src={arrow} className="arrowDown" alt="" /> */}</NavLink>
                         <div className="subNavBox"> 
                             <NavLink to="/howItWorks_employer">How it works</NavLink>
                             <NavLink to="/pricing_employer">Pricing</NavLink>
                         </div>
-                        <NavLink to="/recruiterPage">For Recruiters<img src={arrow} className="arrowDown" alt="" /></NavLink>
+                        <NavLink to="/recruiterPage">For Recruiters{/* <img src={arrow} className="arrowDown" alt="" /> */}</NavLink>
                         <div className="subNavBox"> 
                             <NavLink to="/howItWorks_recruiter">How it works</NavLink>
                             <NavLink to="/pricing_recruiter">Pricing</NavLink>

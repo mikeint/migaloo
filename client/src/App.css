@@ -32,6 +32,10 @@ a {
 p {
     font-size: 18px;
 }
+textarea, 
+input {
+    font-family: siteFont;
+}
 #root {
     height: 100%;
 }

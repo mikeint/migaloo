@@ -1,6 +1,6 @@
 import React, { Component } from "react";  
 import './HowItWorks.css';
-import NavBar from "../components/NavBar/NavBar"
+import NavBar from "../../components/NavBar/NavBar"
  
 class HowItWorks extends Component { 
     render() {
@@ -10,7 +10,7 @@ class HowItWorks extends Component {
                     <NavBar />
                 </div>
                 <div className="lp2_body">
-                    How it works
+                    How it works for Recruiters
                 </div>
             </div>
         );

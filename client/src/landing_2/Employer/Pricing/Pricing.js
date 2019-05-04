@@ -1,6 +1,6 @@
 import React, { Component } from "react";  
 import './Pricing.css';
-import NavBar from "../components/NavBar/NavBar"
+import NavBar from "../../components/NavBar/NavBar"
  
 class Pricing extends Component { 
     render() {
@@ -10,7 +10,7 @@ class Pricing extends Component {
                     <NavBar />
                 </div>
                 <div className="lp2_body">
-                    Pricing
+                    Pricing for employers
                 </div>
             </div>
         );

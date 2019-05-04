@@ -18,14 +18,12 @@ class Recruiter extends Component {
     render() {
         return ( 
             <div className="lp2_container">
+                <div className="fywText" data-aos="zoom-out-down">For Recruiters</div>
                 <div className="lp2_menu">
                     <NavBar />
                 </div>
                 <div className="lp2_body lp2_recruiter">
-                    <div className="fywText">For Recruiters</div>
-
-
-                    
+ 
                     <div className="fullRecruiterText">
                         <div data-aos="fade-down">Hi there ! I'm Migaloo,</div>
                         <div data-aos="fade-up">the whale of recruitment</div>
@@ -40,9 +38,9 @@ class Recruiter extends Component {
                                 retained jobs to their pipeline.
                                 I will Deliver job reqs based on your 
                                 specialization from top companies who
-                                desperatley need your help but, who sadly, 
-                                dont have enough time to properly manage 
-                                recruiter relationships.
+                                desperately need your help but, who sadly, 
+                                don't have enough time to properly manage 
+                                recruiter&nbsp;relationships.
                             </div>
                         </div>
  
@@ -56,8 +54,7 @@ class Recruiter extends Component {
                         </div>
 
                         <div className="flex" data-aos="zoom-in">
-                            Im inviting you to make an even bigger splash in your market<br/>
-                            & join the whales of recruitment.
+                            I'm inviting you to make an even bigger splash in your market & join the whales of recruitment.
                         </div>
                         <div className="flex">
                             <Link to='signUpFormRecruiter'><div className="signUpBtnHome" data-aos="fade-in" data-aos-delay="300">Recruiter RSVP</div></Link>
