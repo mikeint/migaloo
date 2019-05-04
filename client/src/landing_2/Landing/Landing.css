@@ -77,7 +77,7 @@
 .lp2_body {
     flex: calc(100% - 300px); 
     background: #263c5417;
-    background-image: url("../../files/images/landingPage/lp2_bottomS.png");
+    background-image: url("../../files/images/landingPage/lp2_bottomSO.png");
     background-position: bottom;
     background-repeat: no-repeat;
     background-size: auto;

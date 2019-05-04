@@ -99,17 +99,12 @@
     transition: 0.3s;
     margin-bottom: 100px; 
 } 
-.lp2_recruiter .signUpBtnHome svg {
-    width: 50px;
-    float: right;
-    transform: scale(3);
-}  
 .lp2_recruiter .signUpBtnHome:hover {
     background-color: #96b4be;
     box-shadow: 0 5px #666;
     transform: translateY(4px);
     background-color: #96b4be
-  }
+}
  
 
 @media (max-width: 1024px){

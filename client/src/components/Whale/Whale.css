@@ -6,6 +6,7 @@
     transition: 0.3s;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
 }
 .whaleContainer img {
     width: 100%;

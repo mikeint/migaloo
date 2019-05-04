@@ -5,8 +5,7 @@ import 'aos/dist/aos.css'
 import { Link } from 'react-router-dom'
 import NavBar from "../components/NavBar/NavBar"
  
-import whaleCool from "../../files/images/landingPage/whaleCool.png"
-import Spray from '../../components/Loader/Loader'
+import whaleCool from "../../files/images/landingPage/whaleCool.png" 
  
 class Recruiter extends Component {
 
@@ -61,9 +60,7 @@ class Recruiter extends Component {
                             & join the whales of recruitment.
                         </div>
                         <div className="flex">
-                            <Link to='signUpFormRecruiter'><div className="signUpBtnHome">
-                                <Spray sprayColor="#fff"/>Recruiter RSVP</div>
-                            </Link>
+                            <Link to='signUpFormRecruiter'><div className="signUpBtnHome">Recruiter RSVP</div></Link>
                         </div>
                     </div>
 
