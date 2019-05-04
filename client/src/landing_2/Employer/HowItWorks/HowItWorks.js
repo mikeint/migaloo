@@ -1,17 +1,11 @@
 import React, { Component } from "react";  
 import './HowItWorks.css';
-import NavBar from "../../components/NavBar/NavBar"
  
 class HowItWorks extends Component { 
     render() {
         return (
-            <div className="lp2_container">
-                <div className="lp2_menu">
-                    <NavBar />
-                </div>
-                <div className="lp2_body">
-                    How it works for employers
-                </div>
+            <div className="lp2_employerHIWContainer">
+                How it works for employers
             </div>
         );
     }

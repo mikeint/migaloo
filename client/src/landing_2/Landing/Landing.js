@@ -3,7 +3,7 @@ import './Landing.css'
 import { Link } from "react-router-dom"
 import WhaleHead from '../components/WhaleHead/WhaleHead'
  
-class Landing extends Component {  
+class Landing extends Component {
     render() {
 
         return (

@@ -1,31 +1,21 @@
-import React, { Component } from "react";
-import { Route, BrowserRouter, Switch } from "react-router-dom";
-import { PrivateEmployerRoute, PrivateRecruiterRoute } from './PrivateRoute';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'; 
+import React, { Component } from "react"
+import { Route, BrowserRouter, Switch } from "react-router-dom"
+import { PrivateEmployerRoute, PrivateRecruiterRoute } from './PrivateRoute'
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
 //App routes
-import Login from './pages/Login/Login';
-import RecruiterRouter from './pages/recruiter/RecruiterRouter';
-import EmployerRouter from './pages/employer/EmployerRouter';
+import Login from './pages/Login/Login'
+import RecruiterRouter from './pages/recruiter/RecruiterRouter'
+import EmployerRouter from './pages/employer/EmployerRouter'
 
 //Landing page 1 routes
-import AboutTeamPage from './landing_1/AboutTeamPage/AboutTeam';
-import SignUpFormEmployer from './landing_1/components/SignUpFormEmployer/SignUpFormEmployer';
-import SignUpFormRecruiter from './landing_1/components/SignUpFormRecruiter/SignUpFormRecruiter';
+import AboutTeamPage from './landing_1/AboutTeamPage/AboutTeam'
+import SignUpFormEmployer from './landing_1/components/SignUpFormEmployer/SignUpFormEmployer'
+import SignUpFormRecruiter from './landing_1/components/SignUpFormRecruiter/SignUpFormRecruiter'
 
 //Landing page 2 routes
-import Landing from './landing_2/Landing/Landing';
-
-import RecruiterPage from './landing_2/Recruiter/Recruiter';
-import HowItWorks_recruiter from './landing_2/Recruiter/HowItWorks/HowItWorks';
-import Pricing_recruiter from './landing_2/Recruiter/Pricing/Pricing';
-import EmployerPage from './landing_2/Employer/Employer';
-import HowItWorks_employer from './landing_2/Employer/HowItWorks/HowItWorks';
-import Pricing_employer from './landing_2/Employer/Pricing/Pricing';
-
-import Contact from './landing_2/Contact/Contact';
-import About from './landing_2/About/About';
-import Team from './landing_2/Team/Team';
+import Landing from './landing_2/Landing/Landing'
+import LandingRouter from './landing_2/LandingRouter'
 
 import './App.css';
 
@@ -86,19 +76,11 @@ class App extends Component {
                         <Route exact path="/" component={Landing} />
                         <Route exact path="/AboutTeamPage" component={AboutTeamPage} /> 
 
-                        <Route exact path="/recruiterPage" component={RecruiterPage} />
-                        <Route exact path="/howItWorks_recruiter" component={HowItWorks_recruiter} />
-                        <Route exact path="/pricing_recruiter" component={Pricing_recruiter} />
+                        <Route strict path="/recruiterPage" component={LandingRouter} />
+                        <Route strict path="/employerPage" component={LandingRouter} />
+                        <Route strict path="/landing" component={LandingRouter} />
 
-                        <Route exact path="/employerPage" component={EmployerPage} /> 
-                        <Route exact path="/howItWorks_employer" component={HowItWorks_employer} />
-                        <Route exact path="/pricing_employer" component={Pricing_employer} />
-
-
-                        <Route exact path="/contact" component={Contact} />
-                        <Route exact path="/about" component={About} />
-                        <Route exact path="/team" component={Team} />
-
+ 
                         <Route exact path="/signUpFormEmployer" component={SignUpFormEmployer} /> 
                         <Route exact path="/signUpFormRecruiter" component={SignUpFormRecruiter} /> 
                     </React.Fragment>

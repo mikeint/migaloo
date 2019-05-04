@@ -1,17 +1,11 @@
 import React, { Component } from "react";  
 import './Employer.css';
-import NavBar from "../components/NavBar/NavBar"
  
 class Employer extends Component { 
     render() {
         return (
-            <div className="lp2_container">
-                <div className="lp2_menu">
-                    <NavBar />
-                </div>
-                <div className="lp2_body">
-                    Employer
-                </div>
+            <div className="lp2_employerContainer">
+                Employer LP2
             </div>
         );
     }

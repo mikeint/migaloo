@@ -2,8 +2,7 @@ import React, { Component } from "react"
 import './Contact.css'
 //import axios from 'axios'
 import AOS from 'aos'
-import 'aos/dist/aos.css'
-import NavBar from "../components/NavBar/NavBar"
+import 'aos/dist/aos.css' 
 import Loader from '../../components/Loader/Loader'
  
 class Contact extends Component {
@@ -45,53 +44,48 @@ class Contact extends Component {
         :
         (<button className='contactBtnHome'>Submit</button>)
 
-        return (
-            <div className="lp2_container">
+        return ( 
+            <React.Fragment>
                 <div className="fywText" data-aos="zoom-out-down">Contact Us</div> 
-                <div className="lp2_menu">
-                    <NavBar />
-                </div>
-                <div className="lp2_body">
-                    <div className="lp2_contactContainer"> 
-                        <div className="contactContainer">  
-                            <form id="theForm" className="contactForm" onSubmit={() => this.handleSubmit}> 
-                                <input
-                                    id="firstname"
-                                    type="text"
-                                    name="firstname"
-                                    placeholder="Your first name"
-                                    required
-                                    onChange={() => this.handleChange}
-                                />
-                                <input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    placeholder="Your email"
-                                    required
-                                    onChange={() => this.handleChange}
-                                />
-                                <textarea
-                                    id="message" 
-                                    type="textarea"
-                                    name="message"
-                                    placeholder="Your Message"
-                                    required
-                                    onChange={this.handleChange}
-                                /> 
-                                <div className="submitContainer">
-                                    {this.state.sending ?
-                                        <Loader sprayColor="#fff" />
-                                    :
-                                        buttonSpot
-                                    }
-                                </div> 
-                            </form>
+                <div className="lp2_contactContainer"> 
+                    <div className="contactContainer">  
+                        <form id="theForm" className="contactForm" onSubmit={() => this.handleSubmit}> 
+                            <input
+                                id="firstname"
+                                type="text"
+                                name="firstname"
+                                placeholder="Your name"
+                                required
+                                onChange={() => this.handleChange}
+                            />
+                            <input
+                                id="email"
+                                type="email"
+                                name="email"
+                                placeholder="Your email"
+                                required
+                                onChange={() => this.handleChange}
+                            />
+                            <textarea
+                                id="message" 
+                                type="textarea"
+                                name="message"
+                                placeholder="Your Message"
+                                required
+                                onChange={this.handleChange}
+                            /> 
+                            <div className="submitContainer">
+                                {this.state.sending ?
+                                    <Loader sprayColor="#fff" />
+                                :
+                                    buttonSpot
+                                }
+                            </div> 
+                        </form>
 
-                        </div>
                     </div>
-                </div>
-            </div>
+                </div> 
+            </React.Fragment>
         );
     }
 }

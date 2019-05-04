@@ -5,8 +5,7 @@
     color: #263c54;
     text-align: center;
     padding-top: 80px;
-}
-
+} 
 .lp2_recruiter .flex {
     display: flex;
     justify-content: center;
@@ -15,15 +14,13 @@
     text-align: center;
 }
 .lp2_recruiter .r_para {
-    margin: 10px; 
-    background: #6f90a112;
+    margin: 10px;  
 }
 
 .lp2_recruiter .sc_Background {
     width: 350px;
     height: 40px;
-    line-height: 40px;
-    background-color: #6f90a112;
+    line-height: 40px; 
     color: #263c54; 
     font-size: 32px; 
     padding-left: 5px; 
@@ -33,7 +30,8 @@
     padding: 20px 10px;
     overflow: hidden;
     font-size: 20px;
-    margin: auto;
+    margin: auto; 
+    background: #6f90a112; 
 }
 
 .lp2_recruiter .whaleCool { 
@@ -86,5 +84,5 @@
     } 
     .lp2_recruiter .fullRecruiterText {
         padding-top: 20px;
-    }
+    } 
 }

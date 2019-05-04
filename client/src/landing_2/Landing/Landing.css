@@ -102,8 +102,7 @@
 @media only screen and (max-width: 1024px) {   
     .fywText {  
         font-size: 22px;
-        margin-left: 10px;
-        margin-top: 50px;
+        margin-left: 10px; 
         left: 0;
         min-width: 180px;
     } 
@@ -115,9 +114,7 @@
         background-image: url("../../files/images/landingPage/lp2_bottomSM.png");
         background-position: bottom;
         background-repeat: no-repeat;
-        background-size: contain;
-        padding-top: 70px;
-        padding-bottom: 70px;
+        background-size: contain; 
     }
 }
 /* LANDING STRUCTURE */

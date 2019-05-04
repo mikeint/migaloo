@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
-import './NavBar.css'
+import './NavBar.css' 
 
 import Whale from '../../../components/Whale/Whale'
-import tail from '../../../files/images/landingPage/tail.png'
-//import arrow from '../../../files/images/landingPage/arrowDownB.png'
+import tail from '../../../files/images/landingPage/tail.png' 
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 
 class NavBar extends Component {
@@ -26,25 +25,26 @@ class NavBar extends Component {
         const whaleOptions={whaleImg:'whaleWs.png', sprayColor:'#fff'};
 
 		return ( 
-            <div className="lp2_navBar">  
+            <div className="lp2_navBar"> 
+            
                 <div id="navBar">
                     <NavLink to="/"><Whale {...whaleOptions}/></NavLink> 
  
                     <NavLink to="/employerPage" className="topSubItem">For Employers</NavLink>
                     <div className="subNavBox"> 
-                        <NavLink to="/howItWorks_employer">How it works</NavLink>
-                        <NavLink to="/pricing_employer">Pricing</NavLink>
+                        <NavLink to="/employerPage/howItWorks_employer">How it works</NavLink>
+                        <NavLink to="/employerPage/pricing_employer">Pricing</NavLink>
                     </div>
 
                     <NavLink to="/recruiterPage" className="topSubItem">For Recruiters</NavLink>
                     <div className="subNavBox"> 
-                        <NavLink to="/howItWorks_recruiter">How it works</NavLink>
-                        <NavLink to="/pricing_recruiter">Pricing</NavLink>
+                        <NavLink to="/recruiterPage/howItWorks_recruiter">How it works</NavLink>
+                        <NavLink to="/recruiterPage/pricing_recruiter">Pricing</NavLink>
                     </div>
 
-                    <NavLink to="/contact" className="topSubItem">Contact</NavLink>
-                    <NavLink to="/about" className="topSubItem">About</NavLink>
-                    <NavLink to="/team" className="topSubItem">Team</NavLink> 
+                    <NavLink to="/landing/contact" className="topSubItem">Contact</NavLink>
+                    <NavLink to="/landing/about" className="topSubItem">About</NavLink>
+                    <NavLink to="/landing/team" className="topSubItem">Team</NavLink> 
 
 
 
@@ -68,12 +68,12 @@ class NavBar extends Component {
                     onOpen={()=>this.setState({"showOverlay":true,  menuOpen: !this.state.menuOpen})}
                 >  
                     <div className="side-menu">
-                        <NavLink to="/employerPage">For Employers{/* <img src={arrow} className="arrowDown" alt="" /> */}</NavLink>
+                        <NavLink to="/employerPage">For Employers</NavLink>
                         <div className="subNavBox"> 
                             <NavLink to="/howItWorks_employer">How it works</NavLink>
                             <NavLink to="/pricing_employer">Pricing</NavLink>
                         </div>
-                        <NavLink to="/recruiterPage">For Recruiters{/* <img src={arrow} className="arrowDown" alt="" /> */}</NavLink>
+                        <NavLink to="/recruiterPage">For Recruiters</NavLink>
                         <div className="subNavBox"> 
                             <NavLink to="/howItWorks_recruiter">How it works</NavLink>
                             <NavLink to="/pricing_recruiter">Pricing</NavLink>
