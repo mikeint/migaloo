@@ -15,10 +15,6 @@
     text-align: center;
     margin: 20px auto;
     font-size: 20px;
-}
-
-.lp2_contactContainer .contactContent { 
-    border-radius: 3px; 
 } 
 .lp2_contactContainer .contactForm { 
     max-width:800px;
@@ -113,8 +109,7 @@
 }
 
 @media only screen and (max-width: 1024px) {
-    .lp2_contactContainer .contactContent {
-        min-width: 350px;
+    .lp2_contactContainer .contactContent { 
         padding: 60px 20px;
     }
     .lp2_contactContainer .contactForm input { 

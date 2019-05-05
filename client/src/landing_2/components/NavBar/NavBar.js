@@ -79,9 +79,9 @@ class NavBar extends Component {
                             <NavLink to="/recruiterPage/pricing_recruiter">Pricing</NavLink>
                         </div>
                         
-                        <NavLink to="/landing/contact">Contact</NavLink>
-                        <NavLink to="/landing/about">About</NavLink>
-                        <NavLink to="/landing/team">Team</NavLink>  
+                        <NavLink to="/landing/contact" onClick={this.callAddOverlay}>Contact</NavLink>
+                        <NavLink to="/landing/about" onClick={this.callAddOverlay}>About</NavLink>
+                        <NavLink to="/landing/team" onClick={this.callAddOverlay}>Team</NavLink>  
                     </div>
                 </SwipeableDrawer> 
             </div> 
