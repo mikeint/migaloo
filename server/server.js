@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const auth = require('./routes/auth');
+const landing = require('./routes/landing');
 const mailto = require('./utils/mailto');  
 const recruiterJobs = require('./routes/recruiterJobs');  
 const employerPostings = require('./routes/employerPostings');
@@ -38,6 +39,7 @@ app.use('/api/public/', express.static(path.join(`${__dirname}/public/`)))
 
 // USE routes
 app.use('/api/auth', auth);
+app.use('/api/landing', landing);
 app.use('/api/mailto', mailto);
 app.use('/api/recruiterJobs', recruiterJobs);
 app.use('/api/accountManager', accountManager);
