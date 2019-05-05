@@ -46,6 +46,33 @@ function sendEmailVerification(args){
         })
     })
 }
+function sendContactMessage(args){
+    return new Promise((resolve, reject)=>{
+        const params = {
+            "Source":"noreply@migaloo.io",
+            "Template":"ContactEmail",
+            "Destination":{
+                "ToAddresses":[
+                    "info@migaloo.io"
+                ]
+            },
+            "TemplateData":JSON.stringify({ 
+                "name":args.name,
+                "email": args.email,
+                "message": args.message,
+                "year":new Date().getFullYear()
+            })
+        }
+        ses.sendTemplatedEmail(params, function(err, data) {
+            if (err){
+                console.log(err, err.stack); // an error occurred
+                reject(err)
+            }
+            else 
+                resolve(data);           // successful response
+        });
+    })
+}
 function sendUserInvite(user_id, email, company){
     const params = {
         "Source":"signup@migaloo.io",
@@ -135,6 +162,7 @@ function resetPasswordEmail(args){
 }
 
 module.exports = {
+    sendContactMessage:sendContactMessage,
     sendEmailVerification:sendEmailVerification,
     sendSignupEmail:sendSignupEmail,
     sendUserInvite:sendUserInvite,

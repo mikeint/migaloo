@@ -37,6 +37,10 @@
     border-bottom: 1px solid #fff;
     margin-bottom: 10px;
 }
+.lp2_contactContainer .sent { 
+    padding: 30px 0px 100px 0px;
+    font-size: 18px; 
+}
 
 .lp2_contactContainer .contactBtnHome {
     cursor: pointer;

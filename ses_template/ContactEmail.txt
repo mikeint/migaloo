@@ -1,0 +1,78 @@
+{
+  "Template": {
+    "TemplateName": "ContactEmail",
+    "SubjectPart": "Message From {{name}}",
+    "HtmlPart": "<div style=\"padding:0;margin:0 auto;font-size:14px;font-family:arial\"><table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"margin:0 auto;padding:0;max-width:612px\" align=\"center\"> <tbody><tr> <td align=\"center\" valign=\"top\"> <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:0;padding:0;width:100%;background:#263c54\"> <tbody><tr> <td style=\"width:30%;padding:0 20px\"> <div style=\"padding: 10px 25px; margin: 10px;\"><img src=\"https://s3.amazonaws.com/static.migaloo.io/migaloo.png\" alt=\"migaloo\"></div> </td> </tr> </tbody></table> </td> </tr> <tr> <td style=\"padding: 30px 0 0px 20px;\">Message from our valued user, {{name}}</td> </tr><tr> <td style=\"padding: 0px 0 0px 20px;\"><a href=\"mailto:{{email}}\">{{email}}</a></td> </tr> <tr> <td style=\"padding:0 20px 20px\"></td> </tr> <tr style=\" background: #748fA2; padding: 0 20px 20px; font-weight: bold;\"> <td style=\"padding: 10px 0px 0px 20px;\">Message:</td> </tr> <tr style=\" background: #748fA2; padding: 0 20px 20px;\"> <td style=\"padding: 20px 0px 20px 20px;\">{{message}}</td></tr><tr> <td style=\"padding:10px 20px 0\"> <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:0;padding:0;width:100%\"> <tbody><tr> <td style=\"width:25%;font-size:10px;padding-bottom:10px\"> Copyright {{year}}, Migaloo. <br> All rights reserved. </td> </tr> </tbody></table> </td> </tr> </tbody></table><div></div><div></div></div>",
+    "TextPart": "Message from our valued user, {{name}}\r\n{{email}}\r\n\r\n\r\nMessage:\r\n\r\n{{message}}\r\n\r\nCopyright {{year}}, Migaloo.\r\nAll rights reserved.\r\n\r\n"
+  }
+}
+
+
+Message from our valued user, {{name}}\r\n
+{{email}}\r\n\r\n\r\n
+Message:\r\n\r\n
+{{message}}\r\n\r\n
+Copyright {{year}}, Migaloo.\r\n
+All rights reserved.\r\n\r\n
+
+
+
+<div style="padding:0;margin:0 auto;font-size:14px;font-family:arial">
+<table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0 auto;padding:0;max-width:612px" align="center">
+    <tbody><tr>
+        <td align="center" valign="top">
+			<table border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;width:100%;background:#263c54">
+            	<tbody><tr>
+                	<td style="width:30%;padding:0 20px">
+                    	<div style="padding: 10px 25px; margin: 10px;"><img src="https://s3.amazonaws.com/static.migaloo.io/migaloo.png" alt="migaloo"></div>
+                    </td>
+                </tr>
+            </tbody></table>    
+        </td>
+    </tr>
+    
+	<tr>
+    	<td style="padding: 30px 0 0px 20px;">Message from our valued user, {{name}}</td>
+    </tr><tr>
+    	<td style="padding: 0px 0 0px 20px;"><a href="mailto:{{email}}">{{email}}</a></td>
+    </tr>
+    <tr>
+    	<td style="padding:0 20px 20px"></td>
+    </tr>
+    
+    <tr style="
+    background: #748fA2;
+    padding: 0 20px 20px;
+    font-weight: bold;
+">
+    	<td style="padding: 10px 0px 0px 20px;">Message:</td>
+    </tr>
+    
+   
+          
+    
+    
+    <tr style="
+    background: #748fA2;
+    padding: 0 20px 20px;
+">
+    	
+    <td style="padding: 20px 0px 20px 20px;">{{message}}</td></tr><tr>
+    	<td style="padding:10px 20px 0">
+        	<table border="0" cellpadding="0" cellspacing="0" style="margin:0;padding:0;width:100%">
+            	<tbody><tr>
+                	<td style="width:25%;font-size:10px;padding-bottom:10px">
+						Copyright {{year}}, Migaloo. <br>
+                    	All rights reserved.
+                    </td>
+                    
+                </tr>
+            </tbody></table>
+        </td>
+    </tr>
+    
+</tbody></table><div></div><div>
+
+
+
+</div></div>
