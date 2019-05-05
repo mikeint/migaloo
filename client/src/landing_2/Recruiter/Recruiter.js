@@ -19,15 +19,15 @@ class Recruiter extends Component {
             <React.Fragment>
                 <div className="fywText" data-aos="zoom-out-down">For Recruiters</div> 
                 
-                <div className="lp2_recruiter"> 
+                <div className="lp2_recruiterContainer"> 
 
                     <div className="recruiterContent"> 
-                        <div className="fullRecruiterText">
+                        <div className="fullText">
                             <div data-aos="fade-down">Hi there ! I'm Migaloo,</div>
                             <div data-aos="fade-up">the whale of recruitment</div>
                         </div>
                         <div className="flex">
-                            <div className="flex r_para" data-aos="flip-up" data-aos-offset="-200">
+                            <div className="flex r_para" data-aos="zoom-in" data-aos-offset="-200">
                                 I'm here to help you save time & make more placements. I believe every great recruiter deserves a whale on their side who can who can add relevant, 
                                 retained jobs to their pipeline. I will Deliver job reqs based on your specialization from top companies who desperately need your help but, who sadly, 
                                 don't have enough time to properly manage recruiter&nbsp;relationships.

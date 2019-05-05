@@ -1,23 +1,33 @@
-.lp2_recruiter .fullRecruiterText {
+.lp2_recruiterContainer .fullText {
     width: 100%;
     font-size: 32px;
     display: inline-block;
     color: #263c54;
     text-align: center;
     padding-top: 80px;
-} 
-.lp2_recruiter .flex {
+}
+.lp2_recruiterContainer .recruiterContent { 
+    max-width: 600px;
+    padding: 20px 10px;
+    overflow: hidden;
+    font-size: 20px;
+    margin: auto;  
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+}
+
+.lp2_recruiterContainer .flex {
     display: flex;
     justify-content: center;
     flex: 1 0;
     padding: 20px; 
     text-align: center;
 }
-.lp2_recruiter .r_para {
+.lp2_recruiterContainer .r_para {
     margin: 10px;  
 }
 
-.lp2_recruiter .sc_Background {
+.lp2_recruiterContainer .sc_Background {
     width: 350px;
     height: 40px;
     line-height: 40px; 
@@ -25,41 +35,32 @@
     font-size: 32px; 
     padding-left: 5px; 
 }
-.lp2_recruiter .recruiterContent { 
-    max-width: 600px;
-    padding: 20px 10px;
-    overflow: hidden;
-    font-size: 20px;
-    margin: auto; 
-    background: #6f90a112; 
-}
-
-.lp2_recruiter .whaleCool { 
+.lp2_recruiterContainer .whaleCool { 
     justify-content: center;
     align-items: flex-end;
 }
-.lp2_recruiter .soundCool { 
+.lp2_recruiterContainer .soundCool { 
     display: flex;
     justify-content: center;
     align-items: flex-end;
 }
-.lp2_recruiter .flexCenter {
+.lp2_recruiterContainer .flexCenter {
     text-align: center;
 }
 
-.lp2_recruiter .whaleCool img {
+.lp2_recruiterContainer .whaleCool img {
     width: 230px; 
     margin-bottom: -5px;
 }
 
-.lp2_recruiter .signUpBtnHome {
+.lp2_recruiterContainer .signUpBtnHome {
     cursor: pointer;  
     padding: 10px 25px; 
     text-align: center;
     cursor: pointer;
     outline: none;
     color: #fff;
-    background: #263c54;
+    background: #dea3d4;
     border: none;
     border-radius: 10px;
     box-shadow: 0 9px #999;
@@ -67,7 +68,7 @@
     transition: 0.3s;
     margin-bottom: 100px; 
 } 
-.lp2_recruiter .signUpBtnHome:hover {
+.lp2_recruiterContainer .signUpBtnHome:hover {
     background-color: #96b4be;
     box-shadow: 0 5px #666;
     transform: translateY(4px);
@@ -76,13 +77,13 @@
  
 
 @media (max-width: 1024px){ 
-    .lp2_recruiter .flex { 
+    .lp2_recruiterContainer .flex { 
         flex: 1 0 100%;
     }  
-    .lp2_recruiter .signUpBtnHome {
+    .lp2_recruiterContainer .signUpBtnHome {
         width: 100%;
     } 
-    .lp2_recruiter .fullRecruiterText {
+    .lp2_recruiterContainer .fullText {
         padding-top: 20px;
     } 
 }

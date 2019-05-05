@@ -75,13 +75,14 @@
     background: #263c54; 
 } 
 .lp2_body {
+    height: 100vh;
     flex: calc(100% - 300px); 
     background: #263c5417;
     background-image: url("../../files/images/landingPage/lp2_bottomSO.png");
     background-position: bottom;
     background-repeat: no-repeat;
     background-size: auto;
-    overflow-y: scroll;  
+    overflow-y: auto;  
 }
 
 .fywText {
@@ -103,13 +104,15 @@
     .fywText {  
         font-size: 22px;
         margin-left: 10px; 
-        left: 0;
-        min-width: 180px;
+        left: 0; 
+        min-width: 182px;
+        max-width: 182px;
     } 
     .lp2_container {
         display: unset; 
     }
     .lp2_body {  
+        height: unset;
         flex: 0 0 calc(100% - 50px); 
         background-image: url("../../files/images/landingPage/lp2_bottomSM.png");
         background-position: bottom;

@@ -1,0 +1,90 @@
+.lp2_employerContainer .fullText {
+    width: 100%;
+    font-size: 32px;
+    display: inline-block;
+    color: #263c54;
+    text-align: center;
+    padding-top: 80px;
+} 
+.lp2_employerContainer .employerContent { 
+    max-width: 600px;
+    padding: 20px 10px;
+    overflow: hidden;
+    font-size: 20px;
+    margin: auto;  
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+}
+
+.lp2_employerContainer .flex {
+    display: flex;
+    justify-content: center;
+    flex: 1 0;
+    padding: 20px; 
+    text-align: center;
+}
+.lp2_employerContainer .r_para {
+    margin: 10px;  
+}
+
+.lp2_employerContainer .sc_Background {
+    width: 350px;
+    height: 40px;
+    line-height: 40px; 
+    color: #263c54; 
+    font-size: 32px; 
+    padding-left: 5px; 
+}
+
+.lp2_employerContainer .whaleCool { 
+    justify-content: center;
+    align-items: flex-end;
+}
+.lp2_employerContainer .soundCool { 
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+.lp2_employerContainer .flexCenter {
+    text-align: center;
+}
+
+.lp2_employerContainer .whaleCool img {
+    width: 230px; 
+    margin-bottom: -5px;
+}
+
+.lp2_employerContainer .signUpBtnHome {
+    cursor: pointer;  
+    padding: 10px 25px; 
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background: #a3dec6;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 9px #999;
+    font-size: 32px;
+    transition: 0.3s;
+    margin-bottom: 100px; 
+} 
+.lp2_employerContainer .signUpBtnHome:hover {
+    background-color: #96b4be;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+    background-color: #96b4be
+}
+ 
+
+@media (max-width: 1024px){ 
+    .lp2_employerContainer .flex { 
+        flex: 1 0 100%;
+    }  
+    .lp2_employerContainer .signUpBtnHome {
+        width: 100%;
+    } 
+    .lp2_employerContainer .fullText {
+        padding-top: 20px;
+    } 
+}

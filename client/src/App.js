@@ -9,14 +9,11 @@ import RecruiterRouter from './pages/recruiter/RecruiterRouter'
 import EmployerRouter from './pages/employer/EmployerRouter'
 import AuthRouter from './pages/auth/AuthRouter'
 
-//Landing page 1 routes
-import AboutTeamPage from './landing_1/AboutTeamPage/AboutTeam'
-import SignUpFormEmployer from './landing_1/components/SignUpFormEmployer/SignUpFormEmployer'
-import SignUpFormRecruiter from './landing_1/components/SignUpFormRecruiter/SignUpFormRecruiter'
-
 //Landing page 2 routes
 import Landing from './landing_2/Landing/Landing'
 import LandingRouter from './landing_2/LandingRouter'
+import SignUpFormEmployer from './landing_2/components/SignUpFormEmployer/SignUpFormEmployer'
+import SignUpFormRecruiter from './landing_2/components/SignUpFormRecruiter/SignUpFormRecruiter'
 
 import './App.css';
 
@@ -85,7 +82,6 @@ class App extends Component {
                         <Route exact path='/login' render={ () => (<Login />) } />
                         <Route strict path="/auth" component={AuthRouter} />
                         <Route exact path="/" component={Landing} />
-                        <Route exact path="/AboutTeamPage" component={AboutTeamPage} /> 
 
                         <Route strict path="/recruiterPage" component={LandingRouter} />
                         <Route strict path="/employerPage" component={LandingRouter} />

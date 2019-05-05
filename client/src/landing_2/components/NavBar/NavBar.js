@@ -68,20 +68,20 @@ class NavBar extends Component {
                     onOpen={()=>this.setState({"showOverlay":true,  menuOpen: !this.state.menuOpen})}
                 >  
                     <div className="side-menu">
-                        <NavLink to="/employerPage">For Employers</NavLink>
-                        <div className="subNavBox"> 
-                            <NavLink to="/howItWorks_employer">How it works</NavLink>
-                            <NavLink to="/pricing_employer">Pricing</NavLink>
+                        <NavLink to="/employerPage" onClick={this.callAddOverlay}>For Employers</NavLink>
+                        <div className="subNavBox" onClick={this.callAddOverlay}> 
+                            <NavLink to="/employerPage/howItWorks_employer">How it works</NavLink>
+                            <NavLink to="/employerPage/pricing_employer">Pricing</NavLink>
                         </div>
-                        <NavLink to="/recruiterPage">For Recruiters</NavLink>
-                        <div className="subNavBox"> 
-                            <NavLink to="/howItWorks_recruiter">How it works</NavLink>
-                            <NavLink to="/pricing_recruiter">Pricing</NavLink>
+                        <NavLink to="/recruiterPage" onClick={this.callAddOverlay}>For Recruiters</NavLink>
+                        <div className="subNavBox" onClick={this.callAddOverlay}> 
+                            <NavLink to="/recruiterPage/howItWorks_recruiter">How it works</NavLink>
+                            <NavLink to="/recruiterPage/pricing_recruiter">Pricing</NavLink>
                         </div>
                         
-                        <NavLink to="/contact">Contact</NavLink>
-                        <NavLink to="/about">About</NavLink>
-                        <NavLink to="/team">Team</NavLink>  
+                        <NavLink to="/landing/contact">Contact</NavLink>
+                        <NavLink to="/landing/about">About</NavLink>
+                        <NavLink to="/landing/team">Team</NavLink>  
                     </div>
                 </SwipeableDrawer> 
             </div> 

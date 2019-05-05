@@ -3,7 +3,7 @@ import './Contact.css'
 //import axios from 'axios'
 import AOS from 'aos'
 import 'aos/dist/aos.css' 
-import Loader from '../../components/Loader/Loader'
+import Loader from '../../components/Loader/Loader' 
  
 class Contact extends Component {
     constructor() {
@@ -46,34 +46,50 @@ class Contact extends Component {
 
         return ( 
             <React.Fragment>
-                <div className="fywText" data-aos="zoom-out-down">Contact Us</div> 
+                <div className="fywText" data-aos="zoom-out-down">Contact Us</div>
                 <div className="lp2_contactContainer"> 
-                    <div className="contactContainer">  
+                    <div className="contactContent">
+                        <div className="contactHeader">
+                            <p>Got a question?</p>
+                            <p>We'd love to hear from you. Contact the Migaloo team and we'll get back to you as soon as possible</p>
+                        </div>
+
                         <form id="theForm" className="contactForm" onSubmit={() => this.handleSubmit}> 
-                            <input
-                                id="firstname"
-                                type="text"
-                                name="firstname"
-                                placeholder="Your name"
-                                required
-                                onChange={() => this.handleChange}
-                            />
-                            <input
-                                id="email"
-                                type="email"
-                                name="email"
-                                placeholder="Your email"
-                                required
-                                onChange={() => this.handleChange}
-                            />
-                            <textarea
-                                id="message" 
-                                type="textarea"
-                                name="message"
-                                placeholder="Your Message"
-                                required
-                                onChange={this.handleChange}
-                            /> 
+                            <div className="input-container">
+                                <i className="icon icon1"></i>
+                                <input
+                                    id="firstname"
+                                    type="text"
+                                    name="firstname"
+                                    placeholder="Your name"
+                                    required
+                                    onChange={() => this.handleChange}
+                                />
+                            </div>
+
+                            <div className="input-container">
+                                <i className="icon icon2"></i>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    placeholder="Your email"
+                                    required
+                                    onChange={() => this.handleChange}
+                                />
+                            </div>
+                            
+                            <div className="input-container">
+                                <i className="icon icon3"></i>
+                                <textarea
+                                    id="message" 
+                                    type="textarea"
+                                    name="message"
+                                    placeholder="Your Message"
+                                    required
+                                    onChange={this.handleChange}
+                                /> 
+                            </div> 
                             <div className="submitContainer">
                                 {this.state.sending ?
                                     <Loader sprayColor="#fff" />
