@@ -209,7 +209,7 @@ function listCandidatesForJob(req, res){
             return t.any(' \
                 SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, et.experience_type_name, \
                     coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
-                    coalesce(cpd.not_accepted_count, 0) as not_accepted_count, coalesce(cpd.coins_spent, 0) as coins_spent, \
+                    coalesce(cpd.not_accepted_count, 0) as not_accepted_count, \
                     coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
                     (count(1) OVER())/10+1 AS page_count, tag_names, tag_ids, \
                     score, total_score, score/total_score*100.0 as tag_score  \
@@ -226,11 +226,10 @@ function listCandidatesForJob(req, res){
                 LEFT JOIN ( \
                     SELECT cp.candidate_id, \
                         SUM(1) as posted_count, \
-                        SUM(cast(accepted as int)) as accepted_count, \
-                        SUM(cast(not_accepted as int)) as not_accepted_count, \
-                        SUM(coins) as coins_spent, \
-                        SUM(CASE WHEN NOT has_seen_response AND accepted THEN 1 ELSE 0 END) as new_accepted_count, \
-                        SUM(CASE WHEN NOT has_seen_response AND not_accepted THEN 1 ELSE 0 END) as new_not_accepted_count \
+                        SUM(cast(migaloo_accepted as int)) as accepted_count, \
+                        SUM(cast(migaloo_accepted as int)) as not_accepted_count, \
+                        SUM(CASE WHEN NOT has_seen_response AND migaloo_accepted THEN 1 ELSE 0 END) as new_accepted_count, \
+                        SUM(CASE WHEN NOT has_seen_response AND migaloo_accepted THEN 1 ELSE 0 END) as new_not_accepted_count \
                     FROM candidate_posting cp\
                     WHERE cp.recruiter_id = ${recruiterId} \
                     GROUP BY cp.candidate_id \

@@ -7,9 +7,15 @@ import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Close from '@material-ui/icons/Close';
-import goldStar from '../../../../files/images/star_gold.png';
-import blackStar from '../../../../files/images/star_black.png';
+import ThumbUp from '@material-ui/icons/ThumbUp';
+import ThumbDown from '@material-ui/icons/ThumbDown';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
   
 const styles = theme => ({
     drawer:{ 
@@ -18,6 +24,70 @@ const styles = theme => ({
     },
     rightBtn:{
         float: "right",
+    },
+    searchBtn:{
+        width: "80%",
+        flex: "1 100%",
+        margin: 10,
+    },
+    feedbackBtnContainer:{
+        display: "flex",
+        flexWrap: "wrap",
+    },
+    feedbackBtn:{
+        flex: "1 1",
+        margin: 10,
+    },
+    rightIcon: {
+      marginLeft: theme.spacing.unit,
+    },
+    tableBody:{
+        width: "80%",
+        margin: "20px auto 20px auto"
+    },
+    tableHeading:{
+        backgroundColor: "rgb(197, 197, 197)",
+        fontWeight: "bold"
+    },
+    tableCellHeader:{
+        border: "1px solid #999999",
+        textAlign: "center",
+        padding: "0px 5px"
+    },
+    tableCell:{
+        border: "1px solid #999999",
+        padding: "0px 5px"
+    },
+    profileImage: {
+        float: "right",
+        margin: "20px",
+        width: "200px"
+    },
+    jobTitle: {
+        fontWeight: "bold"
+    },
+    jobSalary: {
+        fontSize: "14px"
+    },
+    jobPostingHeader: {
+        background: "#546f82",
+        color: "#fff",
+        padding: "20px",
+        fontSize: "22px"
+    },
+    jobPostingContent: {    
+        fontSize: "16px",
+        margin: "0px 10px"
+    },
+    jobCaption: {
+        padding: "20px",
+        overflow: "hidden"
+    },
+    pageEnter:{
+        animation: "slideInRight 0.4s forwards"
+    },
+    pageExit: {
+        animation: "slideOutLeft 0.4s forwards"
     }
 });
 class JobDescription extends React.Component{
@@ -32,8 +102,9 @@ class JobDescription extends React.Component{
             jobObj: {},
             redirectJob: false,
             showPostJob: false,
-            enterSlide:"page-enter",
+            enterSlide:props.classes.pageEnter,
             openJobPageState: false,
+            candidateList:[]
         }
         this.Auth = new AuthFunctions();
     } 
@@ -42,9 +113,10 @@ class JobDescription extends React.Component{
             this.getImage();
         });
         this.getJobData();
+        this.listCandidates();
     }
     componentWillUnmount = () => {
-        this.setState({enterSlide:"page-exit"})
+        this.setState({enterSlide:this.props.classes.pageExit})
     }
     getJobData = () => {
         (this.state.candidateId?
@@ -58,6 +130,16 @@ class JobDescription extends React.Component{
                 this.setState({
                     jobObj: jobList[0],
                     candidateData: candidateData }) 
+            }
+        }).catch(errors => 
+            console.log(errors.response.data)
+        )
+    }
+    listCandidates = () => {
+        ApiCalls.get('/api/recruiterJobs/listPostedCandidates/'+this.state.jobId)
+        .then((res)=>{
+            if(res && res.data.success){
+                this.setState({candidateList: res.data.candidates }) 
             }
         }).catch(errors => 
             console.log(errors.response.data)
@@ -84,17 +166,6 @@ class JobDescription extends React.Component{
         this.setState({showPostJob: true})
     }
 
-    setFavourite = () => {
-        var element = document.getElementById("card-object"); 
-        if ((element.classList[0] === "favourite-flip" && element.classList[1] === undefined ) || 
-            (element.classList[0] === "favourite-flip" && element.classList[1] === "flip-back")) {  
-            element.classList.add("favourite-flip-scale"); 
-            element.classList.remove("flip-back");
-        } else { 
-            element.classList.add("flip-back");
-            element.classList.remove("favourite-flip-scale");
-        }
-    }
     closeJobPage = () => {
         this.setState({openJobPageState: true}) 
     }
@@ -111,52 +182,98 @@ class JobDescription extends React.Component{
 
         return (
             <React.Fragment>
-                <div className="fixedjobPostingContainer"></div>
-                <div className={"jobPostingContainer "+this.state.enterSlide}> 
-
-                    <div className="jobPostingHeader">
-                        {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobObj.post_id}/> : ''}
-                        {this.state.profileImage !== ''?<img className="profileImage" src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
-                        <div className="jobTitle">
-                            {this.state.jobObj.title}
-                        </div>
-                        
+                <div className={this.state.enterSlide}> 
+                    <div className={classes.jobPostingHeader}>
                         <IconButton color="inherit"
                             onClick={() => this.closeJobPage()}
                             className={classes.rightBtn}>
                             <Close color="primary"/>
                         </IconButton>
-                        {/* <div className="backButton" onClick={() => this.closeJobPage()}></div> */}
-                        <span className="jobSalary">Salary: {this.state.jobObj.salary_type_name}</span> 
-                        <div className="favContainer" onClick={() => this.setFavourite()}>
-                            <div className="favourite-flip" id="card-object" >
-                                <div className="front face">
-                                    <div className="text"><img src={blackStar} alt="" /></div>
-                                </div>
-                                <div className="back face">
-                                    <div className="text"><img src={goldStar} alt="" /></div>
-                                </div>
-                            </div>
+                        {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobObj.post_id}/> : ''}
+                        {this.state.profileImage !== ''?<img className={classes.profileImage} src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
+                        <div className={classes.jobTitle}>
+                            {this.state.jobObj.title}
                         </div>
                         
-                        
+                        {/* <div className="backButton" onClick={() => this.closeJobPage()}></div> */}
+                        <span className="jobSalary">Salary: {this.state.jobObj.salary_type_name}</span> 
                     </div> 
-                    <div className="jobPostingContent">
+                    <div className={classes.jobPostingContent}>
 
                         <h3>Description</h3>
-                        <div className="jobCaption">{this.state.jobObj.caption}</div>
+                        <div className={classes.jobCaption}>{this.state.jobObj.caption}</div>
                         <h3>{this.state.jobObj.company_name}</h3>
                         <p>
                             {this.state.jobObj.address_line_1}<br/>
                             {this.state.jobObj.address_line_2}<br/>
-                            {this.state.jobObj.city+", "+this.state.jobObj.state+", "+this.state.jobObj.country}
+                            {[this.state.jobObj.city, this.state.jobObj.state, this.state.jobObj.country].filter(d=>d!=null).join(", ")}
                         </p>
                         <h5>Experience: {this.state.jobObj.experience_type_name}</h5>
-                        <span className="jobSalary">Salary: {this.state.jobObj.salary_type_name}</span> 
+                        <span className={classes.jobSalary}>Salary: {this.state.jobObj.salary_type_name}</span> 
                         {this.state.jobObj.tag_names?<p>Tags: {this.state.jobObj.tag_names.join(", ")}</p>:''}
                         <p>Posted: {this.state.jobObj.posted}</p>
-                        <div className="rowButton" onClick={this.searchJobsForCandidates}>Search For Candidates</div>
-                        {this.state.candidateData && <div className="rowButton" onClick={this.postToJob}>Post Candidate to Job</div>}
+                        <div className={classes.feedbackBtnContainer}>
+                            <Button
+                                className={classes.searchBtn} 
+                                color="primary"
+                                variant="contained"
+                                onClick={this.searchJobsForCandidates}>Search For Candidates</Button>
+                            {this.state.candidateData && <Button
+                                className={classes.searchBtn} 
+                                color="primary"
+                                variant="contained"
+                                onClick={this.postToJob}>Post Candidate to Job</Button>}
+                            <Button 
+                                className={classes.feedbackBtn}
+                                color="primary"
+                                variant="contained">Im working on it <ThumbUp className={classes.rightIcon}/></Button>
+                            <Button 
+                                className={classes.feedbackBtn}
+                                color="primary"
+                                variant="contained">Not in my wheelhouse <ThumbDown className={classes.rightIcon}/></Button>
+                        </div>
+                        
+                        <Table className={classes.tableBody}>
+                            <TableHead className={classes.tableHeading}>
+                                <TableRow>
+                                    <TableCell align="center" className={classes.tableCellHeader}>First Name</TableCell>
+                                    <TableCell align="center" className={classes.tableCellHeader}>Last Name</TableCell>
+                                    <TableCell align="center" className={classes.tableCellHeader}>Posted On</TableCell>
+                                    <TableCell align="center" className={classes.tableCellHeader}>Status</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                            {
+                                this.state.candidateList.length === 0 ? 
+                                <TableRow className={classes.tableRow}>
+                                    <TableCell colSpan={4} align="center" className={classes.tableCellHeader}>No Candidates Posted</TableCell>
+                                </TableRow> :
+                                this.state.candidateList.map((d, i)=>{
+                                    return <TableRow key={i} className={classes.tableRow}>
+                                        <TableCell className={classes.tableCell}>{d.first_name}</TableCell>
+                                        <TableCell className={classes.tableCell}>{d.last_name}</TableCell>
+                                        <TableCell className={classes.tableCell}>{d.created}</TableCell>
+                                        <TableCell className={classes.tableCell}>
+                                            {
+                                                (d.migaloo_accepted === false || d.employer_accepted === false || d.job_accepted === false)?
+                                                    "Denied" :
+                                                    (
+                                                        d.migaloo_accepted === null ? "Pending Migaloo Acceptance" :
+                                                        (
+                                                            d.employer_accepted === null ? "Pending Employer Acceptance" :
+                                                            (
+                                                                d.job_accepted === null ? "Pending Job Acceptance" :
+                                                                    "Accepted By Employer"
+                                                            )
+                                                        )
+                                                    )
+                                            }
+                                        </TableCell>
+                                    </TableRow>
+                                })
+                            }
+                            </TableBody>
+                        </Table>
                     </div>
                 </div>
 
@@ -173,11 +290,6 @@ class JobDescription extends React.Component{
                                                 job={this.state.jobObj}
                                                 handleClose={()=>this.setState({showPostJob:false})} />
                 </Drawer>
-                <div>
-                    <div>Feedback</div>
-                    <div>Im Working On It</div>
-                    <div>Im Working On It</div>
-                </div>
             </React.Fragment>
         )
     }

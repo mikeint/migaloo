@@ -12,7 +12,9 @@ DROP TABLE IF EXISTS messages_calander;
 DROP TABLE IF EXISTS messages_base;
 DROP TABLE IF EXISTS messages_subject;
 DROP TABLE IF EXISTS messages_type;
-DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS transactions; -- To Remove
+DROP TABLE IF EXISTS notification;
+DROP TABLE IF EXISTS notification_topic;
 DROP TABLE IF EXISTS posting_tags;
 DROP TABLE IF EXISTS candidate_tags;
 DROP TABLE IF EXISTS recruiter_candidate;
@@ -29,6 +31,7 @@ DROP TABLE IF EXISTS candidate;
 DROP TABLE IF EXISTS account_manager;
 DROP TABLE IF EXISTS employer; -- To Remove
 DROP TABLE IF EXISTS address;
+DROP TABLE IF EXISTS login_history;
 DROP TABLE IF EXISTS login;
 DROP TABLE IF EXISTS user_type;
 DROP TABLE IF EXISTS salary_type;
@@ -211,6 +214,7 @@ tsvector_update_trigger (posting_search, 'pg_catalog.simple', title, caption);
 CREATE TABLE job_recruiter_posting (
     post_id bigint REFERENCES job_posting_all(post_id),
     recruiter_id bigint REFERENCES recruiter(recruiter_id),
+    response int,
 	created_on timestamp default NOW(),
     PRIMARY KEY(post_id, recruiter_id)
 );
@@ -395,13 +399,22 @@ CREATE INDEX message_chain_idx ON messages_subject(user_id_1, user_id_2);
 CREATE INDEX message_chain_subject_idx ON messages_subject(user_id_1, user_id_2, message_subject_id);
 CREATE INDEX message_to_idx ON messages_base(to_id);
 
-
-CREATE TABLE transactions (
-    transaction_id bigserial,
+CREATE TABLE notification_topic (
+    topic_id int,
+    user_type_id int REFERENCES user_type(user_type_id),
+    topic_name varchar(256),
+    PRIMARY KEY(topic_id)
+);
+CREATE TABLE notification (
+    notification_id bigserial,
     created_on timestamp default NOW(),
-    coins int NOT NULL,
-    recruiter_id bigint REFERENCES recruiter(recruiter_id),
-    PRIMARY KEY(recruiter_id)
+    title varchar(256),
+    message varchar(512),
+    url varchar(512),
+    topic_id int REFERENCES notification_topic(topic_id),
+    has_seen boolean default false,
+    user_id bigint REFERENCES login(user_id),
+    PRIMARY KEY(notification_id)
 );
 CREATE TABLE tag_type (
     tag_type_id serial UNIQUE,
@@ -481,6 +494,14 @@ INSERT INTO user_type (user_type_name) VALUES
     ('Account Manager'),
     ('Candidate'),
     ('Employer');
+INSERT INTO notification_topic (topic_id, user_type_id, topic_name) VALUES 
+    (1, 1, 'Candidate is Accepted'),
+    (2, 1, 'Candidate is Denied'),
+    (3, 1, 'New Job Posting'),
+    (4, 1, 'New Chat Message'),
+    (5, 2, 'Candidate Posted To Job'),
+    (6, 2, 'New Job Posting'),
+    (7, 2, 'New Chat Message');
 INSERT INTO experience_type (experience_type_name) VALUES 
     ('Entry Level'),
     ('Mid Level'),

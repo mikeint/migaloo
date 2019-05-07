@@ -274,5 +274,61 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
         return res.status(500).json({success: false, error:err})
     });
 });
+/**
+ * List candidates that have been posted and their status
+ * @route POST api/jobs/listPostedCandidates/:jobId
+ * @group jobs - Jobs for Recruiters
+ * @params {number} body.candidateId - Candidate Id
+ * @params {number} body.postId - Id of the job post
+ * @params {number} body.coins - Number of coins
+ * @returns {object} 200 - A success message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/listPostedCandidates/:jobId', passport.authentication,  (req, res) => {
+    var jobId = req.params.jobId;
+    if(jobId == null)
+        return res.status(400).json({success:false, error:"Missing Job Id"})
+    
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        return res.status(400).json({success:false, error:"Must be a recruiter to look at postings"})
+    }
+    postgresdb.one('SELECT 1 \
+            FROM job_posting jp \
+            WHERE jp.post_id = ${jobId} AND jp.recruiter_id = ${recruiterId}', {recruiterId:jwtPayload.id, jobId:jobId})
+    .then(()=>{
+        return postgresdb.any('\
+            SELECT c.first_name, c.last_name, cp.*, dr.denial_reason_text \
+            FROM job_posting jp \
+            INNER JOIN candidate_posting cp ON jp.post_id = cp.post_id AND jp.recruiter_id = cp.recruiter_id \
+            INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
+            LEFT JOIN denial_reason dr ON cp.denial_reason_id = dr.denial_reason_id \
+            WHERE jp.post_id = ${jobId} AND jp.recruiter_id = ${recruiterId} \
+            ORDER BY cp.created_on DESC \
+            ', {recruiterId:jwtPayload.id, jobId:jobId})
+            
+            // WHERE NOT EXISTS (SELECT 1 FROM candidate_posting cp WHERE cp.candidate_id = $1) \
+        .then((data) => {
+            // Marshal data
+            data = data.map(m=>{
+                var timestamp = moment(m.created_on);
+                var ms = timestamp.diff(moment());
+                m.created = moment.duration(ms).humanize() + " ago";
+                m.created_on = timestamp.format("x");
+                return m
+            })
+            res.json({candidates:data, success:true})
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(400).json(err)
+        });
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(400).json(err)
+    });
+});
 
 module.exports = router;

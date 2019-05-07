@@ -1,5 +1,3 @@
-const express = require('express');
-
 const db = require('../config/db');
 
 const postgresdb = db.postgresdb
@@ -20,7 +18,7 @@ function assignJobToRecruiter(data){
     const query = pgp.helpers.insert(data, addRecruiter);
     return t.none(query)
 }
-function findRecruitersForPost(postId){
+function findRecruitersForPost(postId, limit=5){
     /**
      * Find the best recruiters for a job posting
      * Look at the candidates they work with / have worked with
@@ -87,10 +85,10 @@ function findRecruitersForPost(postId){
             least(f.logins_per_month / 30, 1.0) + \
             f.average_score_accetable_candidates \
         ) DESC \
-        LIMIT 5 \
-    ', {postId:postId})
+        LIMIT ${limit} \
+    ', {postId:postId, limit:limit})
 }
-function findPostsForNewRecruiter(recruiterId){
+function findPostsForNewRecruiter(recruiterId, limit=5){
     /**
      * Find the best job posting for a new recruiter
      * Lets assume that they have not put in any information, or at least added candidates
@@ -128,8 +126,8 @@ function findPostsForNewRecruiter(recruiterId){
             greatest(1 - (f.candidate_count / 7), 0.0) + \
             greatest(1 - (f.age / 14), 0.0) \
         ) DESC \
-        LIMIT 5 \
-    ', {recruiterId:recruiterId})
+        LIMIT ${limit} \
+    ', {recruiterId:recruiterId, limit:limit})
 }
 
 module.exports = {
