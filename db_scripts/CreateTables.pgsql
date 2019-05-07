@@ -79,12 +79,20 @@ CREATE TABLE login (
     email varchar(128) UNIQUE,
     passwordhash varchar(128),
     created_on timestamp default NOW(),
-    last_login timestamp,
     email_verified boolean default false,
     user_type_id int REFERENCES user_type(user_type_id),
     PRIMARY KEY(user_id)
 );
 CREATE UNIQUE INDEX login_lower_idx ON login ((lower(email)));
+
+CREATE TABLE login_history (
+    user_id bigint REFERENCES login(user_id),
+    login_date timestamp default NOW(),
+    login_ip varchar(39),
+    PRIMARY KEY(user_id, login_date)
+);
+CREATE INDEX login_history_idx ON login_history(login_date);
+
 CREATE TABLE address (
     address_id bigserial,
     address_line_1 varchar(128),
@@ -431,7 +439,7 @@ CREATE INDEX candidate_tags_idx ON candidate_tags(tag_id);
 
 CREATE VIEW user_master AS 
 SELECT 
-    l.created_on, l.user_id, l.user_type_id, l.last_login, l.email, ut.user_type_name,
+    l.created_on, l.user_id, l.user_type_id, l.email, ut.user_type_name,
     coalesce(c.first_name, r.first_name, ac.first_name) as first_name,
     coalesce(e.company_name) as company_name, 
     coalesce(c.last_name, r.last_name, ac.last_name) as last_name,
@@ -623,6 +631,25 @@ INSERT INTO login (user_id, email, passwordhash, created_on, user_type_id, email
     (502, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
     (503, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
     (504, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true); -- Dummy Employer, pass: test
+INSERT INTO login_history (user_id, login_date) VALUES 
+    (1, TIMESTAMP '2019-02-17 10:23:54'),
+    (2, TIMESTAMP '2018-11-25 10:23:54'),
+    (3, TIMESTAMP '2018-12-25 10:23:54'),
+    (1, NOW() - interval '1' day ),
+    (2, NOW() - interval '1' day ),
+    (3, NOW() - interval '1' day ),
+    (1, NOW() - interval '2' day ),
+    (2, NOW() - interval '2' day ),
+    (3, NOW() - interval '3' day ),
+    (1, NOW() - interval '3' day ),
+    (2, NOW() - interval '3' day ),
+    (3, NOW() - interval '5' day ),
+    (1, NOW() - interval '4' day ),
+    (2, NOW() - interval '4' day ),
+    (3, NOW() - interval '7' day ),
+    (1, NOW() - interval '6' day ),
+    (2, NOW() - interval '8' day ),
+    (3, NOW() - interval '10' day );
 INSERT INTO login (user_id, email, created_on, user_type_id, email_verified) VALUES 
     (1000, 'c1@test.com', TIMESTAMP '2019-02-17 10:23:54', 3, true), -- Add candidate
     (1001, 'c2@test.com', TIMESTAMP '2018-11-25 10:23:54', 3, true), -- Add candidate
