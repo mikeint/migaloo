@@ -12,35 +12,38 @@ import jobSearch from '../../../files/images/landingPage/hiw_recruiter/jobSearch
 
 class HowItWorks extends Component { 
     render() {
-        return (
-            <div className="lp2_HIWRecruiter">
-                <div className='hiwContainer'>
-                    <div className="hiwSection">
-                        <div className="hiwImage"><Iphone image={chat} /></div>
-                        <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                    </div> 
-                    <div className="hiwSection">
-                        <div className="hiwImage"><Iphone image={account} /></div>
-                        <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                    </div> 
-                    <div className="hiwSection">
-                        <div className="hiwImage"><Iphone image={postCandidate} /></div>
-                        <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                    </div> 
-                    <div className="hiwSection">
-                        <div className="hiwImage"><Iphone image={profile} /></div>
-                        <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                    </div> 
-                    <div className="hiwSection">
-                        <div className="hiwImage"><Iphone image={filter} /></div>
-                        <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                    </div> 
-                    <div className="hiwSection">
-                        <div className="hiwImage"><Iphone image={jobSearch} /></div>
-                        <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                    </div>  
+        return ( 
+            <React.Fragment>
+                <div className="fywText" data-aos="zoom-out-down">How It Works</div> 
+                <div className="lp2_HIWRecruiter">
+                    <div className='hiwContainer'>
+                        <div className="hiwSection">
+                            <div className="hiwImage"><Iphone image={chat} /></div>
+                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
+                        </div> 
+                        <div className="hiwSection">
+                            <div className="hiwImage"><Iphone image={account} /></div>
+                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
+                        </div> 
+                        <div className="hiwSection">
+                            <div className="hiwImage"><Iphone image={postCandidate} /></div>
+                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
+                        </div> 
+                        <div className="hiwSection">
+                            <div className="hiwImage"><Iphone image={profile} /></div>
+                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
+                        </div> 
+                        <div className="hiwSection">
+                            <div className="hiwImage"><Iphone image={filter} /></div>
+                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
+                        </div> 
+                        <div className="hiwSection">
+                            <div className="hiwImage"><Iphone image={jobSearch} /></div>
+                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
+                        </div>  
+                    </div>
                 </div>
-            </div>
+            </React.Fragment>
         );
     }
 }

@@ -14,24 +14,30 @@
 }
 .lp2_HIWRecruiter .hiwImage{
     display: flex;
-    justify-content: center;
-    flex-direction: column;
+    justify-content: center; 
 }  
 .lp2_HIWRecruiter .hiwDesc {
-    display: flex;
+    display: flex; 
     justify-content: center;
+    text-align: center;
     flex-direction: column;
     padding: 30px;
-    max-width: 410px; 
+    margin: auto;
+    font-size: 32px;
+
 }
 
 
 @media only screen and (max-width: 1024px) {  
     .lp2_HIWRecruiter .hiwSection {
         flex-direction: column; 
-        padding: 0px;
+        padding: 0px 20px;
+        margin: 0px; 
     }
     .lp2_HIWRecruiter .hiwDesc {
         padding: 0px;
+    }
+    .lp2_HIWRecruiter .hiwContainer {
+        overflow: hidden;
     }
 }
