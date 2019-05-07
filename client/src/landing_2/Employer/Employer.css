@@ -22,6 +22,7 @@
     flex: 1 0;
     padding: 20px; 
     text-align: center;
+    flex-direction: column;
 }
 .lp2_employerContainer .r_para {
     margin: 10px;  
@@ -61,7 +62,7 @@
     cursor: pointer;
     outline: none;
     color: #fff;
-    background: #a3dec6;
+    background: #dea3d4;
     border: none;
     border-radius: 10px;
     box-shadow: 0 9px #999;

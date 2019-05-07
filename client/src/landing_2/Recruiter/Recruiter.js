@@ -27,10 +27,11 @@ class Recruiter extends Component {
                             <div data-aos="fade-up">the whale of recruitment</div>
                         </div>
                         <div className="flex">
-                            <div className="flex r_para" data-aos="zoom-in" data-aos-offset="-200">
-                                I'm here to help you save time & make more placements. I believe every great recruiter deserves a whale on their side who can who can add relevant, 
-                                retained jobs to their pipeline. I will Deliver job reqs based on your specialization from top companies who desperately need your help but, who sadly, 
-                                don't have enough time to properly manage recruiter&nbsp;relationships.
+                            <div className="flex" data-aos="zoom-in" data-aos-offset="-200">
+                                <div className="flex_paragraph" data-aos="zoom-in" data-aos-delay="500">I'm here to help you save time & make more placements.</div>
+                                <div className="flex_paragraph" data-aos="zoom-in" data-aos-delay="1000">I believe every great recruiter deserves a whale on their side who can who can add relevant, retained jobs to their pipeline.</div>
+                                <div className="flex_paragraph" data-aos="zoom-in" data-aos-delay="1500">I will Deliver job reqs based on your specialization from top companies who desperately need your help but, who sadly,
+                                don't have enough time to properly manage recruiter&nbsp;relationships.</div>
                             </div>
                         </div>
 

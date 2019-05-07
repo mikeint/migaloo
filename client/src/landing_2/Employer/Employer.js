@@ -27,7 +27,7 @@ class Employer extends Component {
                             <div className="flex r_para" data-aos="zoom-in" data-aos-offset="-200">
                                 I believe that you agree that recruiters can add a ton (~50 tonnes in my case) of value for hard to find roles.
                                 I also understand that you are way too busy to manage external recruiter relationships.
-                                I give you access to top talent from a pool of vetted, specialized recruiters with one contract & one point of contact&nbsp;(me always).
+                                I give you access to top talent from a pool of vetted, specialized recruiters with one contract & one point of contact,&nbsp;always.
                             </div>
                         </div>
                          

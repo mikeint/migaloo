@@ -22,9 +22,11 @@
     flex: 1 0;
     padding: 20px; 
     text-align: center;
-}
-.lp2_recruiterContainer .r_para {
-    margin: 10px;  
+    flex-direction: column;
+} 
+
+.lp2_recruiterContainer .flex_paragraph {
+    margin: 20px;
 }
 
 .lp2_recruiterContainer .sc_Background {

@@ -1,0 +1,37 @@
+.lp2_HIWRecruiter .hiwContainer {
+    display: flex;
+    flex-direction: column;
+}
+.lp2_HIWRecruiter .hiwSection {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+    background: #263c540a;
+    max-width: 1100px;
+    margin: auto;
+    padding: 50px;
+}
+.lp2_HIWRecruiter .hiwImage{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}  
+.lp2_HIWRecruiter .hiwDesc {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 30px;
+    max-width: 410px; 
+}
+
+
+@media only screen and (max-width: 1024px) {  
+    .lp2_HIWRecruiter .hiwSection {
+        flex-direction: column; 
+        padding: 0px;
+    }
+    .lp2_HIWRecruiter .hiwDesc {
+        padding: 0px;
+    }
+}
