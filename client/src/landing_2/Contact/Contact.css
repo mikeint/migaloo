@@ -118,4 +118,7 @@
     .lp2_contactContainer #message {  
         padding: 10px; 
     }
+    .lp2_contactContainer .contactContent {
+        margin-bottom: 60px;
+    }
 }

@@ -47,7 +47,7 @@ class Recruiter extends Component {
                         <div className="flex" data-aos="zoom-in">
                             I'm inviting you to make an even bigger splash in your market & join the whales of recruitment.
                         </div>
-                        <div className="flex">
+                        <div className="flex" data-aos="fade-up">
                             <Link to='signUpFormRecruiter'><div className="signUpBtnHome">Recruiter RSVP</div></Link>
                         </div>
                     </div>

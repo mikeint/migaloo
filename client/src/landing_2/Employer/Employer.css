@@ -27,6 +27,9 @@
 .lp2_employerContainer .r_para {
     margin: 10px;  
 }
+.lp2_employerContainer .flex_paragraph {
+    margin: 20px;
+}
 
 .lp2_employerContainer .sc_Background {
     width: 350px;
