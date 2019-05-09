@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './Landing.css';
 import SocialSide from "../SocialSide/SocialSide";
 import LandingSection1 from "../LandingSection1/LandingSection1";
-//import LandingSection2 from "../LandingSection2/LandingSection2";
 import LandingSection3 from "../LandingSection3/LandingSection3";
 import LandingSection4 from "../LandingSection4/LandingSection4";
 import LandingSection5 from "../LandingSection5/LandingSection5";
@@ -23,7 +22,6 @@ class Landing extends Component {
                 <HeroCover /> 
                 <HeroContainer /> 
                 <LandingSection1 />
-				{/* <LandingSection2 />*/}
 				<LandingSection3 /> 
                 <LandingSection6 />
                 <LandingSection5 />
