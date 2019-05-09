@@ -87,7 +87,7 @@ class Notifications extends React.Component{
 		this.state = {
             showOverlay: false,
             /* scrollY, */
-            notificationCount: 0,
+            newNotificationCount: 0,
             notificationList: [],
             open: false,
             messageInfo: {message:''},
@@ -111,7 +111,6 @@ class Notifications extends React.Component{
     }
     
     timer = () => {
-        // this.test()
         // setState method is used to update the state
         this.getNewNotifications();
     }
@@ -127,11 +126,19 @@ class Notifications extends React.Component{
         }
     };
 
-    handleClose = (event, reason) => {
+    handleClosePopUp = (event, reason) => {
         if (reason === 'clickaway') {
             return;
         }
         this.setState({ open: false });
+    };
+    handleGotoPopUp = (item) => {
+        this.setSeen([item.notification_id]);
+        this.setState({ open: false });
+    };
+    handleGotoDrawer = (item) => {
+        this.setSeen([item.notification_id]);
+        this.setState({"showOverlay":false})
     };
 
     handleExited = () => {
@@ -163,14 +170,13 @@ class Notifications extends React.Component{
             if(res && res.data.success) {
                 res.data.notificationList.forEach(d=>d.notification_id = parseInt(d.notification_id, 10))
                 var count = parseInt(res.data.counts.new_notification_count, 10)
-                count = count > 99 ? 99 : count;
                 const minId = res.data.notificationList.map(d=>d.notification_id).reduce((a,b)=>Math.min(a,b));
                 var notificationList = this.state.notificationList?this.state.notificationList:[];
                 notificationList = notificationList.concat(res.data.notificationList)
                 this.setState({
                     search_after: minId,
                     notificationList: notificationList,
-                    notificationCount: count,
+                    newNotificationCount: count,
                     totalCount: parseInt(res.data.counts.notification_count, 10)
                 });
             }
@@ -179,12 +185,24 @@ class Notifications extends React.Component{
             console.log(error);
         });
     }
-    test = () => {
-        ApiCalls.get('/api/notifications/test')
-        .then((res) => {
-        })
+    setSeen = (notificationIds) => {
+        ApiCalls.post('/api/notifications/setSeen', {notificationIds:notificationIds})
+        .then((res) => {})
         .catch(error => {
             console.log(error);
+        });
+        const notificationList = this.state.notificationList;
+        var minusCount = 0;
+        notificationIds.forEach(id=>{
+            const data = notificationList.find(d=>d.notification_id === id);
+            if(data != null){
+                data.has_seen = true;
+                minusCount--;
+            }
+        })
+        this.setState({
+            notificationList: notificationList,
+            newNotificationCount: this.state.newNotificationCount - minusCount
         });
     }
 
@@ -196,13 +214,13 @@ class Notifications extends React.Component{
         .then((res) => {
             if(res && res.data.success) {
                 lastNotificationId = res.data.notificationList.reduce((t,a)=>Math.max(a.notification_id, t), lastNotificationId);
-                const newNotificationCount = this.state.notificationCount + res.data.notificationList.length;
+                const newNotificationCount = this.state.newNotificationCount + res.data.notificationList.length;
                 const allNotifications = this.state.notificationList;
-                res.data.notificationList.forEach(d=>allNotifications.push(d));
+                res.data.notificationList.forEach(d=>allNotifications.unshift(d));
                 
                 this.setState({
                     notificationList: allNotifications,
-                    notificationCount: newNotificationCount,
+                    newNotificationCount: newNotificationCount,
                     lastNotificationId: lastNotificationId,
                 });
                 res.data.notificationList.forEach(d=>this.queue.push(d));
@@ -218,7 +236,7 @@ class Notifications extends React.Component{
         return (
             <React.Fragment>
                 <IconButton color="inherit" onClick={() => this.openNotifications()}>
-                    <Badge badgeContent={this.state.notificationCount} color="error">
+                    <Badge badgeContent={this.state.newNotificationCount} color="error">
                         <NotificationsIcon />
                     </Badge>
                 </IconButton>
@@ -260,7 +278,7 @@ class Notifications extends React.Component{
                                                 variant="outlined"
                                                 color="primary"
                                                 to={item.url} component={Link}
-                                                onClick={()=>this.setState({"showOverlay":false})}>Goto</Button>
+                                                onClick={()=>this.handleGotoDrawer(item)}>Goto</Button>
                                         </div>}
                                     </div>
                                 </div> 
@@ -286,7 +304,7 @@ class Notifications extends React.Component{
                     }}
                     open={this.state.open}
                     // autoHideDuration={6000}
-                    onClose={this.handleClose}
+                    onClose={this.handleClosePopUp}
                     onExited={this.handleExited}
                     ContentProps={{
                         'aria-describedby': 'message-id',
@@ -299,16 +317,16 @@ class Notifications extends React.Component{
                         (this.state.messageInfo.url != null?[
                             <Button key="goto" color="secondary" size="small"
                             to={this.state.messageInfo.url}
-                            onClick={this.handleClose} component={Link}>
+                            onClick={()=>this.handleGotoPopUp(this.state.messageInfo)} component={Link}>
                                 GOTO
                             </Button>]:[]
                         ).concat([
                             <IconButton
                                 key="close"
                                 aria-label="Close"
-                            color="inherit"
-                            className={classes.close}
-                            onClick={this.handleClose}
+                                color="inherit"
+                                className={classes.close}
+                                onClick={this.handleClosePopUp}
                                 >
                                 <Close />
                             </IconButton>,

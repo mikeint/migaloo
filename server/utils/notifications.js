@@ -139,10 +139,9 @@ function getAllNotifications(userId, searchAfter=null, limit=5){
         ORDER BY created_on DESC \
         LIMIT ${limit}', {userId:userId, limit:limit, searchAfter: searchAfter})
 }
-function notificationsSetSeen(ids){
-    const ids = data.filter(d=>d.has_seen).map(d=>d.notification_id)
-    return postgresdb.none('UPDATE notification SET has_seen=true WHERE notification_id in (${ids:csv})',
-            {ids:ids})
+function notificationsSetSeen(userId, ids){
+    return postgresdb.none('UPDATE notification SET has_seen=true WHERE user_id = ${userId} AND notification_id in (${ids:csv})',
+            {ids:ids, userId:userId})
 }
 module.exports = {
     addNotification: addNotification,
