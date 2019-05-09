@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import './LandingSection2.css'; 
-import Slider from 'react-slick';
+//import Slider from 'react-slick';
  
-import carouselImg2 from '../../files/images/landingPage/carousel-2.png';
+/* import carouselImg2 from '../../files/images/landingPage/carousel-2.png';
 import carouselImg3 from '../../files/images/landingPage/carousel-3.png';
 import carouselImg4 from '../../files/images/landingPage/carousel-4.png';
 import carouselImg5 from '../../files/images/landingPage/carousel-5.png';
-import carouselImg6 from '../../files/images/landingPage/carousel-6.png';
+import carouselImg6 from '../../files/images/landingPage/carousel-6.png'; */
 
 
 class LandingSection2 extends Component {
@@ -44,7 +44,8 @@ class LandingSection2 extends Component {
         };
         return (
         <div className="landingSection2">  
-            <Slider {...settings}>
+            {/* DELETED REAC-SLICK */}
+            {/* <Slider {...settings}> 
                 <div>
                     <img src={carouselImg2} alt="" />
                     <h1 className="mc_4_text">Top Talent</h1>
@@ -70,7 +71,7 @@ class LandingSection2 extends Component {
                     <h1 className="mc_4_text">Confidentiality</h1>
                     <p>Candidates can take comfort knowing that they remain entirely anonymous until they wish to move forward in a given hiring&nbsp;process.</p>
                 </div> 
-            </Slider>
+            </Slider> */}
           </div>
         );
     }
