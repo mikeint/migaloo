@@ -56,7 +56,6 @@ function assignJobToRecruiter(data){
         throw new Error(err)
     });
     const query = pgp.helpers.insert(data, addRecruiter);
-    console.log(query)
     return postgresdb.none(query)
 }
 function findRecruitersForPost(postId, limit=5){
