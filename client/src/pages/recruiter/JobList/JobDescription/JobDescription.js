@@ -7,16 +7,18 @@ import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
 import Close from '@material-ui/icons/Close';
 import ThumbUp from '@material-ui/icons/ThumbUp';
 import ThumbDown from '@material-ui/icons/ThumbDown';
+import Info from '@material-ui/icons/Info';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-  
+
 const styles = theme => ({
     drawer:{ 
         minWidth: "300px",
@@ -41,23 +43,10 @@ const styles = theme => ({
     rightIcon: {
       marginLeft: theme.spacing.unit,
     },
-    tableBody:{
-        width: "80%",
-        margin: "20px auto 20px auto"
-    },
-    tableHeading:{
-        backgroundColor: "rgb(197, 197, 197)",
-        fontWeight: "bold"
-    },
-    tableCellHeader:{
-        border: "1px solid #999999",
-        textAlign: "center",
-        padding: "0px 5px"
-    },
-    tableCell:{
-        border: "1px solid #999999",
-        padding: "0px 5px"
-    },
+    tableBody:theme.table.tableBody,
+    tableHeading:theme.table.tableHeading,
+    tableCellHeader:theme.table.tableCellHeader,
+    tableCell:theme.table.tableCell,
     profileImage: {
         float: "right",
         margin: "20px",
@@ -88,6 +77,12 @@ const styles = theme => ({
     },
     pageExit: {
         animation: "slideOutLeft 0.4s forwards"
+    },
+    toolTipText:{
+        fontSize: "18px"
+    },
+    toolTip:{
+        marginLeft: "15px"
     }
 });
 class JobDescription extends React.Component{
@@ -238,7 +233,7 @@ class JobDescription extends React.Component{
                                 <TableRow>
                                     <TableCell align="center" className={classes.tableCellHeader}>First Name</TableCell>
                                     <TableCell align="center" className={classes.tableCellHeader}>Last Name</TableCell>
-                                    <TableCell align="center" className={classes.tableCellHeader}>Posted On</TableCell>
+                                    <TableCell align="center" className={classes.tableCellHeader}>Posted</TableCell>
                                     <TableCell align="center" className={classes.tableCellHeader}>Status</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -267,6 +262,14 @@ class JobDescription extends React.Component{
                                                             )
                                                         )
                                                     )
+                                            }
+                                            {(d.migaloo_accepted === false || d.employer_accepted === false || d.job_accepted === false) &&
+                                                <Tooltip classes={{tooltip: classes.toolTipText}}
+                                                data-html="true"
+                                                title={<div>{d.denial_reason_text}<br/>{d.denial_comment}</div>}
+                                                aria-label="Denial Reason">
+                                                    <Info className={classes.toolTip}/>
+                                                </Tooltip>
                                             }
                                         </TableCell>
                                     </TableRow>

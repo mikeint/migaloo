@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import AuthFunctions from '../../../AuthFunctions'; 
 import { Redirect } from 'react-router-dom';
+import debounce from 'lodash/debounce';
 
 const styles = theme => ({
     textField: {
@@ -31,15 +32,20 @@ class PendingVerification extends React.Component{
         const user = this.Auth.getUser()
 		this.state = {
             backToLogin: false,
-            email: user.email
+            email: user.email,
+            sentAgain: false
         };
     }
 
+    sentEmail = debounce(() => {
+        ApiCalls.post("/api/auth/sendEmailVerification", {}).then(()=>{});
+    }, 5000)
     componentDidMount = () => {
-        this.sendRequest();
+
     }
     sendRequest = () => {
-        post("/api/auth/sendEmailVerification", {}).then(()=>{});
+        this.setState({sentAgain: true});
+        this.sentEmail();
     };
     handleSubmit = () => {
         this.setState({backToLogin: true});
@@ -52,7 +58,7 @@ class PendingVerification extends React.Component{
         return (
             <div className={classes.root}>
                 <div className={"pageHeading "+classes.header}>Verification Pending</div>
-                <div className={classes.formItem}>An email has been sent to {this.state.email}</div>
+                <div className={classes.formItem}>{this.state.sentAgain ? 'An': 'Another'} email has been sent to {this.state.email}</div>
                 <div className={classes.formItem}>Please wait up to 10 minutes for the email to be recieved.</div>
                 <div className={classes.formItem}>If you do not recieve the email in this time resend the request</div>
 				<br/>

@@ -28,30 +28,10 @@ const styles = theme => ({
         width: "80%",
         display: "inline-block"
     },
-    tableBody:{
-        // display: "table",
-        // marginTop: "15px",
-        width: "80%",
-        margin: "20px auto 20px auto"
-    },
-    // tableRow:{
-    //     display: "table-row"
-    // },
-    tableHeading:{
-        backgroundColor: "rgb(197, 197, 197)",
-        // display: "table-header-group",
-        fontWeight: "bold"
-    },
-    tableCellHeader:{
-        border: "1px solid #999999",
-        textAlign: "center",
-        padding: "0px 5px"
-    },
-    tableCell:{
-        border: "1px solid #999999",
-        // display: "table-cell",
-        padding: "0px 5px"
-    },
+    tableBody:theme.table.tableBody,
+    tableHeading:theme.table.tableHeading,
+    tableCellHeader:theme.table.tableCellHeader,
+    tableCell:theme.table.tableCell,
     center:{
         textAlign:"center"
     },

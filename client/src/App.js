@@ -30,6 +30,25 @@ const theme = createMuiTheme({
         height: "100%",
         backgroundSize: "400% 400%"
     },
+    table:{
+        tableBody:{
+            width: "80%",
+            margin: "20px auto 20px auto"
+        },
+        tableHeading:{
+            backgroundColor: "rgb(197, 197, 197)",
+            fontWeight: "bold"
+        },
+        tableCellHeader:{
+            border: "1px solid #999999",
+            textAlign: "center",
+            padding: "0px 5px"
+        },
+        tableCell:{
+            border: "1px solid #999999",
+            padding: "0px 5px"
+        }
+    },
     palette: {
         primary: {
           // light: will be calculated from palette.primary.main,

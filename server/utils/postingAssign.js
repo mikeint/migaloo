@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const notifications = require('./notifications');
 
 const postgresdb = db.postgresdb
 const pgp = db.pgp
@@ -14,9 +15,49 @@ function assignJobToRecruiter(data){
      *  ...
      * ]
      * 
-     */ 
+     */
+    postgresdb.any('\
+    SELECT jp.post_id, jp.title, c.company_name \
+    FROM job_posting_all jp \
+    INNER JOIN company c ON c.company_id = jp.company_id \
+    WHERE jp.active AND jp.is_visible AND jp.post_id in (${postId:csv}) \
+    ', {postId:data.map(d=>d.post_id)}).then(ret=>{
+        data = data.map(d=>{ // Match up the data to the notification
+            const found = ret.find(f=>f.post_id === d.post_id)
+            return {...d, ...found}
+        })
+        const search = {}
+        data.forEach(d=>{ // Count how many new jobs for this recuriter
+            if(search[d.recruiter_id] == null)
+                search[d.recruiter_id] = 0
+            search[d.recruiter_id]++
+        })
+        data.forEach(d=>{
+            if(search[d.recruiter_id] != null){ // Check if we should send a message
+                if(search[d.recruiter_id] <= 1)
+                    notifications.addNotification(d.recruiter_id, 'newJobPosting', d)
+                    .catch(err => {
+                        console.error(err)
+                        throw new Error(err)
+                    });
+                else if(search[d.recruiter_id] > 1){
+                    notifications.addNotification(d.recruiter_id, 'multipleNewJobPosting', {count:search[d.recruiter_id]})
+                    .catch(err => {
+                        console.error(err)
+                        throw new Error(err)
+                    });
+                    search[d.recruiter_id] = null; // Stop from sending another message
+                }
+            }
+        })
+    })
+    .catch(err => {
+        console.error(err)
+        throw new Error(err)
+    });
     const query = pgp.helpers.insert(data, addRecruiter);
-    return t.none(query)
+    console.log(query)
+    return postgresdb.none(query)
 }
 function findRecruitersForPost(postId, limit=5){
     /**

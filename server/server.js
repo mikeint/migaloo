@@ -11,6 +11,7 @@ const employer = require('./routes/employer');
 const company = require('./routes/company'); 
 const recruiter = require('./routes/recruiter');
 const candidate = require('./routes/candidate');  
+const notifications = require('./routes/notifications');  
 const profileImage = require('./routes/profileImage');  
 const message = require('./routes/message');  
 
@@ -41,6 +42,7 @@ app.use('/api/public/', express.static(path.join(`${__dirname}/public/`)))
 app.use('/api/auth', auth);
 app.use('/api/landing', landing);
 app.use('/api/mailto', mailto);
+app.use('/api/notifications', notifications);
 app.use('/api/recruiterJobs', recruiterJobs);
 app.use('/api/accountManager', accountManager);
 app.use('/api/employerPostings', employerPostings);

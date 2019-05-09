@@ -4,6 +4,7 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const passport = require('../config/passport');
 const ses = require('../utils/ses');
+const postingAssign = require('../utils/postingAssign');
 
 const postgresdb = require('../config/db').postgresdb;
 
@@ -147,44 +148,44 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                         const lh = t.none('INSERT INTO login_history (user_id, login_ip) VALUES ($1, $2)',
                                 [login_ret.user_id, loginIp])
                         if(type == 1){ // Recruiter
-                            const q2 = t.one('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3) RETURNING company_id',
+                            const q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3)',
                                     [company_login_ret.user_id, body.companyName, null])
                             var q3 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
                                     [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
                             var q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
                                 [login_ret.user_id, company_login_ret.user_id])
                             return t.batch([lh, q2, q3, q4]).then(() => {
-                                return q3.then(() => {
-                                    createJWT(payload).then((token)=>{
-                                        res.status(200).json(token)
-                                    })
-                                    .catch(err => {
-                                        console.log(err)
-                                        res.status(400).json({success: false, error:err})
-                                    });
-                                    return []
+                                sendEmailVerification(payload.id, payload.email) // Async to send email verification
+                                .catch(err => {
+                                    console.error(err)
                                 })
-                            })
-                        }else if(type == 2){ // Employer
-                            var q2 = t.one('INSERT INTO company (company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING company_id',
-                                    [body.companyName, null])
-                            return q2.then((employer_data) => {
-                                var q3 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
-                                    [login_ret.user_id, employer_data.company_id, body.firstName, body.lastName, body.phoneNumber])
-                                return q3.then(() => {
-                                    createJWT(payload).then((token)=>{
-                                        res.status(200).json(token)
-                                    })
-                                    .catch(err => {
-                                        console.log(err)
-                                        res.status(400).json({success: false, error:err})
-                                    });
-                                    return []
+                                createJWT(payload).then((token)=>{
+                                    res.status(200).json(token)
                                 })
                                 .catch(err => {
                                     console.log(err)
                                     res.status(400).json({success: false, error:err})
                                 });
+                                return []
+                            })
+                        }else if(type == 2){ // Employer
+                            var q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6)',
+                                    [company_login_ret.user_id, body.companyName, null])
+                            var q3 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
+                                [login_ret.user_id, company_login_ret.user_id, body.firstName, body.lastName, body.phoneNumber])
+                            return t.batch([lh, q2, q3]).then(() => {
+                                sendEmailVerification(payload.id, payload.email) // Async to send email verification
+                                .catch(err => {
+                                    console.error(err)
+                                })
+                                createJWT(payload).then((token)=>{
+                                    res.status(200).json(token)
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                    res.status(400).json({success: false, error:err})
+                                });
+                                return []
                             })
                             .catch(err => {
                                 console.log(err)
@@ -254,22 +255,43 @@ router.post('/verifyEmail', (req, res) => { // Todo recieve encrypted jwt toekn 
         postgresdb.none('UPDATE login SET email_verified=true WHERE user_id = ${id}',
                         {id:payload.user_id})
             .then(() => {
-                res.json({success:true})
+                postingAssign.findPostsForNewRecruiter(payload.id).then((data)=>{
+                    postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: d.post_id, recruiter_id: payload.id}}))
+                    .then(() => {
+                        res.json({success:true})
+                    })
+                    .catch(err => {
+                        console.error(err)
+                        res.status(400).json(err)
+                    })
+                }) // Async call to add posts to the new recruiter
+                .catch(err => {
+                    console.error(err)
+                    res.status(400).json(err)
+                })
             })
+            .catch(err=>res.status(400).json(err))
     }).catch(err=>res.status(400).json(err))
 });
+function sendEmailVerification(id, email){
+    return new Promise((resolve, reject)=>{
+        return postgresdb.one('\
+            SELECT concat(first_name, \' \', last_name) as display_name \
+            FROM user_master um \
+            WHERE um.user_id = ${id}', {id:id})
+        .then((data) => {
+            return ses.sendEmailVerification({name:data.display_name, user_id:id, email:email})
+                .then(resolve)
+                .catch(reject);
+        })
+        .catch(reject);
+    })
+}
 router.post('/sendEmailVerification', passport.authentication, (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
     const jwtPayload = req.body.jwtPayload;
-    return postgresdb.one('\
-        SELECT concat(first_name, \' \', last_name) as display_name \
-        FROM user_master um \
-        WHERE um.user_id = ${id}', {id:jwtPayload.id})
-    .then((data) => {
-        ses.sendEmailVerification({name:data.display_name, user_id:jwtPayload.id, email:jwtPayload.email})
-        .then(result=>{
-            console.log(result)
-            res.json({success:true})
-        })
+    sendEmailVerification(jwtPayload.id, jwtPayload.email).then(result=>{
+        console.log(result)
+        res.json({success:true})
     })
     .catch(err => {
         console.log(err)
