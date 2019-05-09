@@ -68,7 +68,7 @@ router.get('/listEmployers', passport.authentication,  (req, res) => {
             city, state, country, lat, lon, \
             state_code as "stateCode", \
             country_code as "countryCode" \
-        FROM employer e \
+        FROM company e \
         INNER JOIN company_contact ec ON ec.company_id = e.company_id \
         LEFT JOIN address a ON a.address_id = e.address_id \
         WHERE ec.company_contact_id = $1', [jwtPayload.id])

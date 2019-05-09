@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('../config/passport');
 const validatePostingsInput = require('../validation/postings');  
 const moment = require('moment');
+const postingAssign = require('../utils/postingAssign')
 
 const db = require('../config/db')
 const postgresdb = db.postgresdb
@@ -46,9 +47,9 @@ router.post('/create', passport.authentication,  (req, res) => {
             INNER JOIN account_manager ac ON ac.account_manager_id = ec.company_contact_id \
             WHERE ec.company_contact_id = ${userId} AND ac.active AND company_id = ${companyId}', 
             {userId:jwtPayload.id, companyId:body.employer}).then(()=>{
-        postgresdb.tx(t => {
+        return postgresdb.tx(t => {
             // creating a sequence of transaction queries:
-            const q1 = t.one('INSERT INTO job_posting (company_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING post_id',
+            const q1 = t.one('INSERT INTO job_posting_all (company_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING post_id',
                                 [body.employer, body.title, body.caption, body.experience, body.salary])
             return q1.then((post_ret)=>{
                 if(body.tagIds != null && body.tagIds.length > 0){
@@ -56,20 +57,22 @@ router.post('/create', passport.authentication,  (req, res) => {
                     const q2 = t.none(query);
                     return q2
                         .then(() => {
-                            res.status(200).json({success: true})
-                            return []
+                            return Promise.resolve(post_ret.post_id)
                         })
                         .catch(err => {
-                            console.log(err)
-                            res.status(400).json({success: false, error:err})
+                            return Promise.reject(err)
                         });
                 }else{
-                    res.status(200).json({success: true})
-                    return []
+                    return Promise.resolve(post_ret.post_id)
                 }
             })
+            .then((post_id) => {
+                res.status(200).json({success: true})
+                postingAssign.findRecruitersForPost(post_id).then((data)=>{
+                    postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: post_id, recruiter_id: d.recruiter_id}}))
+                }) // Async call to add posts to the new recruiter
+            })
             .catch(err => {
-                
                 console.log(err)
                 res.status(400).json({success: false, error:err})
             });

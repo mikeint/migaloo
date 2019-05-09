@@ -76,7 +76,7 @@ class PostAJob extends React.Component{
             redirect: false,
             salaryList: [],
             experienceList: [],
-            employers: [],
+            companies: [],
             errors: {}
         }
         this.Auth = new AuthFunctions();
@@ -92,10 +92,10 @@ class PostAJob extends React.Component{
         .catch(error => {
             console.log(error);
         });
-        get('/api/employer/listEmployers')
+        ApiCalls.get('/api/company/list')
         .then((res) => {
             if(res && res.data.success) {
-                this.setState({employers:res.data.employers.map(d=>{return {id:d.company_id, name:d.company_name}})});
+                this.setState({companies:res.data.companies.map(d=>{return {id:d.company_id, name:d.company_name}})});
             }
         })
         .catch(error => {
@@ -162,7 +162,7 @@ class PostAJob extends React.Component{
                                     <MenuItem value="">
                                         <em>Unspecified</em>
                                     </MenuItem>
-                                    {this.state.employers.map((d, i)=>
+                                    {this.state.companies.map((d, i)=>
                                         <MenuItem key={i} value={d.id}>{d.name}</MenuItem>
                                     )}
                                 </Select>

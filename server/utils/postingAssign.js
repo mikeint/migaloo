@@ -17,13 +17,13 @@ function assignJobToRecruiter(data){
      * 
      */
     postgresdb.any('\
-    SELECT jp.post_id, jp.title, c.company_name \
+    SELECT jp.post_id as "postId", jp.title as "postTitle", c.company_name as "companyName" \
     FROM job_posting_all jp \
     INNER JOIN company c ON c.company_id = jp.company_id \
     WHERE jp.active AND jp.is_visible AND jp.post_id in (${postId:csv}) \
     ', {postId:data.map(d=>d.post_id)}).then(ret=>{
         data = data.map(d=>{ // Match up the data to the notification
-            const found = ret.find(f=>f.post_id === d.post_id)
+            const found = ret.find(f=>f.postId == d.post_id)
             return {...d, ...found}
         })
         const search = {}
