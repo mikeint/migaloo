@@ -1,6 +1,6 @@
 import React from 'react';
 import './JobDescription.css'; 
-import ApiCalls from '../../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import {Redirect} from 'react-router-dom';
 import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
@@ -48,8 +48,8 @@ class JobDescription extends React.Component{
     }
     getJobData = () => {
         (this.state.candidateId?
-            ApiCalls.get('/api/recruiterJobs/getCandidateForJob/'+this.state.candidateId+'/'+this.state.jobId):
-            ApiCalls.get('/api/recruiterJobs/get/'+this.state.jobId))
+            get('/api/recruiterJobs/getCandidateForJob/'+this.state.candidateId+'/'+this.state.jobId):
+            get('/api/recruiterJobs/get/'+this.state.jobId))
         .then((res)=>{
             if(res && res.data.success){
                 console.log(res.data)
@@ -65,7 +65,7 @@ class JobDescription extends React.Component{
     }
 
     getImage = () => {
-        ApiCalls.get(`/api/profileImage/view/2/${this.state.jobObj.company_id}/small`)
+        get(`/api/profileImage/view/2/${this.state.jobObj.company_id}/small`)
         .then((res)=>{
             if(res == null) return
             if(res.data.success){

@@ -1,7 +1,7 @@
 import React from 'react';
 import './Profile.css';  
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions';  
 import { Redirect } from 'react-router-dom';
 import UploadImage from '../../../components/UploadImage/UploadImage'; 
@@ -24,7 +24,7 @@ class Profile extends React.Component{
     } 
 
     componentWillUnmount = () => {
-        ApiCalls.cancel()
+        cancel()
     }
     componentWillMount = () => {
         this.setState({ migalooOverlay: sessionStorage.getItem("migalooOverlay") });
@@ -43,13 +43,13 @@ class Profile extends React.Component{
         }).then((result) => {
             if (result.value) {
                 this.Auth.logout();
-                ApiCalls.getNewAuthToken();
+                getNewAuthToken();
                 this.setState({logout: true})
             } 
         }) 
     }
     getProfileInfo = () => {
-        ApiCalls.get('/api/recruiter/getProfile')
+        get('/api/recruiter/getProfile')
         .then((res)=>{   
             if(res == null) return 
             this.setState({ profileInfo: res.data }) 
@@ -58,7 +58,7 @@ class Profile extends React.Component{
         )
     }
     getImage = () => {
-        ApiCalls.get('/api/profileImage/view/medium')
+        get('/api/profileImage/view/medium')
         .then((res)=>{
             if(res == null) return
             if(res.data.success){

@@ -33,5 +33,5 @@ function RecruiterRouter({ match }) {
     );
 }
 
-module.exports = RecruiterRouter;
+export default RecruiterRouter;
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import AuthFunctions from '../../../AuthFunctions'; 
@@ -40,12 +40,12 @@ class VerifyEmail extends React.Component{
     }
 
     componentDidMount = () => {
-        ApiCalls.post("/api/auth/verifyEmail", {token: this.state.token}).then(()=>{
+        post("/api/auth/verifyEmail", {token: this.state.token}).then(()=>{
             this.setState({ verifySuccess: true });
         })
     }
     sendRequest = () => {
-        ApiCalls.post("/api/auth/sendEmailVerification", {}).then(()=>{});
+        post("/api/auth/sendEmailVerification", {}).then(()=>{});
     };
     handleSubmit = () => {
         if(this.state.verifySuccess)

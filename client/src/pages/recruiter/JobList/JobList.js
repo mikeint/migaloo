@@ -2,7 +2,7 @@ import React from 'react';
 import './JobList.css';    
 import Loader from '../../../components/Loader/Loader';
 import Filters from '../../../components/Filters/Filters';
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import { NavLink, Redirect } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 
@@ -58,7 +58,7 @@ class JobList extends React.Component{
     }
 
     componentWillUnmount = () => {
-        ApiCalls.cancel()
+        cancel()
         this.setState({enterSlide:"page-exit"})
     }
 
@@ -83,8 +83,8 @@ class JobList extends React.Component{
 
     getJobList = (searchString) => {
         (this.state.candidateId?
-            ApiCalls.getWithParams('/api/recruiterJobs/listForCandidate/'+this.state.candidateId+'/'+this.state.page+(searchString?`/${searchString}`:''), this.state.filters):
-            ApiCalls.getWithParams('/api/recruiterJobs/list/'+this.state.page+(searchString?`/${searchString}`:''), this.state.filters))
+            getWithParams('/api/recruiterJobs/listForCandidate/'+this.state.candidateId+'/'+this.state.page+(searchString?`/${searchString}`:''), this.state.filters):
+            getWithParams('/api/recruiterJobs/list/'+this.state.page+(searchString?`/${searchString}`:''), this.state.filters))
         .then((res)=>{
             if(res && res.data.success){
                 const jobList = res.data.jobList;

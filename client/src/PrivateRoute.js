@@ -44,7 +44,7 @@ class PrivateEmployerRoute extends Route {
         }
     }
 }
-module.exports = {
-    PrivateEmployerRoute:PrivateEmployerRoute,
-    PrivateRecruiterRoute:PrivateRecruiterRoute
-};
+export {
+    PrivateEmployerRoute,
+    PrivateRecruiterRoute
+ };

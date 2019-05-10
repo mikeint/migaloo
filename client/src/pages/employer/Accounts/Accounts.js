@@ -1,5 +1,5 @@
 import React from 'react';
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import { withStyles } from '@material-ui/core/styles';
 import Loader from '../../../components/Loader/Loader';
@@ -48,7 +48,7 @@ class Accounts extends React.Component{
     }
 
     componentWillUnmount = () => {
-        ApiCalls.cancel();
+        cancel();
     }
 
     componentDidMount = () => {
@@ -56,7 +56,7 @@ class Accounts extends React.Component{
     }
 
     getCompanys = () => {
-        ApiCalls.get('/api/company/list')
+        get('/api/company/list')
         .then((res)=>{    
             if(res == null) return
             this.setState({ companyList: res.data.companies })

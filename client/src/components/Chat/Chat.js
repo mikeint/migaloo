@@ -1,7 +1,7 @@
 import React, { Component } from "react"; 
 import "./Chat.css"; 
 import AuthFunctions from '../../AuthFunctions'; 
-import ApiCalls from '../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
 import ConversationRow from "./ConversationRow/ConversationRow"; 
 import Pagination from "react-js-pagination";
 import Loader from "../Loader/Loader"; 
@@ -22,11 +22,11 @@ class Chat extends Component {
         this.getConversationList();
     }
     componentWillUnmount = () => {
-        ApiCalls.cancel()
+        cancel()
         this.setState({enterSlide:"page-exit"})
     }
     getConversationList = () => {
-        ApiCalls.get('/api/message/list/'+this.state.page)
+        get('/api/message/list/'+this.state.page)
         .then((res)=>{
             if(res)
                 this.setState({ conversationList: res.data,

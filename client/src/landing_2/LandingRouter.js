@@ -39,5 +39,5 @@ function LandingRouter({ match }) {
     );
 }
 
-module.exports = LandingRouter;
+export default LandingRouter;
 

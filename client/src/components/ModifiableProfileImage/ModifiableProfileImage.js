@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import ApiCalls from '../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
 import UploadImage from '../UploadImage/UploadImage'; 
 import defaultProfileImage from '../../files/images/profile.png'
 
@@ -33,7 +33,7 @@ class ModifiableProfileImage extends React.Component{
         this.getImage();
     }
     getImage = () => {
-        ApiCalls.get('/api/profileImage/view/medium')
+        get('/api/profileImage/view/medium')
         .then((res)=>{
             if(res == null) return
             if(res.data.success){

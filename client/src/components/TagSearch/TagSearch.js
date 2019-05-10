@@ -2,7 +2,7 @@ import React from 'react';
 import AuthFunctions from '../../AuthFunctions'; 
 import './TagSearch.css';    
 import debounce from 'lodash/debounce';
-import ApiCalls from '../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
 import Loader from '../Loader/Loader'; 
 import Chip from '@material-ui/core/Chip';
 import TextField from '@material-ui/core/TextField';
@@ -69,7 +69,7 @@ class TagSearch extends React.Component{
     queryForTags = debounce((searchString) => {
         if(searchString.trim().length > 0){
             const lowerSearchString = searchString.toLowerCase()
-            ApiCalls.get('/api/autocomplete/tag/'+lowerSearchString)
+            get('/api/autocomplete/tag/'+lowerSearchString)
             .then((res) => { 
                 if(res && res.data.success) {
                     if(!res.data.tagList.find(tag=>

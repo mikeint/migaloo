@@ -1,7 +1,7 @@
 import React from 'react';
 import './PostCandidateToJob.css'; 
 import { Redirect } from 'react-router-dom';
-import ApiCalls from '../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
 //import coin from '../../files/images/coin.png'
 import TextField from '@material-ui/core/TextField';
 //import Input from '@material-ui/core/Input';
@@ -53,7 +53,7 @@ class PostCandidateToJob extends React.Component{
     }
 
     handleSubmit = () => {
-        ApiCalls.post('/api/recruiterJobs/postCandidate', this.state)
+        post('/api/recruiterJobs/postCandidate', this.state)
         .then((res) => {
             // THIS IS getting messy, its to shut the overlay after submitting a new candidate.
             // TO-DO (not here) show the added candidate behind overlay
@@ -69,7 +69,7 @@ class PostCandidateToJob extends React.Component{
         this.state.handleClose();
     }
     getProfileInfo = () => {
-        ApiCalls.get('/api/recruiter/getProfile')
+        get('/api/recruiter/getProfile')
         .then((res)=>{    
             if(res == null) return
             this.setState({ profileInfo: res.data }) 
@@ -78,7 +78,7 @@ class PostCandidateToJob extends React.Component{
         )
     }
     getResumeURL = () => {
-        ApiCalls.get('/api/resume/view/'+this.props.candidateData.candidate_id)
+        get('/api/resume/view/'+this.props.candidateData.candidate_id)
         .then((res)=>{
             if(res && res.data.success)
                 window.open(res.data.url, '_blank');

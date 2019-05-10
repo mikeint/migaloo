@@ -1,7 +1,7 @@
 import React, { Component } from "react"; 
 import "./Conversation.css"; 
 import Loader from '../../Loader/Loader'; 
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import Close from '@material-ui/icons/Close';
 import MeetingPicker from "../../MeetingPicker/MeetingPicker";
@@ -38,7 +38,7 @@ class Conversation extends Component {
     }
     getMessageList = () => {
         if(this.state.pageNumber <= this.state.pageCount || this.state.pageCount === -1){
-            ApiCalls.get(`/api/message/listConversationMessages/${this.state.conversation.message_subject_id}/${this.state.pageNumber}`)
+            get(`/api/message/listConversationMessages/${this.state.conversation.message_subject_id}/${this.state.pageNumber}`)
             .then((res)=>{
                 if(res == null) return
                 this.setState({showLoader:false})
@@ -122,7 +122,7 @@ class Conversation extends Component {
             }
         }
         if(data != null){
-            ApiCalls.post(`/api/message/create`, data)
+            post(`/api/message/create`, data)
             .then((res)=>{
                 if(res == null) return
                 // Reset messages and repull
@@ -144,7 +144,7 @@ class Conversation extends Component {
             response: response,
             messageId: row.messageId
         }
-        ApiCalls.post(`/api/message/setResponse`, data)
+        post(`/api/message/setResponse`, data)
         .then((res)=>{
             if(res == null) return
             // Reset messages and repull

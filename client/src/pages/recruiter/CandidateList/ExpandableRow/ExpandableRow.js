@@ -1,7 +1,7 @@
 import React from 'react';
 import './ExpandableRow.css'; 
 import UploadResume from '../UploadResume/UploadResume';
-import ApiCalls from '../../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import Redirect from 'react-router-dom/Redirect';
 import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
@@ -49,7 +49,7 @@ class ExpandableRow extends React.Component{
         this.setState({redirectCandidate:true})
     }
     getResumeURL = () => {
-        ApiCalls.get('/api/resume/view/'+this.props.candidateData.candidate_id)
+        get('/api/resume/view/'+this.props.candidateData.candidate_id)
         .then((res)=>{
             if(res && res.data.success)
                 window.open(res.data.url, '_blank');

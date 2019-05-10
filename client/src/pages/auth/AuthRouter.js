@@ -20,4 +20,4 @@ function AuthRouter({ match }) {
     );
 }
 
-module.exports = AuthRouter;
+export default AuthRouter ;

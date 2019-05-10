@@ -5,7 +5,7 @@ import Calendar from 'react-calendar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
-import ApiCalls from '../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -71,7 +71,7 @@ class MeetingPicker extends React.Component{
         this.onEndTimeChange = this.onEndTimeChange.bind(this);
     }
     componentDidMount = () => {
-        ApiCalls.get("/api/message/locations")
+        get("/api/message/locations")
         .then((res)=>{
             if(res == null) return
             this.setState({locationList: res.data.locationList})

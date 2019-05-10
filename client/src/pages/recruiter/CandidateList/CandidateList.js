@@ -1,7 +1,7 @@
 import React from 'react';
 import './CandidateList.css';    
 import { NavLink } from 'react-router-dom';
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import Loader from '../../../components/Loader/Loader';
 import ExpandableRow from './ExpandableRow/ExpandableRow'; 
@@ -54,12 +54,12 @@ class CandidateList extends React.Component{
     }
 
     componentWillUnmount = () => {
-        ApiCalls.cancel()
+        cancel()
         this.setState({enterSlide:"page-exit"})
     }
 
     openCandidateTop = (candidateId) => { 
-        ApiCalls.get(`/api/candidate/getCandidate/${candidateId}`)
+        get(`/api/candidate/getCandidate/${candidateId}`)
         .then((res) => {
             if(res)
                 this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].page_count, 10):1 }) 
@@ -93,8 +93,8 @@ class CandidateList extends React.Component{
 
     getCandidateList = (searchString) => {
         (this.state.postId?
-            ApiCalls.get('/api/candidate/listForJob/'+this.state.postId+"/"+this.state.page+(searchString?`/${searchString}`:'')):
-            ApiCalls.get('/api/candidate/list/'+this.state.page+(searchString?`/${searchString}`:'')))
+            get('/api/candidate/listForJob/'+this.state.postId+"/"+this.state.page+(searchString?`/${searchString}`:'')):
+            get('/api/candidate/list/'+this.state.page+(searchString?`/${searchString}`:'')))
         .then((res)=>{
             if(res)
                 this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].page_count, 10):1 }) 

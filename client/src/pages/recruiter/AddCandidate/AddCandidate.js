@@ -1,7 +1,7 @@
 import React from 'react';
 import './AddCandidate.css';  
 import AuthFunctions from '../../../AuthFunctions'; 
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import TagSearch from '../../../components/TagSearch/TagSearch';  
 
 import Close from '@material-ui/icons/Close';
@@ -55,7 +55,7 @@ class AddCandidate extends React.Component{
     }
     loadData(){
         
-        ApiCalls.get('/api/autocomplete/salary')
+        get('/api/autocomplete/salary')
         .then((res) => {
             if(res && res.data.success) {
                 this.setState({salaryList:res.data.salaryList});
@@ -64,7 +64,7 @@ class AddCandidate extends React.Component{
         .catch(error => {
             console.log(error);
         });
-        ApiCalls.get('/api/autocomplete/experience')
+        get('/api/autocomplete/experience')
         .then((res) => {
             if(res && res.data.success) {
                 this.setState({experienceList:res.data.experienceList});
@@ -84,7 +84,7 @@ class AddCandidate extends React.Component{
     }
 
     handleSubmit = () => {
-        ApiCalls.post('/api/candidate/create', this.state)
+        post('/api/candidate/create', this.state)
         .then((res) => {
 
             // THIS IS getting messy, its to shut the overlay after submitting a new candidate.

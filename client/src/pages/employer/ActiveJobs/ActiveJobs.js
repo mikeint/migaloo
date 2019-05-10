@@ -1,7 +1,7 @@
 import React from 'react';
 import './ActiveJobs.css';    
 import { NavLink } from 'react-router-dom';
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
@@ -45,7 +45,7 @@ class ActiveJobs extends React.Component{
     }
 
     componentWillUnmount = () => {
-        ApiCalls.cancel();
+        cancel();
     }
     
     componentWillMount = () => {
@@ -73,7 +73,7 @@ class ActiveJobs extends React.Component{
         this.setState({filters:filters}, ()=>this.getJobList())
     }
     getJobList = () => {
-        ApiCalls.getWithParams('/api/employerPostings/list/'+this.state.page, this.state.filters)
+        getWithParams('/api/employerPostings/list/'+this.state.page, this.state.filters)
         .then((res)=>{
             if(res == null) return
             this.setState({ jobList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 })

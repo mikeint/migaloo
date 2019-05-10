@@ -1,94 +1,135 @@
-import React, { Component } from "react";  
-import './HowItWorks.css'; 
+import React, { Component } from "react"
+import './HowItWorks.scss'
+import AOS from 'aos'
+import 'aos/dist/aos.css' 
+ 
+class HowItWorks extends Component {
 
-import Iphone from '../../components/Iphone/Iphone'
-
-import chat from '../../../files/images/landingPage/hiw_recruiter/chat.jpg'
-import account from '../../../files/images/landingPage/hiw_recruiter/account.jpg'
-import postCandidate from '../../../files/images/landingPage/hiw_recruiter/postCandidate.jpg'
-import profile from '../../../files/images/landingPage/hiw_recruiter/profile.jpg'
-import filter from '../../../files/images/landingPage/hiw_recruiter/filter.jpg'
-import jobSearch from '../../../files/images/landingPage/hiw_recruiter/jobSearch.jpg'
-import addAccount from '../../../files/images/landingPage/hiw_recruiter/addAccount.jpg'
-import addCandidate from '../../../files/images/landingPage/hiw_recruiter/addCandidate.jpg'
-import calander from '../../../files/images/landingPage/hiw_recruiter/calander.jpg'
-import candidateData from '../../../files/images/landingPage/hiw_recruiter/candidateData.jpg'
-import candidateList from '../../../files/images/landingPage/hiw_recruiter/candidateList.jpg'
-import chatList from '../../../files/images/landingPage/hiw_recruiter/chatList.jpg'
-import job from '../../../files/images/landingPage/hiw_recruiter/job.jpg'
-import notifications from '../../../files/images/landingPage/hiw_recruiter/notifications.jpg'
-import relevantJobs from '../../../files/images/landingPage/hiw_recruiter/relevantJobs.jpg'
-
-
-class HowItWorks extends Component { 
+    componentDidMount(){
+        AOS.init({
+          duration : 500
+        })
+    }
+    
     render() {
-        return ( 
+        return (
             <React.Fragment>
                 <div className="fywText" data-aos="zoom-out-down">How It Works - Recruiter</div> 
-                <div className="lp2_HIWRecruiter">
-                    <div className='hiwContainer'>
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={chat} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div> 
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={account} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div> 
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={postCandidate} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div> 
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={profile} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div> 
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={filter} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div> 
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={jobSearch} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div>  
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={addAccount} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div>  
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={addCandidate} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div>  
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={calander} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div>  
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={candidateData} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div>  
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={candidateList} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div>  
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={chatList} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div>  
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={job} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div>  
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={notifications} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div>  
-                        <div className="hiwSection">
-                            <div className="hiwImage"><Iphone image={relevantJobs} /></div>
-                            <div className="hiwDesc">something lorem ipsum, something some thing something about something</div>
-                        </div>   
+                
+                <div className="howItWorksContent">  
+        
+                    {/* FOR DESKTOP - stacking properly */ }
+                    <div className="showOnDesktop">
+                        <div className="module_wrapper mc_4">
+                            <div className="module_max">
+                                <div className="aos-animate"> 
+                                    <div className="module_img module_img1"></div>
+                                </div> 
+                                <div className="aos-animate">  
+                                    <div className="module_content">
+                                        <h1>Sign up</h1>
+                                        <p>Employers sign up to see a short list of vetted candidates from the top recruiters in their area. Recruiters sign up to gain access to exclusive job requisitions from employers anxious to win the war for&nbsp;talent.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="module_wrapper whiteBG">
+                            <div className="module_max">
+                                <div className="aos-animate"> 
+                                    <div className="module_content">
+                                        <h1>Submit Candidate</h1>
+                                        <p>Recruiters submit their most qualified candidate(s) for each requisition for&nbsp;review.</p>
+                                    </div> 
+                                </div>
+                                <div className="aos-animate"> 
+                                    <div className="module_img module_img2"></div> 
+                                </div>
+                            </div>
+                        </div>
+                        <div className="module_wrapper mc_4">
+                            <div className="module_max">
+                                <div className="aos-animate"> 
+                                    <div className="module_img module_img3"></div>
+                                </div>
+                                <div className="aos-animate">  
+                                    <div className="module_content">
+                                        <h1>ShortList</h1>
+                                        <p>The list of submissions from top recruiters is distilled by migaloo and organized into a shortlist that is then sent to the employer in an organized&nbsp;fashion.</p>
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                        <div className="module_wrapper whiteBG">
+                            <div className="module_max">
+                                <div className="aos-animate">  
+                                    <div className="module_content">
+                                        <h1>Engage</h1>
+                                        <p>Employer gives a “thumbs up” on candidate(s) from migaloo’s shortlist, subsequently opening their schedule up for interview times.  Recruiter is informed and next steps are organized through the concierge&nbsp;service.</p>
+                                    </div> 
+                                </div>
+                                <div className="aos-animate">  
+                                        <div className="module_img module_img4"></div> 
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                    {/* end FOR DESKTOP - stacking properly */ }
+
+
+
+
+
+                    {/* FOR MOBILE - stacking properly*/ }
+                    <div className="showOnMobile">
+                        <div className="module_wrapper mc_4">
+                            <div data-aos="fade-right"> 
+                                <div className="module_img module_img1"></div>
+                            </div>
+                            <div data-aos="fade-left"> 
+                                <div className="module_content">
+                                    <h1>Sign up</h1>
+                                    <p>Employers sign up to post jobs exclusively to third-party recruiters. Recruiters sign up to gain access to jobs posted by employers seeking third-party recruitment&nbsp;services.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="module_wrapper whiteBG">
+                            <div data-aos="fade-right"> 
+                                <div className="module_img module_img2"></div>
+                            </div>
+                            <div data-aos="fade-left"> 
+                                <div className="module_content">
+                                    <h1>Submit Profile</h1>
+                                    <p>Recruiters submit their top candidate profiles along with terms and conditions to relevant job&nbsp;postings</p>
+                                </div> 
+                            </div>
+                        </div>
+                        <div className="module_wrapper mc_4">
+                            <div data-aos="fade-right"> 
+                                <div className="module_img module_img3"></div>
+                            </div>
+                            <div data-aos="fade-left"> 
+                                <div className="module_content">
+                                    <h1>Review List</h1>
+                                    <p>Employer reviews the credit-based, organized list and picks the candidate(s) that they wish to move forward with based on their profile and the recruiters terms and&nbsp;conditions</p>
+                                </div> 
+                            </div>
+                        </div>
+                        <div className="module_wrapper whiteBG">
+                            <div data-aos="fade-right"> 
+                                <div className="module_img module_img4"></div>  
+                            </div>
+                            <div data-aos="fade-left"> 
+                                <div className="module_content">
+                                    <h1>Engage</h1>
+                                    <p>Employer can reach out to the recruiter(s) they’ve chosen to engage based on their candidate profile submission and terms and conditions via our messaging app, email, or&nbsp;phone</p>
+                                </div> 
+                            </div>
+                        </div> 
+                    </div>
+                    {/* FOR MOBILE - stacking properly*/ }
+
+                </div> 
+                 
             </React.Fragment>
         );
     }

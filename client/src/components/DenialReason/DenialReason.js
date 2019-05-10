@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
-import ApiCalls from '../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -76,7 +76,7 @@ class DenialReason extends React.Component{
         this.formValidation = new FormValidation(this, errorText)
     }
     componentDidMount = () => {
-        ApiCalls.get("/api/autocomplete/denialReason")
+        get("/api/autocomplete/denialReason")
         .then((res)=>{
             if(res == null) return
             this.setState({denialReasonList: res.data.denialReasonList})

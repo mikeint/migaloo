@@ -1,5 +1,5 @@
 import React from 'react';
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import AuthFunctions from '../../../AuthFunctions'; 
@@ -39,7 +39,7 @@ class PendingVerification extends React.Component{
         this.sendRequest();
     }
     sendRequest = () => {
-        ApiCalls.post("/api/auth/sendEmailVerification", {}).then(()=>{});
+        post("/api/auth/sendEmailVerification", {}).then(()=>{});
     };
     handleSubmit = () => {
         this.setState({backToLogin: true});

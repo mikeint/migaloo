@@ -1,5 +1,5 @@
 import React from 'react';
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -56,7 +56,7 @@ class ResetPasswordRequest extends React.Component{
 
     sendRequest = () => {
         if(this.formValidation.isValid()){
-            ApiCalls.post("/api/auth/sendPasswordReset", {email:this.state.email}).then(()=>{
+            post("/api/auth/sendPasswordReset", {email:this.state.email}).then(()=>{
                 this.setState({didSend: true})
             });
         }

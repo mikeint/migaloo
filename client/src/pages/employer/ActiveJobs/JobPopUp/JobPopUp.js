@@ -1,5 +1,5 @@
 import React from 'react';
-import ApiCalls from '../../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions';  
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import CandidateView from './CandidateView/CandidateView';
@@ -64,7 +64,7 @@ class JobPopUp extends React.Component{
         this.getJobList();
     } 
     getJobList = () => {
-        ApiCalls.get('/api/employerPostings/listCandidates/'+this.state.postId)
+        get('/api/employerPostings/listCandidates/'+this.state.postId)
         .then((res)=>{
             if(res && res.data.success){
                 this.setState({ candidateList: res.data.candidateList });
@@ -84,7 +84,7 @@ class JobPopUp extends React.Component{
             cancelButtonText: 'No, keep it'
           }).then((result) => {
             if (result.value) { 
-                ApiCalls.post('/api/employerPostings/remove', {postId:this.state.postId})
+                post('/api/employerPostings/remove', {postId:this.state.postId})
                 .then((res)=>{
                     if(res && res.data.success){
                         if(this.props.removedCallback != null){
@@ -113,7 +113,7 @@ class JobPopUp extends React.Component{
             cancelButtonText: 'No, keep it'
           }).then((result) => {
             if (result.value) { 
-                ApiCalls.post('/api/employerPostings/hide', {postId:this.state.postId})
+                post('/api/employerPostings/hide', {postId:this.state.postId})
                 .then((res)=>{
                     if(res && res.data.success){
                         if(this.props.removedCallback != null){

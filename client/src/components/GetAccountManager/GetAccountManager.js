@@ -15,7 +15,7 @@ import Close from '@material-ui/icons/Close';
 import Search from '@material-ui/icons/Search';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import React, { Component } from "react";
-import ApiCalls from '../../ApiCalls';
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';
 
 const styles = theme => ({
     rightBtn:{
@@ -41,7 +41,7 @@ class GetAccountManager extends Component {
     }
     getAccountManagers = (searchString) => {
         const query = searchString!==''?`/api/employer/getAccountManagers/search/${searchString}`:`/api/employer/getAccountManagers`
-        ApiCalls.get(query)
+        get(query)
         .then((res)=>{
             if(res.data && res.data.success){
                 const data = res.data.accountManagers.map(d=>{

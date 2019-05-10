@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 
 import AuthFunctions from '../../../AuthFunctions'; 
 
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import TagSearch from '../../../components/TagSearch/TagSearch';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -83,7 +83,7 @@ class PostAJob extends React.Component{
         this.formValidation = new FormValidation(this, errorText);
     }
     loadData(){
-        ApiCalls.get('/api/autocomplete/salary')
+        get('/api/autocomplete/salary')
         .then((res) => {
             if(res && res.data.success) {
                 this.setState({salaryList:res.data.salaryList});
@@ -92,7 +92,7 @@ class PostAJob extends React.Component{
         .catch(error => {
             console.log(error);
         });
-        ApiCalls.get('/api/employer/listEmployers')
+        get('/api/employer/listEmployers')
         .then((res) => {
             if(res && res.data.success) {
                 this.setState({employers:res.data.employers.map(d=>{return {id:d.company_id, name:d.company_name}})});
@@ -101,7 +101,7 @@ class PostAJob extends React.Component{
         .catch(error => {
             console.log(error);
         });
-        ApiCalls.get('/api/autocomplete/experience')
+        get('/api/autocomplete/experience')
         .then((res) => {
             if(res && res.data.success) {
                 this.setState({experienceList:res.data.experienceList});
@@ -113,7 +113,7 @@ class PostAJob extends React.Component{
     }
  
     componentWillUnmount = () => {
-        ApiCalls.cancel();
+        cancel();
     }
     componentDidMount() {
         this.loadData()
@@ -126,7 +126,7 @@ class PostAJob extends React.Component{
 
     handleSubmit = () => {
         if(this.formValidation.isValid()){
-            ApiCalls.post('/api/employerPostings/create', this.state)
+            post('/api/employerPostings/create', this.state)
             .then((res) => { 
                 if(res && res.data.success) {
                     this.setState({ redirect: true })

@@ -1,5 +1,5 @@
 import React from 'react';
-import ApiCalls from '../../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../ApiCalls';  
 import Pagination from "react-js-pagination";
 import Loader from '../../../../components/Loader/Loader';
 import { withStyles } from '@material-ui/core/styles';  
@@ -109,13 +109,13 @@ class ContactList extends React.Component{
         this.formValidation = new FormValidation(this, errorText);
     }
     componentWillUnmount = () => {
-        ApiCalls.cancel();
+        cancel();
     }
     componentDidMount = () => {
         this.getContactList();
     }
     getContactList = () => {
-        ApiCalls.get(`/api/company/getCompanyContactList/${this.state.company.company_id}/${this.state.page}`)
+        get(`/api/company/getCompanyContactList/${this.state.company.company_id}/${this.state.page}`)
         .then((res)=>{
             this.setState({loading: false});
             if(res && res.data.success){
@@ -131,7 +131,7 @@ class ContactList extends React.Component{
         })
     }
     setAdmin = (e, companyContact) => {
-        ApiCalls.post(`/api/company/setContactAdmin`,
+        post(`/api/company/setContactAdmin`,
             {
                 companyContactId:companyContact.company_contact_id,
                 companyId:this.state.company.company_id,
@@ -153,7 +153,7 @@ class ContactList extends React.Component{
     addContact = (users) => {
         const userIds = users.map(d=>d.id)
         if(userIds.length > 0){
-            ApiCalls.post(`/api/company/addContactToCompany`,
+            post(`/api/company/addContactToCompany`,
                 {userIds:userIds, companyId:this.state.company.company_id})
             .then((res)=>{
                 if(res && res.data.success){
@@ -166,7 +166,7 @@ class ContactList extends React.Component{
         }
     }
     removeContact = (user) => {
-        ApiCalls.post(`/api/company/removeContactFromCompany`,
+        post(`/api/company/removeContactFromCompany`,
             {userId:user.company_contact_id, companyId:this.state.company.company_id})
         .then((res)=>{
             if(res && res.data.success){
@@ -179,7 +179,7 @@ class ContactList extends React.Component{
     }
     saveCompany = (user) => {
         if(this.formValidation.isValid()){
-            ApiCalls.post(`/api/company/setCompanyProfile`,
+            post(`/api/company/setCompanyProfile`,
                 {companyId:this.state.company.company_id, company_name:this.state.company_name, department:this.state.department})
             .then((res)=>{
                 if(res && res.data.success){

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ApiCalls from '../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -42,7 +42,7 @@ const styles = theme => ({
     },
 });
 function experienceDataCall(){
-    ApiCalls.get('/api/autocomplete/experience/')
+    get('/api/autocomplete/experience/')
     .then((res) => { 
         if(res && res.data.success) {
             const data = res.data.experienceList
@@ -55,7 +55,7 @@ function experienceDataCall(){
     });
 }
 function salaryDataCall(){
-    ApiCalls.get('/api/autocomplete/salary/')
+    get('/api/autocomplete/salary/')
     .then((res) => { 
         if(res && res.data.success) {
             const data = res.data.salaryList
@@ -70,7 +70,7 @@ function salaryDataCall(){
 }
 function tagsDataCall(searchString){
     const lowerSearchString = searchString.toLowerCase()
-    ApiCalls.get('/api/autocomplete/tag/'+lowerSearchString)
+    get('/api/autocomplete/tag/'+lowerSearchString)
     .then((res) => { 
         if(res && res.data.success) {
             const data = res.data.tagList
@@ -83,7 +83,7 @@ function tagsDataCall(searchString){
     })
 }
 function employerDataCall(){
-    ApiCalls.get('/api/company/list')
+    get('/api/company/list')
     .then((res) => {
         if(res && res.data.success) {
             const data = res.data.companies

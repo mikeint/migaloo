@@ -1,5 +1,5 @@
 import React from 'react';
-import ApiCalls from '../../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';  
 import Close from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
@@ -70,7 +70,7 @@ class AddRecruiter extends React.Component{
                 company_name:this.state.company_name,
                 ...this.state.address
             }
-            ApiCalls.post(`/api/recruiter/addRecruiter`, data)
+            post(`/api/recruiter/addRecruiter`, data)
             .then((res)=>{
                 if(res && res.data.success){
                     this.state.onClose(true)

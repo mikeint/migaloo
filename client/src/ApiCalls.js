@@ -55,10 +55,11 @@ const post = (url, args) => {
     return axios.post(url, args, axiosConfig)
         .catch(handleErrors);
 }
-module.exports = {
-    get:get,
-    getWithParams:getWithParams,
-    post:post,
-    cancel:cancel,
-    getNewAuthToken:getNewAuthToken
+
+export {
+    get,
+    getWithParams,
+    post,
+    cancel,
+    getNewAuthToken
 };

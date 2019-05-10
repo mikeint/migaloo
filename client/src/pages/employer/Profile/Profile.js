@@ -3,7 +3,7 @@ import './Profile.css';
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import AuthFunctions from '../../../AuthFunctions';  
 import { Redirect } from 'react-router-dom';
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import UploadImage from '../../../components/UploadImage/UploadImage'; 
 import defaultProfileImage from '../../../files/images/profile.png'
 
@@ -24,7 +24,7 @@ class Profile extends React.Component{
     } 
 
     componentWillUnmount = () => {
-        ApiCalls.cancel();
+        cancel();
     }
     componentDidMount = () => {
         this.getProfileInfo();
@@ -39,14 +39,14 @@ class Profile extends React.Component{
         }).then((result) => {
             if (result.value) {
                 this.Auth.logout();
-                ApiCalls.getNewAuthToken();
+                getNewAuthToken();
                 this.setState({logout: true})
             } 
         }) 
     }
 
     getProfileInfo = () => {
-        ApiCalls.get('/api/accountManager/getProfile')
+        get('/api/accountManager/getProfile')
         .then((res)=>{    
             if(res == null) return
             this.setState({ profileInfo: res.data }) 
@@ -59,7 +59,7 @@ class Profile extends React.Component{
         this.getImage();
     }
     getImage = () => {
-        ApiCalls.get('/api/profileImage/view/medium')
+        get('/api/profileImage/view/medium')
         .then((res)=>{
             if(res == null) return
             if(res.data.success){

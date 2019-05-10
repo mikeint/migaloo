@@ -26,4 +26,4 @@ function EmployerRouter({ match }) {
     );
 }
 
-module.exports = EmployerRouter;
+export default EmployerRouter ;

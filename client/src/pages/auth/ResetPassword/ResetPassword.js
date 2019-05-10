@@ -1,5 +1,5 @@
 import React from 'react';
-import ApiCalls from '../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -77,7 +77,7 @@ class ResetPassword extends React.Component{
     }
 
     componentWillUnmount = () => {
-        ApiCalls.cancel();
+        cancel();
     }
 
     componentDidMount = () => {
@@ -92,7 +92,7 @@ class ResetPassword extends React.Component{
     };
     handleSubmit = () => {
         if(this.formValidation.isValid()){
-            ApiCalls.post("/api/auth/resetPassword", {password:this.state.password, token: this.state.token}).then(()=>{
+            post("/api/auth/resetPassword", {password:this.state.password, token: this.state.token}).then(()=>{
                 this.setState({ backToLogin: true });
             })
         }

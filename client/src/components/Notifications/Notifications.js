@@ -2,7 +2,7 @@ import React from 'react';
 import './Notifications.css';    
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import AuthFunctions from '../../AuthFunctions'; 
-import ApiCalls from '../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Badge from '@material-ui/core/Badge';
 import BuildNotifications from './BuildNotifications/BuildNotifications';
@@ -52,7 +52,7 @@ class Notifications extends React.Component{
     handleAlert = () => {
         
         var userType = this.Auth.getUser().userType;
-        ApiCalls.get(userType===1?'/api/recruiter/alerts':'/api/accountManager/alerts')
+        get(userType===1?'/api/recruiter/alerts':'/api/accountManager/alerts')
         .then((res) => {
             if(res && res.data.success) {
                 var count = (res.data.alertList.length === 0 ? 0 : 

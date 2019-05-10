@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import AuthFunctions from '../../../AuthFunctions';
 import { Redirect, Link } from 'react-router-dom';
 import Whale from '../../../components/Whale/Whale';
-import ApiCalls from '../../../ApiCalls';   
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';   
 import Button from '@material-ui/core/Button';
 
 import './LoginForm.css';
@@ -30,7 +30,7 @@ class LoginForm extends Component {
     }
 
     login = () => {
-        ApiCalls.post('/api/auth/login', {
+        post('/api/auth/login', {
             email: this.state.email,
             password: this.state.password
         })
@@ -42,7 +42,7 @@ class LoginForm extends Component {
                 console.log("set token data ", token)
                 this.setState({ token: token },
                     ()=>{
-                        ApiCalls.getNewAuthToken();
+                        getNewAuthToken();
                         this.Auth.setUser(res.data.user, () => {
                             console.log("setUser data ", res.data.user)
                             this.setState({ user: res.data.user })

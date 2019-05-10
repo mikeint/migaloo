@@ -1,5 +1,5 @@
 import React from 'react';
-import ApiCalls from '../../../../../ApiCalls';  
+import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../../ApiCalls';  
 import AuthFunctions from '../../../../../AuthFunctions'; 
 import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -75,7 +75,7 @@ class CandidateView extends React.Component{
             Object.assign(newRowObj, this.state.rowObj);
             newRowObj.has_seen_post = true;
             this.setState({rowObj:newRowObj});
-            ApiCalls.post(`/api/employerPostings/setRead/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {})
+            post(`/api/employerPostings/setRead/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {})
             .then((res)=>{
 
             }).catch(errors => 
@@ -84,7 +84,7 @@ class CandidateView extends React.Component{
         }
     }
     getResumeURL = () => {
-        ApiCalls.get('/api/resume/view/'+this.props.obj.candidate_id)
+        get('/api/resume/view/'+this.props.obj.candidate_id)
         .then((res)=>{
             if(res && res.data.success)
                 window.open(res.data.url, '_blank');
@@ -106,7 +106,7 @@ class CandidateView extends React.Component{
         }
     }
     postResponse = (type, accepted, denialReasonId) => {
-        ApiCalls.post(`/api/employerPostings/setAccepted/${type}/${this.state.jobObj.post_id}/${this.state.rowObj.candidate_id}/${this.state.rowObj.recruiter_id}`,
+        post(`/api/employerPostings/setAccepted/${type}/${this.state.jobObj.post_id}/${this.state.rowObj.candidate_id}/${this.state.rowObj.recruiter_id}`,
             {accepted:accepted, denialReasonId: denialReasonId})
         .then((res)=>{
             if(res == null) return
