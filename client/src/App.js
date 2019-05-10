@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import { Route, BrowserRouter, Switch } from "react-router-dom"
 import { PrivateEmployerRoute, PrivateRecruiterRoute } from './PrivateRoute'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import BrowserTracer from './components/BrowserTracer/BrowserTracer'
 
 //App routes
 import Login from './pages/Login/Login'
@@ -111,6 +112,7 @@ class App extends Component {
                         <Route exact path="/signUpFormRecruiter" component={SignUpFormRecruiter} /> 
                     </React.Fragment>
                 </BrowserRouter> 
+                <BrowserTracer />
                 
             </MuiThemeProvider>
         );

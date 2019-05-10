@@ -2,6 +2,32 @@ const express = require('express');
 const router = express.Router();
 const ses = require('../utils/ses');
 const logger = require('../utils/logging');
+const useragent = require('useragent');
+
+
+/**
+ * See if there is a new user accessing the website
+ * Note: If local storage or cookies are cleared then we would log them again
+ * Note2: If the page is refreshed we would log them again
+ * @route POST api/landing/helloThere
+ * @group landing - Landing
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/helloThere', (req, res) => {
+    const ip = req.connection.remoteAddress
+    const uuid = req.body.uuid
+    const newUser = req.body.newUser
+    const agent = useragent.parse(req.headers['user-agent'], req.query.jsuseragent)
+    const tags = ['landing']
+    if(newUser){
+        tags.push('new')
+    }
+    logger.info('User Accessed Website', {tags:tags, url:req.originalUrl, agent:agent, uuid, ip:ip})
+    res.json({success:true})
+});
 
 /**
  * Send an email with a message to info@migaloo.io
