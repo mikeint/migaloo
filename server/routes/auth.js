@@ -83,7 +83,7 @@ router.post('/login', (req, res) => {
                     })
                     .catch(err => {
                         logger.error('Error generating token', {tags:['login'], email:email, ip:loginIp, error:err});
-                        res.status(400).json({success: false, error:err})
+                        res.status(500).json({success: false, error:err})
                     });
                 } else {
                     errors.password = "Password Incorrect";
@@ -181,7 +181,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                     })
                     .catch(err => {
                         logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err});
-                        res.status(400).json({success: false, error:err})
+                        res.status(500).json({success: false, error:err})
                     })
                 }).catch((err)=>{
                     logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err});
@@ -210,7 +210,7 @@ router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt toek
                     res.json({success:true})
                 })
         })
-    }).catch(err=>res.status(400).json({success:false, error:err}))
+    }).catch(err=>res.status(500).json({success:false, error:err}))
 });
 router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
     const email = req.body.email.trim();
@@ -228,7 +228,7 @@ router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt 
     })
     .catch(err => {
         logger.error('Error sending password reset', {tags:['login', 'password', 'sql'], url:req.originalUrl, email:email, ip:ip, error:err});
-        res.status(400).json({success:false, error:err})
+        res.status(500).json({success:false, error:err})
     });
 });
 // Todo: Add that the user must be authenticated, requires page redirects reroutes on login
@@ -251,11 +251,11 @@ router.post('/verifyEmail', /*passport.authentication,*/ (req, res) => {
             })
             .catch(err=>{
                 logger.error('Error recieving email verification', {tags:['register', 'sql'], url:req.originalUrl, userId:userId, ip:ip, error:err});
-                res.status(400).json({success:false, error:err})
+                res.status(500).json({success:false, error:err})
             })
     }).catch(err=>{
         logger.error('Error recieving email verification', {tags:['register', 'sql'], url:req.originalUrl, userId:userId, ip:ip, error:err});
-        res.status(400).json({success:false, error:err})
+        res.status(500).json({success:false, error:err})
     })
 });
 function sendEmailVerification(id, email, ip){
@@ -284,7 +284,7 @@ router.post('/sendEmailVerification', passport.authentication, (req, res) => {
         res.json({success:true})
     })
     .catch(err => {
-        res.status(400).json({success:false, error:err})
+        res.status(500).json({success:false, error:err})
     });
 });
 

@@ -41,8 +41,8 @@ router.post('/uploadImage', passport.authentication, generateImageFileNameAndVal
         res.json({success:true, image_id:req.params.finalFileName})
     })
     .catch(err => {
-        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -71,8 +71,8 @@ router.get('/getCoins', passport.authentication,  (req, res) => {
         res.json(data)
     })
     .catch(err => {
-        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 /**
@@ -104,8 +104,8 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
         res.json(data)
     })
     .catch(err => {
-        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -165,7 +165,7 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
             })
         })
     }).catch((err)=>{
-        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
+        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -211,8 +211,8 @@ router.get('/alerts', passport.authentication,  (req, res) => {
         res.json({success:true, alertList:data})
     })
     .catch(err => {
-        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -243,8 +243,8 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
         res.json({success:true})
     })
     .catch(err => {
-        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 module.exports = router;

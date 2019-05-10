@@ -24,8 +24,8 @@ router.get('/lastId', passport.authentication, (req, res) => {
         res.json({success:true, lastNotificationId:data.last_id})
     })
     .catch(err => {
-        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 }) 
 /**
@@ -37,6 +37,7 @@ router.get('/lastId', passport.authentication, (req, res) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
+router.get('/listNew', passport.authentication, listNew) 
 router.get('/listNew/:lastId', passport.authentication, listNew) 
 router.get('/listNew/:lastId/:size', passport.authentication, listNew) 
 router.get('/listNew/:lastId/:size/:page', passport.authentication, listNew) 
@@ -45,6 +46,8 @@ function listNew(req, res) {
     var limit = req.params.size;
     var lastId = req.params.lastId;
     var page = req.params.page;
+    if(lastId == null)
+        lastId = 0;
     if(limit == null)
         limit = 5;
     if(page == null)
@@ -62,8 +65,8 @@ function listNew(req, res) {
         res.json({success:true, notificationList:data})
     })
     .catch(err => {
-        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 }
 /**
@@ -104,8 +107,8 @@ function list(req, res) {
         res.json({success:true, notificationList:data, counts:counts})
     })
     .catch(err => {
-        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 }
 /**
@@ -126,8 +129,8 @@ function setSeen(req, res) {
         res.json({success:true})
     })
     .catch(err => {
-        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 }
 router.get('/test', passport.authentication, test)
@@ -138,8 +141,8 @@ function test(req, res) {
         res.json({success:true})
     })
     .catch(err => {
-        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 }
 

@@ -17,6 +17,8 @@ const generateImageFileNameAndValidation = (req, res, next) => {
     // Validate this candidate is with this recruiter
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var now = Date.now()
@@ -43,7 +45,7 @@ router.post('/uploadImage', passport.authentication, generateImageFileNameAndVal
     })
     .catch(err => {
         logger.error('Upload Image', {tags:['image', 's3'], url:req.originalUrl, userId:jwtPayload.id, error:err});
-        res.status(400).json({success:false, error:err})
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -76,8 +78,8 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
         res.json(data)
     })
     .catch(err => {
-        logger.error('Get Profile', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Get Profile', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -115,7 +117,7 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
         .then(() => {
             res.status(200).json({success: true})
         }).catch((err)=>{
-            logger.error('Set Profile', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
+            logger.error('Set Profile', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
             return res.status(500).json({success: false, error:err})
         });
     })

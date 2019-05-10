@@ -79,8 +79,8 @@ router.post('/create', passport.authentication,  (req, res) => {
             })
         })
     }).catch((err)=>{
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        return res.status(400).json({success: false, error:err})
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        return res.status(500).json({success: false, error:err})
     });
 });
 
@@ -158,8 +158,8 @@ function postListing(req, res){
         res.json(data)
     })
     .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 }
 
@@ -204,8 +204,8 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
         })
     })
     .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 /**
@@ -276,8 +276,8 @@ router.post('/setAccepted/migaloo/:postId/:candidateId/:recruiterId', passport.a
         })
     })
     .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 /**
@@ -333,8 +333,8 @@ router.post('/setAccepted/employer/:postId/:candidateId/:recruiterId', passport.
         })
     })
     .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 /**
@@ -390,8 +390,8 @@ router.post('/setAccepted/job/:postId/:candidateId/:recruiterId', passport.authe
         })
     })
     .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 /**
@@ -430,8 +430,8 @@ router.post('/hide', passport.authentication,  (req, res) => {
         })
     })
     .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 /**
@@ -470,8 +470,8 @@ router.post('/remove', passport.authentication,  (req, res) => {
         })
     })
     .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -521,8 +521,8 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
         res.json({success:true, candidateList:data})
     })
     .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 /**
@@ -568,8 +568,8 @@ router.get('/listRecruiters/:postId', passport.authentication,  (req, res) => {
         res.json({success:true, recruiterList:data})
     })
     .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 

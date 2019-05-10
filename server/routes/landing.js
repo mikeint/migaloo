@@ -64,7 +64,7 @@ router.post('/sendContactEmail', (req, res) => {
         res.json({success:true})
     }).catch((err)=>{
         logger.error('Send Contact Email Failed', {tags:['email', 'contact'], url:req.originalUrl, error:err, body:req.body});
-        res.status(400).json({success:false})
+        res.status(500).json({success:false})
     })
 });
 

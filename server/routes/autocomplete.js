@@ -23,8 +23,8 @@ router.get('/experience/:find', passport.authentication, (req, res) => {
         res.json({success:true, experienceList: data});
     })
     .catch(err => {
-        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 router.get('/experience', passport.authentication, (req, res) => {
@@ -35,8 +35,8 @@ router.get('/experience', passport.authentication, (req, res) => {
         res.json({success:true, experienceList: data});
     })
     .catch(err => {
-        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -68,8 +68,8 @@ router.get('/tag/:find', passport.authentication, (req, res) => {
         res.json({success:true, tagList: data});
     })
     .catch(err => {
-        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 router.get('/tag', passport.authentication, (req, res) => {
@@ -91,8 +91,8 @@ router.get('/tag', passport.authentication, (req, res) => {
         res.json({success:true, tagList: data});
     })
     .catch(err => {
-        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -112,8 +112,8 @@ router.post('/addTag/:tag', passport.authentication, (req, res) => {
         res.json({tag_id: data.tag_id, tag_name:tag});
     })
     .catch(err => {
-        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -135,8 +135,8 @@ router.get('/salary/:find', passport.authentication, (req, res) => {
         res.json({success:true, salaryList: data});
     })
     .catch(err => {
-        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 router.get('/salary', passport.authentication, (req, res) => {
@@ -147,8 +147,8 @@ router.get('/salary', passport.authentication, (req, res) => {
         res.json({success:true, salaryList: data});
     })
     .catch(err => {
-        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 /**
@@ -169,8 +169,8 @@ router.get('/denialReason/:find', passport.authentication, (req, res) => {
         res.json({success:true, denialReasonList: data});
     })
     .catch(err => {
-        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 router.get('/denialReason', passport.authentication, (req, res) => {
@@ -181,8 +181,8 @@ router.get('/denialReason', passport.authentication, (req, res) => {
         res.json({success:true, denialReasonList: data});
     })
     .catch(err => {
-        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 

@@ -48,8 +48,8 @@ router.get('/list', passport.authentication,  (req, res) => {
         res.json({success:true, companies:data})
     })
     .catch(err => {
-        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -102,7 +102,7 @@ router.post('/addCompany', passport.authentication,  (req, res) => {
             })
         })
     }).catch((err)=>{
-        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -164,7 +164,7 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
             })
         })
     }).catch((err)=>{
-        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -252,7 +252,7 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
                 })
             })
     }).catch((err)=>{
-        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -295,7 +295,7 @@ router.post('/removeContactFromCompany', passport.authentication,  (req, res) =>
                 })
             })
     }).catch((err)=>{
-        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -362,7 +362,7 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
                 })
             })
     }).catch((err)=>{
-        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -421,8 +421,8 @@ function getCompanyContactList(req, res) {
             })
     })
     .catch(err => {
-        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success: false, error:err})
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success: false, error:err})
     });
 }
 

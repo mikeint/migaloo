@@ -66,7 +66,7 @@ router.post('/create', passport.authentication,  (req, res) => {
             
         })
     }).catch((err)=>{
-        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
+        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -92,7 +92,7 @@ function listCandidates(req, res){
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        const errorMessage = "Must be an recruiter to look at canidates"
+        const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
@@ -152,8 +152,8 @@ function listCandidates(req, res){
         res.json({candidateList:data, success:true})
     })
     .catch(err => {
-        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 }
 
@@ -177,7 +177,7 @@ function listCandidatesForJob(req, res){
         page = 1;
     const jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        const errorMessage = "Must be an recruiter to look at canidates"
+        const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
@@ -272,8 +272,8 @@ function listCandidatesForJob(req, res){
         })
     })
     .catch(err => {
-        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });;
 }
 

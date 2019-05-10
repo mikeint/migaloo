@@ -92,8 +92,8 @@ function getJobs(req, res){
         res.json({jobList:data, success:true})
     })
     .catch(err => {
-        logger.error('Recruiter Jobs SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Recruiter Jobs SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 }
 
@@ -217,8 +217,8 @@ function getJobsForCandidate(req, res){
         })
     })
     .catch(err => {
-        logger.error('Recruiter Jobs SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Recruiter Jobs SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 }
 
@@ -278,7 +278,7 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
             res.json({success: true})
         })
     }).catch((err)=>{
-        logger.error('Recruiter Jobs SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
+        logger.error('Recruiter Jobs SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -335,8 +335,8 @@ router.get('/listPostedCandidates/:jobId', passport.authentication,  (req, res) 
         })
     })
     .catch(err => {
-        logger.error('Recruiter Jobs SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Recruiter Jobs SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 

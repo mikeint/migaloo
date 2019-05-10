@@ -43,8 +43,8 @@ router.post('/uploadImage', passport.authentication, generateImageFileNameAndVal
         res.json({success:true, image_id:req.params.finalFileName})
     })
     .catch(err => {
-        logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -98,8 +98,8 @@ function getAccountManagers(req, res) {
         res.json({success: true, accountManagers:data})
     })
     .catch(err => {
-        logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success: false, error:err})
+        logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success: false, error:err})
     });
 }
 

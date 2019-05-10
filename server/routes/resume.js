@@ -29,7 +29,7 @@ const generateResumeFileNameAndValidation = (req, res, next) => {
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json({success:false, error:err})
+        res.status(500).json({success:false, error:err})
     });
 }
 /**
@@ -47,8 +47,8 @@ router.post('/upload/:candidateId', passport.authentication, generateResumeFileN
         res.json({success:true, resume_id:req.params.finalFileName})
     })
     .catch(err => {
-        logger.error('Resume SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Resume SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 /**
@@ -71,7 +71,7 @@ router.get('/view/:candidateId', passport.authentication,  generateResumeFileNam
             s3.getSignedUrl('getObject', params, function (err, url) {
                 if(err != null){
                     logger.error('Signed URL Call Failed', {tags:['aws', 's3'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-                    return res.status(400).json({success:false, error:err})
+                    return res.status(500).json({success:false, error:err})
                 }
                 res.json({success:true, url:url})
             });
@@ -80,8 +80,8 @@ router.get('/view/:candidateId', passport.authentication,  generateResumeFileNam
         }
     })
     .catch(err => {
-        logger.error('Resume SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
-        res.status(400).json({success:false, error:err})
+        logger.error('Resume SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
