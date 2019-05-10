@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('../config/passport');
+const logger = require('../utils/logging');
 
 const postgresdb = require('../config/db').postgresdb
 const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
@@ -13,7 +14,9 @@ const generateResumeFileNameAndValidation = (req, res, next) => {
     // Validate this candidate is with this recruiter
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be an recruiter for this"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.one('\
         SELECT 1 \

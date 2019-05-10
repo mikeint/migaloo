@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('../config/passport');
 const moment = require('moment');
 const validateCandidateInput = require('../validation/candidate');  
+const logger = require('../utils/logging');
 
 const db = require('../config/db')
 const postgresdb = db.postgresdb
@@ -33,11 +34,15 @@ router.post('/create', passport.authentication,  (req, res) => {
     const { errors, isValid } = validateCandidateInput(body);
     //check Validation
     if(!isValid) {
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
     var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be an recruiter to add a candidate"})
+        const errorMessage = "Must be an recruiter to add a candidate"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
 
     postgresdb.tx(t => {
@@ -99,7 +104,9 @@ function listCandidates(req, res){
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be an recruiter to look at canidates"})
+        const errorMessage = "Must be an recruiter to look at canidates"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     var sqlArgs = [jwtPayload.id, (page-1)*10]
     if(search != null)
@@ -182,11 +189,16 @@ function listCandidatesForJob(req, res){
         page = 1;
     const jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be an recruiter to look at canidates"})
+        const errorMessage = "Must be an recruiter to look at canidates"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     const postId = req.params.postId
-    if(postId == null)
-        return res.status(400).json({success:false, error:"Missing post Id"})
+    if(postId == null){
+        const errorMessage = "Missing post Id"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
     const recruiterId = jwtPayload.id;
     
 

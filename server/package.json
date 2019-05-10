@@ -28,7 +28,9 @@
     "passport-jwt": "^4.0.0",
     "passport-saml": "^1.0.0",
     "pg-promise": "^8.5.5",
-    "validator": "^10.9.0"
+    "validator": "^10.9.0",
+    "winston": "^3.2.1",
+    "winston-cloudwatch": "^2.0.5"
   },
   "devDependencies": {
     "cors": "^2.8.5",

@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const passport = require('../config/passport');
 const ses = require('../utils/ses');
 const postingAssign = require('../utils/postingAssign');
-
+const logger = require('../utils/logging');
 const postgresdb = require('../config/db').postgresdb;
 
 //load input validation
 const validateRegisterInput = require('../validation/register'); 
 const validateLoginInput = require('../validation/login');
-
 // TODO: encrypt JWT with public key
 function createJWT(payload){
     return new Promise((resolve, reject)=>{
@@ -29,12 +27,13 @@ function createJWT(payload){
     })
 }
 
-router.post('/saml/callback', passport.passportObject.authenticate('saml', {
-    failureRedirect: '/error',
-    failureFlash: true
-  }), function (req, res) {
-    res.redirect('/')
-  })
+// router.post('/saml/callback', passport.passportObject.authenticate('saml', {
+//     failureRedirect: '/error',
+//     failureFlash: true
+//   }), function (req, res) {
+//     res.redirect('/')
+//   })
+
 // @route       GET api/auth/login
 // @desc        Login user route
 // @access      Public
@@ -42,6 +41,9 @@ router.post('/login', (req, res) => {
     const { errors, isValid } = validateLoginInput(req.body);
     // Check Validation 
     if (!isValid) {
+        const errorMessage = "Invalid Parameters"
+        logger.error('Route Params Mismatch', {tags:['login', 'validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+
         return res.status(400).json(errors);
     }
     const loginIp = req.connection.remoteAddress;
@@ -68,7 +70,7 @@ router.post('/login', (req, res) => {
         }
         if (!user) {
             errors.email = 'Email not registered';
-            console.log('Email not registered');
+            logger.error('Email not registered', {tags:['login'], email:email, ip:loginIp});
             return res.status(400).json(errors);
         } else {
             bcrypt.compare(password, user.passwordhash).then(isMatch => {
@@ -76,16 +78,16 @@ router.post('/login', (req, res) => {
                     postgresdb.none('INSERT INTO login_history (user_id, login_ip) VALUES ($1, $2)',
                             [user.user_id, loginIp]).then(()=>{})
                     createJWT(payload).then((token)=>{
-                        console.log(`Successful login from ${loginIp} for ${email}`)
+                        logger.info('Successful login', {tags:['login'], email:email, ip:loginIp});
                         res.status(200).json(token)
                     })
                     .catch(err => {
-                        console.log(err)
+                        logger.error('Error generating token', {tags:['login'], email:email, ip:loginIp, error:err});
                         res.status(400).json({success: false, error:err})
                     });
                 } else {
-                    console.log(`Failed login from ${loginIp} for ${email}`)
                     errors.password = "Password Incorrect";
+                    logger.error('Password Incorrect', {tags:['login'], email:email, ip:loginIp});
                     return res.status(400).json(errors)
                 }
             });
@@ -93,7 +95,7 @@ router.post('/login', (req, res) => {
         }
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Error in sql', {tags:['login', 'sql'], email:email, ip:loginIp, error:err})
         res.status(500).json({success: false, error:err})
     });
     // }
@@ -115,25 +117,28 @@ function checkEmailExists(email){
 // @access      Public
 router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
     var body = req.body;
-    console.log(body)
     const { errors, isValid } = validateRegisterInput(body);
     const loginIp = req.connection.remoteAddress;
     // Check Validation 
     if (!isValid) {
+        const errorMessage = "Invalid Parameters"
+        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+
         return res.status(400).json(errors);
     }
-    checkEmailExists(body.email).then(user => {
-        if (user) {  
-            console.log('Email already exists');
+    const email = body.email
+    const type = body.type;
+    checkEmailExists(email).then(user => {
+        if (user) {
+            logger.error('Email already exists', {tags:['register'], email:email, ip:loginIp});
             errors.email = 'Email already exists';
             return res.status(400).json(errors);
         } else {
             bcrypt.hash(body.password, 10).then((hash)=>{
-                var type = body.type;
                 postgresdb.tx(t => {
                     // creating a sequence of transaction queries:
                     const q1 = t.one('INSERT INTO login (email, passwordhash, user_type_id) VALUES ($1, $2, $3) RETURNING user_id',
-                                    [body.email, hash, type]);
+                                    [email, hash, type]);
                     const qc = t.one('INSERT INTO login (user_type_id) VALUES (4) RETURNING user_id', []);
                     return t.batch([q1, qc]).then((ret)=>{
                         const login_ret = ret[0];
@@ -141,7 +146,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                         const payload = {
                             id: login_ret.user_id,
                             userType: type,
-                            email: body.email,
+                            email: email,
                             isPrimary: true,
                             isVerified: false
                         }
@@ -156,17 +161,10 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                                 [login_ret.user_id, company_login_ret.user_id])
                             return t.batch([lh, q2, q3, q4]).then(() => {
                                 sendEmailVerification(payload.id, payload.email) // Async to send email verification
-                                .catch(err => {
-                                    console.error(err)
-                                })
-                                createJWT(payload).then((token)=>{
+
+                                return createJWT(payload).then((token)=>{
                                     res.status(200).json(token)
                                 })
-                                .catch(err => {
-                                    console.log(err)
-                                    res.status(400).json({success: false, error:err})
-                                });
-                                return []
                             })
                         }else if(type == 2){ // Employer
                             var q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6)',
@@ -175,42 +173,28 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                                 [login_ret.user_id, company_login_ret.user_id, body.firstName, body.lastName, body.phoneNumber])
                             return t.batch([lh, q2, q3]).then(() => {
                                 sendEmailVerification(payload.id, payload.email) // Async to send email verification
-                                .catch(err => {
-                                    console.error(err)
-                                })
-                                createJWT(payload).then((token)=>{
+
+                                return createJWT(payload).then((token)=>{
                                     res.status(200).json(token)
                                 })
-                                .catch(err => {
-                                    console.log(err)
-                                    res.status(400).json({success: false, error:err})
-                                });
-                                return []
                             })
-                            .catch(err => {
-                                console.log(err)
-                                res.status(400).json({success: false, error:err})
-                            });
                         }
                     })
                     .catch(err => {
-                        console.log(err)
+                        logger.error('Error registering', {tags:['register', 'sql'], email:email, ip:loginIp, type: type, error:err});
                         res.status(400).json({success: false, error:err})
-                    });
-                })
-                .then(() => {
-                    console.log("Done TX")
+                    })
                 }).catch((err)=>{
-                    console.log(err)
+                    logger.error('Error registering', {tags:['register', 'sql'], email:email, ip:loginIp, type: type, error:err});
                     return res.status(500).json({success: false, error:err})
                 });
             }, (err)=>{
-                console.log(err)
+                logger.error('Error registering', {tags:['register', 'password'], email:email, ip:loginIp, type: type, error:err});
                 return res.status(500).json({success: false, error:err})
             })
         }
     }).catch((err)=>{
-        console.log(err)
+        logger.error('Error checking for registered email', {tags:['register', 'sql'], email:email, ip:loginIp, error:err});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -231,49 +215,51 @@ router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt toek
 });
 router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
     const email = req.body.email.trim();
-    
+    const ip = req.connection.remoteAddress;
     return postgresdb.one('\
         SELECT concat(first_name, \' \', last_name) as display_name, user_id \
         FROM user_master um \
         WHERE lower(um.email) = ${email}', {email:email})
     .then((data) => {
-        console.log(data)
-        ses.resetPasswordEmail({name:data.display_name, email:email})
-        .then(result=>{
-            console.log(result)
-            res.json({success:true})
-        })
+        return ses.resetPasswordEmail({name:data.display_name, email:email})
+    })
+    .then(result=>{
+        logger.info('Sent password reset', {tags:['login', 'password'], email:email, ip:ip});
+        res.json({success:true})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Error sending password reset', {tags:['login', 'password', 'sql'], email:email, ip:ip, error:err});
         res.status(400).json({success:false, error:err})
     });
 });
-router.post('/verifyEmail', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+// Todo: Add that the user must be authenticated, requires page redirects reroutes on login
+router.post('/verifyEmail', /*passport.authentication,*/ (req, res) => {
     var body = req.body;
+    const ip = req.connection.remoteAddress;
     passport.decodeToken(body.token).then(payload=>{
+        const userId = payload.user_id;
         postgresdb.none('UPDATE login SET email_verified=true WHERE user_id = ${id}',
-                        {id:payload.user_id})
+                        {id:userId})
             .then(() => {
-                postingAssign.findPostsForNewRecruiter(payload.id).then((data)=>{
-                    postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: d.post_id, recruiter_id: payload.id}}))
-                    .then(() => {
-                        res.json({success:true})
-                    })
-                    .catch(err => {
-                        console.error(err)
-                        res.status(400).json({success:false, error:err})
-                    })
-                }) // Async call to add posts to the new recruiter
-                .catch(err => {
-                    console.error(err)
-                    res.status(400).json({success:false, error:err})
-                })
+                return postingAssign.findPostsForNewRecruiter(payload.id)
             })
-            .catch(err=>res.status(400).json({success:false, error:err}))
-    }).catch(err=>res.status(400).json({success:false, error:err}))
+            .then((data)=>{
+                logger.info('Recieved email verification', {tags:['register'], userId:userId, ip:ip});
+                return postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: d.post_id, recruiter_id: payload.id}}))
+            }) // Async call to add posts to the new recruiter
+            .then(() => {
+                res.json({success:true})
+            })
+            .catch(err=>{
+                logger.error('Error recieving email verification', {tags:['register', 'sql'], userId:userId, ip:ip, error:err});
+                res.status(400).json({success:false, error:err})
+            })
+    }).catch(err=>{
+        logger.error('Error recieving email verification', {tags:['register', 'sql'], userId:userId, ip:ip, error:err});
+        res.status(400).json({success:false, error:err})
+    })
 });
-function sendEmailVerification(id, email){
+function sendEmailVerification(id, email, ip){
     return new Promise((resolve, reject)=>{
         return postgresdb.one('\
             SELECT concat(first_name, \' \', last_name) as display_name \
@@ -281,38 +267,36 @@ function sendEmailVerification(id, email){
             WHERE um.user_id = ${id}', {id:id})
         .then((data) => {
             return ses.sendEmailVerification({name:data.display_name, user_id:id, email:email})
-                .then(resolve)
-                .catch(reject);
         })
-        .catch(reject);
+        .then(()=>{
+            logger.info('Sent email verification', {tags:['register'], email:jwtPayload.email, userId:jwtPayload.id, ip:ip});
+            resolve()
+        })
+        .catch((err)=>{
+            logger.error('Error sending email verification', {tags:['register', 'sql'], email:email, ip:ip, error:err});
+            reject(err)
+        });
     })
 }
-router.post('/sendEmailVerification', passport.authentication, (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+router.post('/sendEmailVerification', passport.authentication, (req, res) => {
     const jwtPayload = req.body.jwtPayload;
-    sendEmailVerification(jwtPayload.id, jwtPayload.email).then(result=>{
-        console.log(result)
+    const ip = req.connection.remoteAddress;
+    sendEmailVerification(jwtPayload.id, jwtPayload.email, ip).then(result=>{
         res.json({success:true})
     })
     .catch(err => {
-        console.log(err)
         res.status(400).json({success:false, error:err})
     });
 });
 
 // @route       GET api/auth/current
 // @desc        return current user
-// @access      Private3
+// @access      Private
 router.get('/current', passport.authentication, (req, res) => {
-    const avatar = gravatar.url(req.body.jwtPayload.user_id, {
-        s: '200', // Size
-        r: 'pg', // Rating
-        d: 'mm' // Default
-    });
     res.json({ 
         id: req.body.jwtPayload.id,
         name: req.body.jwtPayload.name,
-        email: req.body.jwtPayload.email,
-        avatar: avatar
+        email: req.body.jwtPayload.email
     })
 });
 

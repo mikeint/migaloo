@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('../config/passport');
 const moment = require('moment');
 const notifications = require('../utils/notifications');
+const logger = require('../utils/logging');
 
 const validateMessageInput = require('../validation/message');  
 const db = require('../config/db')
@@ -34,6 +35,8 @@ router.post('/create', passport.authentication,  (req, res) => {
     const { errors, isValid } = validateMessageInput(body);
     //check Validation
     if(!isValid) {
+        const errorMessage = "Invalid Parameters"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
     var jwtPayload = body.jwtPayload;
@@ -135,8 +138,11 @@ router.post('/setResponse', passport.authentication,  (req, res) => {
     const messageId = req.body.messageId;
     const messageSubjectId = req.body.messageSubjectId;
     let response = req.body.response;
-    if(response !== 1 && response !== 2)
-        return res.status(400).json({success:false, error:"Invalid response"})
+    if(response !== 1 && response !== 2){
+        const errorMessage = "Invalid response"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
 
     const userId = jwtPayload.id;
     postgresdb.one('\
@@ -277,7 +283,9 @@ function listConversationMessages(req, res){
     var page = req.params.page;
     var messageSubjectId = parseInt(req.params.message_subject_id, 10);
     if(messageSubjectId == null){
-        return res.status(400).json({success:false, error:"Missing Message Subject Id"})
+        const errorMessage = "Missing Message Subject Id"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     var jwtPayload = req.body.jwtPayload;
     // Validate that the user id of the user is in the requested chain

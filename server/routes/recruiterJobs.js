@@ -4,6 +4,7 @@ const passport = require('../config/passport');
 const moment = require('moment');
 const validateCandidatePosting = require('../validation/jobs');  
 const notifications = require('../utils/notifications');
+const logger = require('../utils/logging');
 
 const postgresdb = require('../config/db').postgresdb
 
@@ -33,7 +34,9 @@ function getJobs(req, res){
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     var sqlArgs = {page:(page-1)*10, recruiterId: jwtPayload.id}
     if(search != null)
@@ -113,12 +116,18 @@ function getJobsForCandidate(req, res){
     if(page == null)
         page = 1;
     var candidateId = req.params.candidateId
-    if(candidateId == null)
-        return res.status(400).json({success:false, error:"Missing Candidate Id"})
+    if(candidateId == null){
+        const errorMessage = "Missing Candidate Id"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+
+    }
     
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     // Define the filters
     const validKeys = Object.keys(listFilters).filter(d=>Object.keys(req.query).includes(d))
@@ -240,11 +249,15 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
     const { errors, isValid } = validateCandidatePosting(body);
     //check Validation
     if(!isValid) {
+        const errorMessage = "Invalid Parameters"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be a recruiter to look for postings"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
 
     postgresdb.tx(t => {
@@ -301,12 +314,17 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
  */
 router.get('/listPostedCandidates/:jobId', passport.authentication,  (req, res) => {
     var jobId = req.params.jobId;
-    if(jobId == null)
-        return res.status(400).json({success:false, error:"Missing Job Id"})
+    if(jobId == null){
+        const errorMessage = "Missing Job Id"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
     
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Must be a recruiter to look at postings"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.one('SELECT 1 \
             FROM job_posting jp \

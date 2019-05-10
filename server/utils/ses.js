@@ -18,7 +18,6 @@ function sendEmailVerification(args){
             email: args.email,
             rand: Math.random()
         }
-        console.log(jwtPayload)
         passport.signToken(jwtPayload, "1h").then(token=>{
             const params = {
                 "Source":"signup@migaloo.io",
@@ -34,16 +33,14 @@ function sendEmailVerification(args){
                     "year":new Date().getFullYear()
                 })
             }
-            console.log(params)
             ses.sendTemplatedEmail(params, function(err, data) {
                 if (err){
-                    console.log(err, err.stack); // an error occurred
                     reject(err)
                 }
                 else 
                     resolve(data);           // successful response
             });
-        })
+        }).catch(reject)
     })
 }
 function sendContactMessage(args){
@@ -65,7 +62,6 @@ function sendContactMessage(args){
         }
         ses.sendTemplatedEmail(params, function(err, data) {
             if (err){
-                console.log(err, err.stack); // an error occurred
                 reject(err)
             }
             else 
@@ -73,27 +69,30 @@ function sendContactMessage(args){
         });
     })
 }
+// Not Used
 function sendUserInvite(user_id, email, company){
-    const params = {
-        "Source":"signup@migaloo.io",
-        "Template":"VerifyOrganizationEmail",
-        "Destination":{
-            "ToAddresses":[
-                "success@simulator.amazonses.com"
-                // email
-            ]
-        },
-        "TemplateData":JSON.stringify({ 
-            "companyName":company,
-            "verifyLink":"https://migaloo.io/link?token=dsfdsgsfdg",
-            "resendLink":"https://migaloo.io/link?token=dsfdsgsfdg",
-            "year":new Date().getFullYear()
-        })
-    }
-    ses.sendTemplatedEmail(params, function(err, data) {
-        if (err) console.log(err, err.stack); // an error occurred
-        else     console.log(data);           // successful response
-    });
+    return new Promise((resolve, reject)=>{
+        const params = {
+            "Source":"signup@migaloo.io",
+            "Template":"VerifyOrganizationEmail",
+            "Destination":{
+                "ToAddresses":[
+                    "success@simulator.amazonses.com"
+                    // email
+                ]
+            },
+            "TemplateData":JSON.stringify({ 
+                "companyName":company,
+                "verifyLink":"https://migaloo.io/link?token=dsfdsgsfdg",
+                "resendLink":"https://migaloo.io/link?token=dsfdsgsfdg",
+                "year":new Date().getFullYear()
+            })
+        }
+        ses.sendTemplatedEmail(params, function(err, data) {
+            if (err) reject(err);
+            else     resolve(data);
+        });
+    })
 }
 function sendSignupEmail(args){
   return new Promise((resolve, reject)=>{
@@ -114,12 +113,10 @@ function sendSignupEmail(args){
         })
     }
     ses.sendTemplatedEmail(params, function(err, data) {
-        if (err){
-            console.log(err, err.stack); // an error occurred
+        if (err)
             reject(err)
-        }
         else 
-            resolve(data);           // successful response
+            resolve(data);
     });
   })
 }
@@ -130,7 +127,6 @@ function resetPasswordEmail(args){
             email: args.email,
             rand: Math.random()
         }
-        console.log(jwtPayload)
         passport.signToken(jwtPayload, "1h").then(token=>{
             const nameParam = new Buffer(args.name).toString('base64')
             const params = {
@@ -147,17 +143,13 @@ function resetPasswordEmail(args){
                     "year":new Date().getFullYear()
                 })
             }
-            console.log(params)
             ses.sendTemplatedEmail(params, function(err, data) {
-                console.log(err, data)
-                if (err){
-                    console.log(err, err.stack); // an error occurred
+                if (err)
                     reject(err)
-                }
                 else 
-                    resolve(data);           // successful response
+                    resolve(data);
             });
-        })
+        }).catch(reject)
     })
 }
 

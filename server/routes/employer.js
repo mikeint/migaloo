@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('../config/passport');
 const moment = require('moment');
+const logger = require('../utils/logging');
 
 //load input validation
 const validateEmployerInput = require('../validation/employer');  
@@ -16,7 +17,9 @@ const generateImageFileNameAndValidation = (req, res, next) => {
     // Validate this candidate is with this recruiter
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
-        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     var now = Date.now()
     req.params.fileName = jwtPayload.id+"_image_"+now.toString()
@@ -61,7 +64,9 @@ router.get('/getAccountManagers/search/:searchString/:page', passport.authentica
 function getAccountManagers(req, res) {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
-        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     var page = req.params.page;
     var searchString = req.params.searchString;

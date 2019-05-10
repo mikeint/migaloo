@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const ses = require('../utils/ses');
+const logger = require('../utils/logging');
 
 /**
  * Send an email with a message to info@migaloo.io
@@ -15,12 +16,21 @@ router.post('/sendContactEmail', (req, res) => {
     const name = req.body.name;
     const email = req.body.email;
     const message = req.body.message;
-    if(name == null || name.length === 0)
-        return res.status(400).json({success:false, error:"Missing name field"})
-    if(email == null || email.length === 0)
-        return res.status(400).json({success:false, error:"Missing email field"})
-    if(message == null || message.length === 0)
-        return res.status(400).json({success:false, error:"Missing message field"})
+    if(name == null || name.length === 0){
+        const errorMessage = "Missing name field"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(email == null || email.length === 0){
+        const errorMessage = "Missing email field"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(message == null || message.length === 0){
+        const errorMessage = "Missing message field"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
     
     ses.sendContactMessage({name:name.trim(), email:email.trim(), message:message.trim()})
     .then(result=>{

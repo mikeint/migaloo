@@ -6,6 +6,7 @@ const postgresdb = db.postgresdb
 const useAWS = process.env.AWS ? true : false;
 const aws = require('aws-sdk');
 var s3 = new aws.S3()
+const logger = require('../utils/logging');
 
 /**
  * Get image
@@ -17,8 +18,11 @@ var s3 = new aws.S3()
  * @access Private
  */
 router.get('/view/:size', passport.authentication, (req, res) => {
-    if(req.params.size == null)
-        return res.status(400).json({success:false, error:"Missing Size"})
+    if(req.params.size == null){
+        const errorMessage = "Missing Size"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
     var jwtPayload = req.body.jwtPayload;
     var query;
     if(jwtPayload.userType == 1){
@@ -69,12 +73,21 @@ router.get('/view/:size', passport.authentication, (req, res) => {
  * @access Private
  */
 router.get('/view/:type/:id/:size', passport.authentication, (req, res) => {
-    if(req.params.type == null)
-        return res.status(400).json({success:false, error:"Missing Type"})
-    if(req.params.id == null || Number.isNaN(parseInt(req.params.id, 10)))
-        return res.status(400).json({success:false, error:"Missing Id"})
-    if(req.params.size == null)
-        return res.status(400).json({success:false, error:"Missing Size"})
+    if(req.params.type == null){
+        const errorMessage = "Missing Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(req.params.id == null || Number.isNaN(parseInt(req.params.id, 10))){
+        const errorMessage = "Missing Id"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(req.params.size == null){
+        const errorMessage = "Missing Size"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
     var query;
     if(req.params.type == 1){
         query = '\

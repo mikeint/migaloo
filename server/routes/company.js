@@ -5,6 +5,7 @@ const moment = require('moment');
 const invite = require('../utils/invite')
 //load input validation
 const validateCompanyInput = require('../validation/company');  
+const logger = require('../utils/logging');
 
 const db = require('../config/db')
 const postgresdb = db.postgresdb
@@ -23,7 +24,9 @@ router.get('/list', passport.authentication,  (req, res) => {
     const jwtPayload = req.body.jwtPayload;
     
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
-        return res.status(400).json({success:false, error:"Invalid user"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     
     postgresdb.any('\
@@ -68,7 +71,9 @@ router.post('/addCompany', passport.authentication,  (req, res) => {
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
     if(jwtPayload.userType != 2){
-        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.tx(t => {
         var fields = ['company_name', 'department'];
@@ -135,7 +140,9 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
-        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.tx(t => {
         var fields = ['company_name', 'department'];
@@ -218,7 +225,9 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
     const jwtPayload = bodyData.jwtPayload;
     const userType = jwtPayload.userType;
     if(userType !== 2 && userType !== 1){
-        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
 
     postgresdb.tx(t => {
@@ -305,10 +314,14 @@ router.post('/removeContactFromCompany', passport.authentication,  (req, res) =>
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
-        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     if(bodyData.userId === jwtPayload.id){
-        return res.status(400).json({success:false, error:"Can not remove yourself"})
+        const errorMessage = "Can not remove yourself"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.tx(t => {
         return t.one('SELECT ec.company_id \
@@ -366,17 +379,28 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
-        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     
     var companyContactId = req.body.companyContactId
-    if(companyContactId == null)
-        return res.status(400).json({success:false, error:"Missing companyContactId field"})
-    if(companyContactId == jwtPayload.id)
-        return res.status(400).json({success:false, error:"Can't change your own administrator setting"})
+    if(companyContactId == null){
+        const errorMessage = "Missing companyContactId field"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(companyContactId == jwtPayload.id){
+        const errorMessage = "Can't change your own administrator setting"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
     var isPrimary = req.body.isPrimary
-    if(isPrimary == null)
-        return res.status(400).json({success:false, error:"Missing isPrimary field"})
+    if(isPrimary == null){
+        const errorMessage = "Missing isPrimary field"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
 
     postgresdb.tx(t => {
         return t.one('SELECT ec.company_id \
@@ -425,7 +449,9 @@ function getCompanyContactList(req, res) {
     const jwtPayload = req.body.jwtPayload;
     var companyId = req.params.companyId
     if(jwtPayload.userType !== 2 && jwtPayload.userType != 1){
-        return res.status(400).json({success:false, error:"Invalid user"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     var page = req.params.page;
     if(page == null)

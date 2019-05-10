@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('../config/passport');
 const moment = require('moment');
+const logger = require('../utils/logging');
 
 //load input validation
 const validateEmployerInput = require('../validation/employer');  
@@ -16,7 +17,7 @@ const generateImageFileNameAndValidation = (req, res, next) => {
     // Validate this candidate is with this recruiter
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
-        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+        return res.status(400).json({success:false, error:errorMessage})
     }
     var now = Date.now()
     req.params.fileName = jwtPayload.id+"_image_"+now.toString()
@@ -37,10 +38,11 @@ router.post('/uploadImage', passport.authentication, generateImageFileNameAndVal
     var jwtPayload = req.params.jwtPayload;
     postgresdb.none('UPDATE employer SET image_id=$1 WHERE company_id = $2', [req.params.finalFileName, jwtPayload.id])
     .then((data) => {
+        logger.info('Upload Image', {tags:['image', 's3'], userId:jwtPayload.id});
         res.json({success:true, image_id:req.params.finalFileName})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Upload Image', {tags:['image', 's3'], userId:jwtPayload.id, error:err});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -57,7 +59,9 @@ router.post('/uploadImage', passport.authentication, generateImageFileNameAndVal
 router.get('/getProfile', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
-        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     
     postgresdb.one('\
@@ -72,7 +76,7 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
         res.json(data)
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Get Profile', {tags:['sql'], userId:jwtPayload.id, error:err});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -90,12 +94,16 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
     const { errors, isValid } = validateEmployerInput(req.body);
     //check Validation
     if(!isValid) {
+        const errorMessage = "Invalid parameters"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
     if(jwtPayload.userType != 2){
-        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     var fields = ['first_name', 'last_name', 'phone_number'];
     postgresdb.one('SELECT first_name, last_name, phone_number \
@@ -124,7 +132,9 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
 router.get('/alerts', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
-        return res.status(400).json({success:false, error:"Must be an account manager for this"})
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     
     postgresdb.any('\
