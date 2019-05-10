@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('../config/passport');
 const moment = require('moment');
+const notifications = require('../utils/notifications');
 
 const validateMessageInput = require('../validation/message');  
 const db = require('../config/db')
@@ -47,19 +48,47 @@ router.post('/create', passport.authentication,  (req, res) => {
     postgresdb.tx(t => {
         // Get basic data, and ensure they can message, candidate posting must be accepted
         return t.one('\
-            SELECT 1 \
-            FROM messages_subject m \
-            '+(jwtPayload.userType == 2?
-                'LEFT JOIN company_contact ec1 ON m.user_id_1 = ec1.company_id \
-                LEFT JOIN company_contact ec2 ON m.user_id_2 = ec2.company_id \
-            ':'')+
-            'WHERE '+(jwtPayload.userType == 1 ? 
-                '(m.user_id_1 = ${userId} OR m.user_id_2 = ${userId}) AND m.message_subject_id = ${messageSubjectId}' :
-                '(ec1.company_contact_id = ${userId} OR ec2.company_contact_id = ${userId}) AND m.message_subject_id = ${messageSubjectId}')+
-            ' \
-            LIMIT 1 \
+            SELECT ms.company_contact_ids, ms.recruiter_id, \
+                c.company_name as "companyName", \
+                umsub.user_id as "candidateId", \
+                ms.post_id as "postId", \
+                jpa.title as "postTitle", \
+                concat(umsub.first_name, \' \', umsub.last_name) as "candidateName", \
+                concat(r.first_name, \' \', r.last_name) as "recruiterName" \
+            FROM ( \
+                SELECT gm.message_subject_id, gm.user_id_1, gm.user_id_2, gm.subject_user_id, gm.created_on, gm.post_id, gm.company_id, gm.recruiter_id, array_agg(gm.company_contact_id) as company_contact_ids  \
+                FROM \
+                (\
+                    SELECT \
+                        m.message_subject_id, m.user_id_1, m.user_id_2, m.created_on, m.post_id, m.subject_user_id,\
+                        coalesce(ec1.company_contact_id, ec2.company_contact_id) as company_contact_id, \
+                        coalesce(ec1.company_id, ec2.company_id) as company_id, \
+                        CASE WHEN ec2.company_id IS NULL THEN m.user_id_2 ELSE m.user_id_1 END as recruiter_id \
+                    FROM messages_subject m \
+                    LEFT JOIN company_contact ec1 ON m.user_id_1 = ec1.company_id \
+                    LEFT JOIN company_contact ec2 ON m.user_id_2 = ec2.company_id \
+                    WHERE m.message_subject_id = ${messageSubjectId} \
+                ) gm \
+                GROUP BY gm.message_subject_id, gm.user_id_1, gm.user_id_2, gm.subject_user_id, gm.created_on, gm.post_id, gm.company_id, gm.recruiter_id \
+            ) ms \
+            INNER JOIN job_posting_all jpa ON jpa.post_id = ms.post_id \
+            INNER JOIN user_master umsub ON umsub.user_id = ms.subject_user_id \
+            INNER JOIN company c ON c.company_id = ms.company_id \
+            INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
+            WHERE (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active \
             ', {userId:userId, messageSubjectId:body.messageSubjectId})
         .then((data) => {
+            data['fromName'] = jwtPayload.userType === 1?data.recruiterName:data.companyName
+            data['message'] = body.message
+            data['meetingSubject'] = body.subject
+            data['locationType'] = body.locationType
+            data['dateOffer'] = moment(body.dateOffer).format("LLL")
+            data['minuteLength'] = body.minuteLength >= 60?((body.minuteLength/60).toString()+" hour"+(body.minuteLength === 60?'':'s')):(body.minuteLength+" minutes")
+            const userIds = jwtPayload.userType === 1?data.company_contact_ids:data.recruiter_id
+            if(messageType === 1) // Chat Message
+                notifications.addNotification(userIds, jwtPayload.userType === 1 ? 'employerNewChat' : 'recruiterNewChat', data)
+            else // Meeting REquest
+                notifications.addNotification(userIds, jwtPayload.userType === 1 ? 'employerNewMeeting' : 'recruiterNewMeeting', data)
             // Ensure the person is in this chain
             const makeMessage = {
                 to_id:body.toId,
@@ -160,11 +189,26 @@ function listMessages(req, res){
             m.message, m.response, m.date_offer, m.has_seen, m.message_id, ms.message_subject_id, \
             umsub.user_type_id as subject_user_type_id, umsub.user_type_name as subject_user_type_name, \
             umsub.user_id as subject_user_id, umsub.first_name as subject_first_name, umsub.last_name as subject_last_name, \
-            um1.user_type_name as user_1_type_name, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
-            um2.user_type_name as user_2_type_name, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
-            ms.user_id_2, ms.user_id_1, \
+            ms.user_id_1, ms.user_id_2, \
+            ms.company_contact_ids, \
+            c.company_name, \
+            r.recruiter_id, r.first_name as recruiter_first_name, r.last_name as recruiter_last_name, \
             (count(1) OVER())/10+1 AS page_count, ${userId} as my_id \
-        FROM messages_subject ms \
+        FROM ( \
+            SELECT gm.message_subject_id, gm.user_id_1, gm.user_id_2, gm.subject_user_id, gm.created_on, gm.post_id, gm.company_id, gm.recruiter_id, array_agg(gm.company_contact_id) as company_contact_ids  \
+            FROM \
+            (\
+                SELECT \
+                    m.message_subject_id, m.user_id_1, m.user_id_2, m.created_on, m.post_id, m.subject_user_id,\
+                    coalesce(ec1.company_contact_id, ec2.company_contact_id) as company_contact_id, \
+                    coalesce(ec1.company_id, ec2.company_id) as company_id, \
+                    CASE WHEN ec2.company_id IS NULL THEN m.user_id_2 ELSE m.user_id_1 END as recruiter_id \
+                FROM messages_subject m \
+                LEFT JOIN company_contact ec1 ON m.user_id_1 = ec1.company_id \
+                LEFT JOIN company_contact ec2 ON m.user_id_2 = ec2.company_id \
+            ) gm \
+            GROUP BY gm.message_subject_id, gm.user_id_1, gm.user_id_2, gm.subject_user_id, gm.created_on, gm.post_id, gm.company_id, gm.recruiter_id \
+        ) ms \
         LEFT JOIN ( \
             SELECT mo.* \
             FROM ( \
@@ -172,23 +216,14 @@ function listMessages(req, res){
                 ROW_NUMBER() OVER (PARTITION BY message_subject_id, user_id_1, user_id_2 \
                                     ORDER BY created_on DESC) AS rn \
                 FROM messages ml \
-                WHERE ml.user_id_1 = ${userId} OR ml.user_id_2 = ${userId} \
             ) mo \
             WHERE mo.rn = 1 \
         ) m ON ms.message_subject_id = m.message_subject_id \
         INNER JOIN job_posting_all jpa ON jpa.post_id = ms.post_id \
         INNER JOIN user_master umsub ON umsub.user_id = ms.subject_user_id \
-        LEFT JOIN user_master um1 ON um1.user_id = ms.user_id_2 \
-        LEFT JOIN user_master um2 ON um2.user_id = ms.user_id_2 \
-        '+(jwtPayload.userType == 2?
-        'INNER JOIN company_contact cc ON jpa.company_id = cc.company_id \
-        ':'\
-        INNER JOIN job_recruiter_posting jrp ON jpa.post_id = jrp.post_id \
-        ')+
-        'WHERE '+(jwtPayload.userType == 2 ? 
-            'cc.company_contact_id = ${userId}':
-            '(ms.user_id_1 = ${userId} OR ms.user_id_2 = ${userId}) AND jrp.recruiter_id = ${userId} AND jpa.active AND jpa.is_visible')+
-        ' \
+        INNER JOIN company c ON c.company_id = ms.company_id \
+        INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
+        WHERE (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active \
         ORDER BY coalesce(m.created_on, ms.created_on) DESC \
         OFFSET ${page} \
         LIMIT 10 \
@@ -196,10 +231,10 @@ function listMessages(req, res){
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
-            m.toMe = m.to_id == m.my_id;
-            let contactName = m.my_id === m.user_id_1?
-                (m.user_2_company_name?m.user_2_company_name:(m.user_2_first_name+" "+m.user_2_last_name)):
-                (m.user_1_company_name?m.user_1_company_name:(m.user_1_first_name+" "+m.user_1_last_name));
+            m.toMe = jwtPayload.userType === 1 ? m.to_id === m.recruiter_id : m.to_id !== m.recruiter_id;
+            let contactName = jwtPayload.userType === 1?
+                (m.company_name):
+                (m.recruiter_first_name+" "+m.recruiter_last_name);
             m.contactName = contactName;
 
             var dateOfferTimestamp = moment(m.date_offer);
@@ -250,34 +285,37 @@ function listConversationMessages(req, res){
     if(page == null)
         page = 1;
     postgresdb.any('\
-        SELECT m.message_id, ms.post_id, m.to_id, m.created_on, m.responded, \
+        SELECT m.message_id, ms.post_id, m.to_id, m.created_on, m.responded, m.message_type_id, \
             m.message, m.has_seen, m.date_offer, m.response, m.minute_length, m.location_type_name, m.meeting_subject, \
-            um.user_type_id as subject_user_type_id, um.user_type_name as subject_user_type_name, \
-            m.message_subject_id, um.first_name as subject_first_name, m.message_type_id, \
-            m.user_id_1, um1.user_type_name as user_1_type_name, um1.first_name as user_1_first_name, um1.last_name as user_1_last_name, um1.company_name as user_1_company_name, \
-            m.user_id_2, um2.user_type_name as user_2_type_name, um2.first_name as user_2_first_name, um2.last_name as user_2_last_name, um2.company_name as user_2_company_name, \
-            (count(1) OVER())/10+1 AS page_count, '+
-            (jwtPayload.userType == 1 ? 
-                '${userId} as my_id' :
-                'CASE \
-                    WHEN ec1.company_id IS NULL AND ec2.company_id IS NOT NULL THEN ec1.company_id \
-                    WHEN ec1.company_id IS NOT NULL AND ec2.company_id IS NULL THEN ec2.company_id \
-                    ELSE 0 \
-                END as my_id')+
-            ' \
+            ms.user_id_1, ms.user_id_2, \
+            m.message_subject_id, \
+            umsub.user_type_id as subject_user_type_id, umsub.user_type_name as subject_user_type_name, \
+            umsub.user_id as subject_user_id, umsub.first_name as subject_first_name, umsub.last_name as subject_last_name, \
+            ms.company_contact_ids, \
+            c.company_name, \
+            r.recruiter_id, r.first_name as recruiter_first_name, r.last_name as recruiter_last_name, \
+            (count(1) OVER())/10+1 AS page_count, ${userId} as my_id \
         FROM messages m \
-        INNER JOIN messages_subject ms ON ms.message_subject_id = m.message_subject_id \
-        INNER JOIN user_master um ON um.user_id = ms.subject_user_id \
-        INNER JOIN user_master um1 ON um1.user_id = m.user_id_1 \
-        INNER JOIN user_master um2 ON um2.user_id = m.user_id_2 \
-        '+(jwtPayload.userType == 2?
-        'LEFT JOIN company_contact ec1 ON ms.user_id_1 = ec1.company_id \
-        LEFT JOIN company_contact ec2 ON ms.user_id_2 = ec2.company_id \
-        ':'')+
-        'WHERE '+(jwtPayload.userType == 1 ? 
-            '(ms.user_id_1 = ${userId} OR ms.user_id_2 = ${userId}) AND m.message_subject_id = ${messageSubjectId}' :
-            '(ec1.company_contact_id = ${userId} OR ec2.company_contact_id = ${userId}) AND m.message_subject_id = ${messageSubjectId}')+
-        ' \
+        INNER JOIN ( \
+            SELECT gm.message_subject_id, gm.user_id_1, gm.user_id_2, gm.subject_user_id, gm.created_on, gm.post_id, gm.company_id, gm.recruiter_id, array_agg(gm.company_contact_id) as company_contact_ids  \
+            FROM \
+            (\
+                SELECT \
+                    m.message_subject_id, m.user_id_1, m.user_id_2, m.created_on, m.post_id, m.subject_user_id,\
+                    coalesce(ec1.company_contact_id, ec2.company_contact_id) as company_contact_id, \
+                    coalesce(ec1.company_id, ec2.company_id) as company_id, \
+                    CASE WHEN ec2.company_id IS NULL THEN m.user_id_2 ELSE m.user_id_1 END as recruiter_id \
+                FROM messages_subject m \
+                LEFT JOIN company_contact ec1 ON m.user_id_1 = ec1.company_id \
+                LEFT JOIN company_contact ec2 ON m.user_id_2 = ec2.company_id \
+            ) gm \
+            GROUP BY gm.message_subject_id, gm.user_id_1, gm.user_id_2, gm.subject_user_id, gm.created_on, gm.post_id, gm.company_id, gm.recruiter_id \
+        ) ms ON m.message_subject_id = ms.message_subject_id \
+        INNER JOIN user_master umsub ON umsub.user_id = ms.subject_user_id \
+        INNER JOIN job_posting_all jpa ON jpa.post_id = ms.post_id \
+        INNER JOIN company c ON c.company_id = ms.company_id \
+        INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
+        WHERE (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active AND ms.message_subject_id = ${messageSubjectId} \
         ORDER BY m.created_on DESC \
         OFFSET ${page} \
         LIMIT 10 \
@@ -285,7 +323,11 @@ function listConversationMessages(req, res){
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
-            m.toMe = m.to_id == m.my_id;
+            m.toMe = jwtPayload.userType === 1 ? m.to_id === m.recruiter_id : m.to_id !== m.recruiter_id;
+            let contactName = jwtPayload.userType === 1?
+                (m.company_name):
+                (m.recruiter_first_name+" "+m.recruiter_last_name);
+            m.contactName = contactName;
             var dateOfferTimestamp = moment(m.date_offer);
             m.date_offer_str = dateOfferTimestamp.format("LLL");
             var timestamp = moment(m.created_on);

@@ -5,7 +5,7 @@ const pgp = db.pgp
 
 const topicData = {
     'acceptedByMigaloo': {
-        topicId: 1, // Recruiter, Candidate is Accepted
+        topic_id: 1, // Recruiter, Candidate is Accepted
         url:'/recruiter/jobList/job/${postId}',
         title: 'Your candidate ${candidateName} has been accepted by Migaloo',
         message: '\
@@ -15,7 +15,7 @@ Someone will be in contact if there are any questions or additional steps needed
         params: ['companyName', 'postTitle', 'postId', 'candidateName']
     },
     'acceptedByEmployer': {
-        topicId: 1,  // Recruiter, Candidate is Accepted
+        topic_id: 1,  // Recruiter, Candidate is Accepted
         url:'/recruiter/jobList/job/${postId}',
         title: 'Your candidate ${candidateName} has been accepted by ${companyName}',
         message: '\
@@ -24,7 +24,7 @@ Someone will be in contact for the steps to move forward.',
         params: ['companyName', 'postTitle', 'postId', 'candidateName']
     },
     'deniedByMigaloo': {
-        topicId: 2, // Recruiter, Candidate is Denied
+        topic_id: 2, // Recruiter, Candidate is Denied
         url:'/recruiter/jobList/job/${postId}',
         title: 'Your candidate ${candidateName} has been denied by Migaloo',
         message: '\
@@ -33,7 +33,7 @@ Reason:\r\n${denialReason}\r\n\r\nComment:${denialComment}',
         params: ['companyName', 'postTitle', 'postId', 'candidateName', 'denialReason', 'denialComment']
     },
     'deniedByEmployer': {
-        topicId: 2,  // Recruiter, Candidate is Denied
+        topic_id: 2,  // Recruiter, Candidate is Denied
         url:'/recruiter/jobList/job/${postId}',
         title: 'Your candidate ${candidateName} has been denied by ${companyName}',
         message: '\
@@ -42,7 +42,7 @@ Reason:\r\n${denialReason}\r\n\r\nComment:${denialComment}',
         params: ['companyName', 'postTitle', 'postId', 'candidateName', 'denialReason', 'denialComment']
     },
     'newJobPosting': {
-        topicId: 3,  // Recruiter, New Job Posting
+        topic_id: 3,  // Recruiter, New Job Posting
         url:'/recruiter/jobList/job/${postId}',
         title: 'Assigned a new posting for ${companyName}',
         message: '\
@@ -51,7 +51,7 @@ The requesting company is ${companyName}.',
         params: ['companyName', 'postId', 'postTitle']
     },
     'multipleNewJobPosting': {
-        topicId: 3,  // Recruiter, New Job Posting
+        topic_id: 3,  // Recruiter, New Job Posting
         url:'/recruiter/jobList/job/',
         title: 'You have been assigned ${count} new job postings',
         message: '\
@@ -59,17 +59,30 @@ ${count} new job postings, are available.',
         params: ['count']
     },
     'recruiterNewChat': {
-        topicId: 4,  // Recruiter, New Chat Message
-        url:'/recruiter/chat',
-        title: 'You have received a message from ${name}',
+        topic_id: 4,  // Recruiter, New Chat Message
+        url:'/recruiter/chat/${postId}/${candidateId}',
+        title: 'You have received a message from ${fromName}',
         message: '\
-${subject}\r\n\r\n\
-${message}\
-',
-        params: ['name', 'subject', 'message']
+Regarding ${companyName}\'s job posting: ${postTitle}\r\n\r\n\
+And the candidate ${candidateName} \
+Message:\r\n\
+${message}',
+        params: ['fromName', 'postTitle', 'postId', 'candidateId', 'companyName', 'candidateName', 'message']
+    },
+    'recruiterNewMeeting': {
+        topic_id: 4,  // Recruiter, New Chat Message
+        url:'/recruiter/chat/${postId}/${candidateId}',
+        title: 'You have received a meeting request from ${fromName}',
+        message: '\
+Regarding ${companyName}\'s job posting: ${postTitle}\r\n\r\n\
+And the candidate ${candidateName} \
+Meeting Request (${locationType}):\r\n\
+${meetingSubject}\r\n\
+${dateOffer} for ${minuteLength}',
+        params: ['fromName', 'postTitle', 'postId', 'candidateId', 'companyName', 'candidateName', 'meetingSubject', 'locationType', 'dateOffer', 'minuteLength']
     },
     'employerNewCandidate': {
-        topicId: 5,  // Employer, Candidate Posted To Job
+        topic_id: 5,  // Employer, Candidate Posted To Job
         url:'/employer/activeJobs',
         title: '${companyName} has recieved a new candidate',
         message: '\
@@ -78,7 +91,7 @@ ${name}',
         params: ['companyName', 'postTitle', 'name']
     },
     'employerNewJob': {
-        topicId: 6,  // Employer, New Job Posting
+        topic_id: 6,  // Employer, New Job Posting
         url:'/employer/activeJobs',
         title: 'Recieved assigned a new posting for the company, ${companyName}',
         message: '\
@@ -87,13 +100,27 @@ The requesting company is ${companyName}.',
         params: ['companyName', 'postTitle']
     },
     'employerNewChat': {
-        topicId: 7,  // Employer, New Chat Message
-        url:'/employer/chat',
-        title: 'You have received a message from ${name}',
+        topic_id: 7,  // Employer, New Chat Message
+        url:'/employer/chat/${postId}/${candidateId}',
+        title: 'You have received a message from ${fromName}',
         message: '\
-${subject}\r\n\r\n\
+Regarding ${companyName}\'s job posting: ${postTitle}\r\n\r\n\
+And the candidate ${candidateName} \
+Message:\r\n\
 ${message}',
-        params: ['name', 'subject', 'message']
+        params: ['fromName', 'postTitle', 'postId', 'candidateId', 'companyName', 'candidateName', 'message']
+    },
+    'employerNewMeeting': {
+        topic_id: 7,  // Employer, New Chat Message
+        url:'/employer/chat/${postId}/${candidateId}',
+        title: 'You have received a meeting request from ${fromName}',
+        message: '\
+Regarding ${companyName}\'s job posting: ${postTitle}\r\n\r\n\
+And the candidate ${candidateName} \
+Meeting Request:\r\n\
+${meetingSubject}\r\n\
+${dateOffer} for ${minuteLength}',
+        params: ['fromName', 'postTitle', 'postId', 'candidateId', 'companyName', 'candidateName', 'meetingSubject', 'locationType', 'dateOffer', 'minuteLength']
     }
 }
 function applyTemplate(templateName, params){
@@ -113,13 +140,16 @@ function applyTemplate(templateName, params){
     })
     return template
 }
-
+const addNotificationHelper = new pgp.helpers.ColumnSet(['user_id', 'title', 'message', 'url', 'topic_id'], {table: 'notification'});
 function addNotification(userId, templateName, params){
+    if(!Array.isArray(userId))
+        userId = [userId]
     const template = applyTemplate(templateName, params)
-    console.log(template)
     // Add email logic, and check notification settings
-    return postgresdb.none('INSERT INTO notification (user_id, title, message, url, topic_id) VALUES (${userId}, ${title}, ${message}, ${url}, ${topicId})',
-            {userId:userId, title:template.title, message:template.message, url:template.url, topicId:template.topicId})
+    const data = userId.map(id=>{return {...template, user_id:id}})
+    console.log(data)
+    const query = pgp.helpers.insert(data, addNotificationHelper)
+    return postgresdb.none(query)
 }
 function getNewNotifications(userId, lastId, page=1, limit=5){
     return postgresdb.any('SELECT notification_id, title, message, url, created_on, has_seen \

@@ -184,7 +184,7 @@ class Conversation extends Component {
                         aria-labelledby="dialog-title"
                         open={other.open}> 
                     <DialogTitle id="dialog-title">
-                        <span>Conversation - {this.state.contactName + " - " + this.state.conversation.subject_first_name+" "+this.state.conversation.subject_last_name}</span>
+                        <span>Conversation - {this.state.contactName + ", for " + this.state.conversation.subject_first_name+" "+this.state.conversation.subject_last_name}</span>
                         <IconButton color="inherit" onClick={this.handleChatDialogClose} className={classes.rightBtn}>
                             <Close color="primary"/>
                         </IconButton>
