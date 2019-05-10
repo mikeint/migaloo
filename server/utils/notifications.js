@@ -158,7 +158,7 @@ function getNewNotifications(userId, lastId, page=1, limit=5){
         ORDER BY notification_id DESC', {userId:userId, limit:limit, page: (page-1)*limit, lastId:lastId})
 }
 function getAllNotificationsCounts(userId){
-    return postgresdb.one('SELECT sum(cast((NOT has_seen) as int)) AS new_notification_count, count(1) AS notification_count \
+    return postgresdb.one('SELECT coalesce(sum(cast((NOT has_seen) as int)), 0) AS new_notification_count, count(1) AS notification_count \
         FROM notification \
         WHERE user_id = ${userId}', {userId:userId})
 }

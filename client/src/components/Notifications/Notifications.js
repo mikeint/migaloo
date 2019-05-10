@@ -166,11 +166,11 @@ class Notifications extends React.Component{
         get(this.state.search_after == null ?'/api/notifications/list/5':`/api/notifications/list/5/${this.state.search_after}`)
         .then((res) => {
             if(res && res.data.success) {
-                res.data.notificationList.forEach(d=>d.notification_id = parseInt(d.notification_id, 10))
-                var count = parseInt(res.data.counts.new_notification_count, 10)
-                const minId = res.data.notificationList.map(d=>d.notification_id).reduce((a,b)=>Math.min(a,b));
+                res.data.notificationList.forEach(d=>d.notification_id = parseInt(d.notification_id, 10));
+                var count = parseInt(res.data.counts.new_notification_count, 10);
+                const minId = res.data.notificationList.length === 0 ? 0 : res.data.notificationList.map(d=>d.notification_id).reduce((a,b)=>Math.min(a,b));
                 var notificationList = this.state.notificationList?this.state.notificationList:[];
-                notificationList = notificationList.concat(res.data.notificationList)
+                notificationList = notificationList.concat(res.data.notificationList);
                 this.setState({
                     search_after: minId,
                     notificationList: notificationList,
