@@ -41,7 +41,7 @@ router.post('/uploadImage', passport.authentication, generateImageFileNameAndVal
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 
@@ -73,7 +73,7 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 
@@ -149,7 +149,7 @@ router.get('/alerts', passport.authentication,  (req, res) => {
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 

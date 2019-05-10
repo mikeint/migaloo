@@ -227,7 +227,7 @@ router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt toek
                     res.json({success:true})
                 })
         })
-    }).catch(err=>res.status(400).json(err))
+    }).catch(err=>res.status(400).json({success:false, error:err}))
 });
 router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
     const email = req.body.email.trim();
@@ -246,7 +246,7 @@ router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt 
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 router.post('/verifyEmail', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
@@ -262,16 +262,16 @@ router.post('/verifyEmail', (req, res) => { // Todo recieve encrypted jwt toekn 
                     })
                     .catch(err => {
                         console.error(err)
-                        res.status(400).json(err)
+                        res.status(400).json({success:false, error:err})
                     })
                 }) // Async call to add posts to the new recruiter
                 .catch(err => {
                     console.error(err)
-                    res.status(400).json(err)
+                    res.status(400).json({success:false, error:err})
                 })
             })
-            .catch(err=>res.status(400).json(err))
-    }).catch(err=>res.status(400).json(err))
+            .catch(err=>res.status(400).json({success:false, error:err}))
+    }).catch(err=>res.status(400).json({success:false, error:err}))
 });
 function sendEmailVerification(id, email){
     return new Promise((resolve, reject)=>{
@@ -295,7 +295,7 @@ router.post('/sendEmailVerification', passport.authentication, (req, res) => { /
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 

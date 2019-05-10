@@ -90,7 +90,7 @@ function getJobs(req, res){
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 }
 
@@ -207,12 +207,12 @@ function getJobsForCandidate(req, res){
             })
             .catch(err => {
                 console.log(err)
-                res.status(400).json(err)
+                res.status(400).json({success:false, error:err})
             });
         })
         .catch(err => {
             console.log(err)
-            res.status(400).json(err)
+            res.status(400).json({success:false, error:err})
         });
     })
     .then((data) => {
@@ -220,7 +220,7 @@ function getJobsForCandidate(req, res){
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 }
 
@@ -336,12 +336,12 @@ router.get('/listPostedCandidates/:jobId', passport.authentication,  (req, res) 
         })
         .catch(err => {
             console.log(err)
-            res.status(400).json(err)
+            res.status(400).json({success:false, error:err})
         });
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 

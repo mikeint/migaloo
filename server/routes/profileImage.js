@@ -44,7 +44,7 @@ router.get('/view/:size', passport.authentication, (req, res) => {
                 var params = {Bucket: bucketName, Key: 'profile_image/'+req.params.size+"_"+data.image_id};
                 s3.getSignedUrl('getObject', params, function (err, url) {
                     if(err != null)
-                        return res.status(400).json(err)
+                        return res.status(400).json({success:false, error:err})
                     res.json({success:true, url:url})
                 });
             }else{
@@ -56,7 +56,7 @@ router.get('/view/:size', passport.authentication, (req, res) => {
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 /**
@@ -99,7 +99,7 @@ router.get('/view/:type/:id/:size', passport.authentication, (req, res) => {
                 var params = {Bucket: bucketName, Key: 'profile_image/'+req.params.size+"_"+data.image_id};
                 s3.getSignedUrl('getObject', params, function (err, url) {
                     if(err != null)
-                        return res.status(400).json(err)
+                        return res.status(400).json({success:false, error:err})
                     res.json({success:true, url:url})
                 });
             }else{
@@ -111,7 +111,7 @@ router.get('/view/:type/:id/:size', passport.authentication, (req, res) => {
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 

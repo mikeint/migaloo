@@ -158,7 +158,7 @@ function listCandidates(req, res){
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 }
 
@@ -271,19 +271,19 @@ function listCandidatesForJob(req, res){
             })
             .catch(err => {
                 console.log(err)
-                res.status(400).json(err)
+                res.status(400).json({success:false, error:err})
             });
         })
         .catch(err => {
             console.log(err)
-            res.status(400).json(err)
+            res.status(400).json({success:false, error:err})
         });;
     })
     .then((data) => {
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });;
 }
 

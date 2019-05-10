@@ -163,7 +163,7 @@ function postListing(req, res){
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 }
 
@@ -202,12 +202,12 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
         })
         .catch(err => {
             console.log(err)
-            res.status(400).json(err)
+            res.status(400).json({success:false, error:err})
         });
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 /**
@@ -271,12 +271,12 @@ router.post('/setAccepted/migaloo/:postId/:candidateId/:recruiterId', passport.a
         })
         .catch(err => {
             console.log(err)
-            res.status(400).json(err)
+            res.status(400).json({success:false, error:err})
         });
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 /**
@@ -324,12 +324,12 @@ router.post('/setAccepted/employer/:postId/:candidateId/:recruiterId', passport.
         })
         .catch(err => {
             console.log(err)
-            res.status(400).json(err)
+            res.status(400).json({success:false, error:err})
         });
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 /**
@@ -377,12 +377,12 @@ router.post('/setAccepted/job/:postId/:candidateId/:recruiterId', passport.authe
         })
         .catch(err => {
             console.log(err)
-            res.status(400).json(err)
+            res.status(400).json({success:false, error:err})
         });
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 /**
@@ -417,12 +417,12 @@ router.post('/hide', passport.authentication,  (req, res) => {
         })
         .catch(err => {
             console.log(err)
-            res.status(400).json(err)
+            res.status(400).json({success:false, error:err})
         });
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 /**
@@ -457,12 +457,12 @@ router.post('/remove', passport.authentication,  (req, res) => {
         })
         .catch(err => {
             console.log(err)
-            res.status(400).json(err)
+            res.status(400).json({success:false, error:err})
         });
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 
@@ -509,7 +509,7 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 /**
@@ -552,7 +552,7 @@ router.get('/listRecruiters/:postId', passport.authentication,  (req, res) => {
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 

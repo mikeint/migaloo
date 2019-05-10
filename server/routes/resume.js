@@ -26,7 +26,7 @@ const generateResumeFileNameAndValidation = (req, res, next) => {
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 }
 /**
@@ -45,7 +45,7 @@ router.post('/upload/:candidateId', passport.authentication, generateResumeFileN
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 /**
@@ -67,7 +67,7 @@ router.get('/view/:candidateId', passport.authentication,  generateResumeFileNam
             var params = {Bucket: bucketName, Key: 'resumes/'+data.resume_id};
             s3.getSignedUrl('getObject', params, function (err, url) {
                 if(err != null)
-                    return res.status(400).json(err)
+                    return res.status(400).json({success:false, error:err})
                 res.json({success:true, url:url})
             });
         }else{
@@ -76,7 +76,7 @@ router.get('/view/:candidateId', passport.authentication,  generateResumeFileNam
     })
     .catch(err => {
         console.log(err)
-        res.status(400).json(err)
+        res.status(400).json({success:false, error:err})
     });
 });
 
