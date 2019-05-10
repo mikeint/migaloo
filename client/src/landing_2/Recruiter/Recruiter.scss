@@ -1,0 +1,97 @@
+.recruiterContent {
+    max-width: 600px;
+    padding: 100px 10px;
+    overflow: hidden;
+    font-size: 20px;
+    margin: auto;  
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+    .titleText {
+        width: 100%;
+        font-size: 52px;
+        display: inline-block;
+        color: #263c54;
+        text-align: center; 
+    }
+    .paragraphContainer {
+        display: flex;
+        justify-content: center; 
+        padding: 20px; 
+        text-align: center;
+        flex-direction: column;  
+        .paragraph {
+            margin: 20px; 
+        }
+    }
+
+    .center {
+        text-align: center; 
+        .whaleCool {  
+            img {
+                width: 230px; 
+                margin-bottom: -5px;
+            }
+        }
+        .soundCoolContainer { 
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            .sc_Background {
+                width: 350px;
+                height: 40px;
+                line-height: 40px; 
+                color: #263c54; 
+                font-size: 32px;  
+                border-radius: 10px;
+                background: #263c540d;
+            }
+        }
+    }
+    .textBtm {
+        width: 100%;
+        padding: 20px;
+        font-size: 22px;
+        display: inline-block;
+        color: #263c54;
+        text-align: center; 
+    }
+
+    .signUpBtnHome {
+        cursor: pointer;  
+        padding: 10px 25px; 
+        text-align: center;
+        cursor: pointer;
+        outline: none;
+        color: #fff;
+        background: #dea3d4;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 9px #999;
+        font-size: 32px;
+        transition: 0.3s;
+        &:hover {
+            background-color: #96b4be;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+            background-color: #96b4be
+        }
+    } 
+
+}
+
+    
+ 
+
+@media (max-width: 1024px){     
+    .recruiterContent {
+        padding: 60px 10px 100px 10px;
+        .titleText {
+            padding-top: 20px; 
+            font-size: 34px;
+        }
+        .signUpBtnHome {
+            width: 90%;
+            margin: auto;
+        }  
+    }
+}

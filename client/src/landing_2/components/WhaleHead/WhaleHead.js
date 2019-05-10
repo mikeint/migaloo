@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import './WhaleHead.css'
+import './WhaleHead.scss'
 import WhaleSpray from '../../../components/Loader/Loader'
 import whaleHead from "../../../files/images/landingPage/whaleHead.png"
 

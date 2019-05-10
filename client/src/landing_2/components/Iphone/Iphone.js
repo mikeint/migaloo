@@ -1,5 +1,5 @@
 import React, { Component } from "react";  
-import './Iphone.css' 
+import './Iphone.scss' 
 class Iphone extends Component {
  
     render() { 

@@ -1,0 +1,96 @@
+
+.teamContent {
+    display: flex; 
+    font-size: 42px;
+    justify-content: center;
+    color:#263c54;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    .flex {
+        display: flex; 
+        flex-direction: column;
+        justify-content: center;
+        margin: 40px;
+        max-width: 200px; 
+        .teamMember {
+            width: 200px;
+            height: 200px; 
+            box-shadow: 0px 0px 10px 0px #263c54;
+            border-radius: 50%;
+            margin: auto;
+        }
+        .teamMember1 {
+            background-image:url('../../files/images/landingPage/team/sansone.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .teamMember2 {
+            background-image:url('../../files/images/landingPage/team/nasser.png');
+            background-repeat: no-repeat;
+            background-size: cover;   
+        }
+        .teamMember3 {
+            background-image:url('../../files/images/landingPage/team/marcucci.png');
+            background-repeat: no-repeat;
+            background-size: cover;  
+        } 
+        .name {
+            padding-top: 10px;
+            font-size: 28px;
+        } 
+        .title {
+            font-size: 18px;
+            color: #bac1c9;
+        }
+        p {
+            height: 100px; 
+        }
+
+        .socialItems {
+            a {
+                img {
+                    cursor: pointer;
+                    border-radius: 5px;
+                    margin-top: 10px;
+                    margin-right: 2px;
+                    width: 45px;
+                }
+                &:nth-child(1) img{
+                    background: #0074b0;
+                    padding: 8px 10px; 
+                }
+                &:nth-child(2) img{
+                    background: #b05500;
+                    padding: 13px 10px;
+                }
+                &:nth-child(3) img{
+                    background: #263c54; 
+                    padding: 9px 10px;
+                }
+            }
+        }
+    }
+
+
+}
+
+@media only screen and (max-width: 1200px) {
+    .teamContent {
+        flex-direction: column;
+        margin-bottom: 100px;
+        margin-top: 100px;
+        .flex {
+            margin: 30px; 
+            p {
+                height: auto;
+            }
+        }
+    }
+} 
+ 
+@media only screen and (max-width: 1024px) { }
+
+@media only screen and (max-width: 768px) { }

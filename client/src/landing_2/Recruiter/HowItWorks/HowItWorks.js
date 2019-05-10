@@ -16,60 +16,52 @@ class HowItWorks extends Component {
             <React.Fragment>
                 <div className="fywText" data-aos="zoom-out-down">How It Works - Recruiter</div> 
                 
-                <div className="howItWorksContent">  
+                <div className="howItWorksRecruiter">  
         
                     {/* FOR DESKTOP - stacking properly */ }
                     <div className="showOnDesktop">
-                        <div className="module_wrapper mc_4">
-                            <div className="module_max">
-                                <div className="aos-animate"> 
-                                    <div className="module_img module_img1"></div>
+                        <div className="module_wrapper">
+                            <div className="aos-animate"> 
+                                <div className="module_img module_img1"></div>
+                            </div> 
+                            <div className="aos-animate">  
+                                <div className="module_content">
+                                    <h1>Sign up</h1>
+                                    <p>Employers sign up to see a short list of vetted candidates from the top recruiters in their area. Recruiters sign up to gain access to exclusive job requisitions from employers anxious to win the war for&nbsp;talent.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="module_wrapper whiteBG">
+                            <div className="aos-animate"> 
+                                <div className="module_content">
+                                    <h1>Submit Candidate</h1>
+                                    <p>Recruiters submit their most qualified candidate(s) for each requisition for&nbsp;review.</p>
                                 </div> 
-                                <div className="aos-animate">  
-                                    <div className="module_content">
-                                        <h1>Sign up</h1>
-                                        <p>Employers sign up to see a short list of vetted candidates from the top recruiters in their area. Recruiters sign up to gain access to exclusive job requisitions from employers anxious to win the war for&nbsp;talent.</p>
-                                    </div>
-                                </div>
+                            </div>
+                            <div className="aos-animate"> 
+                                <div className="module_img module_img2"></div> 
+                            </div>
+                        </div>
+                        <div className="module_wrapper">
+                            <div className="aos-animate"> 
+                                <div className="module_img module_img3"></div>
+                            </div>
+                            <div className="aos-animate">  
+                                <div className="module_content">
+                                    <h1>ShortList</h1>
+                                    <p>The list of submissions from top recruiters is distilled by migaloo and organized into a shortlist that is then sent to the employer in an organized&nbsp;fashion.</p>
+                                </div> 
                             </div>
                         </div>
                         <div className="module_wrapper whiteBG">
-                            <div className="module_max">
-                                <div className="aos-animate"> 
-                                    <div className="module_content">
-                                        <h1>Submit Candidate</h1>
-                                        <p>Recruiters submit their most qualified candidate(s) for each requisition for&nbsp;review.</p>
-                                    </div> 
-                                </div>
-                                <div className="aos-animate"> 
-                                    <div className="module_img module_img2"></div> 
-                                </div>
+                            <div className="aos-animate">  
+                                <div className="module_content">
+                                    <h1>Engage</h1>
+                                    <p>Employer gives a “thumbs up” on candidate(s) from migaloo’s shortlist, subsequently opening their schedule up for interview times.  Recruiter is informed and next steps are organized through the concierge&nbsp;service.</p>
+                                </div> 
                             </div>
-                        </div>
-                        <div className="module_wrapper mc_4">
-                            <div className="module_max">
-                                <div className="aos-animate"> 
-                                    <div className="module_img module_img3"></div>
-                                </div>
-                                <div className="aos-animate">  
-                                    <div className="module_content">
-                                        <h1>ShortList</h1>
-                                        <p>The list of submissions from top recruiters is distilled by migaloo and organized into a shortlist that is then sent to the employer in an organized&nbsp;fashion.</p>
-                                    </div> 
-                                </div>
-                            </div>
-                        </div>
-                        <div className="module_wrapper whiteBG">
-                            <div className="module_max">
-                                <div className="aos-animate">  
-                                    <div className="module_content">
-                                        <h1>Engage</h1>
-                                        <p>Employer gives a “thumbs up” on candidate(s) from migaloo’s shortlist, subsequently opening their schedule up for interview times.  Recruiter is informed and next steps are organized through the concierge&nbsp;service.</p>
-                                    </div> 
-                                </div>
-                                <div className="aos-animate">  
-                                        <div className="module_img module_img4"></div> 
-                                </div>
+                            <div className="aos-animate">  
+                                    <div className="module_img module_img4"></div> 
                             </div>
                         </div>
                     </div>
@@ -81,7 +73,7 @@ class HowItWorks extends Component {
 
                     {/* FOR MOBILE - stacking properly*/ }
                     <div className="showOnMobile">
-                        <div className="module_wrapper mc_4">
+                        <div className="module_wrapper">
                             <div data-aos="fade-right"> 
                                 <div className="module_img module_img1"></div>
                             </div>
@@ -103,7 +95,7 @@ class HowItWorks extends Component {
                                 </div> 
                             </div>
                         </div>
-                        <div className="module_wrapper mc_4">
+                        <div className="module_wrapper">
                             <div data-aos="fade-right"> 
                                 <div className="module_img module_img3"></div>
                             </div>
@@ -126,7 +118,7 @@ class HowItWorks extends Component {
                             </div>
                         </div> 
                     </div>
-                    {/* FOR MOBILE - stacking properly*/ }
+                    {/* FOR MOBILE - stacking properly */ }
 
                 </div> 
                  

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
-import './NavBar.css' 
+import './NavBar.scss' 
 
 import Whale from '../../../components/Whale/Whale'
 import tail from '../../../files/images/landingPage/tail.png' 
@@ -28,26 +28,20 @@ class NavBar extends Component {
             <div className="lp2_navBar"> 
             
                 <div id="navBar">
-                    <NavLink to="/"><Whale {...whaleOptions}/></NavLink> 
- 
+                    <NavLink to="/"><Whale {...whaleOptions}/></NavLink>
                     <NavLink to="/employerPage" className="topSubItem">For Employers</NavLink>
                     <div className="subNavBox"> 
                         <NavLink to="/employerPage/howItWorks_employer">How it works</NavLink>
                         <NavLink to="/employerPage/pricing_employer">Pricing</NavLink>
                     </div>
-
                     <NavLink to="/recruiterPage" className="topSubItem">For Recruiters</NavLink>
                     <div className="subNavBox"> 
                         <NavLink to="/recruiterPage/howItWorks_recruiter">How it works</NavLink>
                         <NavLink to="/recruiterPage/pricing_recruiter">Pricing</NavLink>
                     </div>
-
                     <NavLink to="/landing/contact" className="topSubItem">Contact</NavLink>
                     <NavLink to="/landing/about" className="topSubItem">About</NavLink>
                     <NavLink to="/landing/team" className="topSubItem">Team</NavLink> 
-
-
-
                 </div>
 
                 <div id="navBarMobile"> 
