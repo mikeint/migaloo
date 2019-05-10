@@ -42,7 +42,7 @@ router.post('/uploadImage', passport.authentication, generateImageFileNameAndVal
         res.json({success:true, image_id:req.params.finalFileName})
     })
     .catch(err => {
-        logger.error('Upload Image', {tags:['image', 's3'], userId:jwtPayload.id, error:err});
+        logger.error('Upload Image', {tags:['image', 's3'], url:req.originalUrl, userId:jwtPayload.id, error:err});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -60,7 +60,7 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     
@@ -76,7 +76,7 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
         res.json(data)
     })
     .catch(err => {
-        logger.error('Get Profile', {tags:['sql'], userId:jwtPayload.id, error:err});
+        logger.error('Get Profile', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -95,14 +95,14 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
     //check Validation
     if(!isValid) {
         const errorMessage = "Invalid parameters"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
     var bodyData = req.body;
     var jwtPayload = bodyData.jwtPayload;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var fields = ['first_name', 'last_name', 'phone_number'];
@@ -115,53 +115,10 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
         .then(() => {
             res.status(200).json({success: true})
         }).catch((err)=>{
-            console.log(err)
+            logger.error('Set Profile', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
             return res.status(500).json({success: false, error:err})
         });
     })
 });
-/**
- * Get employer alerts
- * @route GET api/employer/alerts
- * @group employer - Employer
- * @param {Object} body.optional
- * @returns {object} 200 - A list of alert information
- * @returns {Error}  default - Unexpected error
- * @access Private
- */
-router.get('/alerts', passport.authentication,  (req, res) => {
-    var jwtPayload = req.body.jwtPayload;
-    if(jwtPayload.userType != 2){
-        const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    
-    postgresdb.any('\
-        SELECT c.candidate_id, jp.post_id, cp.created_on, c.first_name, coins, count(1) OVER() AS alert_count, jp.title \
-        FROM candidate_posting cp \
-        INNER JOIN job_posting_all jp ON cp.post_id = jp.post_id \
-        INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
-        INNER JOIN company_contact ec ON ec.company_id = jp.company_id \
-        WHERE NOT cp.has_seen_post AND ec.company_contact_id = ${company_contact_id} \
-        ORDER BY created_on DESC \
-        LIMIT 10', {company_contact_id:jwtPayload.id})
-    .then((data) => {
-        // Marshal data
-        data = data.map(m=>{
-            var timestamp = moment(m.created_on);
-            var ms = timestamp.diff(moment());
-            m.created = moment.duration(ms).humanize() + " ago";
-            m.created_on = timestamp.format("x");
-            return m
-        })
-        res.json({success:true, alertList:data})
-    })
-    .catch(err => {
-        console.log(err)
-        res.status(400).json({success:false, error:err})
-    });
-});
-
 
 module.exports = router;

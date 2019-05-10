@@ -6,6 +6,7 @@ const moment = require('moment');
 const router = express.Router();
 const postgresdb = db.postgresdb
 const pgp = db.pgp
+const logger = require('../utils/logging');
 
 
 /**
@@ -23,7 +24,7 @@ router.get('/lastId', passport.authentication, (req, res) => {
         res.json({success:true, lastNotificationId:data.last_id})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 }) 
@@ -61,7 +62,7 @@ function listNew(req, res) {
         res.json({success:true, notificationList:data})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 }
@@ -103,7 +104,7 @@ function list(req, res) {
         res.json({success:true, notificationList:data, counts:counts})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 }
@@ -125,7 +126,7 @@ function setSeen(req, res) {
         res.json({success:true})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 }
@@ -137,7 +138,7 @@ function test(req, res) {
         res.json({success:true})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 }

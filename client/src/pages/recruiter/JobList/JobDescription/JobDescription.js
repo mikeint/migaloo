@@ -142,17 +142,19 @@ class JobDescription extends React.Component{
     }
 
     getImage = () => {
-        get(`/api/profileImage/view/2/${this.state.jobObj.company_id}/small`)
-        .then((res)=>{
-            if(res == null) return
+        if(this.state.jobObj.company_id != null){
+            get(`/api/profileImage/view/2/${this.state.jobObj.company_id}/small`)
+            .then((res)=>{
+                if(res == null) return
             if(res.data.success){
                 this.setState({ profileImage: res.data.url }) 
             }else{
                 this.setState({ profileImage: '' })
             }
         }).catch(errors => {
-            this.setState({ profileImage: '' })
-        })
+                this.setState({ profileImage: '' })
+            })
+        }
     }
     searchJobsForCandidates = () => {
         this.setState({redirectJob:true})

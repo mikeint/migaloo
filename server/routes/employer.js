@@ -18,7 +18,7 @@ const generateImageFileNameAndValidation = (req, res, next) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var now = Date.now()
@@ -43,7 +43,7 @@ router.post('/uploadImage', passport.authentication, generateImageFileNameAndVal
         res.json({success:true, image_id:req.params.finalFileName})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -65,7 +65,7 @@ function getAccountManagers(req, res) {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var page = req.params.page;
@@ -98,7 +98,7 @@ function getAccountManagers(req, res) {
         res.json({success: true, accountManagers:data})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success: false, error:err})
     });
 }

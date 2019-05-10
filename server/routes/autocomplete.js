@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('../config/passport');
+const logger = require('../utils/logging');
 
 const postgresdb = require('../config/db').postgresdb;
 
@@ -22,7 +23,7 @@ router.get('/experience/:find', passport.authentication, (req, res) => {
         res.json({success:true, experienceList: data});
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -34,7 +35,7 @@ router.get('/experience', passport.authentication, (req, res) => {
         res.json({success:true, experienceList: data});
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -67,7 +68,7 @@ router.get('/tag/:find', passport.authentication, (req, res) => {
         res.json({success:true, tagList: data});
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -90,7 +91,7 @@ router.get('/tag', passport.authentication, (req, res) => {
         res.json({success:true, tagList: data});
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -108,11 +109,10 @@ router.post('/addTag/:tag', passport.authentication, (req, res) => {
     var tag = req.params.tag
     postgresdb.one('INSERT INTO tags (tag_name) VALUES ($1) RETURNING tag_id', tag)
     .then(data => {
-        console.log({tag_id: data.tag_id, tag_name:tag})
         res.json({tag_id: data.tag_id, tag_name:tag});
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -135,7 +135,7 @@ router.get('/salary/:find', passport.authentication, (req, res) => {
         res.json({success:true, salaryList: data});
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -147,7 +147,7 @@ router.get('/salary', passport.authentication, (req, res) => {
         res.json({success:true, salaryList: data});
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -169,7 +169,7 @@ router.get('/denialReason/:find', passport.authentication, (req, res) => {
         res.json({success:true, denialReasonList: data});
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -181,7 +181,7 @@ router.get('/denialReason', passport.authentication, (req, res) => {
         res.json({success:true, denialReasonList: data});
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });

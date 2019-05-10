@@ -37,13 +37,13 @@ router.post('/create', passport.authentication,  (req, res) => {
     //check Validation
     if(!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
     var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
 
@@ -77,20 +77,10 @@ router.post('/create', passport.authentication,  (req, res) => {
                     postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: post_id, recruiter_id: d.recruiter_id}}))
                 }) // Async call to add posts to the new recruiter
             })
-            .catch(err => {
-                console.log(err)
-                res.status(400).json({success: false, error:err})
-            });
         })
-        .then(() => {
-            console.log("Done TX")
-        }).catch((err)=>{
-            console.log(err)
-            return res.status(500).json({success: false, error:err})
-        });
     }).catch((err)=>{
-        console.log(err)
-        return res.status(500).json({success: false, error:err})
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
+        return res.status(400).json({success: false, error:err})
     });
 });
 
@@ -107,13 +97,12 @@ router.get('/list', passport.authentication, postListing);
 router.get('/list/:page', passport.authentication, postListing);
 function postListing(req, res){
     var page = req.params.page;
-    console.log(req.query)
     if(page == null)
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     // Define the filters
@@ -169,7 +158,7 @@ function postListing(req, res){
         res.json(data)
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 }
@@ -189,17 +178,17 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
     var candidateId = req.params.candidateId
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(postId == null){
         const errorMessage = "Missing postId"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(candidateId == null){
         const errorMessage = "Missing Candidate Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.any('\
@@ -209,17 +198,13 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
         WHERE ec.company_contact_id = ${userId} AND jp.active AND jp.post_id = ${postId} \
         LIMIT 1', {postId:postId, userId:jwtPayload.id})
     .then(()=>{
-        postgresdb.none('UPDATE candidate_posting SET has_seen_post=true  WHERE candidate_id = $1 AND post_id = $2', [candidateId, postId])
+        return postgresdb.none('UPDATE candidate_posting SET has_seen_post=true  WHERE candidate_id = $1 AND post_id = $2', [candidateId, postId])
         .then((data) => {
             res.json({success:true})
         })
-        .catch(err => {
-            console.log(err)
-            res.status(400).json({success:false, error:err})
-        });
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -240,22 +225,22 @@ router.post('/setAccepted/migaloo/:postId/:candidateId/:recruiterId', passport.a
     var accepted = req.body.accepted
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(postId == null){
         const errorMessage = "Missing postId"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(candidateId == null){
         const errorMessage = "Missing Candidate Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(recruiterId == null){
         const errorMessage = "Missing Recruiter Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     recruiterId = parseInt(recruiterId, 10);
@@ -266,7 +251,7 @@ router.post('/setAccepted/migaloo/:postId/:candidateId/:recruiterId', passport.a
         WHERE ec.company_contact_id = ${userId} AND jp.active AND jp.post_id = ${postId} \
         LIMIT 1', {postId:postId, userId:jwtPayload.id})
     .then(()=>{
-        postgresdb.none('UPDATE candidate_posting SET migaloo_accepted=$1, has_seen_response=NULL, migaloo_responded_on=NOW()\
+        return postgresdb.none('UPDATE candidate_posting SET migaloo_accepted=$1, has_seen_response=NULL, migaloo_responded_on=NOW()\
             WHERE candidate_id = $2 AND post_id = $3 AND recruiter_id = $4', [accepted, candidateId, postId, recruiterId])
         .then((data) => {
             if(accepted){
@@ -284,19 +269,14 @@ router.post('/setAccepted/migaloo/:postId/:candidateId/:recruiterId', passport.a
                     res.json({success:true})
                 })
                 .catch(err => {
-                    console.log(err)
                     res.json({success:true}) // If this subject was already created just skip the error
                 });
             }else
                 res.json({success:true})
         })
-        .catch(err => {
-            console.log(err)
-            res.status(400).json({success:false, error:err})
-        });
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -318,22 +298,22 @@ router.post('/setAccepted/employer/:postId/:candidateId/:recruiterId', passport.
     var denialReasonId = req.body.denialReasonId;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(postId == null){
         const errorMessage = "Missing postId"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(candidateId == null){
         const errorMessage = "Missing Candidate Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(recruiterId == null){
         const errorMessage = "Missing Recruiter Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(denialReasonId == null)
@@ -346,18 +326,14 @@ router.post('/setAccepted/employer/:postId/:candidateId/:recruiterId', passport.
         WHERE ec.company_contact_id = ${userId} AND jp.active AND jp.post_id = ${postId} \
         LIMIT 1', {postId:postId, userId:jwtPayload.id})
     .then(()=>{
-        postgresdb.none('UPDATE candidate_posting SET employer_accepted=$1, denial_reason_id=$2, employer_responded_on=NOW()\
+        return postgresdb.none('UPDATE candidate_posting SET employer_accepted=$1, denial_reason_id=$2, employer_responded_on=NOW()\
             WHERE candidate_id = $3 AND post_id = $4 AND recruiter_id = $5', [accepted, denialReasonId, candidateId, postId, recruiterId])
         .then((data) => {
             res.json({success:true})
         })
-        .catch(err => {
-            console.log(err)
-            res.status(400).json({success:false, error:err})
-        });
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -379,22 +355,22 @@ router.post('/setAccepted/job/:postId/:candidateId/:recruiterId', passport.authe
     var denialReasonId = req.body.denialReasonId;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(postId == null){
         const errorMessage = "Missing postId"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(candidateId == null){
         const errorMessage = "Missing Candidate Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(recruiterId == null){
         const errorMessage = "Missing Recruiter Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(denialReasonId == null)
@@ -407,18 +383,14 @@ router.post('/setAccepted/job/:postId/:candidateId/:recruiterId', passport.authe
         WHERE ec.company_contact_id = ${userId} AND jp.active AND jp.post_id = ${postId} \
         LIMIT 1', {postId:postId, userId:jwtPayload.id})
     .then(()=>{
-        postgresdb.none('UPDATE candidate_posting SET job_accepted=$1, denial_reason_id=$2, job_responded_on=NOW()\
+        return postgresdb.none('UPDATE candidate_posting SET job_accepted=$1, denial_reason_id=$2, job_responded_on=NOW()\
             WHERE candidate_id = $4 AND post_id = $5 AND recruiter_id = $6', [accepted, denialReasonId, candidateId, postId, recruiterId])
         .then((data) => {
             res.json({success:true})
         })
-        .catch(err => {
-            console.log(err)
-            res.status(400).json({success:false, error:err})
-        });
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -436,12 +408,12 @@ router.post('/hide', passport.authentication,  (req, res) => {
     var postId = req.body.postId
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(postId == null){
         const errorMessage = "Missing postId"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.one('\
@@ -452,17 +424,13 @@ router.post('/hide', passport.authentication,  (req, res) => {
         LIMIT 1', {postId:postId, userId:jwtPayload.id})
     .then(()=>{
         // TODO: Return all coins that have not been accepted or rejected
-        postgresdb.none('UPDATE job_posting SET is_valid=false WHERE post_id = $1', [postId])
+        return postgresdb.none('UPDATE job_posting SET is_valid=false WHERE post_id = $1', [postId])
         .then((data) => {
             res.json({success:true})
         })
-        .catch(err => {
-            console.log(err)
-            res.status(400).json({success:false, error:err})
-        });
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -480,12 +448,12 @@ router.post('/remove', passport.authentication,  (req, res) => {
     var postId = req.body.postId
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(postId == null){
         const errorMessage = "Missing postId"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.one('\
@@ -496,17 +464,13 @@ router.post('/remove', passport.authentication,  (req, res) => {
         LIMIT 1', {postId:postId, userId:jwtPayload.id})
     .then(()=>{
         // TODO: Return all coins that have not been accepted or rejected
-        postgresdb.none('UPDATE job_posting SET active=false WHERE post_id = $1', [postId])
+        return postgresdb.none('UPDATE job_posting SET active=false WHERE post_id = $1', [postId])
         .then((data) => {
             res.json({success:true})
         })
-        .catch(err => {
-            console.log(err)
-            res.status(400).json({success:false, error:err})
-        });
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -525,12 +489,12 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
     var postId = req.params.postId
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(postId == null){
         const errorMessage = "Missing postId"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
 
@@ -557,7 +521,7 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
         res.json({success:true, candidateList:data})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -575,12 +539,12 @@ router.get('/listRecruiters/:postId', passport.authentication,  (req, res) => {
     var postId = req.params.postId
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(postId == null){
         const errorMessage = "Missing postId"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
 
@@ -604,7 +568,7 @@ router.get('/listRecruiters/:postId', passport.authentication,  (req, res) => {
         res.json({success:true, recruiterList:data})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });

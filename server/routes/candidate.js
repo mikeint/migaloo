@@ -35,13 +35,13 @@ router.post('/create', passport.authentication,  (req, res) => {
     //check Validation
     if(!isValid) {
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
     var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Must be an recruiter to add a candidate"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
 
@@ -63,22 +63,10 @@ router.post('/create', passport.authentication,  (req, res) => {
             return t.batch(queries).then(()=>{
                 res.json({success: true})
             })
-            .catch(err => {
-                console.log(err)
-                res.status(400).json({success: false, error:err})
-            });
             
         })
-        .catch(err => {
-            
-            console.log(err)
-            res.status(400).json({success: false, error:err})
-        });
-    })
-    .then(() => {
-        console.log("Done TX")
     }).catch((err)=>{
-        console.log(err)
+        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -105,7 +93,7 @@ function listCandidates(req, res){
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Must be an recruiter to look at canidates"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var sqlArgs = [jwtPayload.id, (page-1)*10]
@@ -164,7 +152,7 @@ function listCandidates(req, res){
         res.json({candidateList:data, success:true})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 }
@@ -190,13 +178,13 @@ function listCandidatesForJob(req, res){
     const jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Must be an recruiter to look at canidates"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     const postId = req.params.postId
     if(postId == null){
         const errorMessage = "Missing post Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     const recruiterId = jwtPayload.id;
@@ -281,20 +269,10 @@ function listCandidatesForJob(req, res){
                 })
                 res.json({candidateList:data, postData:job_data, success:true})
             })
-            .catch(err => {
-                console.log(err)
-                res.status(400).json({success:false, error:err})
-            });
         })
-        .catch(err => {
-            console.log(err)
-            res.status(400).json({success:false, error:err})
-        });;
-    })
-    .then((data) => {
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });;
 }

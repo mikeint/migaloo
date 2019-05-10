@@ -36,7 +36,7 @@ router.post('/create', passport.authentication,  (req, res) => {
     //check Validation
     if(!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
     var jwtPayload = body.jwtPayload;
@@ -107,19 +107,10 @@ router.post('/create', passport.authentication,  (req, res) => {
 
             return t.none(query).then(() => {
                 res.json({success: true})
-            }).catch((err)=>{
-                console.log(err)
-                return res.status(500).json({success: false, error:err})
-            });
-        }).catch((err)=>{
-            console.log(err)
-            return res.status(500).json({success: false, error:err})
-        });
-    })
-    .then(() => {
-        
+            })
+        })
     }).catch((err)=>{
-        console.log(err) // Not an admin
+        logger.error('Message SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -140,7 +131,7 @@ router.post('/setResponse', passport.authentication,  (req, res) => {
     let response = req.body.response;
     if(response !== 1 && response !== 2){
         const errorMessage = "Invalid response"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
 
@@ -158,17 +149,13 @@ router.post('/setResponse', passport.authentication,  (req, res) => {
             ' \
             LIMIT 1', {userId:userId, messageSubjectId:messageSubjectId})
     .then(d=>{ 
-        postgresdb.none('UPDATE messages_calander SET response = $1 WHERE message_id_calander = $2', [response, messageId])
+        return postgresdb.none('UPDATE messages_calander SET response = $1 WHERE message_id_calander = $2', [response, messageId])
         .then((data) => {
             res.json({success:true})
         })
-        .catch(err => {
-            console.log(err)
-            res.status(400).json({success:false, error:err})
-        });
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Message SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -263,7 +250,7 @@ function listMessages(req, res){
         res.json(data)
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Message SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 }
@@ -284,7 +271,7 @@ function listConversationMessages(req, res){
     var messageSubjectId = parseInt(req.params.message_subject_id, 10);
     if(messageSubjectId == null){
         const errorMessage = "Missing Message Subject Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var jwtPayload = req.body.jwtPayload;
@@ -347,7 +334,7 @@ function listConversationMessages(req, res){
         res.json(data)
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Message SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 }
@@ -367,7 +354,7 @@ router.get('/locations', passport.authentication, (req, res) => {
         res.json({success:true, locationList: data});
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Message SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });

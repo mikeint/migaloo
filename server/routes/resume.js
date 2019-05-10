@@ -15,7 +15,7 @@ const generateResumeFileNameAndValidation = (req, res, next) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.one('\
@@ -47,7 +47,7 @@ router.post('/upload/:candidateId', passport.authentication, generateResumeFileN
         res.json({success:true, resume_id:req.params.finalFileName})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Resume SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -69,8 +69,10 @@ router.get('/view/:candidateId', passport.authentication,  generateResumeFileNam
         if(useAWS){
             var params = {Bucket: bucketName, Key: 'resumes/'+data.resume_id};
             s3.getSignedUrl('getObject', params, function (err, url) {
-                if(err != null)
+                if(err != null){
+                    logger.error('Signed URL Call Failed', {tags:['aws', 's3'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
                     return res.status(400).json({success:false, error:err})
+                }
                 res.json({success:true, url:url})
             });
         }else{
@@ -78,7 +80,7 @@ router.get('/view/:candidateId', passport.authentication,  generateResumeFileNam
         }
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Resume SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });

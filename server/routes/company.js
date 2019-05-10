@@ -25,7 +25,7 @@ router.get('/list', passport.authentication,  (req, res) => {
     
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     
@@ -48,7 +48,7 @@ router.get('/list', passport.authentication,  (req, res) => {
         res.json({success:true, companies:data})
     })
     .catch(err => {
-        console.log(err)
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -72,7 +72,7 @@ router.post('/addCompany', passport.authentication,  (req, res) => {
     var jwtPayload = bodyData.jwtPayload;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.tx(t => {
@@ -99,25 +99,10 @@ router.post('/addCompany', passport.authentication,  (req, res) => {
                         res.status(200).json({success: true})
                         return []
                     })
-                    .catch(err => {
-                        console.log(err)
-                        res.status(400).json({success: false, error:err})
-                    });
             })
-            .catch(err => {
-                console.log(err)
-                res.status(400).json({success: false, error:err})
-            });
         })
-        .catch(err => {
-            console.log(err)
-            res.status(400).json({success: false, error:err})
-        });
-    })
-    .then(() => {
-        console.log("Done TX")
     }).catch((err)=>{
-        console.log(err) // Not an admin
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -141,7 +126,7 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
     var jwtPayload = bodyData.jwtPayload;
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.tx(t => {
@@ -176,25 +161,10 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
                         res.status(200).json({success: true})
                         return []
                     })
-                    .catch(err => {
-                        console.log(err)
-                        res.status(400).json({success: false, error:err})
-                    });
             })
-            .catch(err => {
-                console.log(err)
-                res.status(400).json({success: false, error:err})
-            });
         })
-        .catch(err => {
-            console.log(err)
-            res.status(400).json({success: false, error:err})
-        });
-    })
-    .then(() => {
-        console.log("Done TX")
     }).catch((err)=>{
-        console.log(err) // Not an admin
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -226,7 +196,7 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
     const userType = jwtPayload.userType;
     if(userType !== 2 && userType !== 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
 
@@ -269,6 +239,7 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
                             })
                             return resolve(data)
                         })
+                        .catch(reject)
                     }
                 }).then(data=>{
                     const query = pgp.helpers.insert(data, companyContactHelper);
@@ -278,25 +249,10 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
                         res.status(200).json({success: true})
                         return []
                     })
-                    .catch(err => {
-                        console.log(err)
-                        res.status(400).json({success: false, error:err})
-                    });
                 })
-                .catch(err => {
-                    console.log(err)
-                    res.status(400).json({success: false, error:err})
-                });
             })
-            .catch(err => {
-                console.log(err)
-                res.status(400).json({success: false, error:"Either not with this company, or not an admin"})
-            });
-    })
-    .then(() => {
-        console.log("Done TX")
     }).catch((err)=>{
-        console.log(err) // Not an admin
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -315,12 +271,12 @@ router.post('/removeContactFromCompany', passport.authentication,  (req, res) =>
     var jwtPayload = bodyData.jwtPayload;
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(bodyData.userId === jwtPayload.id){
         const errorMessage = "Can not remove yourself"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.tx(t => {
@@ -337,20 +293,9 @@ router.post('/removeContactFromCompany', passport.authentication,  (req, res) =>
                     res.status(200).json({success: true})
                     return []
                 })
-                .catch(err => {
-                    console.log(err)
-                    res.status(400).json({success: false, error:err})
-                });
             })
-            .catch(err => {
-                console.log(err)
-                res.status(400).json({success: false, error:"Either not with this company, or not an admin"})
-            });
-    })
-    .then(() => {
-        console.log("Done TX")
     }).catch((err)=>{
-        console.log(err) // Not an admin
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -380,25 +325,25 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
     var jwtPayload = bodyData.jwtPayload;
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     
     var companyContactId = req.body.companyContactId
     if(companyContactId == null){
         const errorMessage = "Missing companyContactId field"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(companyContactId == jwtPayload.id){
         const errorMessage = "Can't change your own administrator setting"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var isPrimary = req.body.isPrimary
     if(isPrimary == null){
         const errorMessage = "Missing isPrimary field"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
 
@@ -415,21 +360,9 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
                     res.status(200).json({success: true})
                     return []
                 })
-                .catch(err => {
-                    console.log(err)
-                    res.status(400).json({success: false, error:err})
-                    return []
-                });
             })
-            .catch(err => {
-                console.log(err)
-                res.status(400).json({success: false, error:"Either not with this company, or not an admin"})
-            });
-    })
-    .then(() => {
-        console.log("Done TX")
     }).catch((err)=>{
-        console.log(err) // Not an admin
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -450,7 +383,7 @@ function getCompanyContactList(req, res) {
     var companyId = req.params.companyId
     if(jwtPayload.userType !== 2 && jwtPayload.userType != 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var page = req.params.page;
@@ -485,19 +418,10 @@ function getCompanyContactList(req, res) {
                     })
                     res.json({success: true, contactList:data})
                 })
-                .catch(err => {
-                    console.log(err)
-                    res.status(400).json({success: false, error:err})
-                });
             })
-            .catch(err => {
-                console.log(err)
-                res.status(400).json({success: false, error:"Either not with this company, or not an admin"})
-            });
     })
-    .then((data) => { })
     .catch(err => {
-        console.log(err)
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err, body:req.body});
         res.status(400).json({success: false, error:err})
     });
 }

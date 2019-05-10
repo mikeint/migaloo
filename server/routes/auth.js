@@ -42,7 +42,7 @@ router.post('/login', (req, res) => {
     // Check Validation 
     if (!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['login', 'validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['login', 'validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
 
         return res.status(400).json(errors);
     }
@@ -122,15 +122,14 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
     // Check Validation 
     if (!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:res.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-
+        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
     const email = body.email
     const type = body.type;
     checkEmailExists(email).then(user => {
         if (user) {
-            logger.error('Email already exists', {tags:['register'], email:email, ip:loginIp});
+            logger.error('Email already exists', {tags:['register'], url:req.originalUrl, email:email, ip:loginIp});
             errors.email = 'Email already exists';
             return res.status(400).json(errors);
         } else {
@@ -181,20 +180,20 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                         }
                     })
                     .catch(err => {
-                        logger.error('Error registering', {tags:['register', 'sql'], email:email, ip:loginIp, type: type, error:err});
+                        logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err});
                         res.status(400).json({success: false, error:err})
                     })
                 }).catch((err)=>{
-                    logger.error('Error registering', {tags:['register', 'sql'], email:email, ip:loginIp, type: type, error:err});
+                    logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err});
                     return res.status(500).json({success: false, error:err})
                 });
             }, (err)=>{
-                logger.error('Error registering', {tags:['register', 'password'], email:email, ip:loginIp, type: type, error:err});
+                logger.error('Error registering', {tags:['register', 'password'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err});
                 return res.status(500).json({success: false, error:err})
             })
         }
     }).catch((err)=>{
-        logger.error('Error checking for registered email', {tags:['register', 'sql'], email:email, ip:loginIp, error:err});
+        logger.error('Error checking for registered email', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, error:err});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -228,7 +227,7 @@ router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt 
         res.json({success:true})
     })
     .catch(err => {
-        logger.error('Error sending password reset', {tags:['login', 'password', 'sql'], email:email, ip:ip, error:err});
+        logger.error('Error sending password reset', {tags:['login', 'password', 'sql'], url:req.originalUrl, email:email, ip:ip, error:err});
         res.status(400).json({success:false, error:err})
     });
 });
@@ -251,11 +250,11 @@ router.post('/verifyEmail', /*passport.authentication,*/ (req, res) => {
                 res.json({success:true})
             })
             .catch(err=>{
-                logger.error('Error recieving email verification', {tags:['register', 'sql'], userId:userId, ip:ip, error:err});
+                logger.error('Error recieving email verification', {tags:['register', 'sql'], url:req.originalUrl, userId:userId, ip:ip, error:err});
                 res.status(400).json({success:false, error:err})
             })
     }).catch(err=>{
-        logger.error('Error recieving email verification', {tags:['register', 'sql'], userId:userId, ip:ip, error:err});
+        logger.error('Error recieving email verification', {tags:['register', 'sql'], url:req.originalUrl, userId:userId, ip:ip, error:err});
         res.status(400).json({success:false, error:err})
     })
 });
@@ -273,7 +272,7 @@ function sendEmailVerification(id, email, ip){
             resolve()
         })
         .catch((err)=>{
-            logger.error('Error sending email verification', {tags:['register', 'sql'], email:email, ip:ip, error:err});
+            logger.error('Error sending email verification', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:ip, error:err});
             reject(err)
         });
     })
