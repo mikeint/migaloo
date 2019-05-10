@@ -92,7 +92,7 @@ class PostAJob extends React.Component{
         .catch(error => {
             console.log(error);
         });
-        ApiCalls.get('/api/company/list')
+        get('/api/company/list')
         .then((res) => {
             if(res && res.data.success) {
                 this.setState({companies:res.data.companies.map(d=>{return {id:d.company_id, name:d.company_name}})});

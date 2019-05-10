@@ -38,7 +38,7 @@ class PendingVerification extends React.Component{
     }
 
     sentEmail = debounce(() => {
-        ApiCalls.post("/api/auth/sendEmailVerification", {}).then(()=>{});
+        post("/api/auth/sendEmailVerification", {}).then(()=>{});
     }, 5000)
     componentDidMount = () => {
 

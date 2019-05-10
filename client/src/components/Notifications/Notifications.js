@@ -1,7 +1,7 @@
 import React from 'react';
 import Close from '@material-ui/icons/Close';
 import AuthFunctions from '../../AuthFunctions'; 
-import {get} from '../../ApiCalls';  
+import {get, post} from '../../ApiCalls';  
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Badge from '@material-ui/core/Badge';
 import IconButton from '@material-ui/core/IconButton';
@@ -147,7 +147,7 @@ class Notifications extends React.Component{
 
     getLastId = () => {
         return new Promise((resolve, reject)=>{
-            ApiCalls.get("/api/notifications/lastId")
+            get("/api/notifications/lastId")
             .then((res) => {
                 if(res && res.data.success) {
                     this.setState({
@@ -163,9 +163,7 @@ class Notifications extends React.Component{
         })
     }
     getNotifications = () => {
-        (this.state.search_after == null ?
-            ApiCalls.get('/api/notifications/list/5') :
-            ApiCalls.get(`/api/notifications/list/5/${this.state.search_after}`))
+        get(this.state.search_after == null ?'/api/notifications/list/5':`/api/notifications/list/5/${this.state.search_after}`)
         .then((res) => {
             if(res && res.data.success) {
                 res.data.notificationList.forEach(d=>d.notification_id = parseInt(d.notification_id, 10))
@@ -186,7 +184,7 @@ class Notifications extends React.Component{
         });
     }
     setSeen = (notificationIds) => {
-        ApiCalls.post('/api/notifications/setSeen', {notificationIds:notificationIds})
+        post('/api/notifications/setSeen', {notificationIds:notificationIds})
         .then((res) => {})
         .catch(error => {
             console.log(error);
@@ -209,8 +207,7 @@ class Notifications extends React.Component{
 
     getNewNotifications = () => {
         var lastNotificationId  = this.state.lastNotificationId;
-        (lastNotificationId == null?ApiCalls.get(`/api/notifications/listNew`):
-        ApiCalls.get(`/api/notifications/listNew/${lastNotificationId}`))
+        get(lastNotificationId == null?`/api/notifications/listNew`:`/api/notifications/listNew/${lastNotificationId}`)
         .then((res) => {
             if(res && res.data.success) {
                 lastNotificationId = res.data.notificationList.reduce((t,a)=>Math.max(a.notification_id, t), lastNotificationId);

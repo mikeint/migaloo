@@ -131,7 +131,7 @@ class JobDescription extends React.Component{
         )
     }
     listCandidates = () => {
-        ApiCalls.get('/api/recruiterJobs/listPostedCandidates/'+this.state.jobId)
+        get('/api/recruiterJobs/listPostedCandidates/'+this.state.jobId)
         .then((res)=>{
             if(res && res.data.success){
                 this.setState({candidateList: res.data.candidates }) 
