@@ -1,5 +1,5 @@
 import React from 'react';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../ApiCalls';  
+import {get, post, cancel} from '../../../../ApiCalls';  
 import Pagination from "react-js-pagination";
 import Loader from '../../../../components/Loader/Loader';
 import { withStyles } from '@material-ui/core/styles';  

@@ -1,6 +1,6 @@
 import React from 'react';
 import './JobDescription.css'; 
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../ApiCalls';  
+import {get} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import {Redirect} from 'react-router-dom';
 import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';

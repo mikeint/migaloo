@@ -1,7 +1,7 @@
 import React from 'react';
 import './PostCandidateToJob.css'; 
 import { Redirect } from 'react-router-dom';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
+import {get, post} from '../../ApiCalls';  
 //import coin from '../../files/images/coin.png'
 import TextField from '@material-ui/core/TextField';
 //import Input from '@material-ui/core/Input';

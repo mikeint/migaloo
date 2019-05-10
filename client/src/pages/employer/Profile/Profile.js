@@ -3,7 +3,7 @@ import './Profile.css';
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import AuthFunctions from '../../../AuthFunctions';  
 import { Redirect } from 'react-router-dom';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
+import {get, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import UploadImage from '../../../components/UploadImage/UploadImage'; 
 import defaultProfileImage from '../../../files/images/profile.png'
 

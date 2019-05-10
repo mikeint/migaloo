@@ -1,7 +1,7 @@
 import React from 'react';
 import './AddCandidate.css';  
 import AuthFunctions from '../../../AuthFunctions'; 
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
+import {get, post} from '../../../ApiCalls';  
 import TagSearch from '../../../components/TagSearch/TagSearch';  
 
 import Close from '@material-ui/icons/Close';

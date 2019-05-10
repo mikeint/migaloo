@@ -2,7 +2,7 @@ import React from 'react';
 import AuthFunctions from '../../AuthFunctions'; 
 import './TagSearch.css';    
 import debounce from 'lodash/debounce';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
+import {get} from '../../ApiCalls';  
 import Loader from '../Loader/Loader'; 
 import Chip from '@material-ui/core/Chip';
 import TextField from '@material-ui/core/TextField';

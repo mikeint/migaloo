@@ -1,7 +1,7 @@
 import React from 'react';
 import './ExpandableRow.css'; 
 import UploadResume from '../UploadResume/UploadResume';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../ApiCalls';  
+import {get} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import Redirect from 'react-router-dom/Redirect';
 import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';

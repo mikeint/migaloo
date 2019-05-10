@@ -1,7 +1,7 @@
 import React, { Component } from "react"; 
 import "./Conversation.css"; 
 import Loader from '../../Loader/Loader'; 
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
+import {get, post} from '../../../ApiCalls';  
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import Close from '@material-ui/icons/Close';
 import MeetingPicker from "../../MeetingPicker/MeetingPicker";

@@ -2,7 +2,7 @@ import React from 'react';
 import './JobList.css';    
 import Loader from '../../../components/Loader/Loader';
 import Filters from '../../../components/Filters/Filters';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
+import {getWithParams, cancel} from '../../../ApiCalls';  
 import { NavLink, Redirect } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 

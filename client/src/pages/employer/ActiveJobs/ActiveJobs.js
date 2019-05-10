@@ -1,7 +1,7 @@
 import React from 'react';
 import './ActiveJobs.css';    
 import { NavLink } from 'react-router-dom';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
+import {getWithParams, cancel} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';

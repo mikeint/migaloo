@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
+import {get} from '../../ApiCalls';  
 import UploadImage from '../UploadImage/UploadImage'; 
 import defaultProfileImage from '../../files/images/profile.png'
 

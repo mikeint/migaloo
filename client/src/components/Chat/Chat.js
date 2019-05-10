@@ -1,7 +1,7 @@
 import React, { Component } from "react"; 
 import "./Chat.css"; 
 import AuthFunctions from '../../AuthFunctions'; 
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
+import {get,cancel} from '../../ApiCalls';  
 import ConversationRow from "./ConversationRow/ConversationRow"; 
 import Pagination from "react-js-pagination";
 import Loader from "../Loader/Loader"; 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../ApiCalls';  
+import {post} from '../../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';  
 import Close from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';

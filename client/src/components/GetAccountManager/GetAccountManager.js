@@ -15,7 +15,7 @@ import Close from '@material-ui/icons/Close';
 import Search from '@material-ui/icons/Search';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import React, { Component } from "react";
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';
+import {get} from '../../ApiCalls';
 
 const styles = theme => ({
     rightBtn:{

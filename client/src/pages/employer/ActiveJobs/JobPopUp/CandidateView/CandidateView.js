@@ -1,5 +1,5 @@
 import React from 'react';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../../ApiCalls';  
+import {get, post} from '../../../../../ApiCalls';  
 import AuthFunctions from '../../../../../AuthFunctions'; 
 import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';

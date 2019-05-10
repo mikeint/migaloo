@@ -1,5 +1,5 @@
 import React from 'react';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
+import {get, cancel} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import { withStyles } from '@material-ui/core/styles';
 import Loader from '../../../components/Loader/Loader';

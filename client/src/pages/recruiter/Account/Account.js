@@ -1,5 +1,5 @@
 import React from 'react';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
+import {get, cancel} from '../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';
 import ContactList from './ContactList/ContactList';
 

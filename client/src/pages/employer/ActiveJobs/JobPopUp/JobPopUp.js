@@ -1,5 +1,5 @@
 import React from 'react';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../../ApiCalls';  
+import {get, post} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions';  
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import CandidateView from './CandidateView/CandidateView';

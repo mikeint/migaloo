@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import AuthFunctions from '../../../AuthFunctions';
 import { Redirect, Link } from 'react-router-dom';
 import Whale from '../../../components/Whale/Whale';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';   
+import {post, getNewAuthToken} from '../../../ApiCalls';   
 import Button from '@material-ui/core/Button';
 
 import './LoginForm.css';

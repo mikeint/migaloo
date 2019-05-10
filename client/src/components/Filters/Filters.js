@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../ApiCalls';  
+import {get} from '../../ApiCalls';  
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';

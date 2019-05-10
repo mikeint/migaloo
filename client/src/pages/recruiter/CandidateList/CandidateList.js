@@ -1,7 +1,7 @@
 import React from 'react';
 import './CandidateList.css';    
 import { NavLink } from 'react-router-dom';
-import {get, getWithParams, post, cancel, getNewAuthToken} from '../../../ApiCalls';  
+import {get,cancel} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import Loader from '../../../components/Loader/Loader';
 import ExpandableRow from './ExpandableRow/ExpandableRow'; 
