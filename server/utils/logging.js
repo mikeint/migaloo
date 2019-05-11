@@ -34,7 +34,7 @@ if (NODE_ENV == 'producation') {
         }
     }
     // Create transport layer to cloud watch
-    logger.add(CloudWatchTransport, config);
+    logger.add(new WinstonCloudWatch(config));
 }else{
     // Create transport layer to console
     logger.add(new (transports.Console)({
