@@ -1,5 +1,5 @@
 var { createLogger, format, transports } = require('winston'),
-    CloudWatchTransport = require('winston-cloudwatch');
+    WinstonCloudWatch = require('winston-cloudwatch');
 const NODE_ENV = process.env.NODE_ENV || 'dev';
 
 const logger = new createLogger({
@@ -20,7 +20,7 @@ if (NODE_ENV == 'producation') {
         }
     }
     // Create transport layer to cloud watch
-    logger.add(CloudWatchTransport, config);
+    logger.add(new WinstonCloudWatch(config));
 }else if (NODE_ENV == 'test') {
     const os = require("os");
     const hostname = os.hostname();
