@@ -1,4 +1,4 @@
-.icon-bar {
+.socialSideContainer .icon-bar {
 	position: fixed; 
 	-webkit-transform: translateY(-50%);
 	-ms-transform: translateY(-50%);
@@ -8,7 +8,7 @@
 	z-index: 999;
 	top: 300px;
 } 
-.icon-bar a {
+.socialSideContainer .icon-bar a {
 	display: block;
 	text-align: center;
 	padding: 10px;
@@ -16,44 +16,44 @@
 	color: white;
 	transition: 0.3s;
 } 
-.icon-bar a:hover {   
+.socialSideContainer .icon-bar a:hover {   
     margin-bottom: 0px;
 } 
-.facebook {
+.socialSideContainer .facebook {
 	background: #3B5998;
 	color: white;
 } 
-.twitter {
+.socialSideContainer .twitter {
 	background: #55ACEE;
 	color: white;
 } 
-.google {
+.socialSideContainer .socialSideContainer .google {
 	background: #dd4b39;
 	color: white;
 } 
-.youtube {
+.socialSideContainer .youtube {
     background: #bb0000;
     color: white;
 }
-.linkedin {
+.socialSideContainer .linkedin {
 	background: #007bb5;
 	color: white;
 } 
-.slack {
+.socialSideContainer .slack {
 	background: #531754;
 	color: white;
 }
 
 
 @media only screen and (max-width: 768px) { 
-    .icon-bar { 
+    .socialSideContainer .icon-bar { 
         width: 100%;
         -webkit-transform: none;
         transform: none;
         top: unset; 
         bottom: 0px;  
     }
-    .icon-bar a {
+    .socialSideContainer .icon-bar a {
         width: 50%;
         height: 45px;
         float: left;

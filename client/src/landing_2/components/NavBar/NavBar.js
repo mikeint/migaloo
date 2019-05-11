@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 import './NavBar.scss' 
 
 import Whale from '../../../components/Whale/Whale'
+import Social from '../../components/Social/Social'
 import tail from '../../../files/images/landingPage/tail.png' 
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
 
@@ -28,20 +29,25 @@ class NavBar extends Component {
             <div className="lp2_navBar"> 
             
                 <div id="navBar">
-                    <NavLink to="/"><Whale {...whaleOptions}/></NavLink>
-                    <NavLink to="/employerPage" className="topSubItem">For Employers</NavLink>
-                    <div className="subNavBox"> 
-                        <NavLink to="/employerPage/howItWorks_employer">How it works</NavLink>
-                        <NavLink to="/employerPage/pricing_employer">Pricing</NavLink>
+                    <div className="topNavContainer">
+                        <NavLink to="/"><Whale {...whaleOptions}/></NavLink>
+                        <NavLink to="/employerPage" className="topSubItem">For Employers</NavLink>
+                        <div className="subNavBox"> 
+                            <NavLink to="/employerPage/howItWorks_employer">How it works</NavLink>
+                            {/* <NavLink to="/employerPage/pricing_employer">Pricing</NavLink> */}
+                        </div>
+                        <NavLink to="/recruiterPage" className="topSubItem">For Recruiters</NavLink>
+                        <div className="subNavBox"> 
+                            <NavLink to="/recruiterPage/howItWorks_recruiter">How it works</NavLink>
+                            {/* <NavLink to="/recruiterPage/pricing_recruiter">Pricing</NavLink> */}
+                        </div>
+                        <NavLink to="/landing/contact" className="topSubItem">Contact</NavLink>
+                        <NavLink to="/landing/about" className="topSubItem">About</NavLink>
+                        <NavLink to="/landing/team" className="topSubItem">Team</NavLink> 
                     </div>
-                    <NavLink to="/recruiterPage" className="topSubItem">For Recruiters</NavLink>
-                    <div className="subNavBox"> 
-                        <NavLink to="/recruiterPage/howItWorks_recruiter">How it works</NavLink>
-                        <NavLink to="/recruiterPage/pricing_recruiter">Pricing</NavLink>
+                    <div className="bottomNavContainer">
+                        <Social/>
                     </div>
-                    <NavLink to="/landing/contact" className="topSubItem">Contact</NavLink>
-                    <NavLink to="/landing/about" className="topSubItem">About</NavLink>
-                    <NavLink to="/landing/team" className="topSubItem">Team</NavLink> 
                 </div>
 
                 <div id="navBarMobile"> 
@@ -62,22 +68,29 @@ class NavBar extends Component {
                     onOpen={()=>this.setState({"showOverlay":true,  menuOpen: !this.state.menuOpen})}
                 >  
                     <div className="side-menu">
-                        <NavLink to="/employerPage" onClick={this.callAddOverlay}>For Employers</NavLink>
-                        <div className="subNavBox" onClick={this.callAddOverlay}> 
-                            <NavLink to="/employerPage/howItWorks_employer">How it works</NavLink>
-                            <NavLink to="/employerPage/pricing_employer">Pricing</NavLink>
+                        <div className="topNavContainer">
+                            <NavLink to="/employerPage" onClick={this.callAddOverlay}>For Employers</NavLink>
+                            <div className="subNavBox" onClick={this.callAddOverlay}> 
+                                <NavLink to="/employerPage/howItWorks_employer">How it works</NavLink>
+                                {/* <NavLink to="/employerPage/pricing_employer">Pricing</NavLink> */}
+                            </div>
+                            <NavLink to="/recruiterPage" onClick={this.callAddOverlay}>For Recruiters</NavLink>
+                            <div className="subNavBox" onClick={this.callAddOverlay}> 
+                                <NavLink to="/recruiterPage/howItWorks_recruiter">How it works</NavLink>
+                                {/* <NavLink to="/recruiterPage/pricing_recruiter">Pricing</NavLink> */}
+                            </div>
+                            
+                            <NavLink to="/landing/contact" onClick={this.callAddOverlay}>Contact</NavLink>
+                            <NavLink to="/landing/about" onClick={this.callAddOverlay}>About</NavLink>
+                            <NavLink to="/landing/team" onClick={this.callAddOverlay}>Team</NavLink>
                         </div>
-                        <NavLink to="/recruiterPage" onClick={this.callAddOverlay}>For Recruiters</NavLink>
-                        <div className="subNavBox" onClick={this.callAddOverlay}> 
-                            <NavLink to="/recruiterPage/howItWorks_recruiter">How it works</NavLink>
-                            <NavLink to="/recruiterPage/pricing_recruiter">Pricing</NavLink>
+
+                        <div className="bottomNavContainer">
+                            <Social/>
                         </div>
-                        
-                        <NavLink to="/landing/contact" onClick={this.callAddOverlay}>Contact</NavLink>
-                        <NavLink to="/landing/about" onClick={this.callAddOverlay}>About</NavLink>
-                        <NavLink to="/landing/team" onClick={this.callAddOverlay}>Team</NavLink>  
                     </div>
                 </SwipeableDrawer> 
+
             </div> 
         ) 
   	}

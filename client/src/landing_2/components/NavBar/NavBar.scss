@@ -3,8 +3,19 @@
         height: 100vh;
         width: 300px; 
         background:#263c54;
+        display: flex;
+        flex-direction: column;
         .whaleContainer {
             padding-top: 20px;
+        }
+        .topNavContainer {
+            display: flex;    
+            flex-direction: column;
+        }
+        .bottomNavContainer {
+            display: flex; 
+            flex: 1;
+            flex-direction: column-reverse;
         }
         a {
             display: flex;
@@ -17,18 +28,18 @@
             &.active {
                 color: #ffffff; 
             }
-        }
-    }  
+        } 
+    } 
     .topSubItem.active + .subNavBox {
-        height: 140px;
-        max-height: 140px;
+        height: 70px;
+        max-height: 70px;
         box-shadow: inset 0px 0px 5px #2a2c2d;
         animation-name: slideDropDown;
         animation-duration: 0.5s;
     } 
     @keyframes slideDropDown {
         from {height: 0px;}
-        to {height: 140px;}
+        to {height: 70px;}
     } 
     .subNavBox { 
         padding-left: 40px;
@@ -133,11 +144,25 @@
         font-weight: bold; 
         padding: 15px 40px; 
     }
-    .side-menu .subNavBox a{
-        padding-left: 60px;
-        font-size: 18px;
-        background: #131e2a17;
-    } 
+    .side-menu {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        .subNavBox a {
+            padding-left: 60px;
+            font-size: 18px;
+            background: #131e2a17;
+        }
+        .topNavContainer {
+            display: flex;    
+            flex-direction: column;
+        }
+        .bottomNavContainer {
+            display: flex; 
+            flex: 1;
+            flex-direction: column-reverse;
+        }
+    }
 } 
 
 

@@ -4,7 +4,7 @@
     overflow: hidden;
     position: relative; 
 }
-.sp_parallax {
+.landingSection4 .sp_parallax {
     height: 310px;
     background-image: url("../../files/images/landingPage/sectionParralax.png");
     background-attachment: fixed;
@@ -12,7 +12,7 @@
     background-size: 100% 310px;
     background-position: bottom;
 }
-.sp_contain {
+.landingSection4 .sp_contain {
     width: 100%;
     height: 100%;
     text-align: center;
@@ -21,7 +21,7 @@
     position: absolute;  
     background: #263c5494;
 }
-.sp_text{
+.landingSection4 .sp_text{
     width: 100%;
     color: #ffffff;
     text-align: center;
@@ -31,11 +31,11 @@
     padding: 20px;
 } 
  
-.sp_choose{
+.landingSection4 .sp_choose{
     width: 100%;
     float: left; 
 } 
-.signUpBtnHome {
+.landingSection4 .signUpBtnHome {
     width: 100%;
     text-align: center;
     padding: 20px;
@@ -44,20 +44,20 @@
     font-size: 32px; 
     transition: 0.3s;
     animation: fadein 1.3s;
-    -moz-animation: fadein 1.3s; /* Firefox */
-    -webkit-animation: fadein 1.3s; /* Safari and Chrome */
-    -o-animation: fadein 1.3s; /* Opera */
+    -moz-animation: fadein 1.3s;
+    -webkit-animation: fadein 1.3s;
+    -o-animation: fadein 1.3s;
     float: left;
 } 
-.signUpBtnHome img {
+.landingSection4 .signUpBtnHome img {
     width: 40px;
     float: right;
     margin-top: -9px;
 }  
-.signUpBtnHome:hover {
+.landingSection4 .signUpBtnHome:hover {
     background-color: #5a718194; 
 } 
-.signUpBtnChoose { 
+.landingSection4 .signUpBtnChoose { 
     color: #fff;
     background: unset;
     width: 48%;
@@ -85,16 +85,16 @@
 
 
 @media only screen and (max-width: 1024px) {
-    .signUpBtnChoose {
+    .landingSection4 .signUpBtnChoose {
         font-size: 22px;
     }
 } 
 
 @media only screen and (max-width: 768px) {
-    .landingSection4 { 
+    .landingSection4 .landingSection4 { 
         padding-bottom: 45px;
     }
-    .sp_parallax {
+    .landingSection4 .sp_parallax {
         height: 380px;
         background-image: url("../../files/images/landingPage/sectionParralaxM.png");
         background-size: 100% calc(380px + 45px); 

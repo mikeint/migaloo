@@ -14,7 +14,7 @@ class HowItWorks extends Component {
     render() {
         return (
             <React.Fragment>
-                <div className="fywText" data-aos="zoom-out-down">How It Works - Recruiter</div> 
+                <div className="fywText" data-aos="zoom-out-down">How It Works - Employers</div> 
                 
                 <div className="howItWorksEmployer">  
         
