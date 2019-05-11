@@ -21,6 +21,20 @@ if (NODE_ENV == 'producation') {
     }
     // Create transport layer to cloud watch
     logger.add(CloudWatchTransport, config);
+}else if (NODE_ENV == 'test') {
+    const os = require("os");
+    const hostname = os.hostname();
+    const config = {
+        logGroupName: 'NodeAppTest',
+        logStreamName: hostname,
+        createLogGroup: false,
+        createLogStream: true,
+        formatLog: function (item) {
+            return item.level + ': ' + item.message + ' ' + JSON.stringify(item.meta)
+        }
+    }
+    // Create transport layer to cloud watch
+    logger.add(CloudWatchTransport, config);
 }else{
     // Create transport layer to console
     logger.add(new (transports.Console)({
