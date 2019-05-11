@@ -22,6 +22,7 @@ class Employer extends Component {
                         <div data-aos="fade-down">Hi there ! I'm Migaloo,</div>
                         <div data-aos="fade-up">the whale of recruitment</div>
                     </div>
+                    
                     <div className="paragraphContainer" data-aos="zoom-in" data-aos-offset="-200"> 
                         <div className="paragraph" data-aos="zoom-in-right">I believe that you agree that recruiters can add a ton (~50 tonnes in my case) of value for hard to find&nbsp;roles.</div>
                         <div className="paragraph" data-aos="zoom-in-left" data-aos-delay="250">I also understand that you are way too busy to manage external recruiter&nbsp;relationships.</div>

@@ -41,7 +41,7 @@ class Recruiter extends Component {
                         <div data-aos="fade-down">I'm inviting you to make an even bigger splash in your market</div>
                         <div data-aos="fade-up">& join the whales of recruitment.</div>
                     </div> 
-                    <Link to='signUpFormRecruiter'><div data-aos="fade-up" className="signUpBtnHome">Recruiter RSVP</div></Link>
+                    <Link to='signUpFormRecruiter'><div className="signUpBtnHome">Recruiter RSVP</div></Link>
 
                 </div>
 

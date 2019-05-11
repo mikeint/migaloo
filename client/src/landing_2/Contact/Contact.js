@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import './Contact.css'
+import './Contact.scss'
 import axios from 'axios'
 import AOS from 'aos'
 import 'aos/dist/aos.css' 
@@ -96,7 +96,7 @@ class Contact extends Component {
                             </div> 
                             <div className="submitContainer">
                                 {this.state.sending ?
-                                    <Loader sprayColor="#fff" />
+                                    <Loader sprayColor="#bac1c9" />
                                 :
                                     buttonSpot
                                 }

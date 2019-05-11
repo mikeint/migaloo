@@ -59,8 +59,7 @@
     .signUpBtnHome {
         cursor: pointer;  
         padding: 10px 25px; 
-        text-align: center;
-        cursor: pointer;
+        text-align: center; 
         outline: none;
         color: #fff;
         background: #dea3d4;
@@ -71,7 +70,7 @@
         transition: 0.3s;
         &:hover {
             background-color: #96b4be;
-            box-shadow: 0 5px #666;
+            box-shadow: 0 5px#666;
             transform: translateY(4px); 
         }
     } 
