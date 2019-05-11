@@ -89,8 +89,9 @@ class JobDescription extends React.Component{
 
     constructor(props){
         super(props);
+        this.Auth = new AuthFunctions();
         this.state={ 
-            user: {},
+            user: this.Auth.getUser(),
             profileImage: '',
             candidateId: props.match.params.candidateId,
             jobId: props.match.params.jobId,
@@ -101,12 +102,8 @@ class JobDescription extends React.Component{
             openJobPageState: false,
             candidateList:[]
         }
-        this.Auth = new AuthFunctions();
     } 
     componentDidMount = () => {
-        this.setState({ user: this.Auth.getUser() }, ()=>{
-            this.getImage();
-        });
         this.getJobData();
         this.listCandidates();
     }
@@ -119,7 +116,7 @@ class JobDescription extends React.Component{
             get('/api/recruiterJobs/get/'+this.state.jobId))
         .then((res)=>{
             if(res && res.data.success){
-                console.log(res.data)
+                this.getImage();
                 const jobList = res.data.jobList;
                 const candidateData = res.data.candidate;
                 this.setState({
@@ -146,12 +143,12 @@ class JobDescription extends React.Component{
             get(`/api/profileImage/view/2/${this.state.jobObj.company_id}/small`)
             .then((res)=>{
                 if(res == null) return
-            if(res.data.success){
-                this.setState({ profileImage: res.data.url }) 
-            }else{
-                this.setState({ profileImage: '' })
-            }
-        }).catch(errors => {
+                if(res.data.success){
+                    this.setState({ profileImage: res.data.url }) 
+                }else{
+                    this.setState({ profileImage: '' })
+                }
+            }).catch(errors => {
                 this.setState({ profileImage: '' })
             })
         }
@@ -201,9 +198,7 @@ class JobDescription extends React.Component{
                         <div className={classes.jobCaption}>{this.state.jobObj.caption}</div>
                         <h3>{this.state.jobObj.company_name}</h3>
                         <p>
-                            {this.state.jobObj.address_line_1}<br/>
-                            {this.state.jobObj.address_line_2}<br/>
-                            {[this.state.jobObj.city, this.state.jobObj.state, this.state.jobObj.country].filter(d=>d!=null).join(", ")}
+                            {[this.state.jobObj.address_line_1, this.state.jobObj.address_line_2, this.state.jobObj.city, this.state.jobObj.state, this.state.jobObj.country].filter(d=>d!=null).join(", ")}
                         </p>
                         <h5>Experience: {this.state.jobObj.experience_type_name}</h5>
                         <span className={classes.jobSalary}>Salary: {this.state.jobObj.salary_type_name}</span> 

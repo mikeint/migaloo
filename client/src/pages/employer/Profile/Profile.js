@@ -1,16 +1,48 @@
 import React from 'react';
-import './Profile.css';  
-import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import AuthFunctions from '../../../AuthFunctions';  
 import { Redirect } from 'react-router-dom';
 import {get, cancel, getNewAuthToken} from '../../../ApiCalls';  
-import UploadImage from '../../../components/UploadImage/UploadImage'; 
 import defaultProfileImage from '../../../files/images/profile.png'
+import { withStyles } from '@material-ui/core/styles';
+import MenuItem from '@material-ui/core/MenuItem';
+import Drawer from '@material-ui/core/Drawer';
+import EditProfile from './EditProfile/EditProfile';  
 
+const styles = theme => ({
+    dataContainer: {
+        paddingTop: "20px",
+        textAlign: "center",
+    },
+    profileImage: {
+        textAlign: "center",
+        display: "inline-block",
+        width: "20vh",
+        height: "20vh",
+        borderRadius: "50%",
+        border: "4px solid grey",
+        boxShadow: "0px 0px 2px 2px #263c54",
+    },
+    nameRow: {
+        fontSize: "32px",
+        fontWeight: "bold", 
+        width: "340px",
+        margin: "auto", 
+    },
+    dataRow: {
+        fontSize: "20px",
+        paddingBottom: "10px",  
+    },
+    menuItem: {  
+        fontWeight: "bold",
+        fontSize: "20px", 
+        color: "#000",
+        borderBottom: "1px solid #5a6592",
+    }, 
+})
 class Profile extends React.Component{
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.Auth = new AuthFunctions();
         this.state={ 
             logout: false, 
@@ -18,8 +50,8 @@ class Profile extends React.Component{
             user: this.Auth.getUser(),
             profile: '',
             profileInfo: {},
-            showUpload:false,
-            profileImage: defaultProfileImage
+            profileImage: defaultProfileImage,
+            openEditProfile: false
         }
     } 
 
@@ -30,33 +62,30 @@ class Profile extends React.Component{
         this.getProfileInfo();
         this.getImage();
     }
+    handleEditProfileClose(didChange) {
+        this.setState({
+            openEditProfile: false
+        })
+        if(didChange){
+            this.getProfileInfo();
+            this.getImage();
+        }
+    }
     handleLogout = () => { 
-        Swal.fire({
-            title: 'Are you sure?', 
-            showCancelButton: true,
-            confirmButtonText: 'Yes, logout',
-            cancelButtonText: 'No'
-        }).then((result) => {
-            if (result.value) {
-                this.Auth.logout();
-                getNewAuthToken();
-                this.setState({logout: true})
-            } 
-        }) 
+        this.Auth.logout();
+        getNewAuthToken();
+        this.setState({logout: true})
     }
 
     getProfileInfo = () => {
         get('/api/accountManager/getProfile')
         .then((res)=>{    
-            if(res == null) return
-            this.setState({ profileInfo: res.data }) 
+            if(res != null && res.data.success) {
+                this.setState({ profileInfo: res.data.profile }) 
+            }
         }).catch(errors => 
             console.log(errors.response.data)
         )
-    }
-    handleClose = (err, d) => {
-        this.setState({showUpload:false});
-        this.getImage();
     }
     getImage = () => {
         get('/api/profileImage/view/medium')
@@ -71,11 +100,9 @@ class Profile extends React.Component{
             this.setState({ profileImage: defaultProfileImage })
         })
     }
-    showUpload = () => {
-        this.setState({showUpload:true})
-    }
 
     render(){
+        const { classes } = this.props;
         
         if (this.state.logout) {
             return <Redirect to='/login' />
@@ -83,29 +110,33 @@ class Profile extends React.Component{
         
         return (
             <React.Fragment>
-                <div className="profileContainer_employer">
-                    <div className='profileImageContainer'>
-                        <img  className='profileImage' src={this.state.profileImage} alt="" onClick={this.showUpload}/>
-                        <div className="profileName">{this.state.profileInfo.first_name} {this.state.profileInfo.last_name}</div>
-                        <div className="profileEmail">{this.state.user.email}<br/>{this.state.profileInfo.phone_number}</div>
-                        <div className="profileEmail">
-                        {[this.state.profileInfo.address_line_1, this.state.profileInfo.city, this.state.profileInfo.state, this.state.profileInfo.country].filter(d=>d).join(", ")}
+                <div>
+                    <div className={classes.dataContainer}>
+                        <img className={classes.profileImage} src={this.state.profileImage} alt="Profile Image"/>
+                        <div className={classes.nameRow}>{this.state.profileInfo.firstName} {this.state.profileInfo.lastName}</div>
+                        <div className={classes.dataRow}>{this.state.user.email}</div>
+                        <div className={classes.dataRow}>{this.state.profileInfo.phoneNumber}</div>
+                        <div className={classes.dataRow}>
+                            {[this.state.profileInfo.addressLine1, this.state.profileInfo.addressLine2, this.state.profileInfo.city, this.state.profileInfo.state, this.state.profileInfo.country].filter(d=>d).join(", ")}
                         </div>
-                        <div className="profileName"></div>
                     </div>
-                    <div className='profileBottom'>
-                        <div className="profileItem">Account info</div>
-                        <div className="profileItem" onClick={this.handleLogout}>Log Out</div>
-                    </div> 
-                    {this.state.showUpload?<UploadImage 
-                                                baseUrl={"/api/accountManager/"}
-                                                uploadUrl={"uploadImage/"}
-                                                handleClose={this.handleClose} />:''}                    
+                    <MenuItem className={classes.menuItem} onClick={()=>this.setState({openEditProfile: true})}>Edit Account info</MenuItem>
+                    <MenuItem className={classes.menuItem}>Edit Notification Settings</MenuItem>
+                    <MenuItem className={classes.menuItem} onClick={this.handleLogout}>Log Out</MenuItem>
                 </div> 
 
+                <Drawer
+                    anchor="bottom"
+                    open={this.state.openEditProfile}
+                    onClose={this.handleEditProfileClose.bind(this)}
+                    >
+                    <EditProfile
+                        defaultData={this.state.profileInfo}
+                        onClose={this.handleEditProfileClose.bind(this)} />
+                </Drawer>
             </React.Fragment>
         );
     }
 };
 
-export default Profile;
+export default withStyles(styles)(Profile);  

@@ -15,6 +15,7 @@ const styles = theme => ({
         boxShadow: "0px 0px 2px 2px #263c54"
     }
 })
+const validTypes = ["company", "accountManager", "recruiter"]
 class ModifiableProfileImage extends React.Component{ 
 
     constructor(props) {
@@ -22,8 +23,10 @@ class ModifiableProfileImage extends React.Component{
 		this.state = {
             showUpload: false,
             profileImage: defaultProfileImage,
-            type:props.type || 'person'
+            type:props.type
         };
+        if(!validTypes.includes(props.type))
+            console.error(`${props.type} is not a valid type in ModifiableProfileImage`)
     }
     componentDidMount = () => {
         this.getImage();
@@ -54,7 +57,7 @@ class ModifiableProfileImage extends React.Component{
             <React.Fragment>
                 <img  className={classes.profileImage} src={this.state.profileImage} alt="" onClick={this.showUpload}/>
                 {this.state.showUpload?<UploadImage 
-                                            baseUrl={"/api/employer/"}
+                                            baseUrl={`/api/${this.state.type}/`}
                                             uploadUrl={"uploadImage/"}
                                             handleClose={this.handleClose} />:''}   
             </React.Fragment>

@@ -67,15 +67,15 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
     }
     
     postgresdb.one('\
-        SELECT email, first_name, last_name, \
-            phone_number, ac.image_id, \
-            address_line_1, address_line_2, city, state, country \
+        SELECT email, first_name as "firstName", last_name as "lastName", \
+            phone_number as "phoneNumber", ac.image_id, \
+            address_line_1 as "addressLine1", address_line_2 as "addressLine2", city, state, country \
         FROM account_manager ac \
         INNER JOIN login l ON l.user_id = ac.account_manager_id \
         LEFT JOIN address a ON a.address_id = ac.address_id \
         WHERE ac.account_manager_id = $1', [jwtPayload.id])
     .then((data) => {
-        res.json(data)
+        res.json({success: true, profile:data})
     })
     .catch(err => {
         logger.error('Get Profile', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

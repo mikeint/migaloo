@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS messages_base;
 DROP TABLE IF EXISTS messages_subject;
 DROP TABLE IF EXISTS messages_type;
 DROP TABLE IF EXISTS transactions; -- To Remove
+DROP TABLE IF EXISTS notification_settings;
 DROP TABLE IF EXISTS notification;
 DROP TABLE IF EXISTS notification_topic;
 DROP TABLE IF EXISTS posting_tags;
@@ -416,6 +417,34 @@ CREATE TABLE notification (
     user_id bigint REFERENCES login(user_id),
     PRIMARY KEY(notification_id)
 );
+CREATE TABLE notification_settings (
+    user_id bigint REFERENCES login(user_id),
+    topic_id int REFERENCES notification_topic(topic_id),
+    email boolean default true,
+    notification boolean default true,
+    PRIMARY KEY(user_id, topic_id)
+);
+CREATE INDEX notification_settings_idx ON notification_settings(user_id);
+
+CREATE OR REPLACE FUNCTION notification_settings_setup_pr() RETURNS trigger AS $$
+DECLARE 
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        INSERT INTO notification_settings(user_id, topic_id)
+            SELECT NEW.user_id, topic_id
+            FROM notification_topic
+            WHERE user_type_id = NEW.user_type_id;
+        RETURN NEW;
+    END IF;
+END;
+$$ LANGUAGE PLPGSQL;
+
+Create trigger notification_settings_setup_tgr
+After Insert
+on login
+FOR EACH ROW
+EXECUTE PROCEDURE notification_settings_setup_pr();
+
 CREATE TABLE tag_type (
     tag_type_id serial UNIQUE,
     tag_type_name varchar(64) NOT NULL,
