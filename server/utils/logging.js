@@ -15,9 +15,10 @@ if (NODE_ENV == 'producation') {
         logStreamName: hostname,
         createLogGroup: false,
         createLogStream: true,
-        formatLog: function (item) {
-            return item.level + ': ' + item.message + ' ' + JSON.stringify(item.meta)
-        }
+        jsonMessage: true,
+        // formatLog: function (item) {
+        //     return item.level + ': ' + item.message + ' ' + JSON.stringify(item.meta)
+        // }
     }
     // Create transport layer to cloud watch
     logger.add(new WinstonCloudWatch(config));
@@ -29,9 +30,10 @@ if (NODE_ENV == 'producation') {
         logStreamName: hostname,
         createLogGroup: false,
         createLogStream: true,
-        formatLog: function (item) {
-            return item.level + ': ' + item.message + ' ' + JSON.stringify(item.meta)
-        }
+        jsonMessage: true,
+        // formatLog: function (item) {
+        //     return item.level + ': ' + item.message + ' ' + JSON.stringify(item.meta)
+        // }
     }
     // Create transport layer to cloud watch
     logger.add(new WinstonCloudWatch(config));
