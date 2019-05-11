@@ -27,15 +27,15 @@ class HowItWorks extends Component {
                             <div className="aos-animate">  
                                 <div className="module_content">
                                     <h1>Sign up</h1>
-                                    <p>Employers sign up to see a short list of vetted candidates from the top recruiters in their area. Recruiters sign up to gain access to exclusive job requisitions from employers anxious to win the war for&nbsp;talent.</p>
+                                    <p>Employer creates their profile which outlines details that help our system get to know them and their&nbsp;company.</p>
                                 </div>
                             </div>
                         </div>
                         <div className="module_wrapper whiteBG">
                             <div className="aos-animate"> 
                                 <div className="module_content">
-                                    <h1>Submit Candidate</h1>
-                                    <p>Recruiters submit their most qualified candidate(s) for each requisition for&nbsp;review.</p>
+                                    <h1>Post Job</h1>
+                                    <p>Take a couple of minutes to fill out a job profile and save to&nbsp;submit.</p>
                                 </div> 
                             </div>
                             <div className="aos-animate"> 
@@ -48,16 +48,16 @@ class HowItWorks extends Component {
                             </div>
                             <div className="aos-animate">  
                                 <div className="module_content">
-                                    <h1>ShortList</h1>
-                                    <p>The list of submissions from top recruiters is distilled by migaloo and organized into a shortlist that is then sent to the employer in an organized&nbsp;fashion.</p>
+                                    <h1>View Shortlist</h1>
+                                    <p>Get notified when you’ve been sent a shortlist and let us know who you would like to&nbsp;interview.</p>
                                 </div> 
                             </div>
                         </div>
                         <div className="module_wrapper whiteBG">
                             <div className="aos-animate">  
                                 <div className="module_content">
-                                    <h1>Engage</h1>
-                                    <p>Employer gives a “thumbs up” on candidate(s) from migaloo’s shortlist, subsequently opening their schedule up for interview times.  Recruiter is informed and next steps are organized through the concierge&nbsp;service.</p>
+                                    <h1>Hired!</h1>
+                                    <p>Let Migaloo lift the weight every hire.</p>
                                 </div> 
                             </div>
                             <div className="aos-animate">  
@@ -80,7 +80,7 @@ class HowItWorks extends Component {
                             <div data-aos="fade-left"> 
                                 <div className="module_content">
                                     <h1>Sign up</h1>
-                                    <p>Employers sign up to post jobs exclusively to third-party recruiters. Recruiters sign up to gain access to jobs posted by employers seeking third-party recruitment&nbsp;services.</p>
+                                    <p>Employer creates their profile which outlines details that help our system get to know them and their&nbsp;company.</p>
                                 </div>
                             </div>
                         </div>
@@ -90,8 +90,8 @@ class HowItWorks extends Component {
                             </div>
                             <div data-aos="fade-left"> 
                                 <div className="module_content">
-                                    <h1>Submit Profile</h1>
-                                    <p>Recruiters submit their top candidate profiles along with terms and conditions to relevant job&nbsp;postings</p>
+                                    <h1>Post Job</h1>
+                                    <p>Take a couple of minutes to fill out a job profile and save to&nbsp;submit.</p>
                                 </div> 
                             </div>
                         </div>
@@ -101,8 +101,8 @@ class HowItWorks extends Component {
                             </div>
                             <div data-aos="fade-left"> 
                                 <div className="module_content">
-                                    <h1>Review List</h1>
-                                    <p>Employer reviews the credit-based, organized list and picks the candidate(s) that they wish to move forward with based on their profile and the recruiters terms and&nbsp;conditions</p>
+                                    <h1>View Shortlist</h1>
+                                    <p>Get notified when you’ve been sent a shortlist and let us know who you would like to&nbsp;interview.</p>
                                 </div> 
                             </div>
                         </div>
@@ -112,8 +112,8 @@ class HowItWorks extends Component {
                             </div>
                             <div data-aos="fade-left"> 
                                 <div className="module_content">
-                                    <h1>Engage</h1>
-                                    <p>Employer can reach out to the recruiter(s) they’ve chosen to engage based on their candidate profile submission and terms and conditions via our messaging app, email, or&nbsp;phone</p>
+                                    <h1>Hired!</h1>
+                                    <p>Let Migaloo lift the weight every hire.</p>
                                 </div> 
                             </div>
                         </div> 

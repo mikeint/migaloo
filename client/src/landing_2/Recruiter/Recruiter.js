@@ -22,6 +22,7 @@ class Recruiter extends Component {
                         <div data-aos="fade-down">Hi there ! I'm Migaloo,</div>
                         <div data-aos="fade-up">the whale of recruitment</div>
                     </div>
+                    
                     <div className="paragraphContainer" data-aos="zoom-in" data-aos-offset="-200"> 
                         <div className="paragraph" data-aos="zoom-in-right">I'm here to help you save time & make more&nbsp;placements.</div>
                         <div className="paragraph" data-aos="zoom-in-left" data-aos-delay="250">I believe every great recruiter deserves a whale on their side who can who can add relevant, retained jobs to their&nbsp;pipeline.</div>
