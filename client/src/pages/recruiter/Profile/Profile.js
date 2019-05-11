@@ -112,7 +112,7 @@ class Profile extends React.Component{
             <React.Fragment>
                 <div>
                     <div className={classes.dataContainer}>
-                        <img className={classes.profileImage} src={this.state.profileImage} alt="Profile Image"/>
+                        <img className={classes.profileImage} src={this.state.profileImage} alt="Profile"/>
                         <div className={classes.nameRow}>{this.state.profileInfo.firstName} {this.state.profileInfo.lastName}</div>
                         <div className={classes.dataRow}>{this.state.user.email}</div>
                         <div className={classes.dataRow}>{this.state.profileInfo.phoneNumber}</div>
