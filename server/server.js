@@ -1,6 +1,8 @@
+const NODE_ENV = process.env.NODE_ENV || 'dev';
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+
 const auth = require('./routes/auth');
 const landing = require('./routes/landing');
 const mailto = require('./utils/mailto');  
@@ -14,25 +16,17 @@ const candidate = require('./routes/candidate');
 const notifications = require('./routes/notifications');  
 const profileImage = require('./routes/profileImage');  
 const message = require('./routes/message');  
-
 const resume = require('./routes/resume');  
 const autocomplete = require('./routes/autocomplete');  
 //const testAPI = require('./routes/testAPI'); 
 const passport = require('./config/passport'); 
-const cors = require('cors');
-const methodOverride = require('method-override');
 
 const app = express();
-
-var logger = require('morgan');
-app.use(logger('dev'));
-app.use(cors());
 
 app.use(bodyParser.urlencoded({
     extended: false
 }))
 app.use(bodyParser.json())
-app.use(methodOverride('_method')); 
 
 // Passport middleware
 passport.init(app);
@@ -54,6 +48,17 @@ app.use('/api/profileImage', profileImage);
 app.use('/api/autocomplete', autocomplete);
 app.use('/api/resume', resume);
 app.use('/api/message', message);
+
+// Server the frontend from node
+if (NODE_ENV == 'test' || NODE_ENV == 'production') {
+    app.use(express.static(path.join(__dirname, '../client/build')));
+    app.get('*', (req,res) =>{
+        res.sendFile(path.join(__dirname, '../client/build/index.html'));
+    });
+}else{
+    var logger = require('morgan');
+    app.use(logger('dev'));
+}
 //app.use('/testAPI', testAPI);
 
 
