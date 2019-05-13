@@ -66,7 +66,7 @@ class HowItWorks extends Component {
                         </div>
                         <div className="module_wrapper">
                             <div className="aos-animate"> 
-                                <div className="module_img module_img3"></div>
+                                <div className="module_img module_img5"></div>
                             </div>
                             <div className="aos-animate">  
                                 <div className="module_content">
@@ -130,7 +130,7 @@ class HowItWorks extends Component {
                         </div> 
                         <div className="module_wrapper">
                             <div data-aos="fade-right"> 
-                                <div className="module_img module_img3"></div>
+                                <div className="module_img module_img5"></div>
                             </div>
                             <div data-aos="fade-left"> 
                                 <div className="module_content">
