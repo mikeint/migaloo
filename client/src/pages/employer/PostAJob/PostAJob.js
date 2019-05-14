@@ -1,5 +1,4 @@
 import React from 'react';
-import './PostAJob.css'; 
 import { Redirect } from 'react-router-dom';
 
 import AuthFunctions from '../../../AuthFunctions'; 
@@ -36,6 +35,20 @@ const styles = theme => ({
     textAreaMaxHeight:{
         width: "100%",
         margin: "10px"
+    },
+    postAJobContainer: {
+        padding: "20px",
+        color: theme.palette.primary.main,
+        display: "flex"
+    },
+    formSection: {
+        margin: "auto auto 25px auto",
+        width: "100%",
+        maxWidth: "1000px"
+    },
+    input2: {
+        display: "flex",
+        flexWrap: "wrap"
     }
 })
 const errorText = [
@@ -144,9 +157,9 @@ class PostAJob extends React.Component{
             <React.Fragment>
                 {this.state.redirect ? <Redirect to='/employer/activeJobs' /> : ''}
                 <div className="pageHeading">Post a job</div> 
-                <div className="postAJobContainer">
-                    <div className="formSection">
-                        <div className="input-2">  
+                <div className={classes.postAJobContainer}>
+                    <div className={classes.formSection}>
+                        <div className={classes.input2}>  
                             <FormControl
                                     className={classes.selectFormControl}
                                     {...(this.formValidation.hasError("employer").error?{error:true}:{})}>
@@ -169,7 +182,7 @@ class PostAJob extends React.Component{
                                 <FormHelperText>{this.formValidation.hasError("employer").helperText}</FormHelperText>
                             </FormControl>
                         </div>
-                        <div className="input-2">
+                        <div className={classes.input2}>  
                             <TextField
                                 name="title"
                                 label="Title"
@@ -181,7 +194,7 @@ class PostAJob extends React.Component{
                                 {...this.formValidation.hasError("title")}
                             />
                         </div>  
-                        <div className="input-2">
+                        <div className={classes.input2}>  
                             <TextField
                                 name="caption"
                                 label="Description"
@@ -201,7 +214,7 @@ class PostAJob extends React.Component{
                             <TagSearch onChange={(tags)=>this.setState({tagIds:tags}, this.formValidation.shouldRevalidate)}
                                     {...this.formValidation.hasError("tagIds")}/>
                         </div>
-                        <div className="input-2">
+                        <div className={classes.input2}>  
                             <FormControl
                                     className={classes.selectFormControl}
                                     {...(this.formValidation.hasError("salary").error?{error:true}:{})} >

@@ -14,7 +14,7 @@ const postingTagsInsertHelper = new pgp.helpers.ColumnSet(['post_id', 'tag_id'],
 
 /**
  * Create a new job posting for the employer
- * @route POST api/postings/create
+ * @route POST api/employerPostings/create
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -86,7 +86,7 @@ router.post('/create', passport.authentication,  (req, res) => {
 
 /**
  * List all job postings from an employer
- * @route POST api/postings/list
+ * @route POST api/employerPostings/list
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -164,8 +164,93 @@ function postListing(req, res){
 }
 
 /**
+ * List all recruiters assigned to job postings
+ * @route POST api/employerPostings/listRecruiters
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/listRecruiters/:postId', passport.authentication, listRecruiters);
+function listRecruiters(req, res){
+    var postId = req.params.postId;
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 2){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(postId == null){
+        const errorMessage = "Missing postId"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    postgresdb.any('\
+        SELECT j.post_id, r.first_name, r.last_name, coalesce(rc.candidate_count, 0) as candidate_count, \
+            j.response, j.recruiter_created_on \
+        FROM job_posting j \
+        LEFT JOIN ( \
+            SELECT cp.recruiter_id, count(1) as candidate_count \
+            FROM candidate_posting cp \
+            WHERE cp.post_id = ${postId} \
+            GROUP BY cp.recruiter_id \
+        ) rc ON rc.recruiter_id = j.recruiter_id \
+        INNER JOIN recruiter r ON r.recruiter_id = j.recruiter_id \
+        WHERE j.post_id = ${postId} AND j.active \
+        ORDER BY j.created_on DESC', {postId:postId})
+    .then((data) => {
+        // Marshal data
+        data = data.map(m=>{
+            var timestamp = moment(m.recruiter_created_on)
+            var ms = timestamp.diff(moment());
+            m.recruiter_created = moment.duration(ms).humanize() + " ago";
+            m.recruiter_created_on = timestamp.format("x");
+            return m
+        })
+        res.json({success:true, recruiters:data})
+    })
+    .catch(err => {
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+}
+/**
+ * List all recruiters assigned to job postings
+ * @route POST api/employerPostings/listNewRecruiters
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/listNewRecruiters/:postId', passport.authentication, listNewRecruiters);
+function listNewRecruiters(req, res){
+    var postId = req.params.postId;
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 2){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(postId == null){
+        const errorMessage = "Missing postId"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    postingAssign.findRecruitersForPost(postId)
+    .then((data) => {
+        res.json({success:true, recruiters:data})
+    })
+    .catch(err => {
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+}
+
+/**
  * Set posting to be considered read
- * @route POST api/postings/setRead/:postId/:candidateId
+ * @route POST api/employerPostings/setRead/:postId/:candidateId
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -210,7 +295,7 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
 });
 /**
  * Set posting to be considered accepted or not accepted by the account manager
- * @route POST api/postings/setAcceptedPhase1/:postId/:candidateId/:recruiterId
+ * @route POST api/employerPostings/setAcceptedPhase1/:postId/:candidateId/:recruiterId
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -282,7 +367,7 @@ router.post('/setAccepted/migaloo/:postId/:candidateId/:recruiterId', passport.a
 });
 /**
  * Set posting to be considered accepted or not accepted by the employer
- * @route POST api/postings/setAcceptedState/:postId/:candidateId/:recruiterId
+ * @route POST api/employerPostings/setAcceptedState/:postId/:candidateId/:recruiterId
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -339,7 +424,7 @@ router.post('/setAccepted/employer/:postId/:candidateId/:recruiterId', passport.
 });
 /**
  * Set posting to be considered accepted or not accepted by the job
- * @route POST api/postings/setAcceptedState/:postId/:candidateId/:recruiterId
+ * @route POST api/employerPostings/setAcceptedState/:postId/:candidateId/:recruiterId
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -396,7 +481,7 @@ router.post('/setAccepted/job/:postId/:candidateId/:recruiterId', passport.authe
 });
 /**
  * Set posting to be hidden
- * @route POST api/postings/hide
+ * @route POST api/employerPostings/hide
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -436,7 +521,7 @@ router.post('/hide', passport.authentication,  (req, res) => {
 });
 /**
  * Set posting to be removed
- * @route POST api/postings/remove
+ * @route POST api/employerPostings/remove
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -477,7 +562,7 @@ router.post('/remove', passport.authentication,  (req, res) => {
 
 /**
  * List candidates for a job posting
- * @route POST api/postings/listCandidates/:postId
+ * @route POST api/employerPostings/listCandidates/:postId
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -527,7 +612,7 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
 });
 /**
  * List recruiters assigned to a job posting
- * @route POST api/postings/listRecruiters/:postId
+ * @route POST api/employerPostings/listRecruiters/:postId
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -566,6 +651,47 @@ router.get('/listRecruiters/:postId', passport.authentication,  (req, res) => {
             return m
         })
         res.json({success:true, recruiterList:data})
+    })
+    .catch(err => {
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+});
+/**
+ * Assign recruiter to a job posting
+ * @route POST api/employerPostings/addRecruiter
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/addRecruiter', passport.authentication,  (req, res) => {
+    const jwtPayload = req.body.jwtPayload;
+    const postId = req.body.postId
+    const recruiterId = req.body.recruiterId
+    if(jwtPayload.userType != 2){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(postId == null){
+        const errorMessage = "Missing postId"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(recruiterId == null){
+        const errorMessage = "Missing recruiterId"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+
+    postingAssign.assignJobToRecruiter([{
+        recruiter_id:recruiterId,
+        post_id:postId
+    }])
+    .then((data) => {
+        res.json({success:true})
     })
     .catch(err => {
         logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

@@ -3,12 +3,17 @@ import {get, post} from '../../../../ApiCalls';
 import AuthFunctions from '../../../../AuthFunctions';  
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js'
 import CandidateView from './CandidateView/CandidateView';
+import RecruiterView from './RecruiterView/RecruiterView';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';  
 import Close from '@material-ui/icons/Close';
 import red from '@material-ui/core/colors/red';
 import classNames from 'classnames';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+import AddRecruiter from './AddRecruiter/AddRecruiter';
 
 const styles = theme => ({
     button:{ 
@@ -56,7 +61,8 @@ class JobPopUp extends React.Component{
 		this.state = {
             postId: props.obj.post_id,
             onClose: props.onClose,
-            candidateList: []
+            candidateList: [],
+            tabValue: 0
         };
         this.Auth = new AuthFunctions();
     }
@@ -131,6 +137,9 @@ class JobPopUp extends React.Component{
             } 
           })
     }
+    handleTabChange = (event, tabValue) => {
+        this.setState({ tabValue });
+    };
     render(){ 
 
         const { classes } = this.props; 
@@ -150,13 +159,24 @@ class JobPopUp extends React.Component{
                     {jobObj.tag_names?<p>Tags: {jobObj.tag_names.join(", ")}</p>:''}
                     <p>Created: {jobObj.created}</p>
                 </div> 
-                <div>
+                <Tabs variant="fullWidth" value={this.state.tabValue} onChange={this.handleTabChange}>
+                    <Tab label="Candidates" />
+                    <Tab label="Recruiters" />
+                    <Tab label="Add Recruiter" />
+                </Tabs>
+                {this.state.tabValue === 0 && <Typography component="div" style={{ padding: 24 }}>
                     {
                         this.state.candidateList.map((d, i)=>{
                             return <CandidateView obj={d} job={jobObj} key={i}/>
                         })
                     }
-                </div>
+                </Typography>}
+                {this.state.tabValue === 1 && <Typography component="div" style={{ padding: 24 }}>
+                    <RecruiterView job={jobObj} />
+                </Typography>}
+                {this.state.tabValue === 2 && <Typography component="div" style={{ padding: 24 }}>
+                    <AddRecruiter job={jobObj} />
+                </Typography>}
                 <div className={classes.buttonContainer}>
                     <Button
                         variant="contained"

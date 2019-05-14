@@ -95,7 +95,7 @@ router.post('/login', (req, res) => {
         }
     })
     .catch(err => {
-        logger.error('Error in sql', {tags:['login', 'sql'], email:email, ip:loginIp, error:err})
+        logger.error('Error in sql', {tags:['login', 'sql'], email:email, ip:loginIp, error:err.message||err})
         res.status(500).json({success: false, error:err})
     });
     // }
@@ -180,11 +180,11 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                         }
                     })
                     .catch(err => {
-                        logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err});
+                        logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err.message || err});
                         res.status(500).json({success: false, error:err})
                     })
                 }).catch((err)=>{
-                    logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err});
+                    logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err.message || err});
                     return res.status(500).json({success: false, error:err})
                 });
             }, (err)=>{
@@ -193,7 +193,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
             })
         }
     }).catch((err)=>{
-        logger.error('Error checking for registered email', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, error:err});
+        logger.error('Error checking for registered email', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, error:err.message || err});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -227,7 +227,7 @@ router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt 
         res.json({success:true})
     })
     .catch(err => {
-        logger.error('Error sending password reset', {tags:['login', 'password', 'sql'], url:req.originalUrl, email:email, ip:ip, error:err});
+        logger.error('Error sending password reset', {tags:['login', 'password', 'sql'], url:req.originalUrl, email:email, ip:ip, error:err.message || err});
         res.status(500).json({success:false, error:err})
     });
 });
@@ -250,11 +250,11 @@ router.post('/verifyEmail', /*passport.authentication,*/ (req, res) => {
                 res.json({success:true})
             })
             .catch(err=>{
-                logger.error('Error recieving email verification', {tags:['register', 'sql'], url:req.originalUrl, userId:userId, ip:ip, error:err});
+                logger.error('Error recieving email verification', {tags:['register', 'sql'], url:req.originalUrl, userId:userId, ip:ip, error:err.message || err});
                 res.status(500).json({success:false, error:err})
             })
     }).catch(err=>{
-        logger.error('Error recieving email verification', {tags:['register', 'sql'], url:req.originalUrl, userId:userId, ip:ip, error:err});
+        logger.error('Error recieving email verification', {tags:['register', 'sql'], url:req.originalUrl, userId:userId, ip:ip, error:err.message || err});
         res.status(500).json({success:false, error:err})
     })
 });
@@ -272,7 +272,7 @@ function sendEmailVerification(id, email, ip){
             resolve()
         })
         .catch((err)=>{
-            logger.error('Error sending email verification', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:ip, error:err});
+            logger.error('Error sending email verification', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:ip, error:err.message || err});
             reject(err)
         });
     })

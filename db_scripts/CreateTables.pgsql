@@ -41,7 +41,7 @@ DROP TABLE IF EXISTS tags_equality;
 DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS tag_type;
 DROP TABLE IF EXISTS location_type;
-
+DROP TABLE IF EXISTS job_type;
 
 CREATE OR REPLACE FUNCTION array_intersects(a1 bigint[], a2 bigint[]) returns boolean as $$
 declare
@@ -191,10 +191,18 @@ CREATE TABLE rate_recruiter (
     rating int NOT NULL,
     PRIMARY KEY(recruiter_id, user_id)
 );
+
+CREATE TABLE job_type (
+    job_type_id serial,
+    job_type_name varchar(64) NOT NULL,
+    PRIMARY KEY(job_type_id)
+);
+
 CREATE TABLE job_posting_all (
     post_id bigserial,
     company_id bigint REFERENCES company(company_id),
     salary_type_id int REFERENCES salary_type(salary_type_id),
+    job_type_id int REFERENCES job_type(job_type_id),
     title varchar(255) NOT NULL,
     caption text NOT NULL,
 	created_on timestamp default NOW(),
@@ -222,7 +230,7 @@ CREATE TABLE job_recruiter_posting (
 CREATE INDEX job_recruiter_posting_idx ON job_recruiter_posting(post_id);
 
 CREATE VIEW job_posting AS 
-SELECT jpa.*, jrp.recruiter_id, jrp.created_on as recruiter_created_on
+SELECT jpa.*, jrp.recruiter_id, jrp.created_on as recruiter_created_on, jrp.response
 FROM job_posting_all jpa
 INNER JOIN job_recruiter_posting jrp ON jpa.post_id = jrp.post_id
 WHERE active AND is_visible;
@@ -557,6 +565,14 @@ INSERT INTO tag_type (tag_type_name) VALUES
     ('Operating System'),
     ('Programs'),
     ('Management Style');
+INSERT INTO job_type (job_type_name) VALUES
+    ('Software Engineer'),
+    ('Hardware Engineer'),
+    ('IT Profesional'),
+    ('Sales'),
+    ('Marketing'),
+    ('Data Scientist'),
+    ('Leadership');
     
 INSERT INTO tags (tag_name, tag_type_id) VALUES
     ('A# .NET', 2), ('A-0 System', 2), ('A+', 2), ('A++', 2), ('ABAP', 2), ('ABC', 2),
@@ -676,6 +692,11 @@ INSERT INTO login (user_id, email, passwordhash, created_on, user_type_id, email
     (104, 'e5@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
     (105, 'e6@test.com', '$2a$10$NXC07uq0myM5IARD6c4cdOtGMt21hWN1JB9w77BE1yLDUCMUO9thq', TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Account Manager, pass: test
     (106, 'e7@test.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 2, true), -- Add Employer, pass: test
+    (400, 'emp1@test.employer.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 3, true), -- Add Employer Contact
+    (401, 'emp2@test.employer.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 3, true), -- Add Employer Contact
+    (402, 'emp3@test.employer.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 3, true), -- Add Employer Contact
+    (403, 'emp4@test.employer.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 3, true), -- Add Employer Contact
+    (404, 'emp5@test.employer.com', NULL, TIMESTAMP '2019-02-20 10:23:54', 3, true), -- Add Employer Contact
     (500, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
     (501, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
     (502, NULL, NULL, TIMESTAMP '2019-02-20 10:23:54', 4, true), -- Dummy Employer, pass: test
@@ -755,7 +776,12 @@ INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES
     (106, 500, false),
     (1, 503, true),
     (2, 503, false),
-    (3, 504, true);
+    (3, 504, true),
+    (400, 500, true),
+    (401, 501, true),
+    (402, 502, true),
+    (403, 503, true),
+    (404, 504, true);
 INSERT INTO recruiter_candidate (candidate_id, recruiter_id, created_on) VALUES
     (1000, 1, NOW() - interval '1' day),
     (1001, 1, NOW() - interval '2' day),
@@ -781,7 +807,7 @@ INSERT INTO job_recruiter_posting(post_id, recruiter_id) VALUES
 
 INSERT INTO candidate_posting (post_id, candidate_id, recruiter_id, coins, created_on, migaloo_responded_on, has_seen_post, has_seen_response, migaloo_accepted, comment, denial_reason_id, denial_comment) VALUES
     (1, 1000, 1, 10, NOW() - interval '1' day, NOW() - interval '0' day, true, false, true, 'I think this Sarah would be great for the job', null, null),
-    (1, 1001, 2, 5, NOW() - interval '2' day, NOW() - interval '1' day, true, false, false, 'Amanda has all of the skills you need', 2, 'The employer cited that the expierence did not meet their requirments'),
+    (1, 1001, 1, 5, NOW() - interval '2' day, NOW() - interval '1' day, true, false, false, 'Amanda has all of the skills you need', 2, 'The employer cited that the expierence did not meet their requirments'),
     (1, 1002, 3, 1, NOW() - interval '1' day, NULL, false, false, null, 'Beth is very respectable and I think she will be a great addition to your team', null, null),
     (2, 1003, 1, 2, NOW() - interval '3' day, NOW() - interval '2' day, true, true, true, 'Stephanie meets your criteria exactly, please have a look at her resume', null, null),
     (2, 1004, 1, 20, NOW() - interval '4' day, NOW() - interval '3' day, true, false, true, null, null, null),

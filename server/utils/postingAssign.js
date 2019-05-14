@@ -67,14 +67,14 @@ function findRecruitersForPost(postId, limit=5){
      * How many jobs they are currently working on
      */
     return postgresdb.any('\
-        SELECT f.recruiter_id, f.job_count, f.logins_per_month, f.average_score_accetable_candidates, \
+        SELECT f.recruiter_id, f.first_name, f.last_name, f.job_count, f.logins_per_month, f.average_score_accetable_candidates, \
             ( \
                 greatest(1 - (f.job_count / 5), 0.0) + \
                 least(f.logins_per_month / 30, 1.0) + \
                 f.average_score_accetable_candidates \
-            ) as score \
+            ) / 3.0 as score \
         FROM ( \
-            SELECT r.recruiter_id, \
+            SELECT r.recruiter_id, r.first_name, r.last_name, \
                 coalesce(jc.job_count, 0) as job_count, \
                 coalesce(rh.logins_per_month, 0) as logins_per_month, \
                 coalesce(rt.average_score_accetable_candidates, 0) as average_score_accetable_candidates \

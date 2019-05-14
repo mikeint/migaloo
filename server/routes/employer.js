@@ -102,5 +102,45 @@ function getAccountManagers(req, res) {
         res.status(500).json({success: false, error:err})
     });
 }
+/**
+ * Get employer jwt token
+ * @route GET api/employer/generateToken
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - A list of contacts
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/generateToken', passport.authentication,  generateToken)
+function generateToken(req, res) {
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 2){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    postgresdb.one('\
+        SELECT l.user_id, l.email, c.company_name \
+        FROM company c \
+        INNER JOIN login l ON l.user_id = c.compnay_id \
+        WHERE c.active AND l.user_id = ${user_id}', {user_id:req.body.user_id})
+    .then((data) => { 
+        const randNumber = Math.trunc(Math.random()*100000000)
+        const jwtPayload = {
+            user_id: args.user_id,
+            name: args.name,
+            userType: 4,
+            email: args.email,
+            rand: randNumber
+        }
+        passport.signToken(jwtPayload, 'never').then(token=>{
+            res.json({success: true, token:token})
+        })
+    })
+    .catch(err => {
+        logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success: false, error:err})
+    });
+}
 
 module.exports = router;
