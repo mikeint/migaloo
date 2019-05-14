@@ -8,7 +8,9 @@ import BrowserTracer from './components/BrowserTracer/BrowserTracer'
 import Login from './pages/Login/Login'
 import RecruiterRouter from './pages/recruiter/RecruiterRouter'
 import EmployerRouter from './pages/employer/EmployerRouter'
+import EmployerJobPost from './pages/EmployerJobPost/EmployerJobPost'
 import AuthRouter from './pages/auth/AuthRouter'
+
 
 //Landing page 2 routes
 import Landing from './landing_2/Landing/Landing'
@@ -100,14 +102,13 @@ class App extends Component {
                             <PrivateEmployerRoute strict path="/employer" component={EmployerRouter} />
                         </Switch>
                         <Route exact path='/login' render={ () => (<Login />) } />
-                        <Route strict path="/auth" component={AuthRouter} />
+                        <Route exact path='/postJob/:token' component={EmployerJobPost} />
                         <Route exact path="/" component={Landing} />
 
                         <Route strict path="/recruiterPage" component={LandingRouter} />
                         <Route strict path="/employerPage" component={LandingRouter} />
                         <Route strict path="/landing" component={LandingRouter} />
-
- 
+                        <Route strict path="/auth" component={AuthRouter} />
                         <Route exact path="/signUpFormEmployer" component={SignUpFormEmployer} /> 
                         <Route exact path="/signUpFormRecruiter" component={SignUpFormRecruiter} /> 
                     </React.Fragment>
