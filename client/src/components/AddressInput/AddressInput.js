@@ -30,7 +30,8 @@ const styles = theme => ({
     alignment:{
         display: "flex",
         justifyContent: "center",
-        flexWrap: "wrap"
+        flexWrap: "wrap",
+        width: "100%"
     },
     secondaryAddress:{
     },
