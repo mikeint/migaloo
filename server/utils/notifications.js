@@ -10,7 +10,7 @@ const topicData = {
         title: 'Your candidate ${candidateName} has been accepted by Migaloo',
         message: '\
 Migaloo has accepted ${candidateName} for the posting\r\n${postTitle} by ${companyName}.\r\n\
-Migaloo will be passing along your clients information to ${companyName}.\
+Migaloo will be passing along your clients information to ${companyName}.\r\n\
 Someone will be in contact if there are any questions or additional steps needed.',
         params: ['companyName', 'postTitle', 'postId', 'candidateName']
     },
@@ -147,7 +147,7 @@ function addNotification(userId, templateName, params){
     const template = applyTemplate(templateName, params)
     // Add email logic, and check notification settings
     const data = userId.map(id=>{return {...template, user_id:id}})
-    console.log(data)
+    console.log('notification', data)
     const query = pgp.helpers.insert(data, addNotificationHelper)
     return postgresdb.none(query)
 }

@@ -251,19 +251,21 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
 
     postgresdb.tx(t => {
         // Will fail if not their candidate, also grab the company contacts to send notifications too
-        const q1 = t.oneOrMore('SELECT cc.company_contact_id as "userId", \
-            cp.companyName as "companyName", \
+        const q1 = t.many('SELECT \
+            cc.company_contact_id as "userId", \
+            cp.company_name as "companyName", \
             jp.title as "postTitle", \
             concat(c.first_name, \' \', c.last_name) as "name" \
         FROM recruiter_candidate rc \
         INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
         INNER JOIN job_posting jp ON rc.recruiter_id = jp.recruiter_id \
         INNER JOIN company_contact cc ON cc.company_id = jp.company_id \
+        INNER JOIN account_manager ac ON cc.company_contact_id = ac.account_manager_id \
         INNER JOIN company cp ON cc.company_id = cp.company_id \
         WHERE rc.candidate_id = ${candidate_id} AND rc.recruiter_id = ${recruiter_id} AND jp.post_id = ${post_id}',
             {candidate_id:body.candidateId, recruiter_id:jwtPayload.id, post_id: body.postId})
 
-        const q2 = t.none('INSERT INTO candidate_posting (candidate_id, post_id, recruiter_id, comment) VALUES ($1, $2, $3, $4, $5)',
+        const q2 = t.none('INSERT INTO candidate_posting (candidate_id, post_id, recruiter_id, comment) VALUES ($1, $2, $3, $4)',
                             [body.candidateId, body.postId, jwtPayload.id, body.comment])
 
         // const q3 = t.one('UPDATE recruiter SET coins = coins - $1 WHERE recruiter_id = $2 RETURNING coins',
@@ -271,9 +273,10 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
         return t.batch([q1, q2])
         .then((data)=>{
             const toNotify = data[0]
-            toNotify.forEach(d=>{
-                notifications.addNotification(d.userId, 'employerNewCandidate', d)
-            })
+            const toNotifyUsers = toNotify.map(d=>d.userId)
+            const toNotifyTemplate = toNotify[0]
+            notifications.addNotification(toNotifyUsers, 'employerNewCandidate', toNotifyTemplate)
+            
             console.log("Posted candidate")
             res.json({success: true})
         })

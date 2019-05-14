@@ -171,7 +171,7 @@ CREATE TABLE recruiter (
     first_name varchar(128) NOT NULL,
     last_name varchar(128) NOT NULL,
     phone_number  varchar(32) NULL,
-    coins int DEFAULT 0 NOT NULL CHECK (coins >= 0),
+    coins int DEFAULT 0 CHECK (coins >= 0),
     image_id varchar(128),
     active boolean default true,
     rating float default null,
@@ -293,7 +293,7 @@ CREATE TABLE candidate_posting (
     denial_reason_id int REFERENCES denial_reason(denial_reason_id),
     comment varchar(512),
     denial_comment varchar(512),
-    coins int NOT NULL CHECK (coins > 0),
+    coins int default 0 CHECK (coins >= 0),
     PRIMARY KEY(candidate_id, post_id, recruiter_id)
 );
 CREATE INDEX candidate_posting_idx ON candidate_posting(post_id, recruiter_id);
@@ -766,7 +766,7 @@ INSERT INTO candidate (candidate_id, first_name, last_name, experience_type_id, 
     (1006, 'Chris', 'Roth', 2, 5),
     (1007, 'Lukas', 'Page', 1, 4);
 INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES
-    (100, 500, true), 
+    (100, 500, true), -- Account managers
     (100, 501, true), 
     (101, 501, true),
     (102, 500, false),
@@ -774,10 +774,10 @@ INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES
     (104, 500, false),
     (105, 500, false),
     (106, 500, false),
-    (1, 503, true),
+    (1, 503, true), -- Recruiters
     (2, 503, false),
     (3, 504, true),
-    (400, 500, true),
+    (400, 500, true), -- Employer emails
     (401, 501, true),
     (402, 502, true),
     (403, 503, true),

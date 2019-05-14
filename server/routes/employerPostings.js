@@ -4,7 +4,8 @@ const passport = require('../config/passport');
 const validatePostingsInput = require('../validation/postings');  
 const moment = require('moment');
 const postingAssign = require('../utils/postingAssign')
-const logger = require('../utils/logging');
+const logger = require('../utils/logging'); 
+const notifications = require('../utils/notifications');
 
 const db = require('../config/db')
 const postgresdb = db.postgresdb
@@ -294,22 +295,33 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
     });
 });
 /**
- * Set posting to be considered accepted or not accepted by the account manager
- * @route POST api/employerPostings/setAcceptedPhase1/:postId/:candidateId/:recruiterId
+ * Set posting to be considered accepted or not accepted
+ * Type is either, migaloo/employer/job
+ * @route POST api/employerPostings/setAcceptedState/:type/:postId/:candidateId/:recruiterId
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/setAccepted/migaloo/:postId/:candidateId/:recruiterId', passport.authentication,  (req, res) => {
-    var jwtPayload = req.body.jwtPayload;
-    var postId = req.params.postId;
-    var candidateId = req.params.candidateId;
+router.post('/setAccepted/:type/:postId/:candidateId/:recruiterId', passport.authentication,  (req, res) => {
+    const jwtPayload = req.body.jwtPayload;
+    const type = req.params.type;
+    const postId = req.params.postId;
+    const candidateId = req.params.candidateId;
     var recruiterId = req.params.recruiterId;
-    var accepted = req.body.accepted
+    const accepted = req.body.accepted;
+    var denialReasonId = req.body.denialReasonId;
+    var denialComment = req.body.denialComment;
+    
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    const types = ['job', 'employer', 'migaloo']
+    if(!types.includes(type)){
+        const errorMessage = "Invalid Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
@@ -328,154 +340,99 @@ router.post('/setAccepted/migaloo/:postId/:candidateId/:recruiterId', passport.a
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
+    if(denialReasonId == null)
+        denialReasonId = null;
+    if(denialComment == null)
+        denialComment = null;
     recruiterId = parseInt(recruiterId, 10);
+    var companyData
     postgresdb.one('\
         SELECT jp.company_id \
         FROM job_posting jp \
         INNER JOIN company_contact ec ON jp.company_id = ec.company_id \
         WHERE ec.company_contact_id = ${userId} AND jp.active AND jp.post_id = ${postId} \
         LIMIT 1', {postId:postId, userId:jwtPayload.id})
-    .then(()=>{
-        return postgresdb.none('UPDATE candidate_posting SET migaloo_accepted=$1, has_seen_response=NULL, migaloo_responded_on=NOW()\
-            WHERE candidate_id = $2 AND post_id = $3 AND recruiter_id = $4', [accepted, candidateId, postId, recruiterId])
-        .then((data) => {
-            if(accepted){
-                var userId1, userId2;
-                if(recruiterId < d.employerId){
-                    userId1 = recruiterId;
-                    userId2 = d.employerId;
-                }else{
-                    userId1 = d.employerId;
-                    userId2 = recruiterId;
-                }
-                postgresdb.none('INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id) VALUES \
-                        ($1, $2, $3, $4)', [userId1, userId2, candidateId, postId])
-                .then((data) => {
-                    res.json({success:true})
-                })
-                .catch(err => {
-                    res.json({success:true}) // If this subject was already created just skip the error
-                });
-            }else
+    .then((company)=>{
+        companyData = company;
+        if(type === 'migaloo')
+            return postgresdb.none('\
+                UPDATE candidate_posting SET migaloo_accepted=${accepted}, denial_reason_id=${denialReasonId}, \
+                    denial_comment=${denialComment},\ has_seen_response=NULL, migaloo_responded_on=NOW() \
+                WHERE candidate_id = ${candidateId} AND post_id = ${postId} AND recruiter_id = ${recruiterId}',
+                {accepted:accepted, denialReasonId:denialReasonId, candidateId:candidateId, postId:postId, recruiterId:recruiterId, denialComment:denialComment})
+        else if(type === 'employer')
+            return postgresdb.none('\
+                UPDATE candidate_posting SET employer_accepted=${accepted}, denial_reason_id=${denialReasonId}, \
+                    denial_comment=${denialComment}, employer_responded_on=NOW() \
+                WHERE candidate_id = ${candidateId} AND post_id = ${postId} AND recruiter_id = ${recruiterId}',
+                {accepted:accepted, denialReasonId:denialReasonId, candidateId:candidateId, postId:postId, recruiterId:recruiterId, denialComment:denialComment})
+        else if(type === 'job')
+            return postgresdb.none('\
+                UPDATE candidate_posting SET job_accepted=${accepted}, denial_reason_id=${denialReasonId}, \
+                    denial_comment=${denialComment}, job_responded_on=NOW() \
+                WHERE candidate_id = ${candidateId} AND post_id = ${postId} AND recruiter_id = ${recruiterId}',
+                {accepted:accepted, denialReasonId:denialReasonId, candidateId:candidateId, postId:postId, recruiterId:recruiterId, denialComment:denialComment})
+        else
+            throw new Error("Type does not line up with validation")
+        
+    })
+    .then((data) => {
+        if(type === 'migaloo' && accepted){
+            var userId1, userId2;
+            if(recruiterId < companyData.company_id){
+                userId1 = recruiterId;
+                userId2 = companyData.company_id;
+            }else{
+                userId1 = companyData.company_id;
+                userId2 = recruiterId;
+            }
+            postgresdb.none('INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id) VALUES \
+                    ($1, $2, $3, $4)', [userId1, userId2, candidateId, postId])
+            .then((data) => {
                 res.json({success:true})
-        })
-    })
-    .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
-        res.status(500).json({success:false, error:err})
-    });
-});
-/**
- * Set posting to be considered accepted or not accepted by the employer
- * @route POST api/employerPostings/setAcceptedState/:postId/:candidateId/:recruiterId
- * @group postings - Job postings for employers
- * @param {Object} body.optional
- * @returns {object} 200 - Success Message
- * @returns {Error}  default - Unexpected error
- * @access Private
- */
-router.post('/setAccepted/employer/:postId/:candidateId/:recruiterId', passport.authentication,  (req, res) => {
-    var jwtPayload = req.body.jwtPayload;
-    var postId = req.params.postId;
-    var candidateId = req.params.candidateId;
-    var recruiterId = req.params.recruiterId;
-    var accepted = req.body.accepted
-    var denialReasonId = req.body.denialReasonId;
-    if(jwtPayload.userType != 2){
-        const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    if(postId == null){
-        const errorMessage = "Missing postId"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    if(candidateId == null){
-        const errorMessage = "Missing Candidate Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    if(recruiterId == null){
-        const errorMessage = "Missing Recruiter Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    if(denialReasonId == null)
-        denialReasonId = null;
-    recruiterId = parseInt(recruiterId, 10);
-    postgresdb.one('\
-        SELECT jp.company_id \
-        FROM job_posting jp \
-        INNER JOIN company_contact ec ON jp.company_id = ec.company_id \
-        WHERE ec.company_contact_id = ${userId} AND jp.active AND jp.post_id = ${postId} \
-        LIMIT 1', {postId:postId, userId:jwtPayload.id})
-    .then(()=>{
-        return postgresdb.none('UPDATE candidate_posting SET employer_accepted=$1, denial_reason_id=$2, employer_responded_on=NOW()\
-            WHERE candidate_id = $3 AND post_id = $4 AND recruiter_id = $5', [accepted, denialReasonId, candidateId, postId, recruiterId])
-        .then((data) => {
+            })
+            .catch(err => {
+                res.json({success:true}) // If this subject was already created just skip the error
+            });
+        }else
             res.json({success:true})
-        })
-    })
-    .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
-        res.status(500).json({success:false, error:err})
-    });
-});
-/**
- * Set posting to be considered accepted or not accepted by the job
- * @route POST api/employerPostings/setAcceptedState/:postId/:candidateId/:recruiterId
- * @group postings - Job postings for employers
- * @param {Object} body.optional
- * @returns {object} 200 - Success Message
- * @returns {Error}  default - Unexpected error
- * @access Private
- */
-router.post('/setAccepted/job/:postId/:candidateId/:recruiterId', passport.authentication,  (req, res) => {
-    var jwtPayload = req.body.jwtPayload;
-    var postId = req.params.postId;
-    var candidateId = req.params.candidateId;
-    var recruiterId = req.params.recruiterId;
-    var accepted = req.body.accepted;
-    var denialReasonId = req.body.denialReasonId;
-    if(jwtPayload.userType != 2){
-        const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    if(postId == null){
-        const errorMessage = "Missing postId"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    if(candidateId == null){
-        const errorMessage = "Missing Candidate Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    if(recruiterId == null){
-        const errorMessage = "Missing Recruiter Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    if(denialReasonId == null)
-        denialReasonId = null;
-    recruiterId = parseInt(recruiterId, 10);
-    postgresdb.one('\
-        SELECT jp.company_id \
-        FROM job_posting jp \
-        INNER JOIN company_contact ec ON jp.company_id = ec.company_id \
-        WHERE ec.company_contact_id = ${userId} AND jp.active AND jp.post_id = ${postId} \
-        LIMIT 1', {postId:postId, userId:jwtPayload.id})
-    .then(()=>{
-        return postgresdb.none('UPDATE candidate_posting SET job_accepted=$1, denial_reason_id=$2, job_responded_on=NOW()\
-            WHERE candidate_id = $4 AND post_id = $5 AND recruiter_id = $6', [accepted, denialReasonId, candidateId, postId, recruiterId])
+        
+        // Notifications
+        return postgresdb.many('SELECT \
+            rc.recruiter_id as "userId", \
+            cp.company_name as "companyName", \
+            jp.title as "postTitle", \
+            jp.post_id as "postId", \
+            concat(c.first_name, \' \', c.last_name) as "candidateName" \
+        FROM recruiter_candidate rc \
+        INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
+        INNER JOIN job_posting jp ON rc.recruiter_id = jp.recruiter_id \
+        INNER JOIN company cp ON jp.company_id = cp.company_id \
+        WHERE rc.candidate_id = ${candidate_id} AND rc.recruiter_id = ${recruiter_id} AND jp.post_id = ${post_id}',
+            {candidate_id:candidateId, recruiter_id:recruiterId, post_id: postId})
         .then((data) => {
-            res.json({success:true})
+            const userIds = data.map(d=>d.userId)
+            const templateData = data[0]
+            var templateName = ''
+            if(type === 'migaloo'){
+                if(accepted)
+                    templateName = 'acceptedByMigaloo'
+                else
+                    templateName = 'deniedByMigaloo'
+            }else{
+                if(accepted)
+                    templateName = 'acceptedByEmployer'
+                else
+                    templateName = 'deniedByEmployer'
+            }
+            notifications.addNotification(userIds, templateName, templateData)
         })
+        .catch(err => {
+            logger.error('Employer Posting Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:(err.message+"\n"+err) || err, body:req.body});
+        });
     })
     .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:(err.message+"\n"+err) || err, body:req.body});
         res.status(500).json({success:false, error:err})
     });
 });
