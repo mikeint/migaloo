@@ -22,7 +22,10 @@ const autocomplete = require('./routes/autocomplete');
 const passport = require('./config/passport'); 
 
 const app = express();
-
+if (NODE_ENV == 'dev') {
+    var logger = require('morgan');
+    app.use(logger('dev'));
+}
 app.use(bodyParser.urlencoded({
     extended: false
 }))
@@ -55,9 +58,6 @@ if (NODE_ENV == 'test' || NODE_ENV == 'production') {
     app.get('*', (req,res) =>{
         res.sendFile(path.join(__dirname, '../client/build/index.html'));
     });
-}else{
-    var logger = require('morgan');
-    app.use(logger('dev'));
 }
 //app.use('/testAPI', testAPI);
 
