@@ -5,7 +5,7 @@
     box-shadow: 0px 0px 5px 5px #494949;
 }
  
-.sendEmailContainer {
+.landingSection3 .sendEmailContainer {
     width:100%;
     position: relative;
     display: flex;
@@ -17,7 +17,7 @@
     justify-content: center;
 }
 
-.submitEmail {
+.landingSection3 .submitEmail {
     display: flex;
     height: 58px;
     background: #263c54;
@@ -27,7 +27,7 @@
     font-size: 22px;
 }
 
-.emailSignUpInput {
+.landingSection3 .emailSignUpInput {
     width: 70%;
     display: flex;
     height: 60px; 
@@ -48,103 +48,103 @@
     50%  {width: 70%;}
     100% {width: 70%;}
 }
-.emailAnimatedTitle {
+.landingSection3 .emailAnimatedTitle {
     text-align: center;
 }
 
-.module_wrapper {
+.landingSection3 .module_wrapper {
     width: 100%;
     float: left;
     position: relative; 
 }
-.module_max {
+.landingSection3 .module_max {
     max-width: 1400px;
     margin: auto;
 }
-.module_max .aos-animate {
+.landingSection3 .module_max .aos-animate {
     width: 50%;
     float: left; 
 }
  
-.animated_half {
+.landingSection3 .animated_half {
     width: 50%;
     position: relative;
     float: left; 
 } 
-.animated_third {
+.landingSection3 .animated_third {
     width: 33.3333%;
     float: left;
 }
-.animated_half {
+.landingSection3 .animated_half {
     width: 50%;
 }
 
 
-.module_content { 
+.landingSection3 .module_content { 
     width: 100%;
     height: 100%;
     padding: 20px;
     margin: auto;
     text-align: center;
 }
-.module_content p{ 
+.landingSection3 .module_content p{ 
     font-size: 22px;
 }
 
-.header_module_content { 
+.landingSection3 .header_module_content { 
     width: 100%; 
     padding: 20px;
     min-height: 400px;
     margin: auto;
 }
 
-.module_img {
+.landingSection3 .module_img {
     width: 100%;
     height: 400px;
     background-size: contain;
     background-repeat: no-repeat;
 }
-.module_img1 {background-image: url('../../files/images/landingPage/landing1.jpg'); background-position: center;}
-.module_img2 {background-image: url('../../files/images/landingPage/landing2.jpg'); background-position: center;}
-.module_img3 {background-image: url('../../files/images/landingPage/landing3.jpg'); background-position: center;}
-.module_img4 {background-image: url('../../files/images/landingPage/landing4.jpg'); background-position: center;}
+.landingSection3 .module_img1 {background-image: url('../../files/images/landingPage/landing1.jpg'); background-position: center;}
+.landingSection3 .module_img2 {background-image: url('../../files/images/landingPage/landing2.jpg'); background-position: center;}
+.landingSection3 .module_img3 {background-image: url('../../files/images/landingPage/landing3.jpg'); background-position: center;}
+.landingSection3 .module_img4 {background-image: url('../../files/images/landingPage/landing4.jpg'); background-position: center;}
 
  
 
-.showOnMobile {
+.landingSection3 .showOnMobile {
     display: none;
 }
 
 
 @media only screen and (max-width: 1024px) {
-    .module_wrapper {
+    .landingSection3 .module_wrapper {
         display: inline-block;
     }
-    .aos-animate,
-    .animated_third,
-    .animated_half {
+    .landingSection3 .aos-animate,
+    .landingSection3 .animated_third,
+    .landingSection3 .animated_half {
         width: 100%;
     } 
-    .module_img {
+    .landingSection3 .module_img {
         height: 300px;
     }
-    .module_content {
+    .landingSection3 .module_content {
         width: 100%;
     }
 
-    .showOnDesktop {
+    .landingSection3 .showOnDesktop {
         display: none;
     }
-    .showOnMobile {
+    .landingSection3 .showOnMobile {
         display: block;
     } 
-    .header_module_content {
+    .landingSection3 .header_module_content {
         min-height: 200px; 
     }
 } 
 
 @media only screen and (max-width: 768px) {
-    .module_img {
+    .landingSection3 .module_img {
         height: 250px;
     }
 }

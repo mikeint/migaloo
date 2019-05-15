@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './Landing.css';
 import SocialSide from "../SocialSide/SocialSide";
 import LandingSection1 from "../LandingSection1/LandingSection1";
 import LandingSection3 from "../LandingSection3/LandingSection3";

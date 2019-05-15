@@ -4,7 +4,7 @@
     position: fixed;
     background: #263c54;
 }
-.signUpForm { 
+.signUpFormContainer .signUpForm { 
     padding: 30px;
     color: #fff; 
  
@@ -17,10 +17,10 @@
     margin: auto;
 }
 
-.formButtonContainer {
+.signUpFormContainer .formButtonContainer {
     display: flex;
 }
-.formQuestionTitle {
+.signUpFormContainer .formQuestionTitle {
     width: 50%;
     justify-content: center;
     display: flex;
@@ -31,6 +31,6 @@
     cursor: pointer;
 }
 
-.formQuestionTitle:hover {
+.signUpFormContainer .formQuestionTitle:hover {
     background: #546f82;
 }

@@ -7,6 +7,8 @@
     position: relative;
     overflow: hidden;
     cursor: pointer;
+    padding-top: 20px;
+    margin: auto;
 }
 .whaleContainer img {
     width: 100%;
@@ -22,14 +24,7 @@
     transform: scale(4);
 }
 
-@media only screen and (max-width: 768px) {
-    .whaleContainer {
-        width: 200px;
-    } 
-    .whaleSpray { 
-        margin-left: -37px;
-        margin-top: -5px;
-    }
+@media only screen and (max-width: 768px) {  
 }
 
 /* ----- end WHAlE LOGO */

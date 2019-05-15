@@ -7,36 +7,36 @@
     text-align: center;
 }
  
-.techInfoContainer {
+.landingSection5 .techInfoContainer {
     display: inline-block;  
     padding: 350px 0px; 
 }
  
-.techInfoText1 { 
+.landingSection5 .techInfoText1 { 
     color:#263c54; 
     font-size: 45px;
     padding: 20px;
 }
-.techInfoText2 { 
+.landingSection5 .techInfoText2 { 
     color:#6f90a1; 
     font-size: 25px;
     font-weight: bold;
     text-align: center;
     padding-bottom: 45px;
 }
-.skillSection img {
+.landingSection5 .skillSection img {
     padding: 3px;
     width: 12%;
 }
 
-.skillSectionL { 
+.landingSection5 .skillSectionL { 
     margin-top: -20px;
 }
 
 
 
 @media only screen and (max-width: 1024px) {  
-    .techInfoContainer { 
+    .landingSection5 .techInfoContainer { 
         padding: 250px 0px; 
     }
 }

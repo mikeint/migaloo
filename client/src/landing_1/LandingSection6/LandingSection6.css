@@ -1,4 +1,4 @@
-.landingSection6 {
+.landingSection6 .landingSection6 {
     width: 100%;  
     float: left;
     background: #263c54;
@@ -6,26 +6,26 @@
     vertical-align: middle;
     text-align: center;
 }
-.calloutSectionMid {
+.landingSection6 .calloutSectionMid {
     display: inline-block;  
     padding: 350px 0px; 
     max-width: 680px;
 }
-.calloutSectionText1 {  
+.landingSection6 .calloutSectionText1 {  
     width: 100%;
     float: left;   
     font-size: 45px;
     padding: 20px;
     color: #fff;
 }
-.calloutSectionText2 {
+.landingSection6 .calloutSectionText2 {
     width: 100%;
     float: left;   
     font-size: 25px;
     padding: 10px;
     color: #fff; 
 }
-.calloutSectionText3{
+.landingSection6 .calloutSectionText3{
     width: 100%;
     float: left;   
     font-size: 15px;
@@ -35,16 +35,16 @@
 
 
 
-.coImg_container {
+.landingSection6 .coImg_container {
     width: 100%;      
     max-width: 1400px;  
 }
-.co_section {
+.landingSection6 .co_section {
     width: 25%;  
     float: left;
     padding: 20px 0px;
 }
-.calloutImg{
+.landingSection6 .calloutImg{
     width: 150px;
     height: 100px; 
     background:#fff;
@@ -52,7 +52,7 @@
     margin: auto;
     transition: 0.3s;
 }
-.co_section p {
+.landingSection6 .co_section p {
     width: 100%;  
     text-align: center;
     color: #fff;
@@ -60,17 +60,17 @@
 }
  
 @media only screen and (max-width: 1024px) { 
-    .calloutSectionMid {
+    .landingSection6 .calloutSectionMid {
         padding: 250px 0px;
     } 
 }
 
 @media only screen and (max-width: 768px) { 
-    .full_COsection {
+    .landingSection6 .full_COsection {
         width: 100%; 
         float: left; 
     }
-    .co_section {
+    .landingSection6 .co_section {
         width: 50%;
         padding: 5px 0px;
     }

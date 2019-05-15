@@ -77,6 +77,7 @@ class RegisterEmployerForm extends Component {
 
 
   render() {
+    const whaleOptions={whaleImg:'whaleWs.png', sprayColor:'#fff'};
     const { firstName, lastName, email, phoneNumber, companyName, password, password2 } = this.state;
 
 	if(this.Auth.loggedIn()){
@@ -87,7 +88,7 @@ class RegisterEmployerForm extends Component {
     return (
        
         <div className="container">
-			<Whale />
+			<Whale {...whaleOptions}/>
 			{/* <form onSubmit={this.register}> */}
 
 				<div className="formItem"> 

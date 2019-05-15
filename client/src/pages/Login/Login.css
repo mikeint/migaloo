@@ -32,9 +32,8 @@
     font-size: 20px;
 	font-weight: bold;
 	cursor: pointer;
-	-webkit-appearance: none;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    -webkit-appearance: none;
+    margin: 20px;
     
     outline: none;
     color: #263c54;

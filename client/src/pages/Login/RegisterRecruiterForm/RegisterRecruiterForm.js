@@ -72,6 +72,7 @@ class RegisterRecruiterForm extends Component {
 }
 
   render() {
+    const whaleOptions={whaleImg:'whaleWs.png', sprayColor:'#fff'};
     const { firstName, lastName, email, password, password2, companyName } = this.state;
 
     if(this.Auth.loggedIn()){
@@ -82,7 +83,7 @@ class RegisterRecruiterForm extends Component {
     return (
        
         <div className="container">
-			<Whale />
+			<Whale {...whaleOptions}/>
 			{/* <form onSubmit={this.register}> */} 
             <div className="formItem"> 
                 <input type="text" className={this.state.errorList.firstName ? "formControl error" : "formControl"} placeholder="First Name" name="firstName" value={firstName} onChange={this.onChange} required />

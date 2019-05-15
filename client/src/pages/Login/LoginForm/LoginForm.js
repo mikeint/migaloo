@@ -62,6 +62,7 @@ class LoginForm extends Component {
         };
 
   render() {
+    const whaleOptions={whaleImg:'whaleWs.png', sprayColor:'#fff'};
     const { user, email, password } = this.state;
 
     if (user) {
@@ -77,7 +78,7 @@ class LoginForm extends Component {
        
         <React.Fragment>
 
-            <Whale />
+            <Whale {...whaleOptions}/>
             <div className="formItem"> 
                 <input onKeyPress={(event) => this.submit(event)} className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name='email' type='text' onChange={this.handleChange} value={email} required />
             </div>

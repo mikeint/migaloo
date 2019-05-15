@@ -7,37 +7,37 @@
     overflow: hidden; 
 /*  box-shadow: inset 0 -2px 10px 2px #969a9f; */
 }
-.csImg img { 
+.landingSection1 .csImg img { 
     width: 100px;
     border-radius: 50%;
     box-shadow: 0px 0px 20px 0px #263c54;
     border: 4px solid #95b3be;
 }
-.maxTextW {
+.landingSection1 .maxTextW {
     max-width: 460px;
     margin: auto;
     color: #263c54;
     transition: 0.3s;
 }
-.ls_text{
+.landingSection1 .ls_text{
     width: 100%;
     float: left;
     color: #263c54;
     transition: 0.3s;
 }
 
-.csImg_desktop{
+.landingSection1 .csImg_desktop{
     display: block; 
     padding-bottom: 20px;
     padding-top: 20px;
 }
-.csImg_mobile{
+.landingSection1 .csImg_mobile{
     display: none;
 }
  
 @media only screen and (max-width: 1024px) {
-    .csImg_desktop{display: none;}
-    .csImg_mobile{display: block;}  
+    .landingSection1 .csImg_desktop{display: none;}
+    .landingSection1 .csImg_mobile{display: block;}  
 }
 @media only screen and (max-width: 768px) { 
 }
