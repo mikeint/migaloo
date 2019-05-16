@@ -27,7 +27,7 @@ class HowItWorks extends Component {
                             <div className="aos-animate">  
                                 <div className="module_content">
                                     <h1>Sign up</h1>
-                                    <p>Employer creates their profile which outlines details that help our system get to know them and their&nbsp;company.</p>
+                                    <p>Create your profile which outlines details that help our system get to know you and your&nbsp;company.</p>
                                 </div>
                             </div>
                         </div>
@@ -57,7 +57,7 @@ class HowItWorks extends Component {
                             <div className="aos-animate">  
                                 <div className="module_content">
                                     <h1>Hired!</h1>
-                                    <p>Let Migaloo lift the weight every hire.</p>
+                                    <p>Allow us to work with recruiters to help manage candidates along your interview process (interview preparation, interview feedback, references, testing, etc.) so that you can be more&nbsp;efficient.</p>
                                 </div> 
                             </div>
                             <div className="aos-animate">  
@@ -80,7 +80,7 @@ class HowItWorks extends Component {
                             <div data-aos="fade-left"> 
                                 <div className="module_content">
                                     <h1>Sign up</h1>
-                                    <p>Employer creates their profile which outlines details that help our system get to know them and their&nbsp;company.</p>
+                                    <p>Create your profile which outlines details that help our system get to know you and your&nbsp;company.</p>
                                 </div>
                             </div>
                         </div>
@@ -113,7 +113,7 @@ class HowItWorks extends Component {
                             <div data-aos="fade-left"> 
                                 <div className="module_content">
                                     <h1>Hired!</h1>
-                                    <p>Let Migaloo lift the weight every hire.</p>
+                                    <p>Allow us to work with recruiters to help manage candidates along your interview process (interview preparation, interview feedback, references, testing, etc.) so that you can be more&nbsp;efficient.</p>
                                 </div> 
                             </div>
                         </div> 

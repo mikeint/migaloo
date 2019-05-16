@@ -27,7 +27,7 @@ class HowItWorks extends Component {
                             <div className="aos-animate">  
                                 <div className="module_content">
                                     <h1>Sign up</h1>
-                                    <p>Recruiter creates their profile which outlines details that help our system get to know&nbsp;them.</p>
+                                    <p>Create your profile which outlines details that help our system get to know&nbsp;you.</p>
                                 </div>
                             </div>
                         </div>
@@ -35,7 +35,7 @@ class HowItWorks extends Component {
                             <div className="aos-animate"> 
                                 <div className="module_content">
                                     <h1>Add Candidate</h1>
-                                    <p>Recruiter can proactively add profiles to their candidate pool (bank?).  This helps our system know which recruiters are best equipped to work on a given&nbsp;requisition.</p>
+                                    <p>Proactively add profiles to your candidate pool. This helps our system decide which recruiters are best equipped to work on a given&nbsp;requisition.</p>
                                 </div> 
                             </div>
                             <div className="aos-animate"> 
@@ -49,7 +49,7 @@ class HowItWorks extends Component {
                             <div className="aos-animate">  
                                 <div className="module_content">
                                     <h1>View Job Reqs</h1>
-                                    <p>Get notified when jobs are added to your pipeline.  View the job profiles and let us know if you’re interested in helping us with the&nbsp;search.</p>
+                                    <p>Get notified when jobs are added to your pipeline. View the job profiles and let us know if you’re interested in helping us with the&nbsp;search.</p>
                                 </div> 
                             </div>
                         </div>
@@ -91,7 +91,7 @@ class HowItWorks extends Component {
                             <div data-aos="fade-left"> 
                                 <div className="module_content">
                                     <h1>Sign up</h1>
-                                    <p>Recruiter creates their profile which outlines details that help our system get to know&nbsp;them.</p>
+                                    <p>Create your profile which outlines details that help our system get to know&nbsp;you.</p>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +102,7 @@ class HowItWorks extends Component {
                             <div data-aos="fade-left"> 
                                 <div className="module_content">
                                     <h1>Add Candidate</h1>
-                                    <p>Recruiter can proactively add profiles to their candidate pool (bank?).  This helps our system know which recruiters are best equipped to work on a given&nbsp;requisition.</p>
+                                    <p>Proactively add profiles to your candidate pool. This helps our system decide which recruiters are best equipped to work on a given&nbsp;requisition.</p>
                                 </div> 
                             </div>
                         </div>
@@ -113,7 +113,7 @@ class HowItWorks extends Component {
                             <div data-aos="fade-left"> 
                                 <div className="module_content">
                                     <h1>View Job Reqs</h1>
-                                    <p>Get notified when jobs are added to your pipeline.  View the job profiles and let us know if you’re interested in helping us with the&nbsp;search.</p>
+                                    <p>Get notified when jobs are added to your pipeline. View the job profiles and let us know if you’re interested in helping us with the&nbsp;search.</p>
                                 </div> 
                             </div>
                         </div>

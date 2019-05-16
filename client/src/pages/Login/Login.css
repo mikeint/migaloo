@@ -82,15 +82,13 @@
     .loginHR div { 
         border: 4px solid #fff;
         color: #fff;
-    }
-    
+    } 
 	.tabContainer {
 		position: fixed;
 		bottom: 0px;
 		width: 100%;
 	}
-    .tab-item {    
-        box-shadow: inset 0 5px 5px grey;
+    .tab-item {     
         background: #eaeaea; 
     }
 }

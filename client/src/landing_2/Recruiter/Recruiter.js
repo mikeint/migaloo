@@ -19,15 +19,14 @@ class Recruiter extends Component {
                 
                 <div className="recruiterContent"> 
                     <div className="titleText">
-                        <div data-aos="fade-down">Hi there ! I'm Migaloo,</div>
+                        <div data-aos="fade-down">Hi there! I'm Migaloo,</div>
                         <div data-aos="fade-up">the whale of recruitment</div>
                     </div>
                     
                     <div className="paragraphContainer" data-aos="zoom-in" data-aos-offset="-200"> 
                         <div className="paragraph" data-aos="zoom-in-right">I'm here to help you save time & make more&nbsp;placements.</div>
-                        <div className="paragraph" data-aos="zoom-in-left" data-aos-delay="250">I believe every great recruiter deserves a whale on their side who can who can add relevant, retained jobs to their&nbsp;pipeline.</div>
-                        <div className="paragraph" data-aos="zoom-in-right" data-aos-delay="500">I will Deliver job reqs based on your specialization from top companies who desperately need your help but, who sadly,
-                                    don't have enough time to properly manage recruiter&nbsp;relationships.</div>
+                        <div className="paragraph" data-aos="zoom-in-left" data-aos-delay="250">Every great recruiter deserves a whale on their side who can add relevant, retained jobs to their&nbsp;pipeline.</div>
+                        <div className="paragraph" data-aos="zoom-in-right" data-aos-delay="500">You will receive job reqs based on your specialization from top companies who desperately need your help but, who sadly don't have enough time to properly manage recruiter&nbsp;relationships.</div>
                     </div>
                         
                     <div className="center" data-aos="fade-in">
@@ -38,7 +37,7 @@ class Recruiter extends Component {
                     </div>
 
                     <div className="textBtm" data-aos="fade-in">
-                        <div data-aos="fade-down">I'm inviting you to make an even bigger splash in your market</div>
+                        <div data-aos="fade-down">You're cordially invited to make an even bigger splash in your market.</div>
                         <div data-aos="fade-up">& join the whales of recruitment.</div>
                     </div> 
                     <Link to='signUpFormRecruiter'><div className="signUpBtnHome">Recruiter RSVP</div></Link>
