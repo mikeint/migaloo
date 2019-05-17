@@ -255,7 +255,8 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
             cc.company_contact_id as "userId", \
             cp.company_name as "companyName", \
             jp.title as "postTitle", \
-            concat(c.first_name, \' \', c.last_name) as "name" \
+            concat(c.first_name, \' \', c.last_name) as "name", \
+            cp.company_id \
         FROM recruiter_candidate rc \
         INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
         INNER JOIN job_posting jp ON rc.recruiter_id = jp.recruiter_id \
@@ -276,6 +277,7 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
             const toNotifyUsers = toNotify.map(d=>d.userId)
             const toNotifyTemplate = toNotify[0]
             notifications.addNotification(toNotifyUsers, 'employerNewCandidate', toNotifyTemplate)
+            logger.info('Recruiter posted candidate', {tags:['post', 'candidate'], url:req.originalUrl, userId:jwtPayload.id, body:req.body});
             
             console.log("Posted candidate")
             res.json({success: true})
