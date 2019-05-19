@@ -1,10 +1,10 @@
 import React, { Component } from "react"; 
 import "./Conversation.css"; 
-import Loader from '../../Loader/Loader'; 
-import {get, post} from '../../../ApiCalls';  
+import Loader from '../Loader/Loader'; 
+import {get, post} from '../../ApiCalls';  
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import Close from '@material-ui/icons/Close';
-import MeetingPicker from "../../MeetingPicker/MeetingPicker";
+import MeetingPicker from "../MeetingPicker/MeetingPicker";
 import IconButton from '@material-ui/core/IconButton';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
@@ -19,22 +19,58 @@ class Conversation extends Component {
 
     constructor(props) {
         super(props);
-        var toId = (props.conversation.my_id===props.conversation.user_id_1?props.conversation.user_id_2:props.conversation.user_id_1);
+        var extraState;
+        if(props.loadByMessageSubjectId){
+            extraState = {
+                messageSubjectId: props.messageSubjectId,
+                conversation: [],
+                toId: null,
+            }
+        }else{
+            const toId = (props.conversation.my_id===props.conversation.user_id_1?props.conversation.user_id_2:props.conversation.user_id_1);
+            extraState = {
+                conversation: props.conversation,
+                toId: toId
+            }
+        }
 		this.state = {
-            conversation: props.conversation,
+            loadByMessageSubjectId: props.loadByMessageSubjectId,
             messageList: [],
-            contactName: props.conversation.contactName,
             pageCount: -1,
             pageNumber: 1,
-            toId: toId,
             showLoader: true,
             meetingDialogOpen: false,
-            meetingCreate: {}
+            meetingCreate: {},
+            ...extraState
         };
         this.message = React.createRef();
     }
-    componentDidMount = () => {
-        this.getMessageList();
+    getConversationList = () => {
+        return new Promise((resolve, reject)=>{
+            get(`/api/message/get/${this.state.messageSubjectId}`)
+            .then((res)=>{
+                if(res && res.data.length > 0){
+                    const conversation = res.data[0]
+                    const toId = (conversation.my_id===conversation.user_id_1?conversation.user_id_2:conversation.user_id_1);
+                    this.setState({ 
+                        conversation: conversation,
+                        toId:toId,
+                        contactName: conversation.contactName }, resolve) 
+                }
+                else resolve()
+            }).catch(errors => {
+                console.log(errors)
+                resolve()
+            })
+        })
+    }
+    componentWillMount = () => {
+        if(this.state.loadByMessageSubjectId){
+            this.getConversationList().then(()=>{
+                this.getMessageList();
+            });
+        }else
+            this.getMessageList();
     }
     getMessageList = () => {
         if(this.state.pageNumber <= this.state.pageCount || this.state.pageCount === -1){
@@ -184,7 +220,7 @@ class Conversation extends Component {
                         aria-labelledby="dialog-title"
                         open={other.open}> 
                     <DialogTitle id="dialog-title">
-                        <span>Conversation - {this.state.contactName + ", for " + this.state.conversation.subject_first_name+" "+this.state.conversation.subject_last_name}</span>
+                        <span>Conversation {this.state.conversation.contactName ? ` - ${this.state.conversation.contactName}, for ${this.state.conversation.subject_first_name} ${this.state.conversation.subject_last_name}` : ''}</span>
                         <IconButton color="inherit" onClick={this.handleChatDialogClose} className={classes.rightBtn}>
                             <Close color="primary"/>
                         </IconButton>
@@ -193,7 +229,6 @@ class Conversation extends Component {
                         </IconButton>
                     </DialogTitle>
                     <div className='conversationModal'>
-                        {/* <div className='contactHeader2'>{this.state.conversation.subject}</div> */}
                         <MeetingPicker
                             open={this.state.meetingDialogOpen}
                             onClose={this.handleMeetingDialogClose} />

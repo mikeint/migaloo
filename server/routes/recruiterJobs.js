@@ -276,11 +276,25 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
             const toNotify = data[0]
             const toNotifyUsers = toNotify.map(d=>d.userId)
             const toNotifyTemplate = toNotify[0]
+
+            var userId1, userId2;
+            if(jwtPayload.id < toNotifyTemplate.company_id){
+                userId1 = jwtPayload.id;
+                userId2 = toNotifyTemplate.company_id;
+            }else{
+                userId1 = toNotifyTemplate.company_id;
+                userId2 = jwtPayload.id;
+            }
+            postgresdb.none('INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id) VALUES \
+                    ($1, $2, $3, $4)', [userId1, userId2, candidateId, postId])
+            .then((data) => {
+                res.json({success:true})
+            })
+            .catch(err => {
+                res.json({success:true}) // If this subject was already created just skip the error
+            });
             notifications.addNotification(toNotifyUsers, 'employerNewCandidate', toNotifyTemplate)
             logger.info('Recruiter posted candidate', {tags:['post', 'candidate'], url:req.originalUrl, userId:jwtPayload.id, body:req.body});
-            
-            console.log("Posted candidate")
-            res.json({success: true})
         })
     }).catch((err)=>{
         logger.error('Recruiter Jobs SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
@@ -317,10 +331,11 @@ router.get('/listPostedCandidates/:jobId', passport.authentication,  (req, res) 
             WHERE jp.post_id = ${jobId} AND jp.recruiter_id = ${recruiterId}', {recruiterId:jwtPayload.id, jobId:jobId})
     .then(()=>{
         return postgresdb.any('\
-            SELECT c.first_name, c.last_name, cp.*, dr.denial_reason_text \
+            SELECT c.first_name, c.last_name, cp.*, dr.denial_reason_text, ms.message_subject_id \
             FROM job_posting jp \
             INNER JOIN candidate_posting cp ON jp.post_id = cp.post_id AND jp.recruiter_id = cp.recruiter_id \
             INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
+            INNER JOIN messages_subject ms ON ms.subject_user_id = cp.candidate_id AND ms.post_id = jp.post_id AND (ms.user_id_1 = cp.recruiter_id OR ms.user_id_2 = cp.recruiter_id) \
             LEFT JOIN denial_reason dr ON cp.denial_reason_id = dr.denial_reason_id \
             WHERE jp.post_id = ${jobId} AND jp.recruiter_id = ${recruiterId} \
             ORDER BY cp.created_on DESC \

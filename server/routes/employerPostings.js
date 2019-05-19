@@ -542,12 +542,13 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
 
     postgresdb.any(' \
         SELECT c.candidate_id, r.first_name, r.last_name, r.phone_number, r.recruiter_id, rl.email, cp.migaloo_accepted, cp.employer_accepted,\
-            cp.job_accepted, cp.has_seen_post, c.first_name as candidate_first_name, j.created_on as posted_on, c.resume_id \
+            cp.job_accepted, cp.has_seen_post, c.first_name as candidate_first_name, j.created_on as posted_on, c.resume_id, ms.message_subject_id \
         FROM job_posting_all j \
         INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         INNER JOIN candidate_posting cp ON cp.post_id = j.post_id \
         INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
         INNER JOIN recruiter r ON r.recruiter_id = cp.recruiter_id \
+        INNER JOIN messages_subject ms ON ms.subject_user_id = cp.candidate_id AND ms.post_id = j.post_id AND (ms.user_id_1 = cp.recruiter_id OR ms.user_id_2 = cp.recruiter_id)  \
         INNER JOIN login rl ON r.recruiter_id = rl.user_id \
         WHERE j.post_id = ${postId} AND ec.company_contact_id = ${userId} AND j.active \
         ORDER BY cp.created_on DESC', {postId:postId, userId:jwtPayload.id})

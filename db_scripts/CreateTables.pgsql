@@ -298,6 +298,34 @@ CREATE TABLE candidate_posting (
 );
 CREATE INDEX candidate_posting_idx ON candidate_posting(post_id, recruiter_id);
 CREATE INDEX candidate_posting_cdt_idx ON candidate_posting(candidate_id);
+
+CREATE OR REPLACE FUNCTION candidate_posting_pr() RETURNS trigger AS $$
+DECLARE 
+    userId1 bigint;
+    userId2 bigint;
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        SELECT company_id INTO userId2 FROM job_posting_all WHERE post_id = NEW.post_id;
+        IF (NEW.recruiter_id < userId2) THEN
+            userId1 = NEW.recruiter_id;
+        ELSE
+            userId1 = userId2;
+            userId2 = NEW.recruiter_id;
+        END IF;
+        INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id, created_on) VALUES
+            (userId1, userId2, NEW.candidate_id, NEW.post_id, NEW.created_on);
+        RETURN NEW;
+    END IF;
+END;
+$$ LANGUAGE PLPGSQL;
+
+Create trigger candidate_posting_tgr
+After Insert
+on candidate_posting
+FOR EACH ROW
+EXECUTE PROCEDURE candidate_posting_pr();
+
+
 CREATE TABLE messages_type (
     message_type_id serial,
     message_type_name varchar(50) NOT NULL,
@@ -316,7 +344,6 @@ CREATE TABLE messages_subject (
     subject_user_id bigint REFERENCES login(user_id),
     post_id bigint REFERENCES job_posting_all(post_id),
     unique (user_id_1, user_id_2, subject_user_id, post_id),
-    unique (post_id),
     PRIMARY KEY(message_subject_id)
 );
 CREATE TABLE messages_base (
@@ -804,22 +831,6 @@ INSERT INTO job_recruiter_posting(post_id, recruiter_id) VALUES
     (1, 1),(2, 1),(3, 1),(4, 1),
     (2, 2),(3, 2),(4, 2),
     (1, 3),(3, 3),(4, 3);
-
-INSERT INTO candidate_posting (post_id, candidate_id, recruiter_id, coins, created_on, migaloo_responded_on, has_seen_post, has_seen_response, migaloo_accepted, comment, denial_reason_id, denial_comment) VALUES
-    (1, 1000, 1, 10, NOW() - interval '1' day, NOW() - interval '0' day, true, false, true, 'I think this Sarah would be great for the job', null, null),
-    (1, 1001, 1, 5, NOW() - interval '2' day, NOW() - interval '1' day, true, false, false, 'Amanda has all of the skills you need', 2, 'The employer cited that the expierence did not meet their requirments'),
-    (1, 1002, 3, 1, NOW() - interval '1' day, NULL, false, false, null, 'Beth is very respectable and I think she will be a great addition to your team', null, null),
-    (2, 1003, 1, 2, NOW() - interval '3' day, NOW() - interval '2' day, true, true, true, 'Stephanie meets your criteria exactly, please have a look at her resume', null, null),
-    (2, 1004, 1, 20, NOW() - interval '4' day, NOW() - interval '3' day, true, false, true, null, null, null),
-    (2, 1005, 2, 30, NOW() - interval '2' day, NULL, false, false, null, null, null, null),
-    (3, 1006, 3, 6, NOW() - interval '5' day, NOW() - interval '4' day, true, true, true, null, null, null),
-    (3, 1007, 1, 7, NOW() - interval '3' day, NOW() - interval '1' day, true, false, false, null, 1, 'There were 2 candidates that were more expierenced'),
-    (3, 1000, 1, 4, NOW() - interval '2' day, NULL, false, false, null, 'I think this Sarah would be great for the job', null, null),
-    (3, 1001, 2, 4, NOW() - interval '1' day, NOW() - interval '0' day, true, true, true, 'Amanda has all of the skills you need', null, null),
-    (4, 1002, 3, 20, NOW() - interval '3' day, NOW() - interval '2' day, true, false, false, 'Beth is very respectable and I think she will be a great addition to your team', 3, 'After the interview the employer went with another candidate'),
-    (4, 1003, 1, 9, NOW() - interval '4' day, NOW() - interval '3' day, true, true, true, 'Stephanie meets your criteria exactly, please have a look at her resume', null, null),
-    (4, 1004, 1, 8, NOW() - interval '5' day, NOW() - interval '4' day, true, false, false, null, 1, 'There were 3 candidates that were more expierenced'),
-    (4, 1000, 1, 1, NOW() - interval '2' day, NULL, false, false, null, 'I think this Sarah would be great for the position you have open', null, null);
 INSERT INTO posting_tags (post_id, tag_id) VALUES
     (1, 1),
     (1, 2),
@@ -857,10 +868,21 @@ INSERT INTO candidate_tags (candidate_id, tag_id) VALUES
     (1007, 3),
     (1007, 4),
     (1007, 5);
-INSERT INTO messages_subject(user_id_1, user_id_2, subject_user_id, post_id, created_on) VALUES
-    (1, 500, 1000, 1, NOW() - interval '7' day), -- message_subject_id = 1
-    (3, 500, 1006, 2, NOW() - interval '11' day), -- message_subject_id = 2
-    (1, 500, 1001, 3, NOW() - interval '1' day); -- message_subject_id = 3
+INSERT INTO candidate_posting (post_id, candidate_id, recruiter_id, coins, created_on, migaloo_responded_on, has_seen_post, has_seen_response, migaloo_accepted, comment, denial_reason_id, denial_comment) VALUES
+    (1, 1000, 1, 10, NOW() - interval '1' day, NOW() - interval '0' day, true, false, true, 'I think this Sarah would be great for the job', null, null),
+    (1, 1002, 3, 1, NOW() - interval '1' day, NULL, false, false, null, 'Beth is very respectable and I think she will be a great addition to your team', null, null),
+    (1, 1001, 1, 5, NOW() - interval '2' day, NOW() - interval '1' day, true, false, false, 'Amanda has all of the skills you need', 2, 'The employer cited that the expierence did not meet their requirments'),
+    (2, 1003, 1, 2, NOW() - interval '3' day, NOW() - interval '2' day, true, true, true, 'Stephanie meets your criteria exactly, please have a look at her resume', null, null),
+    (2, 1004, 1, 20, NOW() - interval '4' day, NOW() - interval '3' day, true, false, true, null, null, null),
+    (2, 1005, 2, 30, NOW() - interval '2' day, NULL, false, false, null, null, null, null),
+    (3, 1006, 3, 6, NOW() - interval '5' day, NOW() - interval '4' day, true, true, true, null, null, null),
+    (3, 1007, 1, 7, NOW() - interval '3' day, NOW() - interval '1' day, true, false, false, null, 1, 'There were 2 candidates that were more expierenced'),
+    (3, 1000, 1, 4, NOW() - interval '2' day, NULL, false, false, null, 'I think this Sarah would be great for the job', null, null),
+    (3, 1001, 2, 4, NOW() - interval '1' day, NOW() - interval '0' day, true, true, true, 'Amanda has all of the skills you need', null, null),
+    (4, 1002, 3, 20, NOW() - interval '3' day, NOW() - interval '2' day, true, false, false, 'Beth is very respectable and I think she will be a great addition to your team', 3, 'After the interview the employer went with another candidate'),
+    (4, 1003, 1, 9, NOW() - interval '4' day, NOW() - interval '3' day, true, true, true, 'Stephanie meets your criteria exactly, please have a look at her resume', null, null),
+    (4, 1004, 1, 8, NOW() - interval '5' day, NOW() - interval '4' day, true, false, false, null, 1, 'There were 3 candidates that were more expierenced'),
+    (4, 1000, 1, 1, NOW() - interval '2' day, NULL, false, false, null, 'I think this Sarah would be great for the position you have open', null, null);
 INSERT INTO messages (message_type_id, to_id, message_subject_id, message, created_on) VALUES
     (1, 1, 1, 'We would like to hear more about sarah.', NOW() - interval '6' day),
     (1, 500, 1, 'She is a really excellent candidate, she has a lot of expierence as a senior software developer and has run many teams, including a 30 person team in her last job.', NOW() - interval '5' day),

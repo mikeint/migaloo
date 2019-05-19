@@ -2,13 +2,14 @@ import React from 'react';
 import './JobDescription.css'; 
 import {get} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
-import {Redirect} from 'react-router-dom';
+import {Redirect, NavLink} from 'react-router-dom';
 import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import Button from '@material-ui/core/Button';
+import Chat from '@material-ui/icons/Chat';
 import Close from '@material-ui/icons/Close';
 import ThumbUp from '@material-ui/icons/ThumbUp';
 import ThumbDown from '@material-ui/icons/ThumbDown';
@@ -18,6 +19,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Conversation from '../../../../components/Conversation/Conversation';
 
 const styles = theme => ({
     drawer:{ 
@@ -85,6 +87,65 @@ const styles = theme => ({
         marginLeft: "15px"
     }
 });
+class CandidateRow extends React.Component{
+
+    constructor(props){
+        super(props);
+        this.state={
+            showChat:props.showChat,
+            candidate: props.candidate
+        }
+    }
+    render(){
+        const { classes, i } = this.props;
+        const { candidate } = this.state;
+        return <TableRow key={i} className={classes.tableRow}>
+            <TableCell className={classes.tableCell}>{candidate.first_name}</TableCell>
+            <TableCell className={classes.tableCell}>{candidate.last_name}</TableCell>
+            <TableCell className={classes.tableCell}>{candidate.created}</TableCell>
+            <TableCell className={classes.tableCell}>
+                {
+                    (candidate.migaloo_accepted === false || candidate.employer_accepted === false || candidate.job_accepted === false)?
+                        "Denied" :
+                        (
+                            candidate.migaloo_accepted === null ? "Pending Migaloo Acceptance" :
+                            (
+                                candidate.employer_accepted === null ? "Pending Employer Acceptance" :
+                                (
+                                    candidate.job_accepted === null ? "Pending Job Acceptance" :
+                                        "Accepted By Employer"
+                                )
+                            )
+                        )
+                }
+                {(candidate.migaloo_accepted === false || candidate.employer_accepted === false || candidate.job_accepted === false) &&
+                    <Tooltip classes={{tooltip: classes.toolTipText}}
+                    data-html="true"
+                    title={<div>{candidate.denial_reason_text+'.'}<br/>{candidate.denial_comment}</div>}
+                    aria-label="Denial Reason">
+                        <Info className={classes.toolTip}/>
+                    </Tooltip>
+                }
+            </TableCell>
+            <TableCell className={classes.tableCell}>
+                <Button
+                    variant="contained" 
+                    color="primary"
+                    onClick={()=>this.setState({showChat:true})}>
+                    <Chat/>&nbsp;Open Chat
+                </Button>
+                {this.state.showChat && 
+                    <Conversation
+                        messageSubjectId={candidate.message_subject_id}
+                        loadByMessageSubjectId={true}
+                        open={this.state.showChat}
+                        onClose={()=>this.setState({showChat: false})}/>
+                }
+            </TableCell>
+        </TableRow>
+    }
+}
+CandidateRow = withStyles(styles)(CandidateRow)
 class JobDescription extends React.Component{
 
     constructor(props){
@@ -123,9 +184,9 @@ class JobDescription extends React.Component{
                     jobObj: jobList[0],
                     candidateData: candidateData }) 
             }
-        }).catch(errors => 
-            console.log(errors.response.data)
-        )
+        }).catch(errors => {
+            console.log(errors)
+        })
     }
     listCandidates = () => {
         get('/api/recruiterJobs/listPostedCandidates/'+this.state.jobId)
@@ -133,9 +194,9 @@ class JobDescription extends React.Component{
             if(res && res.data.success){
                 this.setState({candidateList: res.data.candidates }) 
             }
-        }).catch(errors => 
-            console.log(errors.response.data)
-        )
+        }).catch(errors => {
+            console.log(errors)
+        })
     }
 
     getImage = () => {
@@ -232,45 +293,18 @@ class JobDescription extends React.Component{
                                     <TableCell align="center" className={classes.tableCellHeader}>Last Name</TableCell>
                                     <TableCell align="center" className={classes.tableCellHeader}>Posted</TableCell>
                                     <TableCell align="center" className={classes.tableCellHeader}>Status</TableCell>
+                                    <TableCell align="center" className={classes.tableCellHeader}>Chat</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                             {
                                 this.state.candidateList.length === 0 ? 
                                 <TableRow className={classes.tableRow}>
-                                    <TableCell colSpan={4} align="center" className={classes.tableCellHeader}>No Candidates Posted</TableCell>
+                                    <TableCell colSpan={5} align="center" className={classes.tableCellHeader}>No Candidates Posted</TableCell>
                                 </TableRow> :
-                                this.state.candidateList.map((d, i)=>{
-                                    return <TableRow key={i} className={classes.tableRow}>
-                                        <TableCell className={classes.tableCell}>{d.first_name}</TableCell>
-                                        <TableCell className={classes.tableCell}>{d.last_name}</TableCell>
-                                        <TableCell className={classes.tableCell}>{d.created}</TableCell>
-                                        <TableCell className={classes.tableCell}>
-                                            {
-                                                (d.migaloo_accepted === false || d.employer_accepted === false || d.job_accepted === false)?
-                                                    "Denied" :
-                                                    (
-                                                        d.migaloo_accepted === null ? "Pending Migaloo Acceptance" :
-                                                        (
-                                                            d.employer_accepted === null ? "Pending Employer Acceptance" :
-                                                            (
-                                                                d.job_accepted === null ? "Pending Job Acceptance" :
-                                                                    "Accepted By Employer"
-                                                            )
-                                                        )
-                                                    )
-                                            }
-                                            {(d.migaloo_accepted === false || d.employer_accepted === false || d.job_accepted === false) &&
-                                                <Tooltip classes={{tooltip: classes.toolTipText}}
-                                                data-html="true"
-                                                title={<div>{d.denial_reason_text}<br/>{d.denial_comment}</div>}
-                                                aria-label="Denial Reason">
-                                                    <Info className={classes.toolTip}/>
-                                                </Tooltip>
-                                            }
-                                        </TableCell>
-                                    </TableRow>
-                                })
+                                this.state.candidateList.map((d, i)=>
+                                    <CandidateRow key={i} candidate={d}/>
+                                )
                             }
                             </TableBody>
                         </Table>

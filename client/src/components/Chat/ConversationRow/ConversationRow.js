@@ -1,6 +1,6 @@
 import React, { Component } from "react"; 
 import "./ConversationRow.css"; 
-import Conversation from '../Conversation/Conversation'; 
+import Conversation from '../../Conversation/Conversation'; 
 
 class ConversationRow extends Component {
 
