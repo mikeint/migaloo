@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import AuthFunctions from '../../../AuthFunctions'; 
 
 import {get, post, cancel} from '../../../ApiCalls';  
-import TagSearch from '../../../components/TagSearch/TagSearch';
+import TagSearch from '../../../components/Inputs/TagSearch/TagSearch';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';

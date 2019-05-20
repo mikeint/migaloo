@@ -43,12 +43,16 @@ router.post('/create', passport.authentication,  (req, res) => {
         return res.status(400).json(errors);
     }
     var jwtPayload = body.jwtPayload;
-    if(jwtPayload.userType != 2){
+    const validUser = (jwtPayload.userType == 2) || // Account manager
+                (jwtPayload.userType == 4) // Company
+    if(validUser){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-
+    var preliminary = false
+    if(jwtPayload.userType == 4)
+        preliminary = true
     postgresdb.one('SELECT company_id \
             FROM company_contact ec \
             INNER JOIN account_manager ac ON ac.account_manager_id = ec.company_contact_id \
@@ -56,8 +60,9 @@ router.post('/create', passport.authentication,  (req, res) => {
             {userId:jwtPayload.id, companyId:body.employer}).then(()=>{
         return postgresdb.tx(t => {
             // creating a sequence of transaction queries:
-            const q1 = t.one('INSERT INTO job_posting_all (company_id, title, caption, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5) RETURNING post_id',
-                                [body.employer, body.title, body.caption, body.experience, body.salary])
+            const q1 = t.one('INSERT INTO job_posting_all (company_id, title, caption, experience_type_id, salary_type_id, preliminary, is_visible) \
+                                VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING post_id',
+                            [body.employer, body.title, body.caption, body.experience, body.salary, preliminary, !preliminary])
             return q1.then((post_ret)=>{
                 if(body.tagIds != null && body.tagIds.length > 0){
                     const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper);
@@ -75,7 +80,7 @@ router.post('/create', passport.authentication,  (req, res) => {
             })
             .then((post_id) => {
                 res.status(200).json({success: true})
-                if(body.autoAddRecruiters !== false){
+                if(body.autoAddRecruiters !== false && preliminary !== true){
                     postingAssign.findRecruitersForPost(post_id).then((data)=>{
                         postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: post_id, recruiter_id: d.recruiter_id}}))
                     }) // Async call to add posts to the new recruiter
@@ -125,7 +130,7 @@ function postListing(req, res){
 
     postgresdb.any('\
         SELECT j.post_id, title, caption, experience_type_name, salary_type_name, tag_names, tag_ids, new_posts_cnt, \
-            posts_cnt, recruiter_count, j.created_on, (count(1) OVER())/10+1 AS page_count \
+            posts_cnt, recruiter_count, j.created_on, (count(1) OVER())/10+1 AS page_count, j.preliminary \
         FROM job_posting_all j \
         INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
@@ -166,7 +171,6 @@ function postListing(req, res){
         res.status(500).json({success:false, error:err})
     });
 }
-
 /**
  * List all recruiters assigned to job postings
  * @route POST api/employerPostings/listRecruiters

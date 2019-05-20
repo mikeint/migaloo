@@ -1,30 +1,24 @@
 import React from 'react';
 import AuthFunctions from '../../AuthFunctions'; 
-import {get, post, cancel, setAuthToken} from '../../ApiCalls';  
-import TagSearch from '../../components/TagSearch/TagSearch';
+import {post, setAuthToken} from '../../ApiCalls';  
+import TagSearch from '../../components/Inputs/TagSearch/TagSearch';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import Select from '@material-ui/core/Select';
-import Input from '@material-ui/core/Input';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormValidation from '../../FormValidation';
-import AddressInput from '../../components/AddressInput/AddressInput';
+import AddressInput from '../../components/Inputs/AddressInput/AddressInput';
+import SalarySelector from '../../components/Inputs/SalarySelector/SalarySelector';
+import ExperienceSelector from '../../components/Inputs/ExperienceSelector/ExperienceSelector';
+import JobTypeSelector from '../../components/Inputs/JobTypeSelector/JobTypeSelector';
 
 const styles = theme => ({
     textField: {
         width: "50%",
-        margin: "10px"
     },
     selectFormControl:{
         flex: "1 1",
-        margin: "10px"
     },
     tagSearch:{
-        margin: "10px"
     },
     postButton:{
         width:"100%",
@@ -32,7 +26,6 @@ const styles = theme => ({
     },
     textAreaMaxHeight:{
         width: "100%",
-        margin: "10px"
     },
     postAJobContainer: {
         padding: "20px",
@@ -58,17 +51,19 @@ const errorText = [
         stateName: "title",
         errorText: "Please enter a title for the job posting"
     },
-    {
-        stateName: "salary",
-        errorText: "Please select the salary range"
+    { 
+        stateName: "salary", 
+        errorText: "Please select the salary range" 
+    }, 
+    { 
+        stateName: "experience", 
+        errorText: "Please select the experience required" 
     },
-    {
-        stateName: "employer",
-        errorText: "Please select an employer for the job posting"
-    },
-    {
-        stateName: "experience",
-        errorText: "Please select the experience required"
+    { 
+        stateName: "jobType", 
+        errorText: "Please select the job type",
+        type: "number",
+        gt: -1
     },
     {
         stateName: "tagIds",
@@ -79,7 +74,7 @@ const errorText = [
         errorText: "Please select an address for the company"
     }
 ]
-class PostAJob extends React.Component{
+class EmployerJobPost extends React.Component{
     constructor(props) {
         super(props);
         const token = props.match.params.token
@@ -87,11 +82,10 @@ class PostAJob extends React.Component{
             token: token,
             title:'',
             caption:'',
-            salary:'',
-            experience:'',
-            employer:'',
-            salaryList: [],
-            experienceList: [],
+            salary:-1,
+            jobType:-1,
+            experience:-1,
+            address:{},
             companies: [],
             errors: {}
         }
@@ -99,39 +93,12 @@ class PostAJob extends React.Component{
         this.Auth = new AuthFunctions();
         this.formValidation = new FormValidation(this, errorText);
     }
-    loadData(){
-        get('/api/autocomplete/salary')
-        .then((res) => {
-            if(res && res.data.success) {
-                this.setState({salaryList:res.data.salaryList});
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
-        get('/api/autocomplete/experience')
-        .then((res) => {
-            if(res && res.data.success) {
-                this.setState({experienceList:res.data.experienceList});
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
-    }
- 
-    componentWillUnmount = () => {
-        cancel();
-    }
-    componentWillMount() {
-        this.loadData()
-    }
 
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
     }
     handleAddressChange(address){
-        this.setState({addressChange:address})
+        this.setState({address:address}, this.formValidation.shouldRevalidate)
     }
 
     handleSubmit = () => {
@@ -156,35 +123,12 @@ class PostAJob extends React.Component{
                 <div className={classes.postAJobContainer}>
                     <div className={classes.formSection}>
                         <div className={classes.input2}>  
-                            <FormControl
-                                    className={classes.selectFormControl}
-                                    {...(this.formValidation.hasError("employer").error?{error:true}:{})}>
-                                <InputLabel htmlFor="employer-helper">Employer</InputLabel>
-                                <Select
-                                    value={this.state.employer}
-                                    onChange={this.handleChange}
-                                    input={<Input name="employer" id="employer-helper" />}
-                                    inputProps={{
-                                        id: 'employer',
-                                    }}
-                                >
-                                    <MenuItem value="">
-                                        <em>Unspecified</em>
-                                    </MenuItem>
-                                    {this.state.companies.map((d, i)=>
-                                        <MenuItem key={i} value={d.id}>{d.name}</MenuItem>
-                                    )}
-                                </Select>
-                                <FormHelperText>{this.formValidation.hasError("employer").helperText}</FormHelperText>
-                            </FormControl>
-                        </div>
-                        <div className={classes.input2}>  
                             <TextField
                                 name="title"
                                 label="Title"
                                 className={classes.textField}
                                 required
-                                onBlur={this.handleChange}
+                                onChange={this.handleChange}
                                 margin="normal"
                                 variant="outlined"
                                 {...this.formValidation.hasError("title")}
@@ -193,66 +137,40 @@ class PostAJob extends React.Component{
                         <div className={classes.input2}>  
                             <TextField
                                 name="caption"
-                                label="Description"
+                                label="Requirements"
                                 multiline={true}
                                 className={classes.textAreaMaxHeight}
-                                placeholder="A basic Job Description"
+                                placeholder="A list of requirements"
                                 rowsMax={7}
                                 rows={2}
                                 required
-                                onBlur={this.handleChange}
+                                onChange={this.handleChange}
                                 margin="normal"
                                 variant="outlined"
                                 {...this.formValidation.hasError("caption")}
                             />
                         </div>  
                         <div  className={classes.tagSearch}>
-                            <TagSearch onChange={(tags)=>this.setState({tagIds:tags}, this.formValidation.shouldRevalidate)}
-                                    {...this.formValidation.hasError("tagIds")}/>
+                            <TagSearch
+                                onChange={(tags)=>this.setState({tagIds:tags}, this.formValidation.shouldRevalidate)}
+                                {...this.formValidation.hasError("tagIds")}/>
                         </div>
-                        <div className={classes.input2}>  
-                            <FormControl
-                                    className={classes.selectFormControl}
-                                    {...(this.formValidation.hasError("salary").error?{error:true}:{})} >
-                                <InputLabel htmlFor="salary-helper">Salary</InputLabel>
-                                <Select
-                                    value={this.state.salary}
-                                    onChange={this.handleChange}
-                                    input={<Input name="salary" id="salary-helper" />}
-                                    inputProps={{
-                                        id: 'salary',
-                                    }}
-                                >
-                                    <MenuItem value="">
-                                        <em>Unspecified</em>
-                                    </MenuItem>
-                                    {this.state.salaryList.map((d, i)=>
-                                        <MenuItem key={i} value={d.salary_type_id}>{d.salary_type_name}</MenuItem>
-                                    )}
-                                </Select>
-                                <FormHelperText>{this.formValidation.hasError("salary").helperText}</FormHelperText>
-                            </FormControl>
-                            <FormControl
-                                    className={classes.selectFormControl}
-                                    {...(this.formValidation.hasError("experience").error?{error:true}:{})} >
-                                <InputLabel htmlFor="experience-helper">Experience</InputLabel>
-                                <Select
-                                    value={this.state.experience}
-                                    onChange={this.handleChange}
-                                    input={<Input name="experience" id="experience-helper" />}
-                                    inputProps={{
-                                        id: 'experience',
-                                    }}
-                                >
-                                    <MenuItem value="">
-                                        <em>Unspecified</em>
-                                    </MenuItem>
-                                    {this.state.experienceList.map((d, i)=>
-                                        <MenuItem key={i} value={d.experience_type_id}>{d.experience_type_name}</MenuItem>
-                                    )}
-                                </Select>
-                                <FormHelperText>{this.formValidation.hasError("experience").helperText}</FormHelperText>
-                            </FormControl>
+                        <div className={classes.input2}>
+                            <JobTypeSelector
+                                required
+                                onChange={(jobType)=>this.setState({jobType:jobType}, this.formValidation.shouldRevalidate)}
+                                {...this.formValidation.hasError("jobType")}/>
+                        </div>
+                        <div className={classes.input2}>
+                            <SalarySelector 
+                                required
+                                onChange={(salary)=>this.setState({salary:salary}, this.formValidation.shouldRevalidate)}
+                                {...this.formValidation.hasError("salary")}/>
+                                &nbsp;&nbsp;&nbsp;
+                            <ExperienceSelector 
+                                required
+                                onChange={(experience)=>this.setState({experience:experience}, this.formValidation.shouldRevalidate)}
+                                {...this.formValidation.hasError("experience")}/>
                         </div>
                         <div className={classes.input2}>
                             <AddressInput
@@ -272,4 +190,4 @@ class PostAJob extends React.Component{
     }
 };
 
-export default withStyles(styles)(PostAJob);  
+export default withStyles(styles)(EmployerJobPost);  

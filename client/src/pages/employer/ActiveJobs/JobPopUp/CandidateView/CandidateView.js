@@ -13,7 +13,6 @@ import Interview from '@material-ui/icons/RecordVoiceOver';
 import NoInterview from '@material-ui/icons/VoiceOverOff';
 import Work from '@material-ui/icons/Work';
 import NoWork from '@material-ui/icons/WorkOff';
-import { NavLink } from 'react-router-dom';  
 
 import { withStyles } from '@material-ui/core/styles';  
 import DenialReason from '../../../../../components/DenialReason/DenialReason';

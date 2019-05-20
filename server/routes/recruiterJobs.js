@@ -70,13 +70,13 @@ function getJobs(req, res){
         ) tg ON tg.post_id = j.post_id \
         '+
         (jobId != null ?
-           'WHERE j.post_id = ${jobId} AND j.recruiter_id = ${recruiterId} '+filtersToAdd
+           'WHERE j.is_visible AND j.post_id = ${jobId} AND j.recruiter_id = ${recruiterId} '+filtersToAdd
         :
         (search ? 
-            'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) AND j.recruiter_id = ${recruiterId} '+filtersToAdd+'\
+            'WHERE j.is_visible AND ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) AND j.recruiter_id = ${recruiterId} '+filtersToAdd+'\
             ORDER BY ts_rank_cd(company_name_search || posting_search, to_tsquery(\'simple\', ${search})) DESC'
         :
-            'WHERE  j.recruiter_id = ${recruiterId} '+filtersToAdd+' ORDER BY j.created_on DESC'
+            'WHERE j.is_visible AND j.recruiter_id = ${recruiterId} '+filtersToAdd+' ORDER BY j.created_on DESC'
         ))+' \
         OFFSET ${page} \
         LIMIT 10', {...sqlArgs, ...paramsToAdd})
@@ -192,11 +192,11 @@ function getJobsForCandidate(req, res){
                 ) jc ON jc.post_id = j.post_id \
                 '+
                 (jobId?
-                    'WHERE j.post_id = ${jobId} AND j.recruiter_id = ${recruiterId} '+filtersToAdd
+                    'WHERE j.is_visible AND j.post_id = ${jobId} AND j.recruiter_id = ${recruiterId} '+filtersToAdd
                 :
                 (search ? 
-                    'WHERE ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) AND j.recruiter_id = ${recruiterId} '+filtersToAdd
-                :'WHERE j.recruiter_id = ${recruiterId} '+filtersToAdd)
+                    'WHERE j.is_visible AND ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) AND j.recruiter_id = ${recruiterId} '+filtersToAdd
+                :'WHERE j.is_visible AND j.recruiter_id = ${recruiterId} '+filtersToAdd)
                 )+' \
                 ORDER BY tag_score DESC NULLS LAST, j.created_on DESC \
                 OFFSET ${page} \
@@ -263,7 +263,7 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
         INNER JOIN company_contact cc ON cc.company_id = jp.company_id \
         INNER JOIN account_manager ac ON cc.company_contact_id = ac.account_manager_id \
         INNER JOIN company cp ON cc.company_id = cp.company_id \
-        WHERE rc.candidate_id = ${candidate_id} AND rc.recruiter_id = ${recruiter_id} AND jp.post_id = ${post_id}',
+        WHERE jp.is_visible AND rc.candidate_id = ${candidate_id} AND rc.recruiter_id = ${recruiter_id} AND jp.post_id = ${post_id}',
             {candidate_id:body.candidateId, recruiter_id:jwtPayload.id, post_id: body.postId})
 
         const q2 = t.none('INSERT INTO candidate_posting (candidate_id, post_id, recruiter_id, comment) VALUES ($1, $2, $3, $4)',

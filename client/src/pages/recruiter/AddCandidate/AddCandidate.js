@@ -2,7 +2,7 @@ import React from 'react';
 import './AddCandidate.css';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import {get, post} from '../../../ApiCalls';  
-import TagSearch from '../../../components/TagSearch/TagSearch';  
+import TagSearch from '../../../components/Inputs/TagSearch/TagSearch';  
 
 import Close from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';

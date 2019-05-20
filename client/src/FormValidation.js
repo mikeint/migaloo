@@ -49,6 +49,16 @@ export default class FormValidation {
                         errors[d.stateName] = d.errorText;
                 }
             }
+            else if(d.type === 'number'){
+                if(d.gt && d.gt <= value){
+                    if(errors[d.stateName] == null)
+                        errors[d.stateName] = d.errorText;
+                }
+                if(d.lt && d.lt >= value){
+                    if(errors[d.stateName] == null)
+                        errors[d.stateName] = d.errorText;
+                }
+            }
         })
         this.parent.setState({errors:errors});
         return Object.keys(errors).length === 0;
