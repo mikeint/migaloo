@@ -30,6 +30,7 @@ router.post('/create', passport.authentication,  (req, res) => {
      * caption
      * employer
      * salaryTypeId (Optional)
+     * autoAddRecruiters (Optional)
      * experienceTypeId (Optional)
      * tagIds (Optional)
      */
@@ -74,9 +75,11 @@ router.post('/create', passport.authentication,  (req, res) => {
             })
             .then((post_id) => {
                 res.status(200).json({success: true})
-                postingAssign.findRecruitersForPost(post_id).then((data)=>{
-                    postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: post_id, recruiter_id: d.recruiter_id}}))
-                }) // Async call to add posts to the new recruiter
+                if(body.autoAddRecruiters !== false){
+                    postingAssign.findRecruitersForPost(post_id).then((data)=>{
+                        postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: post_id, recruiter_id: d.recruiter_id}}))
+                    }) // Async call to add posts to the new recruiter
+                }
             })
         })
     }).catch((err)=>{

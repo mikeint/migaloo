@@ -1,20 +1,156 @@
+# Setup:
+# apt-get install python3-venv
+# python3 -m venv gensim
+# source gensim/bin/activate
+# pip install gensim
 from gensim.models.wrappers import FastText
+
 # Download word vector model from:
 # https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.en.300.bin.gz
 # Gunzip to a folder, and designate here
-model = FastText.load_fasttext_format('/home/ubuntu/cc.en.300')
+# model = FastText.load_fasttext_format('/mnt/1/cc.en.300')
 
-tags=[[1, "a# .net"], [2, "a-0 system"], [3, "a+"], [4, "a++"], [5, "abap"], [6, "abc"], [7, "abset"], [8, "absys"], [9, "acc"], [10, "accent"], [11, "ace dasl"], [12, "acl2"], [13, "action!"], [14, "actionscript"], [15, "actor"], [16, "ada"], [17, "adenine"], [18, "agda"], [19, "agora"], [20, "aimms"], [21, "aldor"], [22, "alef"], [23, "alf"], [24, "algol 58"], [25, "algol 68"], [26, "algol w"], [27, "alice"], [28, "alma-0"], [29, "ambienttalk"], [30, "amiga e"], [31, "ampl"], [32, "angelscript"], [33, "apex"], [34, "apl"], [35, "applescript"], [36, "apt"], [37, "arexx"], [38, "argus"], [39, "aspectj"], [40, "assembly language"], [41, "ats"], [42, "ateji px"], [43, "autocoder"], [44, "autoit"], [45, "autolisp / visual lisp"], [46, "averest"], [47, "awk"], [48, "axum"], [49, "b"], [50, "babbage"], [51, "ballerina"], [52, "bash"], [53, "basic"], [54, "bc"], [55, "beanshell"], [56, "batch file"], [57, "bertrand"], [58, "beta"], [59, "bliss"], [60, "blockly"], [61, "boo"], [62, "boomerang"], [63, "bourne shell"], [64, "bpel"], [65, "business basic"], [66, "c"], [67, "c++"], [68, "c*"], [69, "c#"], [70, "c/al"], [71, "caché objectscript"], [72, "c shell"], [73, "cayenne"], [74, "cduce"], [75, "cecil"], [76, "cesil"], [77, "céu"], [78, "ceylon"], [79, "cg"], [80, "ch"], [81, "chapel"], [82, "charity"], [83, "charm"], [84, "chill"], [85, "chomski"], [86, "chuck"], [87, "cilk"], [88, "citrine"], [89, "cl"], [90, "claire"], [91, "clean"], [92, "clipper"], [93, "clips"], [94, "clist"], [95, "clojure"], [96, "clu"], [97, "cobol"], [98, "cobolscript"], [99, "cobra"], [100, "coffeescript"], [101, "coldfusion"], [102, "comal"], [103, "comit"], [104, "common intermediate language"], [105, "common lisp"], [106, "compass"], [107, "component pascal"], [108, "constraint handling rules"], [109, "cool"], [110, "coq"], [111, "coral 66"], [112, "corvision"], [113, "cowsel"], [114, "cpl"], [115, "crystal"], [116, "csound"], [117, "csp"], [118, "cuneiform"], [119, "curl"], [120, "curry"], [121, "cyclone"], [122, "cython"], [123, "d"], [124, "dasl"], [125, "dart"], [126, "darwin"], [127, "datalog"], [128, "datatrieve"], [129, "dbase"], [130, "dc"], [131, "dcl"], [132, "dinkc"], [133, "dog"], [134, "draco"], [135, "drakon"], [136, "dylan"], [137, "dynamo"], [138, "dax"], [139, "ease"], [140, "easy pl/i"], [141, "easytrieve plus"], [142, "ec"], [143, "ecmascript"], [144, "edinburgh imp"], [145, "eiffel"], [146, "elan"], [147, "elixir"], [148, "elm"], [149, "emacs lisp"], [150, "emerald"], [151, "epl"], [152, "erlang"], [153, "es"], [154, "escher"], [155, "espol"], [156, "esterel"], [157, "euclid"], [158, "euler"], [159, "euphoria"], [160, "euslisp robot programming language"], [161, "cms exec"], [162, "exec 2"], [163, "ezhil"], [164, "f"], [165, "f#"], [166, "f*"], [167, "factor"], [168, "fantom"], [169, "ffp"], [170, "fjölnir"], [171, "fl"], [172, "flavors"], [173, "flex"], [174, "floop"], [175, "focal"], [176, "focus"], [177, "foil"], [178, "formac"], [179, "@formula"], [180, "forth"], [181, "fortress"], [182, "foxpro"], [183, "fp"], [184, "franz lisp"], [185, "f-script"], [186, "g"], [187, "gamemonkey script"], [188, "gams"], [189, "gap"], [190, "g-code"], [191, "gdscript"], [192, "genie"], [193, "george"], [194, "glsl"], [195, "gnu e"], [196, "go"], [197, "go!"], [198, "goal"], [199, "golo"], [200, "gom"], [201, "google apps script"], [202, "gosu"], [203, "gotran"], [204, "gpss"], [205, "grass"], [206, "grasshopper"], [207, "groovy"], [208, "h"], [209, "hack"], [210, "haggis"], [211, "halide"], [212, "hamilton c shell"], [213, "harbour"], [214, "hartmann pipelines"], [215, "haskell"], [216, "haxe"], [217, "high level assembly"], [218, "hlsl"], [219, "holyc"], [220, "hop"], [221, "hopscotch"], [222, "hope"], [223, "hume"], [224, "hypertalk"], [225, "i"], [226, "io"], [227, "icon"], [228, "ibm basic assembly language"], [229, "ibm hascript"], [230, "ibm informix-4gl"], [231, "ibm rpg"], [232, "irineu"], [233, "idl"], [234, "idris"], [235, "j"], [236, "j#"], [237, "j++"], [238, "jade"], [239, "jal"], [240, "janus"], [241, "java"], [242, "javafx script"], [243, "javascript"], [244, "jcl"], [245, "jean"], [246, "join java"], [247, "joule"], [248, "jovial"], [249, "joy"], [250, "jscript"], [251, "jscript .net"], [252, "json"], [253, "jython"], [254, "k"], [255, "kaleidoscope"], [256, "karel"], [257, "kee"], [258, "kixtart"], [259, "kif"], [260, "kojo"], [261, "kotlin"], [262, "krc"], [263, "krl"], [264, "krypton"], [265, "kodu"], [266, "kv"], [267, "l"], [268, "labview"], [269, "ladder"], [270, "lansa"], [271, "latex"], [272, "lava"], [273, "lc-3"], [274, "legoscript"], [275, "lil"], [276, "lilypond"], [277, "limnor"], [278, "linc"], [279, "lingo"], [280, "linq"], [281, "lis"], [282, "lisa"], [283, "lite-c"], [284, "lithe"], [285, "little b"], [286, "lll"], [287, "logo"], [288, "logtalk"], [289, "lpc"], [290, "lse"], [291, "lsl"], [292, "livecode"], [293, "livescript"], [294, "lua"], [295, "lustre"], [296, "lyapas"], [297, "lynx"], [298, "m"], [299, "m2001"], [300, "m4"], [301, "machine code"], [302, "mad"], [303, "mad/i"], [304, "magik"], [305, "magma"], [306, "make"], [307, "maple"], [308, "mapper"], [309, "mark-iv"], [310, "mary"], [311, "masm microsoft assembly x86"], [312, "math-matic"], [313, "matlab"], [314, "maxima"], [315, "max"], [316, "maxscript"], [317, "maya"], [318, "mdl"], [319, "mesa"], [320, "metafont"], [321, "metaquotes language"], [322, "mheg-5"], [323, "microcode"], [324, "microscript"], [325, "milk"], [326, "mimic"], [327, "mirah"], [328, "miranda"], [329, "miva script"], [330, "ml"], [331, "modelica"], [332, "modula"], [333, "modula-2"], [334, "modula-3"], [335, "mohol"], [336, "moo"], [337, "mouse"], [338, "mpd"], [339, "mathcad"], [340, "msl"], [341, "mumps"], [342, "mupad"], [343, "mystic programming language"], [344, "n"], [345, "nasm"], [346, "napier88"], [347, "neko"], [348, "nemerle"], [349, "net.data"], [350, "netlogo"], [351, "netrexx"], [352, "newlisp"], [353, "newp"], [354, "newspeak"], [355, "nial"], [356, "nice"], [357, "nickle"], [358, "nim"], [359, "npl"], [360, "not exactly c"], [361, "nsis"], [362, "nu"], [363, "nwscript"], [364, "nxt-g"], [365, "o"], [366, "o:xml"], [367, "oberon"], [368, "obj2"], [369, "object lisp"], [370, "objectlogo"], [371, "object rexx"], [372, "object pascal"], [373, "objective-j"], [374, "obliq"], [375, "ocaml"], [376, "occam"], [377, "occam-π"], [378, "octave"], [379, "onyx"], [380, "opa"], [381, "opal"], [382, "opencl"], [383, "openedge abl"], [384, "opl"], [385, "ops5"], [386, "optimj"], [387, "orc"], [388, "orca/modula-2"], [389, "oriel"], [390, "orwell"], [391, "oz"], [392, "p"], [393, "p4"], [394, "p′′"], [395, "parasail"], [396, "pari/gp"], [397, "pcastl"], [398, "pcf"], [399, "pearl"], [400, "peoplecode"], [401, "perl"], [402, "pdl"], [403, "pharo"], [404, "php"], [405, "pico"], [406, "picolisp"], [407, "pict"], [408, "pig"], [409, "pikt"], [410, "pilot"], [411, "pipelines"], [412, "pizza"], [413, "pl-11"], [414, "pl/0"], [415, "pl/c"], [416, "pl/i"], [417, "pl/m"], [418, "pl/p"], [419, "pl/sql"], [420, "pl360"], [421, "plankalkül"], [422, "planner"], [423, "plex"], [424, "plexil"], [425, "plus"], [426, "pop-11"], [427, "postscript"], [428, "portable"], [429, "pov-ray sdl"], [430, "powerhouse"], [431, "powerbuilder"], [432, "powershell"], [433, "processing"], [434, "processing.js"], [435, "prograph"], [436, "proiv"], [437, "prolog"], [438, "promal"], [439, "prose modeling language"], [440, "protel"], [441, "providex"], [442, "pro*c"], [443, "pure"], [444, "purebasic"], [445, "python"], [446, "q"], [447, "q#"], [448, "qalb"], [449, "qtscript"], [450, "quakec"], [451, "r"], [452, "r++"], [453, "racket"], [454, "rapid"], [455, "rapira"], [456, "ratfiv"], [457, "rc"], [458, "reason"], [459, "rebol"], [460, "red"], [461, "redcode"], [462, "refal"], [463, "ring"], [464, "rlab"], [465, "roop"], [466, "rpg"], [467, "rpl"], [468, "rsl"], [469, "ruby"], [470, "runescript"], [471, "rust"], [472, "s"], [473, "s2"], [474, "s3"], [475, "s-plus"], [476, "sa-c"], [477, "sabretalk"], [478, "sail"], [479, "salsa"], [480, "sam76"], [481, "sasl"], [482, "sather"], [483, "sawzall"], [484, "scala"], [485, "scheme"], [486, "scilab"], [487, "script.net"], [488, "sed"], [489, "seed7"], [490, "self"], [491, "sensetalk"], [492, "sequencel"], [493, "setl"], [494, "simpol"], [495, "signal"], [496, "simple"], [497, "simscript"], [498, "simula"], [499, "singularity"], [500, "sisal"], [501, "slip"], [502, "small"], [503, "smalltalk"], [504, "sml"], [505, "snap!"], [506, "snobol"], [507, "snowball"], [508, "sol"], [509, "solidity"], [510, "sophaeros"], [511, "speedcode"], [512, "spin"], [513, "sp/k"], [514, "sps"], [515, "sql"], [516, "sqr"], [517, "squirrel"], [518, "sr"], [519, "s/sl"], [520, "starlogo"], [521, "strand"], [522, "stata"], [523, "subtext"], [524, "sbl"], [525, "supercollider"], [526, "supertalk"], [527, "swift"], [528, "sympl"], [529, "t"], [530, "tacl"], [531, "tacpol"], [532, "tads"], [533, "tal"], [534, "tcl"], [535, "teco"], [536, "telcomp"], [537, "tex"], [538, "tex"], [539, "tie"], [540, "tmg, compiler-compiler"], [541, "tom"], [542, "toi"], [543, "topspeed"], [544, "tpu"], [545, "trac"], [546, "ttm"], [547, "transcript"], [548, "ttcn"], [549, "turing"], [550, "tutor"], [551, "txl"], [552, "typescript"], [553, "u"], [554, "ubercode"], [555, "ucsd pascal"], [556, "umple"], [557, "unicon"], [558, "uniface"], [559, "unix shell"], [560, "unrealscript"], [561, "v"], [562, "vala"], [563, "verilog"], [564, "vhdl"], [565, "viper"], [566, "visual basic"], [567, "visual basic .net"], [568, "visual dataflex"], [569, "visual dialogscript"], [570, "visual fortran"], [571, "visual j++"], [572, "visual j#"], [573, "visual lisp"], [574, "visual objects"], [575, "visual prolog"], [576, "vsxu"], [577, "watfiv"], [578, "webassembly"], [579, "webdna"], [580, "whiley"], [581, "winbatch"], [582, "wolfram language"], [583, "x"], [584, "x++"], [585, "x10"], [586, "xbase"], [587, "xbase++"], [588, "xbl"], [589, "xharbour"], [590, "xl"], [591, "xojo"], [592, "xotcl"], [593, "xod"], [594, "xpath"], [595, "xpl0"], [596, "xquery"], [597, "xsb"], [598, "xsharp"], [599, "xslt"], [600, "xtend"], [601, "yorick"], [602, "yql"], [603, "yoix"], [604, "z"], [605, "z notation"], [606, "zebra"], [607, "zetalisp"], [608, "zopl"], [609, "zsh"], [610, "zpl"], [611, "z++"], [612, "linux"], [613, "redhat"], [614, "microsoft excel"], [615, "microsoft office"], [616, "architecture design"], [617, "agile"], [618, "project management"], [619, "leadership"], [620, "waterfall"]]
-with open('similarities.pgsql', 'w') as f:
+# This one seems to have symbols
+# https://dl.fbaipublicfiles.com/fasttext/vectors-wiki/wiki.en.zip
+# unzip wiki.en.zip -x wiki.en.vec
+model = FastText.load_fasttext_format('/mnt/1/wiki.en')
+
+tags=[
+	["A# .NET", 2], ["A-0 System", 2], ["A+", 2], ["A++", 2], ["ABAP", 2], ["ABC", 2],
+	["ABSET", 2], ["ABSYS", 2], ["ACC", 2], ["Accent", 2], ["Ace DASL", 2], ["ACL2", 2],
+	["Action!", 2], ["ActionScript", 2], ["Actor", 2], ["Ada", 2], ["Adenine", 2], ["Agda", 2],
+	["Agora", 2], ["AIMMS", 2], ["Aldor", 2], ["Alef", 2], ["ALF", 2], ["ALGOL 58", 2],
+	["ALGOL 68", 2], ["ALGOL W", 2], ["Alice", 2], ["Alma-0", 2], ["AmbientTalk", 2], ["Amiga E", 2],
+	["AMPL", 2], ["AngelScript", 2], ["Apex", 2], ["APL", 2], ["AppleScript", 2], ["APT", 2],
+	["ARexx", 2], ["Argus", 2], ["AspectJ", 2], ["Assembly language", 2], ["ATS", 2], ["Ateji PX", 2],
+	["Autocoder", 2], ["AutoIt", 2], ["AutoLISP / Visual LISP", 2], ["AWK", 2], ["Axum", 2],
+	["B", 2], ["Babbage", 2], ["Ballerina", 2], ["Bash", 2], ["BASIC", 2], ["bc", 2],
+	["BeanShell", 2], ["Batch file", 2], ["Bertrand", 2], ["BETA", 2], ["BLISS", 2], ["Blockly", 2],
+	["Boo", 2], ["Boomerang", 2], ["Bourne shell", 2], ["BPEL", 2], ["Business Basic", 2], ["C", 2],
+	["C++", 2], ["C#", 2], ["C/AL", 2], ["Caché ObjectScript", 2], ["C Shell", 2],
+	["Cayenne", 2], ["CDuce", 2], ["Cecil", 2], ["Céu", 2], ["Ceylon", 2],
+	["Cg", 2], ["Ch", 2], ["Chapel", 2], ["Charity", 2], ["Charm", 2], ["CHILL", 2],
+	["chomski", 2], ["ChucK", 2], ["Cilk", 2], ["Citrine", 2], ["CL", 2], ["Claire", 2],
+	["Clean", 2], ["Clipper", 2], ["CLIPS", 2], ["CLIST", 2], ["Clojure", 2], ["CLU", 2],
+	["COBOL", 2], ["CobolScript", 2], ["Cobra", 2], ["CoffeeScript", 2], ["ColdFusion", 2], ["COMAL", 2],
+	["COMIT", 2], ["Common Intermediate Language", 2], ["Common Lisp", 2], ["COMPASS", 2], ["Component Pascal", 2], ["Constraint Handling Rules", 2],
+	["Cool", 2], ["Coq", 2], ["Coral 66", 2], ["CorVision", 2], ["COWSEL", 2], ["CPL", 2],
+	["Crystal", 2], ["Csound", 2], ["CSP", 2], ["Cuneiform", 2], ["Curl", 2], ["Curry", 2],
+	["Cyclone", 2], ["Cython", 2], ["D", 2], ["DASL", 2], ["Dart", 2], ["Darwin", 2],
+	["Datalog", 2], ["DATATRIEVE", 2], ["dBase", 2], ["dc", 2], ["DCL", 2], ["DinkC", 2],
+	["Dog", 2], ["Draco", 2], ["DRAKON", 2], ["Dylan", 2], ["DYNAMO", 2], ["DAX", 2],
+	["Ease", 2], ["Easy PL/I", 2], ["EASYTRIEVE PLUS", 2], ["eC", 2], ["ECMAScript", 2], ["Edinburgh IMP", 2],
+	["Eiffel", 2], ["ELAN", 2], ["Elixir", 2], ["Elm", 2], ["Emacs Lisp", 2], ["Emerald", 2],
+	["EPL", 2], ["Erlang", 2], ["es", 2], ["Escher", 2], ["ESPOL", 2], ["Esterel", 2],
+	["Euclid", 2], ["Euler", 2], ["Euphoria", 2], ["EusLisp Robot Programming Language", 2], ["CMS EXEC", 2], ["EXEC 2", 2],
+	["Ezhil", 2], ["F", 2], ["F#", 2], ["Factor", 2], ["Fantom", 2],
+	["FFP", 2], ["Fjölnir", 2], ["FL", 2], ["Flavors", 2], ["Flex", 2], ["FlooP", 2],
+	["FOCAL", 2], ["FOCUS", 2], ["FOIL", 2], ["FORMAC", 2], ["@Formula", 2], ["Forth", 2],
+	["Fortress", 2], ["FoxPro", 2], ["FP", 2], ["Franz Lisp", 2], ["F-Script", 2], ["G", 2],
+	["GameMonkey Script", 2], ["GAMS", 2], ["GAP", 2], ["G-code", 2], ["Genie", 2],
+	["GEORGE", 2], ["GLSL", 2], ["GNU E", 2], ["Go", 2], ["Go!", 2], ["GOAL", 2],
+	["Golo", 2], ["GOM", 2], ["Google Apps Script", 2], ["Gosu", 2], ["GPSS", 2],
+	["GRASS", 2], ["Grasshopper", 2], ["Groovy", 2], ["H", 2], ["Hack", 2], ["HAGGIS", 2],
+	["Halide", 2], ["Hamilton C shell", 2], ["Harbour", 2], ["Hartmann pipelines", 2], ["Haskell", 2], ["Haxe", 2],
+	["High Level Assembly", 2], ["HLSL", 2], ["Hop", 2], ["Hopscotch", 2], ["Hope", 2],
+	["Hume", 2], ["HyperTalk", 2], ["I", 2], ["Io", 2], ["Icon", 2], ["IBM Basic assembly language", 2],
+	["IBM HAScript", 2], ["IBM Informix-4GL", 2], ["IBM RPG", 2], ["Irineu", 2], ["IDL", 2], ["Idris", 2],
+	["J", 2], ["J#", 2], ["J++", 2], ["JADE", 2], ["JAL", 2], ["Janus", 2],
+	["Java", 2], ["JavaFX Script", 2], ["JavaScript", 2], ["JCL", 2], ["JEAN", 2], ["Join Java", 2],
+	["Joule", 2], ["JOVIAL", 2], ["Joy", 2], ["JScript", 2], ["JScript .NET", 2], ["JSON", 2],
+	["Jython", 2], ["K", 2], ["Kaleidoscope", 2], ["Karel", 2], ["KEE", 2], ["Kixtart", 2],
+	["KIF", 2], ["Kojo", 2], ["Kotlin", 2], ["KRC", 2], ["KRL", 2], ["KRYPTON", 2],
+	["Kodu", 2], ["Kv", 2], ["L", 2], ["LabVIEW", 2], ["Ladder", 2], ["LANSA", 2],
+	["LaTeX", 2], ["Lava", 2], ["LC-3", 2], ["LIL", 2], ["LilyPond", 2],
+	["Limnor", 2], ["LINC", 2], ["Lingo", 2], ["LINQ", 2], ["LIS", 2], ["LISA", 2],
+	["Lite-C", 2], ["Lithe", 2], ["Little b", 2], ["LLL", 2], ["Logo", 2], ["Logtalk", 2],
+	["LPC", 2], ["LSE", 2], ["LSL", 2], ["LiveCode", 2], ["LiveScript", 2], ["Lua", 2],
+	["Lustre", 2], ["LYaPAS", 2], ["Lynx", 2], ["M", 2],
+	["Machine code", 2], ["MAD", 2], ["MAD/I", 2], ["Magik", 2], ["Magma", 2], ["Make", 2],
+	["Maple", 2], ["MAPPER", 2], ["MARK-IV", 2], ["Mary", 2], ["MASM Microsoft Assembly x86", 2], ["MATH-MATIC", 2],
+	["MATLAB", 2], ["Maxima", 2], ["Max", 2], ["MaxScript", 2], ["Maya", 2], ["MDL", 2],
+	["Mesa", 2], ["Metafont", 2], ["MetaQuotes Language", 2], ["MHEG-5", 2], ["Microcode", 2], ["MicroScript", 2],
+	["Milk", 2], ["MIMIC", 2], ["Mirah", 2], ["Miranda", 2], ["MIVA Script", 2], ["ML", 2],
+	["Modelica", 2], ["Modula", 2], ["Mohol", 2], ["MOO", 2],
+	["Mouse", 2], ["MPD", 2], ["Mathcad", 2], ["MSL", 2], ["MUMPS", 2], ["MuPAD", 2],
+	["Mystic Programming Language", 2], ["N", 2], ["NASM", 2], ["Napier88", 2], ["Neko", 2], ["Nemerle", 2],
+	["Net.Data", 2], ["NetLogo", 2], ["NetRexx", 2], ["NewLISP", 2], ["NEWP", 2], ["Newspeak", 2],
+	["Nial", 2], ["Nice", 2], ["Nickle", 2], ["Nim", 2], ["NPL", 2], ["Not eXactly C", 2],
+	["NSIS", 2], ["Nu", 2], ["NWScript", 2], ["NXT-G", 2], ["O", 2], ["o:XML", 2],
+	["Oberon", 2], ["OBJ2", 2], ["Object Lisp", 2], ["Object REXX", 2], ["Object Pascal", 2],
+	["Objective-J", 2], ["Obliq", 2], ["OCaml", 2], ["occam", 2], ["occam-π", 2], ["Octave", 2],
+	["Onyx", 2], ["Opa", 2], ["Opal", 2], ["OpenCL", 2], ["OpenEdge ABL", 2], ["OPL", 2],
+	["OptimJ", 2], ["Orc", 2], ["Oriel", 2], ["Orwell", 2],
+	["Oz", 2], ["P", 2], ["ParaSail", 2], ["PARI/GP", 2],
+	["PCASTL", 2], ["PCF", 2], ["PEARL", 2], ["PeopleCode", 2], ["Perl", 2], ["PDL", 2],
+	["Pharo", 2], ["PHP", 2], ["Pico", 2], ["Picolisp", 2], ["Pict", 2], ["Pig", 2],
+	["PIKT", 2], ["PILOT", 2], ["Pipelines", 2], ["Pizza", 2], ["PL-11", 2], ["PL/0", 2],
+	["PL/C", 2], ["PL/I", 2], ["PL/M", 2], ["PL/P", 2], ["PL/SQL", 2], ["PL360", 2],
+	["Plankalkül", 2], ["Planner", 2], ["PLEX", 2], ["PLEXIL", 2], ["Plus", 2], ["POP-11", 2],
+	["PostScript", 2], ["PortablE", 2], ["POV-Ray SDL", 2], ["Powerhouse", 2], ["PowerBuilder", 2], ["PowerShell", 2],
+	["Processing", 2], ["Processing.js", 2], ["Prograph", 2], ["PROIV", 2], ["Prolog", 2], ["PROMAL", 2],
+	["PROSE modeling language", 2], ["PROTEL", 2], ["ProvideX", 2], ["Pro*C", 2], ["Pure", 2], ["PureBasic", 2],
+	["Python", 2], ["Q", 2], ["Q#", 2], ["Qalb", 2], ["QtScript", 2], ["QuakeC", 2],
+	["R", 2], ["R++", 2], ["Racket", 2], ["RAPID", 2], ["Rapira", 2], ["Ratfiv", 2],
+	["rc", 2], ["Reason", 2], ["REBOL", 2], ["Red", 2], ["Redcode", 2], ["REFAL", 2],
+	["Ring", 2], ["Rlab", 2], ["ROOP", 2], ["RPG", 2], ["RPL", 2], ["RSL", 2],
+	["Ruby", 2], ["RuneScript", 2], ["Rust", 2], ["S", 2], ["S2", 2], ["S3", 2],
+	["S-PLUS", 2], ["SA-C", 2], ["SabreTalk", 2], ["SAIL", 2], ["SALSA", 2], ["SAM76", 2],
+	["SASL", 2], ["Sather", 2], ["Sawzall", 2], ["Scala", 2], ["Scheme", 2], ["Scilab", 2],
+	["Script.NET", 2], ["Self", 2], ["SenseTalk", 2], ["SequenceL", 2],
+	["SETL", 2], ["SIMPOL", 2], ["SIGNAL", 2], ["SiMPLE", 2], ["SIMSCRIPT", 2], ["Simula", 2],
+	["Singularity", 2], ["SISAL", 2], ["SLIP", 2], ["SMALL", 2], ["Smalltalk", 2], ["SML", 2],
+	["Snap!", 2], ["SNOBOL", 2], ["Snowball", 2], ["SOL", 2], ["Solidity", 2], 
+	["Speedcode", 2], ["SPIN", 2], ["SP/k", 2], ["SPS", 2], ["SQL", 2], ["SQR", 2],
+	["Squirrel", 2], ["SR", 2], ["S/SL", 2], ["Starlogo", 2], ["Strand", 2], ["Stata", 2],
+	["Subtext", 2], ["SBL", 2], ["SuperCollider", 2], ["SuperTalk", 2], ["Swift", 2], ["SYMPL", 2],
+	["T", 2], ["TACL", 2], ["TACPOL", 2], ["TADS", 2], ["TAL", 2], ["Tcl", 2],
+	["TECO", 2], ["TELCOMP", 2], ["TeX", 2], ["TEX", 2], ["TIE", 2], ["TMG, compiler-compiler", 2],
+	["TOM", 2], ["Toi", 2], ["Topspeed", 2], ["TPU", 2], ["Trac", 2], ["TTM", 2],
+	["Transcript", 2], ["TTCN", 2], ["Turing", 2], ["TUTOR", 2], ["TXL", 2], ["TypeScript", 2],
+	["U", 2], ["Ubercode", 2], ["UCSD Pascal", 2], ["Umple", 2], ["Unicon", 2], ["Uniface", 2],
+	["Unix shell", 2], ["UnrealScript", 2], ["V", 2], ["Vala", 2], ["Verilog", 2], ["VHDL", 2],
+	["Viper", 2], ["Visual Basic", 2], ["Visual Basic .NET", 2], ["Visual DataFlex", 2], ["Visual DialogScript", 2], ["Visual Fortran", 2],
+	["Visual J++", 2], ["Visual J#", 2], ["Visual LISP", 2], ["Visual Objects", 2], ["Visual Prolog", 2], ["VSXu", 2],
+	["WATFIV", 2], ["WebAssembly", 2], ["WebDNA", 2], ["Whiley", 2], ["Winbatch", 2], ["Wolfram Language", 2],
+	["X", 2], ["X++", 2], ["X10", 2], ["xBase", 2], ["xBase++", 2], ["XBL", 2],
+	["xHarbour", 2], ["XL", 2], ["Xojo", 2], ["XOTcl", 2], ["XOD", 2], ["XPath", 2],
+	["XPL0", 2], ["XQuery", 2], ["XSB", 2], ["XSharp", 2], ["XSLT", 2], ["Xtend", 2],
+	["Yorick", 2], ["YQL", 2], ["Yoix", 2], ["Z", 2], ["Z notation", 2], ["Zebra", 2],
+	["ZetaLisp", 2], ["ZOPL", 2], ["Zsh", 2], ["ZPL", 2], ["Z++", 2],
+	["Linux", 3], ["Redhat", 3], ["Debian", 3], ["Windows", 3],
+	["Microsoft Excel", 4], ["Microsoft Office", 4],
+	["Architecture Design", 5], ["Agile", 5], ["Project Management", 5], ["Leadership", 5], ["Waterfall", 5]
+]
+with open('/home/ubuntu/similarities.pgsql', 'w') as f:
+    f.write('INSERT INTO tags (tag_name, tag_type_id, frequency) VALUES\n\t')
+    counter = -1
+    for xid, (x, xType) in enumerate(tags):
+        cnt = 0
+        try:
+            cnt = model.wv.vocab[x.lower()].count
+        except:
+            pass
+        if counter % 6 == 0:
+            f.write(',\n\t')
+            counter = 0
+        if counter == -1:
+            counter = 0
+        if counter == 0:
+            f.write('(\''+str(x)+'\', '+str(xType)+', '+str(cnt)+')')
+        else:
+            f.write(', (\''+str(x)+'\', '+str(xType)+', '+str(cnt)+')')
+        counter += 1
+    f.write(';\n\n')
     f.write('INSERT INTO tags_equality (tag_id_1, tag_id_2, similarity) VALUES\n\t')
     counter = -1
-    for xid, x in tags:
-        for yid, y in tags:
+    for xid, (x, xType) in enumerate(tags):
+        for yid, (y, yType) in enumerate(tags):
             try:
                 if xid == yid:
                     v = 1.0
                 else:
-                    v = model.similarity(x, y)
+                    v = model.wv.similarity(x.lower(), y.lower())
                 if v >= 0.2:
                     if counter % 6 == 0:
                         f.write(',\n\t')
@@ -22,9 +158,9 @@ with open('similarities.pgsql', 'w') as f:
                     if counter == -1:
                         counter = 0
                     if counter == 0:
-                        f.write('('+str(xid)+', '+str(yid)+', '+str(v)+')')
+                        f.write('('+str(xid+1)+', '+str(yid+1)+', '+str(v)+')')
                     else:
-                        f.write(', ('+str(xid)+', '+str(yid)+', '+str(v)+')')
+                        f.write(', ('+str(xid+1)+', '+str(yid+1)+', '+str(v)+')')
                     counter += 1
             except:
                 pass
