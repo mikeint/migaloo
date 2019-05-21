@@ -154,7 +154,7 @@ class JobPopUp extends React.Component{
                     </IconButton>
                 </div>
                 <div className={classes.jobPostingContainer}>
-                    <p>{jobObj.caption}</p>
+                    <p>{jobObj.requirements}</p>
                     <h3>{jobObj.experience_type_name}</h3> 
                     {jobObj.tag_names?<p>Tags: {jobObj.tag_names.join(", ")}</p>:''}
                     <p>Created: {jobObj.created}</p>

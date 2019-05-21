@@ -47,23 +47,30 @@ router.post('/create', passport.authentication,  (req, res) => {
 
     postgresdb.tx(t => {
         // creating a sequence of transaction queries:
-        const q1 = t.one('INSERT INTO login (email) VALUES ($1) RETURNING user_id ON CONFLICT DO UPDATE email = EXCLUDED.email RETURNING user_id',
-                            [body.email])
-        return q1.then((candidate_ret)=>{
-            const q2 = t.none('INSERT INTO recruiter_candidate (candidate_id, recruiter_id) VALUES ($1, $2)',
+        const qCheck = t.any('SELECT user_id FROM login WHERE email = lower(${email})',
+                    {email:body.email})
+        return qCheck.then(email_exists=>{
+            if(email_exists && email_exists.length > 0){
+                return Promise.resolve(email_exists[0])
+            }else{
+                return t.one('INSERT INTO login (email) VALUES (lower(${email})) RETURNING user_id',
+                    {email:body.email})
+            }
+        }).then((candidate_ret)=>{
+            const q2 = t.none('INSERT INTO candidate (candidate_id, first_name, last_name, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5)',
+                                [candidate_ret.user_id, body.firstName, body.lastName, body.experienceTypeId, body.salaryTypeId])
+            const q3 = t.none('INSERT INTO recruiter_candidate (candidate_id, recruiter_id) VALUES ($1, $2)',
                                 [candidate_ret.user_id, jwtPayload.id])
-            const q3 = t.none('INSERT INTO candidate (first_name, last_name, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4)',
-                                [body.firstName, body.lastName, body.experienceTypeId, body.salaryTypeId])
             var queries = [q2, q3];
             if(body.tagIds != null && body.tagIds.length > 0){
                 const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidate_ret.user_id, tag_id: d}}), candidateTagsInsertHelper);
                 const q4 = t.none(query);
                 queries.push(q4)
             }
-            return t.batch(queries).then(()=>{
-                res.json({success: true})
-            })
-            
+            logger.info('Recruiter added candidate', {tags:['candidate', 'recruiter'], url:req.originalUrl, userId:jwtPayload.id, body: {...req.body, candidateId:candidate_ret.user_id}});
+            return t.batch(queries)
+        }).then(()=>{
+            res.json({success: true})
         })
     }).catch((err)=>{
         logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

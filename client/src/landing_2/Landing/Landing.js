@@ -19,7 +19,7 @@ class Landing extends Component {
  
                     <div className="heroContent">
                         <div className="flex">
-                            <div className="hiText">Hi, im Migaloo.</div>
+                            <div className="hiText">Hi, i'm Migaloo.</div>
                             <div className="heroContentWhale"><WhaleHead sprayColor='#fff'/></div>
                         </div>
                         <div className="flex">

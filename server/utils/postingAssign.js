@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const notifications = require('./notifications');
+const logger = require('../utils/logging');
 
 const postgresdb = db.postgresdb
 const pgp = db.pgp
@@ -26,8 +27,10 @@ function assignJobToRecruiter(data){
             const found = ret.find(f=>f.postId == d.post_id)
             return {...d, ...found}
         })
+
         const search = {}
         data.forEach(d=>{ // Count how many new jobs for this recuriter
+            logger.info('Assign job', {tags:['recruiter', 'job', 'assign'], body:data});
             if(search[d.recruiter_id] == null)
                 search[d.recruiter_id] = 0
             search[d.recruiter_id]++

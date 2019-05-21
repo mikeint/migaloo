@@ -8,8 +8,8 @@ module.exports = function validatePostingsInput(data) {
     if (Validator.isEmpty(data.title)) {
         errors.title = 'Title field is required';
     }
-    if (Validator.isEmpty(data.caption)) {
-        errors.caption = 'Caption field is required';
+    if (Validator.isEmpty(data.requirements)) {
+        errors.requirements = 'Requirements field is required';
     }
     return {
         errors,

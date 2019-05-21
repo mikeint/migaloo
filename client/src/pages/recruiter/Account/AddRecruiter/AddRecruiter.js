@@ -5,7 +5,7 @@ import Close from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import AddressInput from '../../../../components/AddressInput/AddressInput';
+import AddressInput from '../../../../components/Inputs/AddressInput/AddressInput';
 import FormValidation from '../../../../FormValidation';
 
 const styles = theme => ({

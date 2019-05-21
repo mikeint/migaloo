@@ -168,6 +168,7 @@ router.post('/setResponse', passport.authentication,  (req, res) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
+router.get('/get/:messageSubjectId', passport.authentication, listMessages);
 router.get('/list', passport.authentication, listMessages);
 router.get('/list/:page', passport.authentication, listMessages);
 function listMessages(req, res){
@@ -176,6 +177,7 @@ function listMessages(req, res){
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     
+    const messageSubjectId = req.params.messageSubjectId;
     var userId = jwtPayload.id;
     postgresdb.any('\
         SELECT ms.post_id, jpa.title as job_post_title, m.to_id, m.created_on, ms.created_on as subject_created_on, \
@@ -217,10 +219,11 @@ function listMessages(req, res){
         INNER JOIN company c ON c.company_id = ms.company_id \
         INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
         WHERE (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active \
+        '+(messageSubjectId?' AND ms.message_subject_id = ${messageSubjectId}':'')+'\
         ORDER BY coalesce(m.created_on, ms.created_on) DESC \
         OFFSET ${page} \
         LIMIT 10 \
-        ', {userId:userId, page:(page-1)*10})
+        ', {userId:userId, page:(page-1)*10, messageSubjectId:messageSubjectId})
     .then((data) => {
         // Marshal data
         data = data.map(m=>{

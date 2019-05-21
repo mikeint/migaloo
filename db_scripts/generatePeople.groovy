@@ -32,7 +32,7 @@ def employerContactQuery = "INSERT INTO company_contact (company_contact_id, com
 def employerContactData = []
 def employerContactId = 10000000
 
-def jobPostingQuery = "INSERT INTO job_posting_all (post_id, company_id, created_on, title, caption, experience_type_id, salary_type_id) VALUES \n\t"
+def jobPostingQuery = "INSERT INTO job_posting_all (post_id, company_id, created_on, title, requirements, experience_type_id, salary_type_id) VALUES \n\t"
 def jobPostingData = []
 def postId = 100
 
@@ -52,7 +52,7 @@ def expierenceCount = 4
 def tagCount = 24
 // Generate Candidates 
 def getTitle = {->jobTitles[(Integer)(Math.random()*jobTitles.size())]}
-def getCaption = {->jobDescriptions[(Integer)(Math.random()*jobDescriptions.size())]}
+def getRequirements = {->jobDescriptions[(Integer)(Math.random()*jobDescriptions.size())]}
 def getTags = {->(1..((Integer)(Math.random()*6+3))).collect{(Integer)(Math.random()*tagCount+1)}}
 lines.drop(1).take(1000).each{line->
     line = line.replaceAll(/'/, "''")
@@ -80,14 +80,14 @@ lines.drop(1001).take(1000).each{line->
     def recruiter = (Integer)(Math.random()*recruiterCount+1)
     def tag = getTags()
     def title = getTitle()
-    def caption = getCaption()
+    def requirements = getRequirements()
     loginData << "(${employerContactId}, '${d.EmailAddress}', current_date - interval '${daysBack}' day, 2)"
     loginData << "(${employerId}, null, current_date - interval '${daysBack}' day, 4)"
     addressData << "(${addressId}, '${d.StreetAddress}', '${d.City}', '${d.State}', '${d.Country}', ${d.Latitude}, ${d.Longitude})"
     employerData << "(${employerId}, '${d.Company}', 'Unknown', ${addressId})"
     employerContactData << "(${employerContactId}, ${employerId}, true)"
     accountManagerData << "(${employerContactId}, '${d.GivenName}', '${d.Surname}', '${d.TelephoneNumber}')"
-    jobPostingData << "(${postId}, ${employerId}, current_date - interval '${daysBack}' day, '${title}', '${caption}', ${exp}, ${salary})"
+    jobPostingData << "(${postId}, ${employerId}, current_date - interval '${daysBack}' day, '${title}', '${requirements}', ${exp}, ${salary})"
     jobRecruiterPostingData << "(${postId}, ${recruiter})"
     jobPostingTagsData << tag.collect{"(${postId}, ${it})"}.unique().join(", ")
     addressId++

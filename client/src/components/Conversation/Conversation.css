@@ -1,0 +1,98 @@
+.conversationModal .chatWindow{
+    padding: 0.75em;  
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column-reverse;
+    height: 55vh;
+    border: 1px solid #263c54;
+    border-radius: 4px;
+}
+.conversationModal .loadMore{
+    border: 1px solid black;
+    border-radius: 0px 0px 10px 10px;
+    padding: 10px 0px;
+    background-color: #263c54;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+.conversationModal .responseContainer{
+    display: flex;
+    flex-direction: row;
+    font-size: 0.8em;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+.conversationModal .responseButton{
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px 0px;
+    background-color: #1a2b6d;
+    width: 75px;
+    margin: 5px 10px;
+    cursor: pointer;
+}
+.conversationModal .responseButton:hover{
+    background-color: #394ea3;
+}
+.conversationModal .more{
+    cursor: pointer;
+}
+.conversationModal .messageRow{
+    margin: 5px;
+}
+.conversationModal .messageContainer{
+    color: #fff;
+    max-width: 75%;
+    display: inline-block;
+    border-radius: 7px;
+    padding: 8px;
+}
+.messageRow.mine{
+    text-align: right;
+}
+
+.messageContainer.mine{
+    background-color: #147efb /* #263c54; */
+}
+.messageContainer.theirs{
+    background-color: #53d769; /* #1a6d2c; */
+}
+.messageContainer .date{
+    font-size: 12px;
+}
+.conversationModal .chatInput { 
+    width: 100%;
+    height: 70px;
+    padding: 5px 5px;
+    margin-top: 5px;
+    font-size: 16px;
+    background: none;
+    color: black;
+    padding-right: 60px;
+    resize: none; 
+    border: 1px solid #263c54; 
+    
+}
+.conversationModal .chatInput label{
+	width: 110px;
+}
+.conversationModal .sendButton{
+    /* Must match .chatInput */
+    width: 55px;
+    height: 55px;
+    line-height: 55px;
+    margin-top: 12px;
+    font-size: 16px;
+    background-color: #263c54;
+    display: inline-block;
+    position: absolute;
+    color: white;
+    font-weight: bold;
+    margin-left: -60px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 60px;
+}

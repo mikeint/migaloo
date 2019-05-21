@@ -1,19 +1,17 @@
 import React from 'react';
-import './AddCandidate.css';  
 import AuthFunctions from '../../../AuthFunctions'; 
-import {get, post} from '../../../ApiCalls';  
-import TagSearch from '../../../components/TagSearch/TagSearch';  
+import {post} from '../../../ApiCalls';  
+import TagSearch from '../../../components/Inputs/TagSearch/TagSearch'; 
+import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/ExperienceSelector';
+import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
+import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector'; 
 
 import Close from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import Select from '@material-ui/core/Select';
-import Input from '@material-ui/core/Input';
-import MenuItem from '@material-ui/core/MenuItem';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
+import FormValidation from '../../../FormValidation';
 
 const styles = theme => ({
     alertClose: {
@@ -21,19 +19,73 @@ const styles = theme => ({
         right: "10px",
         height: "60px",
     }, 
-    textField: {
-        width: 400,
-    },
     submitCandidateBtn:{
         width: "100%"
     },
-    selectFormControl:{
-        marginTop: "10px"
-    },
     tagSearch:{
         marginTop: "10px"
-    }
+    },
+    input2: {
+        display: "flex",
+        flexWrap: "wrap"
+    },
+    textField: {
+        width: "50%",
+        margin: "10px"
+    },
+    selectFormControl:{
+        flex: "1 1",
+        margin: "10px"
+    },
+    postButton:{
+        width:"100%",
+        marginTop: "20px"
+    },
+    textAreaMaxHeight:{
+        width: "100%",
+        margin: "10px"
+    },
+    addCandidateContainer: {
+        padding: "20px",
+        color: theme.palette.primary.main,
+        display: "flex"
+    },
+    formSection: {
+        margin: "auto auto 25px auto",
+        width: "100%",
+        maxWidth: "1000px"
+    },
 })
+const errorText = [
+    {
+        stateName: "firstName",
+        errorText: "Please enter their first name"
+    },
+    {
+        stateName: "lastName",
+        errorText: "Please enter their last name"
+    },
+    {
+        stateName: "email",
+        errorText: "Please enter their email"
+    },
+    {
+        stateName: "salary",
+        errorText: "Please select the salary range"
+    },
+    {
+        stateName: "experience",
+        errorText: "Please select their experience"
+    },
+    {
+        stateName: "tagIds",
+        errorText: "Please select some tags related to their skills"
+    },
+    {
+        stateName: "address.placeId",
+        errorText: "Please select an address for the company"
+    }
+]
   
 
 class AddCandidate extends React.Component{
@@ -43,62 +95,44 @@ class AddCandidate extends React.Component{
             firstName:'',
             lastName:'',
             email:'',
-            salary:'',
-            experience:'',
+            salary:-1,
+            jobType:-1,
+            experience:-1,
+            address:{},
             tagIds:[],
             redirect: false,
             onClose: props.onClose,
             salaryList: [],
-            experienceList: []
+            experienceList: [],
+            errors:{}
         }
         this.Auth = new AuthFunctions();
+        this.formValidation = new FormValidation(this, errorText);
     }
-    loadData(){
-        
-        get('/api/autocomplete/salary')
-        .then((res) => {
-            if(res && res.data.success) {
-                this.setState({salaryList:res.data.salaryList});
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
-        get('/api/autocomplete/experience')
-        .then((res) => {
-            if(res && res.data.success) {
-                this.setState({experienceList:res.data.experienceList});
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
-    }
- 
-    componentDidMount() {
-        this.loadData();
-    } 
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value })
+        this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
     }
 
+    handleAddressChange(address){
+        this.setState({address:address}, this.formValidation.shouldRevalidate)
+    }
     handleSubmit = () => {
-        post('/api/candidate/create', this.state)
-        .then((res) => {
+        if(this.formValidation.isValid()){
+            post('/api/candidate/create', this.state)
+            .then((res) => {
 
-            // THIS IS getting messy, its to shut the overlay after submitting a new candidate.
-            // TO-DO (not here) show the added candidate behind overlay
-            if(res && res.data.success) {
-                this.props.onClose();
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
+                // THIS IS getting messy, its to shut the overlay after submitting a new candidate.
+                // TO-DO (not here) show the added candidate behind overlay
+                if(res && res.data.success) {
+                    this.props.onClose();
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        }
     }
-
-
 
     render(){
         const { classes } = this.props;
@@ -109,88 +143,63 @@ class AddCandidate extends React.Component{
                 <IconButton color="inherit" className={classes.alertClose} onClick={this.state.onClose}>
                     <Close color="primary" />
                 </IconButton>
-                <div className="addCandidateContainer">
-                    <div className="formSection">  
-                        <div className="input-2">
-                            <div className="i-2 il">
-                                <TextField
-                                    name="firstName"
-                                    label="First Name"
-                                    className={classes.textField}
-                                    required
-                                    onChange={this.handleChange}
-                                    margin="normal"
-                                    variant="outlined"
-                                />
-                            </div>
-                            <div className="i-2 il">
-                                <TextField
-                                    name="lastName"
-                                    label="Last Name"
-                                    className={classes.textField}
-                                    required
-                                    onChange={this.handleChange}
-                                    margin="normal"
-                                    variant="outlined"
-                                />
-                            </div>
-                            <div className="i-2 il">
-                                <TextField
-                                    name="email"
-                                    label="Email"
-                                    className={classes.textField}
-                                    required
-                                    onChange={this.handleChange}
-                                    margin="normal"
-                                    variant="outlined"
-                                />
-                            </div>
-                            <div className="i-2 il">
-                            
-                                <FormControl className={classes.selectFormControl}>
-                                    <InputLabel htmlFor="salary-helper">Salary</InputLabel>
-                                    <Select
-                                        value={this.state.salary}
-                                        className={classes.textField}
-                                        onChange={this.handleChange}
-                                        input={<Input name="salary" id="salary-helper" />}
-                                        inputProps={{
-                                            id: 'salary',
-                                        }}
-                                    >
-                                        <MenuItem value="">
-                                            <em>Unspecified</em>
-                                        </MenuItem>
-                                        {this.state.salaryList.map((d, i)=>
-                                            <MenuItem key={i} value={d.salary_type_id}>{d.salary_type_name}</MenuItem>
-                                        )}
-                                    </Select>
-                                </FormControl>
-                            </div>
-                            <div className="i-2 il">
-                                <FormControl className={classes.selectFormControl}>
-                                    <InputLabel htmlFor="experience-helper">Experience</InputLabel>
-                                    <Select
-                                        value={this.state.experience}
-                                        className={classes.textField}
-                                        onChange={this.handleChange}
-                                        input={<Input name="experience" id="experience-helper" />}
-                                        inputProps={{
-                                            id: 'experience',
-                                        }}
-                                    >
-                                        <MenuItem value="">
-                                            <em>Unspecified</em>
-                                        </MenuItem>
-                                        {this.state.experienceList.map((d, i)=>
-                                            <MenuItem key={i} value={d.experience_type_id}>{d.experience_type_name}</MenuItem>
-                                        )}
-                                    </Select>
-                                </FormControl>
-                                <TagSearch
-                                    className={classes.tagSearch}
-                                    onChange={(tags)=>this.setState({tagIds:tags})}/>
-                            </div>
+                <div className={classes.addCandidateContainer}>
+                    <div className={classes.formSection}>
+                        <div className={classes.input2}>
+                            <TextField
+                                name="firstName"
+                                label="First Name"
+                                className={classes.textField}
+                                onChange={this.handleChange}
+                                margin="normal"
+                                variant="outlined"
+                                {...this.formValidation.hasError("firstName")}
+                            />
+                        </div>
+                        <div className={classes.input2}>
+                            <TextField
+                                name="lastName"
+                                label="Last Name"
+                                className={classes.textField}
+                                onChange={this.handleChange}
+                                margin="normal"
+                                variant="outlined"
+                                {...this.formValidation.hasError("lastName")}
+                            />
+                        </div>
+                        <div className={classes.input2}>
+                            <TextField
+                                name="email"
+                                label="Email"
+                                className={classes.textField}
+                                onChange={this.handleChange}
+                                margin="normal"
+                                variant="outlined"
+                                {...this.formValidation.hasError("email")}
+                            />
+                        </div>
+                        <div className={classes.input2}>
+                            <SalarySelector 
+                                required
+                                onChange={(salary)=>this.setState({salary:salary}, this.formValidation.shouldRevalidate)}
+                                {...this.formValidation.hasError("salary")}/>
+                                &nbsp;&nbsp;&nbsp;
+                            <ExperienceSelector 
+                                required
+                                onChange={(experience)=>this.setState({experience:experience}, this.formValidation.shouldRevalidate)}
+                                {...this.formValidation.hasError("experience")}/>
+                        </div>
+                        <div className={classes.input2}>
+                            <TagSearch
+                                className={classes.tagSearch}
+                                onChange={(tags)=>this.setState({tagIds:tags}, this.formValidation.shouldRevalidate)}
+                                {...this.formValidation.hasError("tagIds")}/>
+                        </div>
+                        <div className={classes.input2}>
+                            <AddressInput
+                                onChange={this.handleAddressChange.bind(this)}
+                                {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
+                            />
                         </div>
                         <Button
                             color="primary"

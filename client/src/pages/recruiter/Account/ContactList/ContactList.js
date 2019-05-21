@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import AddUserByEmail from '../../../../components/AddUserByEmail/AddUserByEmail';
 import ModifiableProfileImage from '../../../../components/ModifiableProfileImage/ModifiableProfileImage';
-import AddressInput from '../../../../components/AddressInput/AddressInput';
+import AddressInput from '../../../../components/Inputs/AddressInput/AddressInput';
 import FormValidation from '../../../../FormValidation';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
