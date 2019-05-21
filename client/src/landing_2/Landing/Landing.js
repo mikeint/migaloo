@@ -23,7 +23,7 @@ class Landing extends Component {
                             <div className="heroContentWhale"><WhaleHead sprayColor='#fff'/></div>
                         </div>
                         <div className="flex">
-                            <p className="heroP paddingTop">An app connecting employers to passive&nbsp;talent.</p>
+                            <p className="heroP paddingTop">An app connecting employers to top&nbsp;talent.</p>
                         </div>
                         <div className="flex">
                             <p className="heroP paddingBottom">Lets get to know each&nbsp;other...</p>

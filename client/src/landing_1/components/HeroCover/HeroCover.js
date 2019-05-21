@@ -31,7 +31,7 @@ class HeroCover extends Component {
                 <div className="hc_left">
                     <Whale {...whaleOptions}/>
                     <div className="hc_text1" data-aos='zoom-in'>
-                        For a managed marketplace<br/>join the whales of recruitment.
+                        For a managed marketplace<br/>Join the whales of recruitment.
                     </div>
                     <div className="hc_text2" data-aos='zoom-in'>
                         Finally, talent first. Reinventing recruitment <br/>to achieve an easy hiring process.
