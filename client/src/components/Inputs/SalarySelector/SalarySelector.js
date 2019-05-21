@@ -5,7 +5,7 @@ import Slider from '@material-ui/lab/Slider';
 
 const styles = theme => ({
     root: {
-      width: 300,
+      width: 400,
     },
     slider: {
       padding: '22px 0px',
@@ -69,7 +69,7 @@ class SalarySelector extends React.Component{
                     max={this.state.salaryList.length-1}
                     step={1}
                     onChange={this.handleChange}
-                    {...(this.state.error?{error:true, helperText:this.state.helperText}:{})}
+                    // {...(this.state.error?{error:true, helperText:this.state.helperText}:{})}
                 />
             </div>
         );

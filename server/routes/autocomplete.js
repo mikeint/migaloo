@@ -73,6 +73,40 @@ router.get('/jobType', passport.authentication, (req, res) => {
         res.status(500).json({success:false, error:err})
     });
 });
+/**
+ * Get job type by autocomplete
+ * @route GET api/autocomplete/openReason
+ * @group autocomplete - Autocomplete
+ * @returns {object} 200 - A list of maps containing autocompletes
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/openReason/:find', passport.authentication, (req, res) => {
+    postgresdb.any('SELECT opening_reason_name, opening_reason_id \
+            FROM opening_reason \
+            WHERE lower(opening_reason_name) LIKE $1 \
+            ORDER BY opening_reason_id ASC \
+            LIMIT 10', "%"+req.params.find.toLowerCase()+"%")
+    .then(data => {
+        res.json({success:true, openReasonList: data});
+    })
+    .catch(err => {
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:req.body.jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+});
+router.get('/openReason', passport.authentication, (req, res) => {
+    postgresdb.any('SELECT opening_reason_name, opening_reason_id \
+            FROM opening_reason \
+            ORDER BY opening_reason_id ASC')
+    .then(data => {
+        res.json({success:true, openReasonList: data});
+    })
+    .catch(err => {
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:req.body.jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+});
 
 /**
  * Get tag by autocomplete

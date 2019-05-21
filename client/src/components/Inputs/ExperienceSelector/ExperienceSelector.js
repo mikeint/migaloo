@@ -4,12 +4,13 @@ import Slider from '@material-ui/lab/Slider';
 
 const styles = theme => ({
     root: {
-      width: 300,
+      width: 400,
     },
     slider: {
       padding: '22px 0px',
     },
 })
+const maxValue = 65;
 class ExperienceSelector extends React.Component{
     constructor(props) {
         super(props);
@@ -41,15 +42,15 @@ class ExperienceSelector extends React.Component{
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-                Experience:  {this.state.experience===-1?'Unspecified':`${this.state.experience} years experience`}
+                Experience:  {this.state.experience===-1?'Unspecified':`${this.state.experience}${maxValue===this.state.experience?'+':''} years experience`}
                 <Slider
                     classes={{ container: classes.slider }}
                     value={this.state.experience}
                     min={this.state.required?0:-1}
-                    max={65}
+                    max={maxValue}
                     step={1}
                     onChange={this.handleChange}
-                    {...(this.state.error?{error:true, helperText:this.state.helperText}:{})}
+                    // {...(this.state.error?{error:true, helperText:this.state.helperText}:{})}
                 />
             </div>
         );

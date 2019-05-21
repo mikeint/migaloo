@@ -70,7 +70,7 @@ const styles = theme => ({
         fontSize: "16px",
         margin: "0px 10px"
     },
-    jobCaption: {
+    jobRequirements: {
         padding: "20px",
         overflow: "hidden"
     },
@@ -256,7 +256,7 @@ class JobDescription extends React.Component{
                     <div className={classes.jobPostingContent}>
 
                         <h3>Description</h3>
-                        <div className={classes.jobCaption}>{this.state.jobObj.caption}</div>
+                        <div className={classes.jobRequirements}>{this.state.jobObj.requirements}</div>
                         <h3>{this.state.jobObj.company_name}</h3>
                         <p>
                             {[this.state.jobObj.address_line_1, this.state.jobObj.address_line_2, this.state.jobObj.city, this.state.jobObj.state, this.state.jobObj.country].filter(d=>d!=null).join(", ")}

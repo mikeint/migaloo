@@ -27,7 +27,7 @@ router.post('/create', passport.authentication,  (req, res) => {
     /**
      * Inputs Body:
      * title
-     * caption
+     * requirements
      * employer
      * salaryTypeId (Optional)
      * autoAddRecruiters (Optional)
@@ -60,9 +60,9 @@ router.post('/create', passport.authentication,  (req, res) => {
             {userId:jwtPayload.id, companyId:body.employer}).then(()=>{
         return postgresdb.tx(t => {
             // creating a sequence of transaction queries:
-            const q1 = t.one('INSERT INTO job_posting_all (company_id, title, caption, experience_type_id, salary_type_id, preliminary, is_visible) \
+            const q1 = t.one('INSERT INTO job_posting_all (company_id, title, requirements, experience_type_id, salary_type_id, preliminary, is_visible) \
                                 VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING post_id',
-                            [body.employer, body.title, body.caption, body.experience, body.salary, preliminary, !preliminary])
+                            [body.employer, body.title, body.requirements, body.experience, body.salary, preliminary, !preliminary])
             return q1.then((post_ret)=>{
                 if(body.tagIds != null && body.tagIds.length > 0){
                     const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper);
@@ -129,7 +129,7 @@ function postListing(req, res){
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>filters[k]).join(" ")
 
     postgresdb.any('\
-        SELECT j.post_id, title, caption, experience_type_name, salary_type_name, tag_names, tag_ids, new_posts_cnt, \
+        SELECT j.post_id, title, requirements, experience_type_name, salary_type_name, tag_names, tag_ids, new_posts_cnt, \
             posts_cnt, recruiter_count, j.created_on, (count(1) OVER())/10+1 AS page_count, j.preliminary \
         FROM job_posting_all j \
         INNER JOIN company_contact ec ON j.company_id = ec.company_id \

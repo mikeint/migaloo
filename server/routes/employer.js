@@ -120,16 +120,17 @@ function generateToken(req, res) {
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.one('\
-        SELECT l.user_id, l.email, c.company_name \
-        FROM company c \
-        INNER JOIN login l ON l.user_id = c.company_id \
+        SELECT l.user_id, l.email, c.company_name, l.user_type_id \
+        FROM login l \
+        INNER JOIN company_contact cc ON cc.company_contact_id = l.user_id \
+        INNER JOIN company c ON cc.company_id = c.company_id \
         WHERE c.active AND l.user_id = ${user_id}', {user_id:req.body.user_id})
     .then((args) => { 
         const randNumber = Math.trunc(Math.random()*100000000)
         const jwtPayload = {
             user_id: args.user_id,
             name: args.name,
-            userType: 4,
+            userType: args.user_type_id,
             email: args.email,
             rand: randNumber
         }

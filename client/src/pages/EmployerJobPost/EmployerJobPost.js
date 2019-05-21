@@ -10,6 +10,9 @@ import AddressInput from '../../components/Inputs/AddressInput/AddressInput';
 import SalarySelector from '../../components/Inputs/SalarySelector/SalarySelector';
 import ExperienceSelector from '../../components/Inputs/ExperienceSelector/ExperienceSelector';
 import JobTypeSelector from '../../components/Inputs/JobTypeSelector/JobTypeSelector';
+import InterviewCountSelector from '../../components/Inputs/InterviewCountSelector/InterviewCountSelector';
+import NumberOpeningsSelector from '../../components/Inputs/NumberOpeningsSelector/NumberOpeningsSelector';
+import OpenReasonSelector from '../../components/Inputs/OpenReasonSelector/OpenReasonSelector';
 
 const styles = theme => ({
     textField: {
@@ -24,7 +27,7 @@ const styles = theme => ({
         width:"100%",
         marginTop: "20px"
     },
-    textAreaMaxHeight:{
+    textArea:{
         width: "100%",
     },
     postAJobContainer: {
@@ -44,7 +47,7 @@ const styles = theme => ({
 })
 const errorText = [
     {
-        stateName: "caption",
+        stateName: "requirements",
         errorText: "Please enter a description for the job posting"
     },
     {
@@ -65,6 +68,24 @@ const errorText = [
         type: "number",
         gt: -1
     },
+    { 
+        stateName: "openReason", 
+        errorText: "Please select the reason for the job opening",
+        type: "number",
+        gt: -1
+    },
+    { 
+        stateName: "interviewCount", 
+        errorText: "Please select the number of candidates to interview",
+        type: "number",
+        gt: -1
+    },
+    { 
+        stateName: "numOpenings", 
+        errorText: "Please select the number of openings",
+        type: "number",
+        gt: -1
+    },
     {
         stateName: "tagIds",
         errorText: "Please select some tags related to the job"
@@ -81,21 +102,30 @@ class EmployerJobPost extends React.Component{
         this.state = {
             token: token,
             title:'',
-            caption:'',
-            salary:-1,
+            requirements:'',
+            salary:0,
             jobType:-1,
-            experience:-1,
+            experience:0,
+            interviewCount:0,
+            numOpenings: 0,
+            openReason: -1,
             address:{},
             companies: [],
+            tagIds: [],
             errors: {}
         }
         setAuthToken(token)
         this.Auth = new AuthFunctions();
+        this.handleChangeKV = this.handleChangeKV.bind(this)
         this.formValidation = new FormValidation(this, errorText);
     }
 
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
+    }
+    handleChangeKV = (map) => {
+        console.log(map)
+        this.setState(map, this.formValidation.shouldRevalidate)
     }
     handleAddressChange(address){
         this.setState({address:address}, this.formValidation.shouldRevalidate)
@@ -136,41 +166,60 @@ class EmployerJobPost extends React.Component{
                         </div>  
                         <div className={classes.input2}>  
                             <TextField
-                                name="caption"
+                                name="requirements"
                                 label="Requirements"
                                 multiline={true}
-                                className={classes.textAreaMaxHeight}
+                                className={classes.textArea}
                                 placeholder="A list of requirements"
-                                rowsMax={7}
-                                rows={2}
+                                rowsMax={10}
+                                rows={4}
                                 required
                                 onChange={this.handleChange}
                                 margin="normal"
                                 variant="outlined"
-                                {...this.formValidation.hasError("caption")}
+                                {...this.formValidation.hasError("requirements")}
                             />
                         </div>  
-                        <div  className={classes.tagSearch}>
-                            <TagSearch
-                                onChange={(tags)=>this.setState({tagIds:tags}, this.formValidation.shouldRevalidate)}
-                                {...this.formValidation.hasError("tagIds")}/>
-                        </div>
                         <div className={classes.input2}>
                             <JobTypeSelector
                                 required
-                                onChange={(jobType)=>this.setState({jobType:jobType}, this.formValidation.shouldRevalidate)}
+                                onChange={this.handleChangeKV}
                                 {...this.formValidation.hasError("jobType")}/>
                         </div>
+                        {this.state.jobType !== -1 &&
+                            <div className={classes.tagSearch}>
+                                <TagSearch
+                                    onChange={this.handleChangeKV}
+                                    {...this.formValidation.hasError("tagIds")}/>
+                            </div>
+                        }
                         <div className={classes.input2}>
                             <SalarySelector 
                                 required
-                                onChange={(salary)=>this.setState({salary:salary}, this.formValidation.shouldRevalidate)}
+                                onChange={this.handleChangeKV}
                                 {...this.formValidation.hasError("salary")}/>
                                 &nbsp;&nbsp;&nbsp;
                             <ExperienceSelector 
                                 required
-                                onChange={(experience)=>this.setState({experience:experience}, this.formValidation.shouldRevalidate)}
+                                onChange={this.handleChangeKV}
                                 {...this.formValidation.hasError("experience")}/>
+                        </div>
+                        <div className={classes.input2}>
+                            <InterviewCountSelector 
+                                required
+                                onChange={this.handleChangeKV}
+                                {...this.formValidation.hasError("interviewCount")}/>
+                                &nbsp;&nbsp;&nbsp;
+                            <NumberOpeningsSelector 
+                                required
+                                onChange={this.handleChangeKV}
+                                {...this.formValidation.hasError("numOpenings")}/>
+                        </div>
+                        <div className={classes.input2}>
+                            <OpenReasonSelector 
+                                required
+                                onChange={this.handleChangeKV}
+                                {...this.formValidation.hasError("openReason")}/>
                         </div>
                         <div className={classes.input2}>
                             <AddressInput

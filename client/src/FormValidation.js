@@ -50,11 +50,11 @@ export default class FormValidation {
                 }
             }
             else if(d.type === 'number'){
-                if(d.gt && d.gt <= value){
+                if(d.gt != null && value <= d.gt){
                     if(errors[d.stateName] == null)
                         errors[d.stateName] = d.errorText;
                 }
-                if(d.lt && d.lt >= value){
+                if(d.lt != null && value >= d.lt){
                     if(errors[d.stateName] == null)
                         errors[d.stateName] = d.errorText;
                 }

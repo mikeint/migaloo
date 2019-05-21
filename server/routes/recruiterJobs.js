@@ -54,7 +54,7 @@ function getJobs(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.any('\
-        SELECT j.company_id, j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, \
+        SELECT j.company_id, j.post_id, title, requirements, experience_type_name, salary_type_name, company_name, image_id, \
             address_line_1, address_line_2, city, state, country, tag_ids, \
             tag_names, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting j \
@@ -158,7 +158,7 @@ function getJobsForCandidate(req, res){
             if(jobId != null)
                 sqlArgs['jobId'] = jobId
             return t.any('\
-                SELECT j.post_id, title, caption, experience_type_name, salary_type_name, company_name, image_id, j.company_id, \
+                SELECT j.post_id, title, requirements, experience_type_name, salary_type_name, company_name, image_id, j.company_id, \
                     address_line_1, address_line_2, city, state, country, tag_ids, tag_names, \
                     coalesce(score, 0.0) as score, total_score, coalesce(score, 0.0)/total_score*100.0 as tag_score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
                 FROM job_posting j \
