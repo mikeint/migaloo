@@ -58,9 +58,9 @@ class NavBar extends Component {
             const page = this.state.page;
             const path = location.pathname;
             const newPage = this.getNewPage(path) 
-            console.log(navMappings[page].title)
+            console.log(navMappings[[newPage]].title)
              if(newPage !== page){
-                this.setState({title: navMappings[page].title})
+                this.setState({title: navMappings[[newPage]].title})
             }
         }); 
     }
