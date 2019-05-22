@@ -8,23 +8,23 @@ import tail from '../../../files/images/landingPage/tail.png'
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
  
 const navMappings = 
-[  
-    { 
-        link:"/landing/employerPage/howItWorks_employer",
-        title:"How It Works - Employers"
-    },
+[   
     { 
         link:"/landing/recruiterPage/howItWorks_recruiter",
         title:"How It Works - Recruiters"
     },
+    { 
+        link:"/landing/employerPage/howItWorks_employer",
+        title:"How It Works - Employers"
+    }, 
     {
         link:"/landing/employerPage",
         title:"For Employers"
-    },
+    }, 
     { 
         link:"/landing/recruiterPage",
         title:"For Recruiters"
-    },
+    }, 
     { 
         link:"/landing/contact",
         title: "Contact Us"
@@ -34,7 +34,7 @@ const navMappings =
         title: "About Us"
     },
     { 
-        link:"/team",
+        link:"/landing/team",
         title: "The Whales"
     }
 ]
@@ -46,21 +46,19 @@ class NavBar extends Component {
         super(props);
         const path = window.location.pathname; 
         const page = navMappings.findIndex(d=>path.startsWith(d.link));  
-        console.log(page) 
 		this.state = { 
             menuOpen: false,
             showOverlay:false,  
             page:page,
-            title:"test"
+            title:navMappings[page].title, 
         };
         const { history } = this.props;
         history.listen((location, action) => {
             const page = this.state.page;
             const path = location.pathname;
-            const newPage = this.getNewPage(path) 
-            console.log(navMappings[[newPage]].title)
+            const newPage = this.getNewPage(path)  
              if(newPage !== page){
-                this.setState({title: navMappings[[newPage]].title})
+                this.setState({title: navMappings[[newPage]].title, page:newPage})  
             }
         }); 
     }
@@ -90,7 +88,7 @@ class NavBar extends Component {
 
 		return ( 
             <div className="lp2_navBar">
-                <div className="fywText" data-aos="zoom-out-down">{this.state.title}</div> 
+                <div className='fywText'>{this.state.title}</div>
             
                 <div id="navBar">
                     <div className="topNavContainer">
