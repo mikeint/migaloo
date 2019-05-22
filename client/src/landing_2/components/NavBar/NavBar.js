@@ -1,22 +1,91 @@
 import React, { Component } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, withRouter } from 'react-router-dom';  
 import './NavBar.scss' 
-
+ 
 import Whale from '../../../components/Whale/Whale'
 import Social from '../../components/Social/Social'
 import tail from '../../../files/images/landingPage/tail.png' 
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
+ 
+const navMappings = {
+    '/landing':[ // landing
+            {
+                link:"/landing/employerPage",
+                title:"For Employers"
+            },
+            { 
+                link:"/landing/employerPage/howItWorks_employer",
+                title:"How It Works - Employers"
+            },
+            { 
+                link:"/landing/recruiterPage",
+                title:"For Recruiters"
+            },
+            { 
+                link:"/landing/recruiterPage/howItWorks_recruiter",
+                title:"How It Works - Recruiters"
+            },
+            { 
+                link:"/landing/contact",
+                title: "Contact Us"
+            },
+            { 
+                link:"/landing/about",
+                title: "About Us"
+            },
+            { 
+                link:"/team",
+                title: "The Whales"
+            }
+        ]
+}
+
 
 class NavBar extends Component {
    
     constructor(props) {
-        super(props);
+        super(props);  
+ 
+        
+        const path = window.location.pathname;
+        const basePath = this.getBasePath(path);
+        const page = navMappings[basePath].findIndex(d=>path.startsWith(d.link));
+        console.log(path, page)
+
 		this.state = { 
             menuOpen: false,
             showOverlay:false, 
+            basePath: basePath, 
+            page:page,
+            title:"test"
         };
+        const { history } = this.props;
+        history.listen((location, action) => {
+            const page = this.state.page;
+            const path = location.pathname;
+            const newPage = this.getNewPage(path)
+            console.log("newpage", newPage, "----", "page", page)
+             if(newPage !== page){
+                this.setState({title: navMappings[basePath][page].title})
+            }
+        }); 
     }
+ 
+    getNewPage(path){ 
+         const page = navMappings[this.state.basePath].findIndex(d=>path.startsWith(d.link)) 
+        if(page === -1)
+            return 0
+        return page;
+    }
+    getBasePath(path){
+        const i = path.indexOf('/', 1);
+        if(i === 0)
+            return path;
+        return path.slice(0, i);
+    }   
 
+
+    
     callAddOverlay = () => {
         this.setState({ showOverlay : !this.state.showOverlay })
         this.setState({ menuOpen: !this.state.menuOpen }); 
@@ -26,19 +95,20 @@ class NavBar extends Component {
         const whaleOptions={whaleImg:'whaleWs.png', sprayColor:'#fff'};
 
 		return ( 
-            <div className="lp2_navBar"> 
+            <div className="lp2_navBar">
+                <div className="fywText" data-aos="zoom-out-down">{this.state.title}</div> 
             
                 <div id="navBar">
                     <div className="topNavContainer">
                         <NavLink to="/"><Whale {...whaleOptions}/></NavLink>
-                        <NavLink to="/employerPage" className="topSubItem">For Employers</NavLink>
+                        <NavLink to="/landing/employerPage" className="topSubItem">For Employers</NavLink>
                         <div className="subNavBox"> 
-                            <NavLink to="/employerPage/howItWorks_employer">How it works</NavLink>
+                            <NavLink to="/landing/employerPage/howItWorks_employer">How it works</NavLink>
                             {/* <NavLink to="/employerPage/pricing_employer">Pricing</NavLink> */}
                         </div>
-                        <NavLink to="/recruiterPage" className="topSubItem">For Recruiters</NavLink>
+                        <NavLink to="/landing/recruiterPage" className="topSubItem">For Recruiters</NavLink>
                         <div className="subNavBox"> 
-                            <NavLink to="/recruiterPage/howItWorks_recruiter">How it works</NavLink>
+                            <NavLink to="/landing/recruiterPage/howItWorks_recruiter">How it works</NavLink>
                             {/* <NavLink to="/recruiterPage/pricing_recruiter">Pricing</NavLink> */}
                         </div>
                         <NavLink to="/landing/contact" className="topSubItem">Contact</NavLink>
@@ -69,14 +139,14 @@ class NavBar extends Component {
                 >  
                     <div className="side-menu">
                         <div className="topNavContainer">
-                            <NavLink to="/employerPage" onClick={this.callAddOverlay}>For Employers</NavLink>
+                            <NavLink to="/landing/employerPage" onClick={this.callAddOverlay}>For Employers</NavLink>
                             <div className="subNavBox" onClick={this.callAddOverlay}> 
-                                <NavLink to="/employerPage/howItWorks_employer">How it works</NavLink>
+                                <NavLink to="/landing/employerPage/howItWorks_employer">How it works</NavLink>
                                 {/* <NavLink to="/employerPage/pricing_employer">Pricing</NavLink> */}
                             </div>
-                            <NavLink to="/recruiterPage" onClick={this.callAddOverlay}>For Recruiters</NavLink>
+                            <NavLink to="/landing/recruiterPage" onClick={this.callAddOverlay}>For Recruiters</NavLink>
                             <div className="subNavBox" onClick={this.callAddOverlay}> 
-                                <NavLink to="/recruiterPage/howItWorks_recruiter">How it works</NavLink>
+                                <NavLink to="/landing/recruiterPage/howItWorks_recruiter">How it works</NavLink>
                                 {/* <NavLink to="/recruiterPage/pricing_recruiter">Pricing</NavLink> */}
                             </div>
                             
@@ -94,6 +164,6 @@ class NavBar extends Component {
             </div> 
         ) 
   	}
-}
+} 
 
-export default NavBar;
+export default withRouter((NavBar));

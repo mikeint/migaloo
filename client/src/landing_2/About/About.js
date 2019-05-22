@@ -3,9 +3,7 @@ import './About.scss';
  
 class About extends Component { 
     render() {
-        return (
-            <React.Fragment>
-            <div className="fywText" data-aos="zoom-out-down">About</div>
+        return ( 
             <div className="lp2_aboutContainer"> 
                 <div className="aboutContent">
                     <p>Migaloo started when it’s founder left the agency recruitment space in 2015.  As he moved on up into hiring positions in the tech space,
@@ -31,8 +29,7 @@ class About extends Component {
                     <p>Migaloo believes recruitment is not broken, but highly inefficient.  Migaloo was created to fix inefficiencies and allow employers to comfortably 
                     benefit from the expertise of third-party&nbsp;recruiters.</p>
                 </div>
-            </div>
-        </React.Fragment>
+            </div> 
         );
     }
 }

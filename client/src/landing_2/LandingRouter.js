@@ -21,13 +21,13 @@ function LandingRouter({ match }) {
                 <div className="lp2_menu"><NavBar /></div>
                 <div className="lp2_body">
                     <Switch>
-                        <Route exact path="/recruiterPage" component={RecruiterPage} />
-                        <Route exact path="/recruiterPage/howItWorks_recruiter" component={HowItWorks_recruiter} />
-                        <Route exact path="/recruiterPage/pricing_recruiter" component={Pricing_recruiter} />
+                        <Route exact path="/landing/recruiterPage" component={RecruiterPage} />
+                        <Route exact path="/landing/recruiterPage/howItWorks_recruiter" component={HowItWorks_recruiter} />
+                        <Route exact path="/landing/recruiterPage/pricing_recruiter" component={Pricing_recruiter} />
 
-                        <Route exact path="/employerPage" component={EmployerPage} /> 
-                        <Route exact path="/employerPage/howItWorks_employer" component={HowItWorks_employer} />
-                        <Route exact path="/employerPage/pricing_employer" component={Pricing_employer} />
+                        <Route exact path="/landing/employerPage" component={EmployerPage} /> 
+                        <Route exact path="/landing/employerPage/howItWorks_employer" component={HowItWorks_employer} />
+                        <Route exact path="/landing/employerPage/pricing_employer" component={Pricing_employer} />
 
                         <Route exact path="/landing/contact" component={Contact} />
                         <Route exact path="/landing/about" component={About} />

@@ -48,63 +48,60 @@ class Contact extends Component {
         :
         (<button className='contactBtnHome'>Submit</button>)
 
-        return ( 
-            <React.Fragment>
-                <div className="fywText" data-aos="zoom-out-down">Contact Us</div>
-                <div className="lp2_contactContainer"> 
-                    <div className="contactContent">
-                        <div className="contactHeader">
-                            <p>Got a question?</p>
-                            <p>We'd love to hear from you. Contact the Migaloo team and we'll get back to you as soon as possible</p>
+        return (  
+            <div className="lp2_contactContainer"> 
+                <div className="contactContent">
+                    <div className="contactHeader">
+                        <p>Got a question?</p>
+                        <p>We'd love to hear from you. Contact the Migaloo team and we'll get back to you as soon as possible</p>
+                    </div>
+
+                    <form id="theForm" className="contactForm" onSubmit={this.handleSubmit.bind(this)}> 
+                        <div className="input-container">
+                            <i className="icon icon1"></i>
+                            <input
+                                id="firstname"
+                                type="text"
+                                name="firstname"
+                                placeholder="Your name"
+                                required
+                                onChange={this.handleChange.bind(this)}
+                            />
                         </div>
 
-                        <form id="theForm" className="contactForm" onSubmit={this.handleSubmit.bind(this)}> 
-                            <div className="input-container">
-                                <i className="icon icon1"></i>
-                                <input
-                                    id="firstname"
-                                    type="text"
-                                    name="firstname"
-                                    placeholder="Your name"
-                                    required
-                                    onChange={this.handleChange.bind(this)}
-                                />
-                            </div>
-
-                            <div className="input-container">
-                                <i className="icon icon2"></i>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    name="email"
-                                    placeholder="Your email"
-                                    required
-                                    onChange={this.handleChange.bind(this)}
-                                />
-                            </div>
-                            
-                            <div className="input-container">
-                                <i className="icon icon3"></i>
-                                <textarea
-                                    id="message" 
-                                    type="textarea"
-                                    name="message"
-                                    placeholder="Your Message"
-                                    required
-                                    onChange={this.handleChange.bind(this)}
-                                /> 
-                            </div> 
-                            <div className="submitContainer">
-                                {this.state.sending ?
-                                    <Loader sprayColor="#bac1c9" />
-                                :
-                                    buttonSpot
-                                }
-                            </div> 
-                        </form>
-                     </div> 
-                </div>
-            </React.Fragment>
+                        <div className="input-container">
+                            <i className="icon icon2"></i>
+                            <input
+                                id="email"
+                                type="email"
+                                name="email"
+                                placeholder="Your email"
+                                required
+                                onChange={this.handleChange.bind(this)}
+                            />
+                        </div>
+                        
+                        <div className="input-container">
+                            <i className="icon icon3"></i>
+                            <textarea
+                                id="message" 
+                                type="textarea"
+                                name="message"
+                                placeholder="Your Message"
+                                required
+                                onChange={this.handleChange.bind(this)}
+                            /> 
+                        </div> 
+                        <div className="submitContainer">
+                            {this.state.sending ?
+                                <Loader sprayColor="#bac1c9" />
+                            :
+                                buttonSpot
+                            }
+                        </div> 
+                    </form>
+                    </div> 
+            </div> 
         );
     }
 }
