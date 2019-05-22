@@ -44,14 +44,10 @@ const navMappings = {
 class NavBar extends Component {
    
     constructor(props) {
-        super(props);  
- 
-        
+        super(props);
         const path = window.location.pathname;
         const basePath = this.getBasePath(path);
-        const page = navMappings[basePath].findIndex(d=>path.startsWith(d.link));
-        console.log(path, page)
-
+        const page = navMappings[basePath].findIndex(d=>path.startsWith(d.link)); 
 		this.state = { 
             menuOpen: false,
             showOverlay:false, 
@@ -64,7 +60,7 @@ class NavBar extends Component {
             const page = this.state.page;
             const path = location.pathname;
             const newPage = this.getNewPage(path)
-            console.log("newpage", newPage, "----", "page", page)
+            console.log(navMappings[basePath][page].title)
              if(newPage !== page){
                 this.setState({title: navMappings[basePath][page].title})
             }

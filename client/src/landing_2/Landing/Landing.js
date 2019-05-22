@@ -29,8 +29,8 @@ class Landing extends Component {
                             <p className="heroP paddingBottom">Lets get to know each&nbsp;other...</p>
                         </div> 
                         <div className="flex">
-                            <Link to="/recruiterPage"><div className="selectBtnContainer">Recruiter</div></Link>
-                            <Link to="/employerPage"><div className="selectBtnContainer">Employer</div></Link>
+                            <Link to="/landing/recruiterPage"><div className="selectBtnContainer">Recruiter</div></Link>
+                            <Link to="/landing/employerPage"><div className="selectBtnContainer">Employer</div></Link>
                         </div> 
                     </div>
                     
