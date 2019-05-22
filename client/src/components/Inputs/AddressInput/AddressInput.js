@@ -139,6 +139,12 @@ class AddressInput extends Component {
         if(change){
             this.setState({ error: nextProps.error });
         }
+        if(nextProps.value != null && this.state.placeId !== nextProps.value.placeId){
+            const addr = nextProps.value;
+            addr.formattedAddress = this.formatAddress(addr);
+            addr.address = addr.formattedAddress;
+            this.setState(addr);
+        }
         if(this.state !== nextState)
             return true
         return change;

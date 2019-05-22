@@ -1,9 +1,7 @@
 import React from 'react';
-import AuthFunctions from '../../AuthFunctions'; 
-import {post, setAuthToken} from '../../ApiCalls';  
+import {get, post, setAuthToken} from '../../ApiCalls';  
 import TagSearch from '../../components/Inputs/TagSearch/TagSearch';
 import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormValidation from '../../FormValidation';
 import AddressInput from '../../components/Inputs/AddressInput/AddressInput';
@@ -13,6 +11,9 @@ import JobTypeSelector from '../../components/Inputs/JobTypeSelector/JobTypeSele
 import InterviewCountSelector from '../../components/Inputs/InterviewCountSelector/InterviewCountSelector';
 import NumberOpeningsSelector from '../../components/Inputs/NumberOpeningsSelector/NumberOpeningsSelector';
 import OpenReasonSelector from '../../components/Inputs/OpenReasonSelector/OpenReasonSelector';
+import TitleSelector from '../../components/Inputs/TitleSelector/TitleSelector';
+import RequirementsSelector from '../../components/Inputs/RequirementsSelector/RequirementsSelector';
+import classNames from 'classnames';
 
 const styles = theme => ({
     textField: {
@@ -43,6 +44,18 @@ const styles = theme => ({
     input2: {
         display: "flex",
         flexWrap: "wrap"
+    },
+    headerItems:{
+        flex: "1 1",
+        textOverflow: "ellipsis",
+        overflow: "hidden"
+    },
+    headerItemCenter:{
+        textAlign:"center",
+        fontSize:"1.5em"
+    },
+    headerItemRight:{
+        textAlign:"right"
     }
 })
 const errorText = [
@@ -75,6 +88,11 @@ const errorText = [
         gt: -1
     },
     { 
+        stateName: "openReasonExplain", 
+        errorText: "Please select the reason for the job opening",
+        or: "openReason"
+    },
+    { 
         stateName: "interviewCount", 
         errorText: "Please select the number of candidates to interview",
         type: "number",
@@ -84,7 +102,7 @@ const errorText = [
         stateName: "numOpenings", 
         errorText: "Please select the number of openings",
         type: "number",
-        gt: -1
+        gt: 0
     },
     {
         stateName: "tagIds",
@@ -107,28 +125,44 @@ class EmployerJobPost extends React.Component{
             jobType:-1,
             experience:0,
             interviewCount:0,
-            numOpenings: 0,
+            numOpenings: 1,
             openReason: -1,
+            openReasonExplain: '',
             address:{},
             companies: [],
             tagIds: [],
-            errors: {}
+            errors: {},
+            companyName: '',
+            email: ''
         }
         setAuthToken(token)
-        this.Auth = new AuthFunctions();
         this.handleChangeKV = this.handleChangeKV.bind(this)
         this.formValidation = new FormValidation(this, errorText);
+    }
+
+    componentDidMount() {
+        this.loadTokenData();
     }
 
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
     }
     handleChangeKV = (map) => {
-        console.log(map)
         this.setState(map, this.formValidation.shouldRevalidate)
     }
     handleAddressChange(address){
         this.setState({address:address}, this.formValidation.shouldRevalidate)
+    }
+    loadTokenData = () => {
+        get('/api/auth/current')
+        .then((res) => { 
+            if(res && res.data.success) {
+                this.setState(res.data.data)
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
     }
 
     handleSubmit = () => {
@@ -141,7 +175,6 @@ class EmployerJobPost extends React.Component{
             })
             .catch(error => {
                 console.log(error);
-                document.getElementById("registration_popup").style.display = "block"
             });
         }
     }
@@ -149,36 +182,24 @@ class EmployerJobPost extends React.Component{
         const { classes } = this.props;
         return (
             <React.Fragment>
-                <div className="pageHeading">Post a job</div> 
+                <div className="pageHeading">
+                    <div className={classes.headerItems}>Post a job</div>
+                    <div className={classNames(classes.headerItems, classes.headerItemCenter)}>{this.state.companyName}</div>
+                    <div className={classNames(classes.headerItems, classes.headerItemRight)}>{this.state.email}</div>
+                </div> 
                 <div className={classes.postAJobContainer}>
                     <div className={classes.formSection}>
                         <div className={classes.input2}>  
-                            <TextField
-                                name="title"
-                                label="Title"
-                                className={classes.textField}
+                            <TitleSelector
                                 required
-                                onChange={this.handleChange}
-                                margin="normal"
-                                variant="outlined"
-                                {...this.formValidation.hasError("title")}
-                            />
+                                onChange={this.handleChangeKV}
+                                {...this.formValidation.hasError("title")}/>
                         </div>  
-                        <div className={classes.input2}>  
-                            <TextField
-                                name="requirements"
-                                label="Requirements"
-                                multiline={true}
-                                className={classes.textArea}
-                                placeholder="A list of requirements"
-                                rowsMax={10}
-                                rows={4}
+                        <div className={classes.input2}>
+                            <RequirementsSelector
                                 required
-                                onChange={this.handleChange}
-                                margin="normal"
-                                variant="outlined"
-                                {...this.formValidation.hasError("requirements")}
-                            />
+                                onChange={this.handleChangeKV}
+                                {...this.formValidation.hasError("requirements")}/>
                         </div>  
                         <div className={classes.input2}>
                             <JobTypeSelector
@@ -223,6 +244,7 @@ class EmployerJobPost extends React.Component{
                         </div>
                         <div className={classes.input2}>
                             <AddressInput
+                                value={this.state.address}
                                 onChange={this.handleAddressChange.bind(this)}
                                 {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
                             />

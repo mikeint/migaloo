@@ -42,17 +42,7 @@ const styles = theme => ({
     },
 });
 function experienceDataCall(){
-    get('/api/autocomplete/experience/')
-    .then((res) => { 
-        if(res && res.data.success) {
-            const data = res.data.experienceList
-                    .map(d=>{return {name:d.experience_type_name, id: d.experience_type_id}})
-                this.setState({data: data});
-            }
-    })
-    .catch(error => {
-        console.log(error);
-    });
+    this.setState({data: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]});
 }
 function salaryDataCall(){
     get('/api/autocomplete/salary/')

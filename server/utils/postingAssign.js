@@ -101,10 +101,10 @@ function findRecruitersForPost(postId, limit=5){
                     max(tp.score) as max_score_accetable_candidates \
                 FROM ( \
                     SELECT rc.recruiter_id, ci.candidate_id, (COUNT(1) + \
-                        (CASE WHEN count(j.experience_type_id) = 0 OR count(ci.experience_type_id) = 0 THEN 0 ELSE greatest(2-abs(least(max(j.experience_type_id - ci.experience_type_id), 0)), 0)/2.0 END) + \
+                        (CASE WHEN count(j.experience_years) = 0 OR count(ci.experience_years) = 0 THEN 0 ELSE greatest(15-abs(least(max(j.experience_years - ci.experience_years), 0)), 0)/15.0 END) + \
                         (CASE WHEN count(j.salary_type_id) = 0 OR count(ci.salary_type_id) = 0 THEN 0 ELSE greatest(5-abs(least(max(j.salary_type_id - ci.salary_type_id), 0)), 0)/5.0 END)) / \
                         ( \
-                            SELECT COUNT(1)+count(distinct ci.experience_type_id)+count(distinct ci.salary_type_id) \
+                            SELECT COUNT(1)+count(distinct ci.experience_years)+count(distinct ci.salary_type_id) \
                             FROM posting_tags cti \
                             WHERE cti.post_id = ${postId} \
                         ) as score \

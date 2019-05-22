@@ -95,7 +95,7 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
     postgresdb.one('\
         SELECT email, first_name, last_name, \
             phone_number, image_id, \
-            address_line_1, address_line_2, city, state, country, coins \
+            address_line_1, address_line_2, city, state, country \
         FROM recruiter r \
         INNER JOIN login l ON l.user_id = r.recruiter_id \
         LEFT JOIN address a ON a.address_id = r.address_id \
@@ -147,11 +147,9 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
             // creating a sequence of transaction queries:
             var q1
             if(!addressIdExists){
-                q1 = t.one('INSERT INTO address (address_line_1, address_line_2, city, state, country) VALUES ($1, $2, $3, $4, $5) RETURNING address_id',
-                                [...addrFieldUpdates])
+                q1 = address.addAddress(bodyData, t)
             }else{
-                q1 = t.none('UPDATE address SET address_line_1=$1, address_line_2=$2, city=$3, state=$4, country=$5 WHERE address_id = $6',
-                                [...addrFieldUpdates, addressId]);
+                q1 = address.updateAddress(bodyData, t);
             }
             return q1.then((addr_ret)=>{
                 addressId = addressIdExists ? addressId : addr_ret.address_id

@@ -5,6 +5,7 @@ const passport = require('../config/passport');
 const ses = require('../utils/ses');
 const postingAssign = require('../utils/postingAssign');
 const logger = require('../utils/logging');
+const address = require('../utils/address');
 const postgresdb = require('../config/db').postgresdb;
 
 //load input validation
@@ -292,11 +293,30 @@ router.post('/sendEmailVerification', passport.authentication, (req, res) => {
 // @desc        return current user
 // @access      Private
 router.get('/current', passport.authentication, (req, res) => {
-    res.json({ 
-        id: req.body.jwtPayload.id,
-        name: req.body.jwtPayload.name,
-        email: req.body.jwtPayload.email
-    })
+    console.log(req.body.jwtPayload.id)
+    const ip = req.connection.remoteAddress;
+    postgresdb.one('\
+        SELECT c.company_id as "company", \
+            a.address_id as "addressId", \
+            a.address_line_1 as "addressLine1", \
+            a.address_line_2 as "addressLine2", \
+            a.city, a.state_province as "stateProvince", a.country, a.lat, a.lon, \
+            a.state_province_code as "stateProvinceCode", \
+            a.place_id as "placeId", \
+            a.country_code as "countryCode" \
+        FROM company_contact ec \
+        INNER JOIN company c ON c.company_id = ec.company_id \
+        LEFT JOIN address a ON a.address_id = c.address_id \
+        WHERE ec.company_contact_id = ${userId} \
+        LIMIT 1', {userId:req.body.jwtPayload.id})
+    .then((data) => {
+        address.convertFieldsToMap(data)
+        console.log({...req.body.jwtPayload, ...data})
+        res.json({success: true, data: {...req.body.jwtPayload, ...data}})
+    }).catch((err)=>{
+        logger.error('Get current jwt data', {tags:['jwt', 'sql'], url:req.originalUrl, ...req.body.jwtPayload, ip:ip, error:err.message || err});
+        return res.status(500).json({success: false, error:err})
+    });
 });
 
 

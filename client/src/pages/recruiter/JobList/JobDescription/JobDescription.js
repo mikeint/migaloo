@@ -261,7 +261,7 @@ class JobDescription extends React.Component{
                         <p>
                             {[this.state.jobObj.address_line_1, this.state.jobObj.address_line_2, this.state.jobObj.city, this.state.jobObj.state, this.state.jobObj.country].filter(d=>d!=null).join(", ")}
                         </p>
-                        <h5>Experience: {this.state.jobObj.experience_type_name}</h5>
+                        <h5>Experience: {this.state.jobObj.experience_years}</h5>
                         <span className={classes.jobSalary}>Salary: {this.state.jobObj.salary_type_name}</span> 
                         {this.state.jobObj.tag_names?<p>Tags: {this.state.jobObj.tag_names.join(", ")}</p>:''}
                         <p>Posted: {this.state.jobObj.posted}</p>

@@ -15,7 +15,7 @@ class SalarySelector extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            salaryList: [{}],
+            salaryList: [],
             onChange: props.onChange,
             salary: (props.required || false)?0:-1,
             required: props.required || false,
@@ -39,6 +39,9 @@ class SalarySelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
+        if(nextProps.value != null && this.state.salary !== nextProps.value){
+            this.setState({ salary: nextProps.value });
+        }
         if(this.state !== nextState)
             return true
         return change;
@@ -47,7 +50,7 @@ class SalarySelector extends React.Component{
     componentWillUnmount = () => {
         cancel();
     }
-    componentWillMount() {
+    componentDidMount() {
         this.loadData()
     }
 
@@ -61,7 +64,7 @@ class SalarySelector extends React.Component{
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-                Salary: {this.state.salary===-1?'Unspecified':this.state.salaryList[this.state.salary].salary_type_name}
+                Salary: {this.state.salary === -1||this.state.salaryList.length === 0?'Unspecified':this.state.salaryList[this.state.salary].salary_type_name}
                 <Slider
                     classes={{ container: classes.slider }}
                     value={this.state.salary}

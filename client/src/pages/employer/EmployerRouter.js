@@ -14,6 +14,7 @@ function EmployerRouter({ match }) {
             <NavBar />
             <div className="mainContainer">
                 <Switch>
+                    <Route strict path="/employer/postAJob/:postId" component={PostAJob} />
                     <Route strict path="/employer/postAJob" component={PostAJob} />
                     <Route strict path="/employer/profile" component={EmployerProfile} />  
                     <Route strict path="/employer/accounts" component={Accounts} />  

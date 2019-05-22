@@ -11,7 +11,7 @@ import ContactList from './ContactList/ContactList';
 import AddCompany from './AddCompany/AddCompany';
 
 const styles = theme => ({
-    createdTime:{ 
+    createdTime:{
         fontSize: '12px',
         marginLeft: 'auto',
         marginTop: '15px'
@@ -100,7 +100,7 @@ class Accounts extends React.Component{
             <React.Fragment>
 
                 <div>
-                    <div className="pageHeading">Companys
+                    <div className="pageHeading">Companies
                     <IconButton onClick={()=>this.openAddCompany()}><Add/></IconButton>
                     </div> 
                     {

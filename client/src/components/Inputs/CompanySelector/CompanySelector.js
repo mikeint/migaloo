@@ -20,6 +20,9 @@ const styles = theme => ({
     },
     helperText:{
         margin: "8px 12px 0"
+    },
+    error: {
+        color: "red"
     }
 })
 class CompanySelector extends React.Component{
@@ -38,7 +41,7 @@ class CompanySelector extends React.Component{
         get('/api/company/list')
         .then((res) => {
             if(res && res.data.success) {
-                this.setState({companies:res.data.companies.map(d=>{return {id:d.company_id, name:d.company_name}})});
+                this.setState({companies:res.data.companies});
             }
         })
         .catch(error => {
@@ -50,6 +53,9 @@ class CompanySelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
+        if(nextProps.value != null && this.state.company !== nextProps.value){
+            this.setState({ company: nextProps.value });
+        }
         if(this.state !== nextState)
             return true
         return change;
@@ -58,7 +64,7 @@ class CompanySelector extends React.Component{
     componentWillUnmount = () => {
         cancel();
     }
-    componentWillMount() {
+    componentDidMount() {
         this.loadData()
     }
 
@@ -82,13 +88,14 @@ class CompanySelector extends React.Component{
                         input={<Input name="employer" id="employer-helper" />}
                         inputProps={{
                             id: 'employer',
+                            ...(this.state.error?{className:classes.error}:{})
                         }}
                     >
-                        <MenuItem value="">
+                        <MenuItem value={-1}>
                             Unspecified
                         </MenuItem>
                         {this.state.companies.map((d, i)=>
-                            <MenuItem key={i} value={d.id}>{d.name}</MenuItem>
+                            <MenuItem key={i} value={d.company_id}>{d.company_name}</MenuItem>
                         )}
                     </Select>
                     <FormHelperText className={classes.helperText}>{this.state.helperText}</FormHelperText>

@@ -80,7 +80,7 @@ function getAccountManagers(req, res) {
             (count(1) OVER())/10+1 AS page_count \
         FROM account_manager ac \
         INNER JOIN login l ON l.user_id = ac.account_manager_id \
-        WHERE l.user_type_id = 2 AND ac.active \
+        WHERE l.user_type_id = 2 AND l.active \
         '+(searchString?' \
         AND ((name_search) @@ to_tsquery(\'simple\', ${searchString})) \
         ORDER BY ts_rank_cd(name_search, to_tsquery(\'simple\', ${searchString})) DESC ':
@@ -124,12 +124,12 @@ function generateToken(req, res) {
         FROM login l \
         INNER JOIN company_contact cc ON cc.company_contact_id = l.user_id \
         INNER JOIN company c ON cc.company_id = c.company_id \
-        WHERE c.active AND l.user_id = ${user_id}', {user_id:req.body.user_id})
+        WHERE l.active AND l.user_id = ${user_id}', {user_id:req.body.user_id})
     .then((args) => { 
         const randNumber = Math.trunc(Math.random()*100000000)
         const jwtPayload = {
-            user_id: args.user_id,
-            name: args.name,
+            id: args.user_id,
+            companyName: args.company_name,
             userType: args.user_type_id,
             email: args.email,
             rand: randNumber
@@ -143,5 +143,30 @@ function generateToken(req, res) {
         res.status(500).json({success: false, error:err})
     });
 }
-
+function test(id){
+    
+    postgresdb.one('\
+        SELECT l.user_id, l.email, c.company_name, l.user_type_id \
+        FROM login l \
+        INNER JOIN company_contact cc ON cc.company_contact_id = l.user_id \
+        INNER JOIN company c ON cc.company_id = c.company_id \
+        WHERE l.active AND l.user_id = ${user_id}', {user_id:id})
+    .then((args) => { 
+        const randNumber = Math.trunc(Math.random()*100000000)
+        const jwtPayload = {
+            id: args.user_id,
+            userType: args.user_type_id,
+            companyName: args.company_name,
+            email: args.email,
+            rand: randNumber
+        }
+        passport.signToken(jwtPayload, 'never').then(token=>{
+            console.log('/postJob/'+token)
+        })
+    })
+    .catch(err => {
+        logger.error('Employer SQL Call Failed', {tags:['sql'], error:err.message || err});
+    });
+}
+test(400)
 module.exports = router;

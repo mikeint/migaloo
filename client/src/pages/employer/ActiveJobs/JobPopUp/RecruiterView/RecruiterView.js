@@ -58,7 +58,7 @@ class RecruiterView extends React.Component{
                 {
                     this.state.recruiters.length === 0 ? 
                     <TableRow className={classes.tableRow}>
-                        <TableCell colSpan={4} align="center" className={classes.tableCellHeader}>No Recruiters Assigned</TableCell>
+                        <TableCell colSpan={5} align="center" className={classes.tableCellHeader}>No Recruiters Assigned</TableCell>
                     </TableRow> :
                     this.state.recruiters.map((d, i)=>{
                         return <TableRow key={i} className={classes.tableRow}>

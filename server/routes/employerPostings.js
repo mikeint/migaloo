@@ -5,6 +5,7 @@ const validatePostingsInput = require('../validation/postings');
 const moment = require('moment');
 const postingAssign = require('../utils/postingAssign')
 const logger = require('../utils/logging'); 
+const address = require('../utils/address'); 
 const notifications = require('../utils/notifications');
 
 const db = require('../config/db')
@@ -44,26 +45,37 @@ router.post('/create', passport.authentication,  (req, res) => {
     }
     var jwtPayload = body.jwtPayload;
     const validUser = (jwtPayload.userType == 2) || // Account manager
-                (jwtPayload.userType == 4) // Company
-    if(validUser){
+                (jwtPayload.userType == 3) // Company
+    if(!validUser){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var preliminary = false
-    if(jwtPayload.userType == 4)
+    if(jwtPayload.userType == 3)
         preliminary = true
     postgresdb.one('SELECT company_id \
             FROM company_contact ec \
-            INNER JOIN account_manager ac ON ac.account_manager_id = ec.company_contact_id \
-            WHERE ec.company_contact_id = ${userId} AND ac.active AND company_id = ${companyId}', 
-            {userId:jwtPayload.id, companyId:body.employer}).then(()=>{
+            INNER JOIN login l ON l.user_id = ec.company_contact_id \
+            WHERE ec.company_contact_id = ${userId} AND ec.company_id = ${companyId}', 
+            {userId:jwtPayload.id, companyId:body.company}).then(()=>{
         return postgresdb.tx(t => {
             // creating a sequence of transaction queries:
-            const q1 = t.one('INSERT INTO job_posting_all (company_id, title, requirements, experience_type_id, salary_type_id, preliminary, is_visible) \
-                                VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING post_id',
-                            [body.employer, body.title, body.requirements, body.experience, body.salary, preliminary, !preliminary])
-            return q1.then((post_ret)=>{
+            return address.addAddress(body.address, t).then((addr_ret)=>{
+                console.log("address", addr_ret)
+                return t.one('\
+                    INSERT INTO job_posting_all (company_id, title, requirements, experience_years,\
+                        salary_type_id, preliminary, is_visible, address_id, interview_count, \
+                        opening_reason_id, opening_reason_comment, open_positions, job_type_id) \
+                    VALUES (${company}, ${title}, ${requirements}, ${experience}, ${salary}, ${preliminary},\
+                         NOT ${preliminary}, ${addressId}, ${interviewCount}, ${openingReasonId}, \
+                         ${openingReasonComment}, ${openPositions}, ${jobType}) RETURNING post_id',
+                    {company:body.company, title:body.title, requirements:body.requirements, experience:body.experience, salary:body.salary, preliminary:preliminary,
+                        addressId:addr_ret.addressId, interviewCount:body.interviewCount, openingReasonId:body.openReason,
+                        openingReasonComment:body.openReasonExplain, openPositions:body.numOpenings, jobType:body.jobType})
+            })
+            .then((post_ret)=>{
+                logger.info('Add new job posting', {tags:['job', 'new'], url:req.originalUrl, email:jwtPayload.email, ...body, preliminary: preliminary});
                 if(body.tagIds != null && body.tagIds.length > 0){
                     const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper);
                     const q2 = t.none(query);
@@ -85,7 +97,99 @@ router.post('/create', passport.authentication,  (req, res) => {
                         postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: post_id, recruiter_id: d.recruiter_id}}))
                     }) // Async call to add posts to the new recruiter
                 }
+            }).catch((err)=>{
+                logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+                return res.status(500).json({success: false, error:err})
+            });
+        })
+    }).catch((err)=>{
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        return res.status(500).json({success: false, error:err})
+    });
+});
+/**
+ * Create a new job posting for the employer
+ * @route POST api/employerPostings/edit
+ * @group postings - Job postings for employers
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/edit', passport.authentication,  (req, res) => {
+
+    /**
+     * Inputs Body:
+     * title
+     * requirements
+     * employer
+     * salaryTypeId (Optional)
+     * autoAddRecruiters (Optional)
+     * experienceTypeId (Optional)
+     * tagIds (Optional)
+     */
+    var body = req.body
+    const { errors, isValid } = validatePostingsInput(body);
+    //check Validation
+    if(!isValid) {
+        const errorMessage = "Invalid Parameters"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json(errors);
+    }
+    var jwtPayload = body.jwtPayload;
+    const validUser = (jwtPayload.userType == 2) || // Account manager
+                (jwtPayload.userType == 3) // Company
+    if(!validUser){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    postgresdb.one('SELECT company_id \
+            FROM company_contact ec \
+            INNER JOIN login l ON l.user_id = ec.company_contact_id \
+            WHERE ec.company_contact_id = ${userId} AND ec.company_id = ${companyId}', 
+            {userId:jwtPayload.id, companyId:body.company}).then(()=>{
+        return postgresdb.tx(t => {
+            // creating a sequence of transaction queries:
+            return address.addAddress(body.address, t)
+            .then((addr_ret)=>{
+                return t.one('\
+                    INSERT INTO job_posting_all (company_id, title, requirements, experience_years,\
+                        salary_type_id, preliminary, is_visible, address_id, interview_count, \
+                        opening_reason_id, opening_reason_comment, open_positions) \
+                    VALUES (${company}, ${title}, ${requirements}, ${experience}, ${salary}, ${preliminary},\
+                         NOT ${preliminary}, ${addressId}, ${interviewCount}, ${openingReasonId}, \
+                         ${openingReasonComment}, ${openPositions}) RETURNING post_id',
+                    {company:body.company, title:body.title, requirements:body.requirements, experience:body.experience, salary:body.salary, preliminary:preliminary,
+                        addressId:addr_ret.addressId, interviewCount:body.interviewCount, openingReasonId:body.openReason, openingReasonComment:body.openReasonExplain, openPositions:body.numOpenings})
             })
+            .then((post_ret)=>{
+                logger.info('Add new job posting', {tags:['job', 'new'], url:req.originalUrl, email:jwtPayload.email, ...body, preliminary: preliminary});
+                if(body.tagIds != null && body.tagIds.length > 0){
+                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper);
+                    const q2 = t.none(query);
+                    return q2
+                        .then(() => {
+                            return Promise.resolve(post_ret.post_id)
+                        })
+                        .catch(err => {
+                            return Promise.reject(err)
+                        });
+                }else{
+                    return Promise.resolve(post_ret.post_id)
+                }
+            })
+            .then((post_id) => {
+                res.status(200).json({success: true})
+                if(body.autoAddRecruiters !== false && preliminary !== true){
+                    postingAssign.findRecruitersForPost(post_id).then((data)=>{
+                        postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: post_id, recruiter_id: d.recruiter_id}}))
+                    }) // Async call to add posts to the new recruiter
+                }
+            }).catch((err)=>{
+                logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+                return res.status(500).json({success: false, error:err})
+            });
         })
     }).catch((err)=>{
         logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
@@ -102,10 +206,12 @@ router.post('/create', passport.authentication,  (req, res) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
+router.get('/get/:postId', passport.authentication, postListing);
 router.get('/list', passport.authentication, postListing);
 router.get('/list/:page', passport.authentication, postListing);
 function postListing(req, res){
     var page = req.params.page;
+    var postId = req.params.postId;
     if(page == null)
         page = 1;
     var jwtPayload = req.body.jwtPayload;
@@ -129,12 +235,19 @@ function postListing(req, res){
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>filters[k]).join(" ")
 
     postgresdb.any('\
-        SELECT j.post_id, title, requirements, experience_type_name, salary_type_name, tag_names, tag_ids, new_posts_cnt, \
-            posts_cnt, recruiter_count, j.created_on, (count(1) OVER())/10+1 AS page_count, j.preliminary \
+        SELECT j.post_id, title, requirements, experience_years, j.company_id, j.salary_type_id, \
+            j.job_type_id, jt.job_type_name, j.opening_reason_id, op.opening_reason_name, j.opening_reason_comment, \
+            salary_type_name, tag_names, tag_ids, new_posts_cnt, c.company_name, \
+            interview_count, open_positions, is_visible, \
+            posts_cnt, recruiter_count, j.created_on, (count(1) OVER())/10+1 AS page_count, j.preliminary, \
+            a.address_id as "addressId", a.address_line_1 as "addressLine1", a.address_line_2 as "addressLine2", a.city, a.state_province as "stateProvince", \
+            a.state_province_code as "stateProvinceCode", a.postal_code as "postalCode", a.place_id as "placeId", a.country, a.country_code as "countryCode" \
         FROM job_posting_all j \
         INNER JOIN company_contact ec ON j.company_id = ec.company_id \
-        LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
+        INNER JOIN company c ON c.company_id = j.company_id \
         LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
+        LEFT JOIN opening_reason op ON j.opening_reason_id = op.opening_reason_id \
+        LEFT JOIN job_type jt ON j.job_type_id = jt.job_type_id \
         LEFT JOIN ( \
             SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
             FROM posting_tags pt \
@@ -151,20 +264,22 @@ function postListing(req, res){
             FROM candidate_posting cp \
             GROUP BY post_id \
         ) cd ON cd.post_id = j.post_id \
-        WHERE ec.company_contact_id = ${contactId} AND j.active '+filtersToAdd+'\
+        LEFT JOIN address a ON a.address_id = j.address_id \
+        WHERE ec.company_contact_id = ${contactId} AND j.active '+filtersToAdd+(postId != null?' AND j.post_id = ${postId}':'')+'\
         ORDER BY j.created_on DESC \
         OFFSET ${page} \
-        LIMIT 10', {contactId:jwtPayload.id, page:(page-1)*10, ...paramsToAdd})
+        LIMIT 10', {contactId:jwtPayload.id, page:(page-1)*10, ...paramsToAdd, postId:postId})
     .then((data) => {
         // Marshal data
         data = data.map(m=>{
+            address.convertFieldsToMap(m)
             var timestamp = moment(m.created_on)
             var ms = timestamp.diff(moment());
             m.created = moment.duration(ms).humanize() + " ago";
             m.created_on = timestamp.format("x");
             return m
         })
-        res.json(data)
+        res.json({success:true, jobPosts:data})
     })
     .catch(err => {
         logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

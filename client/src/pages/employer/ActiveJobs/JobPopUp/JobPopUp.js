@@ -14,10 +14,17 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import AddRecruiter from './AddRecruiter/AddRecruiter';
+import { NavLink } from 'react-router-dom';
 
 const styles = theme => ({
     button:{ 
         width: "40%",
+    },
+    itemLabel:{
+        fontWeight: "bold"
+    },
+    requirementsIndent:{
+        marginLeft: 20
     },
     redButton: {
       color: theme.palette.getContrastText(red[500]),
@@ -52,6 +59,12 @@ const styles = theme => ({
     },
     activeJobContainer:{
         overflow: "auto"
+    },
+    needsReview:{
+        marginTop:20,
+        marginBottom:20,
+        textAlign:"center",
+        fontSize: "2em"
     }
 });
 class JobPopUp extends React.Component{
@@ -148,47 +161,70 @@ class JobPopUp extends React.Component{
         return ( 
             <div className={classes.activeJobContainer}> 
                 <div className={classes.alertTitle} color="primary">
-                    <span>{jobObj.title}</span>
+                    <span>{`${jobObj.title} - ${jobObj.company_name}`}</span>
                     <IconButton color="inherit" className={classes.alertClose} onClick={this.state.onClose}>
                         <Close />
                     </IconButton>
                 </div>
                 <div className={classes.jobPostingContainer}>
-                    <p>{jobObj.requirements}</p>
-                    <h3>{jobObj.experience_type_name}</h3> 
-                    {jobObj.tag_names?<p>Tags: {jobObj.tag_names.join(", ")}</p>:''}
-                    <p>Created: {jobObj.created}</p>
-                </div> 
-                <Tabs variant="fullWidth" value={this.state.tabValue} onChange={this.handleTabChange}>
-                    <Tab label="Candidates" />
-                    <Tab label="Recruiters" />
-                    <Tab label="Add Recruiter" />
-                </Tabs>
-                {this.state.tabValue === 0 && <Typography component="div" style={{ padding: 24 }}>
-                    {
-                        this.state.candidateList.map((d, i)=>{
-                            return <CandidateView obj={d} job={jobObj} key={i}/>
-                        })
+                    <p><span className={classes.itemLabel}>Requirements:</span></p>
+                    <p className={classes.requirementsIndent}>{jobObj.requirements}</p>
+                    <p><span className={classes.itemLabel}>Job Type:</span> {jobObj.job_type_name}</p> 
+                    <p><span className={classes.itemLabel}>Experience:</span> {jobObj.experience_years}+ years</p> 
+                    <p><span className={classes.itemLabel}>Salary:</span> {jobObj.salary_type_name}</p> 
+                    <p><span className={classes.itemLabel}>Open Positions:</span> {jobObj.open_positions}</p> 
+                    <p><span className={classes.itemLabel}>Required Number of Interviewees:</span> {jobObj.interview_count}</p> 
+                    {jobObj.opening_reason_id != null ?
+                        <p><span className={classes.itemLabel}>Opening Reason:</span> {jobObj.opening_reason_name}</p>
+                        :
+                        <p><span className={classes.itemLabel}>Opening Reason Comment:</span> {jobObj.opening_reason_comment}</p> 
                     }
-                </Typography>}
-                {this.state.tabValue === 1 && <Typography component="div" style={{ padding: 24 }}>
-                    <RecruiterView job={jobObj} />
-                </Typography>}
-                {this.state.tabValue === 2 && <Typography component="div" style={{ padding: 24 }}>
-                    <AddRecruiter job={jobObj} />
-                </Typography>}
-                <div className={classes.buttonContainer}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        className={classes.button}
-                        onClick={this.hideJob.bind(this)}>Delist Job Posting</Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        className={classNames(classes.button, classes.redButton)}
-                        onClick={this.removeJob.bind(this)}>Delete Job Posting</Button>
-                </div>
+                    {jobObj.tag_names?<p><span>Tags:</span> {jobObj.tag_names.join(", ")}</p>:''}
+                    <p><span className={classes.itemLabel}>Created:</span> {jobObj.created}</p>
+                    <NavLink to={`/employer/postAJob/${jobObj.post_id}`}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            className={classes.button}
+                        >{jobObj.preliminary?'Edit and Post':'Edit'}</Button>
+                    </NavLink>
+                </div> 
+                {!jobObj.preliminary?
+                    <React.Fragment>
+                        <Tabs variant="fullWidth" value={this.state.tabValue} onChange={this.handleTabChange}>
+                            <Tab label="Candidates" />
+                            <Tab label="Recruiters" />
+                            <Tab label="Add Recruiter" />
+                        </Tabs>
+                        {this.state.tabValue === 0 && <Typography component="div" style={{ padding: 24 }}>
+                            {
+                                this.state.candidateList.map((d, i)=>{
+                                    return <CandidateView obj={d} job={jobObj} key={i}/>
+                                })
+                            }
+                        </Typography>}
+                        {this.state.tabValue === 1 && <Typography component="div" style={{ padding: 24 }}>
+                            <RecruiterView job={jobObj} />
+                        </Typography>}
+                        {this.state.tabValue === 2 && <Typography component="div" style={{ padding: 24 }}>
+                            <AddRecruiter job={jobObj} />
+                        </Typography>}
+                        <div className={classes.buttonContainer}>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                className={classes.button}
+                                onClick={this.hideJob.bind(this)}>Delist Job Posting</Button>
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                className={classNames(classes.button, classes.redButton)}
+                                onClick={this.removeJob.bind(this)}>Delete Job Posting</Button>
+                        </div>
+                    </React.Fragment>
+                    :
+                    <div className={classes.needsReview}>This post requires review and is not yet posted</div>
+                }
             </div> 
         )
     }

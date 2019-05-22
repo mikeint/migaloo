@@ -11,7 +11,7 @@ const postgresdb = require('../config/db').postgresdb
 
 const listFilters = {
     'salary':'AND j.salary_type_id in (${salary:csv})',
-    'experience':'AND j.experience_type_id in (${experience:csv})',
+    'experience':'AND j.experience_years in (${experience:csv})',
     'tags':'AND array_intersects(tg.tag_ids, ${tags:list}::bigint[])'
 }
 /**
@@ -54,11 +54,10 @@ function getJobs(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.any('\
-        SELECT j.company_id, j.post_id, title, requirements, experience_type_name, salary_type_name, company_name, image_id, \
+        SELECT j.company_id, j.post_id, title, requirements, experience_years, salary_type_name, company_name, image_id, \
             address_line_1, address_line_2, city, state, country, tag_ids, \
             tag_names, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting j \
-        LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
         LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
         INNER JOIN company e ON j.company_id = e.company_id \
         LEFT JOIN address a ON a.address_id = e.address_id \
@@ -139,10 +138,9 @@ function getJobsForCandidate(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.task(t => {
-        return t.one('SELECT c.candidate_id, first_name, last_name, st.salary_type_name, et.experience_type_name, tg.tag_names \
+        return t.one('SELECT c.candidate_id, first_name, last_name, st.salary_type_name, c.experience_years, tg.tag_names \
             FROM recruiter_candidate rc \
             INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
-            LEFT JOIN experience_type et ON c.experience_type_id = et.experience_type_id \
             LEFT JOIN salary_type st ON c.salary_type_id = st.salary_type_id \
             LEFT JOIN ( \
                 SELECT pt.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
@@ -158,11 +156,10 @@ function getJobsForCandidate(req, res){
             if(jobId != null)
                 sqlArgs['jobId'] = jobId
             return t.any('\
-                SELECT j.post_id, title, requirements, experience_type_name, salary_type_name, company_name, image_id, j.company_id, \
+                SELECT j.post_id, title, requirements, experience_years, salary_type_name, company_name, image_id, j.company_id, \
                     address_line_1, address_line_2, city, state, country, tag_ids, tag_names, \
                     coalesce(score, 0.0) as score, total_score, coalesce(score, 0.0)/total_score*100.0 as tag_score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
                 FROM job_posting j \
-                LEFT JOIN experience_type et ON j.experience_type_id = et.experience_type_id \
                 LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
                 INNER JOIN company e ON j.company_id = e.company_id \
                 LEFT JOIN address a ON a.address_id = e.address_id \
@@ -175,10 +172,10 @@ function getJobsForCandidate(req, res){
                 \
                 LEFT JOIN ( \
                     SELECT j.post_id, (COUNT(1) + \
-                        (CASE WHEN count(j.experience_type_id) = 0 OR count(ci.experience_type_id) = 0 THEN 0 ELSE greatest(2-abs(least(max(j.experience_type_id - ci.experience_type_id), 0)), 0)/2.0 END) + \
+                        (CASE WHEN count(j.experience_years) = 0 OR count(ci.experience_years) = 0 THEN 0 ELSE greatest(15-abs(least(max(j.experience_years - ci.experience_years), 0)), 0)/15.0 END) + \
                         (CASE WHEN count(j.salary_type_id) = 0 OR count(ci.salary_type_id) = 0 THEN 0 ELSE greatest(5-abs(least(max(j.salary_type_id - ci.salary_type_id), 0)), 0)/5.0 END)) as score, \
                         ( \
-                            SELECT COUNT(1)+count(distinct ci.experience_type_id)+count(distinct ci.salary_type_id) \
+                            SELECT COUNT(1)+count(distinct ci.experience_years)+count(distinct ci.salary_type_id) \
                             FROM candidate_tags cti \
                             INNER JOIN candidate ci ON ci.candidate_id = cti.candidate_id \
                             WHERE cti.candidate_id = ${candidateId} \

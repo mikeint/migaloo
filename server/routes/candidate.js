@@ -57,8 +57,8 @@ router.post('/create', passport.authentication,  (req, res) => {
                     {email:body.email})
             }
         }).then((candidate_ret)=>{
-            const q2 = t.none('INSERT INTO candidate (candidate_id, first_name, last_name, experience_type_id, salary_type_id) VALUES ($1, $2, $3, $4, $5)',
-                                [candidate_ret.user_id, body.firstName, body.lastName, body.experienceTypeId, body.salaryTypeId])
+            const q2 = t.none('INSERT INTO candidate (candidate_id, first_name, last_name, experience_years, salary_type_id) VALUES ($1, $2, $3, $4, $5)',
+                                [candidate_ret.user_id, body.firstName, body.lastName, body.experienceYears, body.salaryTypeId])
             const q3 = t.none('INSERT INTO recruiter_candidate (candidate_id, recruiter_id) VALUES ($1, $2)',
                                 [candidate_ret.user_id, jwtPayload.id])
             var queries = [q2, q3];
@@ -109,14 +109,13 @@ function listCandidates(req, res){
     if(candidateId != null)
         sqlArgs.push(candidateId)
     postgresdb.any(' \
-        SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, et.experience_type_name, \
+        SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, c.experience_years, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
             coalesce(cpd.not_accepted_count, 0) as not_accepted_count, coalesce(cpd.coins_spent, 0) as coins_spent, \
             coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
             (count(1) OVER())/10+1 AS page_count, tag_names, tag_ids \
         FROM recruiter_candidate rc \
         INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
-        LEFT JOIN experience_type et ON c.experience_type_id = et.experience_type_id \
         INNER JOIN login l ON l.user_id = c.candidate_id \
         LEFT JOIN ( \
             SELECT ct.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
@@ -136,7 +135,7 @@ function listCandidates(req, res){
             WHERE cp.recruiter_id = $1 \
             GROUP BY cp.candidate_id \
         ) cpd ON cpd.candidate_id = c.candidate_id\
-        WHERE rc.recruiter_id = $1 AND c.active \
+        WHERE rc.recruiter_id = $1 AND l.active \
         '+
         (candidateId ? 'ORDER BY (CASE WHEN c.candidate_id = $3 THEN 1 ELSE 0 END) DESC, c.last_name ASC, c.first_name ASC' :
         (search ? 
@@ -198,9 +197,8 @@ function listCandidatesForJob(req, res){
     
 
     postgresdb.task(t => {
-        return t.one('SELECT jp.post_id, jp.title, st.salary_type_name, et.experience_type_name, tg.tag_names \
+        return t.one('SELECT jp.post_id, jp.title, st.salary_type_name, jp.experience_years, tg.tag_names \
             FROM job_posting jp \
-            LEFT JOIN experience_type et ON jp.experience_type_id = et.experience_type_id \
             LEFT JOIN salary_type st ON jp.salary_type_id = st.salary_type_id \
             LEFT JOIN ( \
                 SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
@@ -214,7 +212,7 @@ function listCandidatesForJob(req, res){
             if(search != null)
                 sqlArgs['search'] = search.split(' ').map(d=>d+":*").join(" & ")
             return t.any(' \
-                SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, et.experience_type_name, \
+                SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, c.experience_years, \
                     coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
                     coalesce(cpd.not_accepted_count, 0) as not_accepted_count, \
                     coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
@@ -222,7 +220,6 @@ function listCandidatesForJob(req, res){
                     score, total_score, score/total_score*100.0 as tag_score  \
                 FROM recruiter_candidate rc \
                 INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
-                LEFT JOIN experience_type et ON c.experience_type_id = et.experience_type_id \
                 INNER JOIN login l ON l.user_id = c.candidate_id \
                 LEFT JOIN ( \
                     SELECT ct.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
@@ -243,10 +240,10 @@ function listCandidatesForJob(req, res){
                 ) cpd ON cpd.candidate_id = c.candidate_id \
                 INNER JOIN ( \
                     SELECT ci.candidate_id, (COUNT(1) + \
-                        (CASE WHEN count(j.experience_type_id) = 0 OR count(ci.experience_type_id) = 0 THEN 0 ELSE greatest(2-abs(least(max(j.experience_type_id - ci.experience_type_id), 0)), 0)/2.0 END) + \
+                        (CASE WHEN count(j.experience_years) = 0 OR count(ci.experience_years) = 0 THEN 0 ELSE greatest(15-abs(least(max(j.experience_years - ci.experience_years), 0)), 0)/15.0 END) + \
                         (CASE WHEN count(j.salary_type_id) = 0 OR count(ci.salary_type_id) = 0 THEN 0 ELSE greatest(5-abs(least(max(j.salary_type_id - ci.salary_type_id), 0)), 0)/5.0 END)) as score, \
                         ( \
-                            SELECT COUNT(1)+count(distinct ci.experience_type_id)+count(distinct ci.salary_type_id) \
+                            SELECT COUNT(1)+count(distinct ci.experience_years)+count(distinct ci.salary_type_id) \
                             FROM posting_tags cti \
                             WHERE cti.post_id = ${postId} \
                         ) as total_score \
@@ -257,7 +254,7 @@ function listCandidatesForJob(req, res){
                     WHERE j.post_id = ${postId} AND j.recruiter_id = ${recruiterId} \
                     GROUP BY ci.candidate_id \
                 ) jc ON jc.candidate_id = rc.candidate_id \
-                WHERE rc.recruiter_id = ${recruiterId} AND c.active \
+                WHERE rc.recruiter_id = ${recruiterId} AND l.active \
                 '+
                 (search ? 
                     'AND (name_search @@ to_tsquery(\'simple\', ${search}))'

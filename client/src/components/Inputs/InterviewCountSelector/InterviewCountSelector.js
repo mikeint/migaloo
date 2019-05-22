@@ -27,6 +27,9 @@ class InterviewCountSelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
+        if(nextProps.value != null && this.state.numberOfInterviews !== nextProps.value){
+            this.setState({ numberOfInterviews: nextProps.value });
+        }
         if(this.state !== nextState)
             return true
         return change;

@@ -3,17 +3,22 @@ import { Redirect } from 'react-router-dom';
 
 import AuthFunctions from '../../../AuthFunctions'; 
 
-import {post} from '../../../ApiCalls';  
+import {get, post} from '../../../ApiCalls';  
 import TagSearch from '../../../components/Inputs/TagSearch/TagSearch';
 import CompanySelector from '../../../components/Inputs/CompanySelector/CompanySelector';
-import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/ExperienceSelector';
-import JobTypeSelector from '../../../components/Inputs/JobTypeSelector/JobTypeSelector';
 import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
 import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector';
+import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/ExperienceSelector';
+import JobTypeSelector from '../../../components/Inputs/JobTypeSelector/JobTypeSelector';
+import InterviewCountSelector from '../../../components/Inputs/InterviewCountSelector/InterviewCountSelector';
+import NumberOpeningsSelector from '../../../components/Inputs/NumberOpeningsSelector/NumberOpeningsSelector';
+import OpenReasonSelector from '../../../components/Inputs/OpenReasonSelector/OpenReasonSelector';
+import TitleSelector from '../../../components/Inputs/TitleSelector/TitleSelector';
+import RequirementsSelector from '../../../components/Inputs/RequirementsSelector/RequirementsSelector';
 import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormValidation from '../../../FormValidation';
+import { Checkbox, FormControlLabel } from '@material-ui/core';
 
 const styles = theme => ({
     textField: {
@@ -52,6 +57,12 @@ const styles = theme => ({
 })
 const errorText = [
     {
+        stateName: "company",
+        errorText: "Please select a company for the job posting",
+        type: "number",
+        gt: -1
+    },
+    {
         stateName: "requirements",
         errorText: "Please enter a description for the job posting"
     },
@@ -64,10 +75,6 @@ const errorText = [
         errorText: "Please select the salary range"
     },
     {
-        stateName: "employer",
-        errorText: "Please select an employer for the job posting"
-    },
-    {
         stateName: "experience",
         errorText: "Please select the experience required"
     },
@@ -76,6 +83,24 @@ const errorText = [
         errorText: "Please select the job type",
         type: "number",
         gt: -1
+    },
+    { 
+        stateName: "openReason", 
+        errorText: "Please select the reason for the job opening",
+        type: "number",
+        gt: -1
+    },
+    { 
+        stateName: "interviewCount", 
+        errorText: "Please select the number of candidates to interview",
+        type: "number",
+        gt: -1
+    },
+    { 
+        stateName: "numOpenings", 
+        errorText: "Please select the number of openings",
+        type: "number",
+        gt: 0
     },
     {
         stateName: "tagIds",
@@ -87,35 +112,50 @@ const errorText = [
     }
 ]
 class PostAJob extends React.Component{
-    constructor() {
-        super();
-        this.state = {   
+    constructor(props) {
+        super(props);
+        this.state = {
             title:'',
             requirements:'',
-            employer:'',
-            salary:-1,
+            company:-1,
+            salary:0,
             jobType:-1,
-            experience:-1,
+            experience:0,
+            interviewCount:0,
+            numOpenings: 1,
+            openReason: -1,
             address:{},
             redirect: false,
-            salaryList: [],
-            experienceList: [],
-            companies: [],
             tagIds: [],
-            errors: {}
+            errors: {},
+            postId: props.match.params.postId,
+            oldPost:{}
         }
         this.Auth = new AuthFunctions();
+        this.handleChangeKV = this.handleChangeKV.bind(this)
         this.formValidation = new FormValidation(this, errorText);
     }
  
-    componentWillUnmount = () => {
+    getJob = () => {
+        if(this.state.postId != null){
+            get('/api/employerPostings/get/'+this.state.postId)
+            .then((res)=>{
+                if(res == null || !res.data.success || res.data.jobPosts.length === 0) return
+                this.setState({ oldPost: res.data.jobPosts[0] })
+            }).catch(errors => 
+                console.log(errors)
+            )
+        }
     }
     componentDidMount() {
-        window.scrollTo(0, 0); 
+        this.getJob()
     }
 
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
+    }
+    handleChangeKV = (map) => {
+        this.setState(map, this.formValidation.shouldRevalidate)
     }
     handleAddressChange(address){
         this.setState({address:address}, this.formValidation.shouldRevalidate)
@@ -131,7 +171,6 @@ class PostAJob extends React.Component{
             })
             .catch(error => {
                 console.log(error);
-                document.getElementById("registration_popup").style.display = "block"
             });
         }
     }
@@ -146,69 +185,99 @@ class PostAJob extends React.Component{
                         <div className={classes.input2}>
                             <CompanySelector
                                 required
-                                onChange={(employer)=>this.setState({employer:employer}, this.formValidation.shouldRevalidate)}
-                                {...this.formValidation.hasError("employer")}/>
+                                onChange={(company)=>this.setState(company, this.formValidation.shouldRevalidate)}
+                                value={this.state.oldPost.company_id}
+                                {...this.formValidation.hasError("company")}/>
                         </div>
                         <div className={classes.input2}>  
-                            <TextField
-                                name="title"
-                                label="Title"
-                                className={classes.textField}
+                            <TitleSelector
                                 required
-                                onBlur={this.handleChange}
-                                margin="normal"
-                                variant="outlined"
-                                {...this.formValidation.hasError("title")}
-                            />
+                                onChange={this.handleChangeKV}
+                                value={this.state.oldPost.title}
+                                {...this.formValidation.hasError("title")}/>
                         </div>  
-                        <div className={classes.input2}>  
-                            <TextField
-                                name="requirements"
-                                label="Requirements"
-                                multiline={true}
-                                className={classes.textAreaMaxHeight}
-                                placeholder="A list of job requirements"
-                                rowsMax={10}
-                                rows={4}
+                        <div className={classes.input2}>
+                            <RequirementsSelector
                                 required
-                                onBlur={this.handleChange}
-                                margin="normal"
-                                variant="outlined"
-                                {...this.formValidation.hasError("requirements")}
-                            />
+                                onChange={this.handleChangeKV}
+                                value={this.state.oldPost.requirements}
+                                {...this.formValidation.hasError("requirements")}/>
                         </div>  
-                        <div  className={classes.tagSearch}>
-                            <TagSearch onChange={(tags)=>this.setState({tagIds:tags}, this.formValidation.shouldRevalidate)}
-                                    {...this.formValidation.hasError("tagIds")}/>
-                        </div>
                         <div className={classes.input2}>
                             <JobTypeSelector
                                 required
-                                onChange={(jobType)=>this.setState({jobType:jobType}, this.formValidation.shouldRevalidate)}
+                                onChange={this.handleChangeKV}
+                                value={this.state.oldPost.job_type_id}
                                 {...this.formValidation.hasError("jobType")}/>
                         </div>
+                        {this.state.jobType !== -1 &&
+                            <div className={classes.tagSearch}>
+                                <TagSearch
+                                    onChange={this.handleChangeKV}
+                                    value={this.state.oldPost.tag_ids}
+                                    {...this.formValidation.hasError("tagIds")}/>
+                            </div>
+                        }
                         <div className={classes.input2}>
                             <SalarySelector 
                                 required
-                                onChange={(salary)=>this.setState({salary:salary}, this.formValidation.shouldRevalidate)}
+                                onChange={this.handleChangeKV}
+                                value={this.state.oldPost.salary_type_id}
                                 {...this.formValidation.hasError("salary")}/>
                                 &nbsp;&nbsp;&nbsp;
                             <ExperienceSelector 
                                 required
-                                onChange={(experience)=>this.setState({experience:experience}, this.formValidation.shouldRevalidate)}
+                                onChange={this.handleChangeKV}
+                                value={this.state.oldPost.experience_years}
                                 {...this.formValidation.hasError("experience")}/>
+                        </div>
+                        <div className={classes.input2}>
+                            <InterviewCountSelector 
+                                required
+                                onChange={this.handleChangeKV}
+                                value={this.state.oldPost.interview_count}
+                                {...this.formValidation.hasError("interviewCount")}/>
+                                &nbsp;&nbsp;&nbsp;
+                            <NumberOpeningsSelector 
+                                required
+                                onChange={this.handleChangeKV}
+                                value={this.state.oldPost.open_positions}
+                                {...this.formValidation.hasError("numOpenings")}/>
+                        </div>
+                        <div className={classes.input2}>
+                            <OpenReasonSelector 
+                                required
+                                onChange={this.handleChangeKV}
+                                value={this.state.oldPost.opening_reason_id || this.state.oldPost.opening_reason_comment}
+                                {...this.formValidation.hasError("openReason")}/>
                         </div>
                         <div className={classes.input2}>
                             <AddressInput
                                 onChange={this.handleAddressChange.bind(this)}
+                                value={this.state.oldPost.address}
                                 {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
                             />
                         </div>
+                        {(this.state.oldPost.post_id == null || this.state.oldPost.preliminary) && 
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        defaultChecked={true}
+                                        onChange={(e)=>this.setState({autoAddRecruiters: e.target.checked})}
+                                        color="primary"
+                                    />
+                                }
+                                label="Auto Add Recruiters"
+                            />
+                        }
                         <Button 
                             color="primary"
                             variant="contained"
                             className={classes.postButton}
-                            onClick={this.handleSubmit}>Post</Button>
+                            onClick={this.handleSubmit}>
+                            {this.state.oldPost.post_id == null ? 'Post' :
+                                (this.state.oldPost.preliminary ? 'Save & Post' : 'Save')}
+                        </Button>
                     </div>
                 </div> 
             </React.Fragment>

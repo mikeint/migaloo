@@ -17,14 +17,34 @@ import Button from '@material-ui/core/Button';
 import FilterList from '@material-ui/icons/FilterList';
 
 import whale from '../../../files/images/logo.png'
+import { Typography, MenuItem } from '@material-ui/core';
+import classNames from 'classnames';
 
 const styles = theme => ({
     drawer:{ 
         minWidth: "300px",
         position: "relative"
     },
+    createdTime:{ 
+        fontSize: '12px',
+        marginLeft: 'auto',
+        marginTop: '15px'
+    },
     rbutton: {
       marginLeft: 'auto', 
+    },
+    isPrimary:{ 
+        marginLeft: 'auto'
+    },
+    isPrimaryBox:{
+        color: theme.palette.secondary.main,
+        border: "1px solid",
+        borderColor: theme.palette.secondary.main,
+        padding: "4px 10px",
+        marginRight: "20px"
+    },
+    unsetText:{
+        textTransform: "none"
     }
 });
 
@@ -75,10 +95,11 @@ class ActiveJobs extends React.Component{
     getJobList = () => {
         getWithParams('/api/employerPostings/list/'+this.state.page, this.state.filters)
         .then((res)=>{
-            if(res == null) return
-            this.setState({ jobList: res.data, pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 })
+            if(res == null || !res.data.success) return
+            this.setState({ jobList: res.data.jobPosts,
+                pageCount: (res.data.jobPosts&&res.data.jobPosts.length>0)?parseInt(res.data.jobPosts[0].page_count, 10):1 })
         }).catch(errors => 
-            console.log(errors.response.data)
+            console.log(errors)
         )
     }
     jobRemoved = () => {
@@ -128,11 +149,12 @@ class ActiveJobs extends React.Component{
                             <div className="jobListContainer">
                                 {
                                     this.state.jobList.map((item, i) => {
-                                        return <div className="jobListItem" key={i} onClick={() => this.callOverlay(i)}>
-                                            {item.title}
+                                        return <MenuItem key={i} onClick={()=>this.callOverlay(i)}>
+                                            {item.preliminary && <NavLink to={`/employer/postAJob/${item.post_id}`}><Button className={classes.isPrimaryBox}>Preliminary</Button></NavLink>}
+                                            <Typography>{item.title}</Typography>
                                             {item.new_posts_cnt > 0 ? <span className="newPostingCount" title={item.new_posts_cnt+" New Candidate Postings"}>{item.new_posts_cnt}</span> : ""}
-                                            <span className="createdTime">{item.created}</span>
-                                        </div>
+                                            <Typography className={classNames(classes.createdTime)}>{item.created}</Typography>
+                                        </MenuItem>
                                     })
                                 }
                                 <div className="paginationContainer">

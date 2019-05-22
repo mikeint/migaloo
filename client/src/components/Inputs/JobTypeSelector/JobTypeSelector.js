@@ -53,6 +53,9 @@ class JobTypeSelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
+        if(nextProps.value != null && this.state.jobType !== nextProps.value){
+            this.setState({ jobType: nextProps.value });
+        }
         if(this.state !== nextState)
             return true
         return change;
@@ -61,7 +64,7 @@ class JobTypeSelector extends React.Component{
     componentWillUnmount = () => {
         cancel();
     }
-    componentWillMount() {
+    componentDidMount() {
         this.loadData()
     }
 

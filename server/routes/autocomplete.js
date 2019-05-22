@@ -6,40 +6,6 @@ const logger = require('../utils/logging');
 const postgresdb = require('../config/db').postgresdb;
 
 /**
- * Get experience by autocomplete
- * @route GET api/autocomplete/experience
- * @group autocomplete - Autocomplete
- * @returns {object} 200 - A list of maps containing autocompletes
- * @returns {Error}  default - Unexpected error
- * @access Private
- */
-router.get('/experience/:find', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT experience_type_name, experience_type_id \
-            FROM experience_type \
-            WHERE lower(experience_type_name) LIKE $1 \
-            ORDER BY experience_type_id ASC \
-            LIMIT 10', "%"+req.params.find.toLowerCase()+"%")
-    .then(data => {
-        res.json({success:true, experienceList: data});
-    })
-    .catch(err => {
-        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:req.body.jwtPayload.id, error:err.message || err, body:req.body});
-        res.status(500).json({success:false, error:err})
-    });
-});
-router.get('/experience', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT experience_type_name, experience_type_id \
-            FROM experience_type \
-            ORDER BY experience_type_id ASC')
-    .then(data => {
-        res.json({success:true, experienceList: data});
-    })
-    .catch(err => {
-        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:req.body.jwtPayload.id, error:err.message || err, body:req.body});
-        res.status(500).json({success:false, error:err})
-    });
-});
-/**
  * Get job type by autocomplete
  * @route GET api/autocomplete/jobType
  * @group autocomplete - Autocomplete

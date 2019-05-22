@@ -27,6 +27,9 @@ class ExperienceSelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
+        if(nextProps.value != null && this.state.experience !== nextProps.value){
+            this.setState({ experience: nextProps.value });
+        }
         if(this.state !== nextState)
             return true
         return change;

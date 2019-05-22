@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('../config/passport');
 const moment = require('moment');
 const invite = require('../utils/invite')
+const address = require('../utils/address')
 //load input validation
 const validateCompanyInput = require('../validation/company');  
 const logger = require('../utils/logging');
@@ -34,8 +35,8 @@ router.get('/list', passport.authentication,  (req, res) => {
             c.company_id, company_name, department, c.image_id, \
             address_line_1 as "addressLine1", \
             address_line_2 as "addressLine2", \
-            city, state, country, lat, lon, \
-            state_code as "stateCode", \
+            city, state_province as "stateProvince", country, lat, lon, \
+            state_province_code as "stateCode", \
             country_code as "countryCode", \
             ec.is_primary \
         FROM login l \
@@ -43,7 +44,7 @@ router.get('/list', passport.authentication,  (req, res) => {
         INNER JOIN company c ON c.company_id = ec.company_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
         WHERE ec.company_contact_id = ${userId} \
-        ORDER BY company_name', {userId:jwtPayload.id})
+        ORDER BY ec.is_primary DESC, company_name', {userId:jwtPayload.id})
     .then((data) => {
         res.json({success:true, companies:data})
     })
@@ -77,17 +78,11 @@ router.post('/addCompany', passport.authentication,  (req, res) => {
     }
     postgresdb.tx(t => {
         var fields = ['company_name', 'department'];
-        var addressFields = ['address_line_1', 'address_line_2', 'city', 'state', 'country'];
         var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:null);
-        var addrFieldUpdates = addressFields.map(f=> bodyData[f] != null?bodyData[f]:null);
         
         // creating a sequence of transaction queries:
-        var q1 = new Promise(function(resolve, reject) { resolve({address_id:null}); });
-        if(!addrFieldUpdates.some(a=>a != null)){
-            q1 = t.one('INSERT INTO address (address_line_1, address_line_2, city, state, country) VALUES ($1, $2, $3, $4, $5) RETURNING address_id',
-                    [...addrFieldUpdates])
-        }
-        return q1.then((addr_ret)=>{
+        address.addAddress(bodyData, t)
+        .then((addr_ret)=>{
             return t.one('INSERT INTO login(user_type_id) VALUES (4) RETURNING user_id')
             .then((user_ret) => {
                 const q3 = t.none('INSERT INTO company(company_id, company_name, department, address_id) VALUES ($1, $2, $3, $4)',
@@ -146,11 +141,9 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
             // creating a sequence of transaction queries:
             var q1
             if(!addressIdExists){
-                q1 = t.one('INSERT INTO address (address_line_1, address_line_2, city, state, country) VALUES ($1, $2, $3, $4, $5) RETURNING address_id',
-                        [...addrFieldUpdates])
+                q1 = address.addAddress(bodyData, t)
             }else{
-                q1 = t.none('UPDATE address SET address_line_1=$1, address_line_2=$2, city=$3, state=$4, country=$5 WHERE address_id = $6',
-                        [...addrFieldUpdates, addressId]);
+                q1 = address.updateAddress(bodyData, t);
             }
             return q1.then((addr_ret)=>{
                 addressId = addressIdExists ? addressId : addr_ret.address_id

@@ -64,7 +64,7 @@ class Conversation extends Component {
             })
         })
     }
-    componentWillMount = () => {
+    componentDidMount = () => {
         if(this.state.loadByMessageSubjectId){
             this.getConversationList().then(()=>{
                 this.getMessageList();

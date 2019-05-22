@@ -37,6 +37,7 @@ class OpenReasonSelector extends React.Component{
             openReasonList: [{}],
             onChange: props.onChange,
             openReason: -1,
+            openReasonExplain: '',
             required: props.required || false,
             error: false,
             helperText: ''
@@ -58,29 +59,36 @@ class OpenReasonSelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
+        if(nextProps.value != null && (this.state.openReason !== nextProps.value && this.state.openReasonExplain !== nextProps.value)){
+            if(isNaN(nextProps.value))
+                this.setState({ openReason: otherNumber, openReasonExplain: nextProps.value });
+            else
+                this.setState({ openReason: nextProps.value });
+        }
         if(this.state !== nextState)
-            return true
+            return true;
         return change;
     }
  
     componentWillUnmount = () => {
         cancel();
     }
-    componentWillMount() {
-        this.loadData()
+    componentDidMount() {
+        this.loadData();
     }
 
     handleChange = (e) => {
         if(this.state.onChange){
-            this.state.onChange({ openReason: e.target.value })
+            this.state.onChange({ openReason: e.target.value===otherNumber?null:e.target.value });
         }
-        this.setState({ openReason: e.target.value })
+        this.setState({ openReason: e.target.value });
     }
     handleChangeExplain = (e) => {
+        const text = e.target.value.substring(0, 512);
         if(this.state.onChange){
-            this.state.onChange({ openReasonExplain: e.target.value })
+            this.state.onChange({ openReasonExplain: text });
         }
-        this.setState({ openReasonExplain: otherNumber })
+        this.setState({ openReasonExplain: text });
     }
     render(){   
         const { classes } = this.props;
@@ -115,13 +123,13 @@ class OpenReasonSelector extends React.Component{
                 {this.state.openReason === otherNumber &&
                     <TextField
                         name="textReason"
-                        label="Reason Explanation"
+                        label={`Reason Explanation (${512-this.state.openReasonExplain.length} Left)`}
                         className={classes.textArea}
+                        value={this.state.openReasonExplain}
                         multiline={true}
                         placeholder="A reason for the opening"
                         rowsMax={10}
                         rows={4}
-                        required
                         onChange={this.handleChangeExplain}
                         margin="normal"
                         variant="outlined"

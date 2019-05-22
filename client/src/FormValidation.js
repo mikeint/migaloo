@@ -59,6 +59,9 @@ export default class FormValidation {
                         errors[d.stateName] = d.errorText;
                 }
             }
+            if(errors[d.stateName] == null && d.or){ // Check if this should be or'd with another error check
+                delete errors[d.or]
+            }
         })
         this.parent.setState({errors:errors});
         return Object.keys(errors).length === 0;

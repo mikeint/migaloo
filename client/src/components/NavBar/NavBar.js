@@ -151,7 +151,7 @@ class NavBar extends React.Component{
         this.setState({ page:value });
     };
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         this.setState({ user: this.Auth.getUser() });
     }
     getNavMappings(){
