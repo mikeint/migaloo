@@ -8,7 +8,7 @@ const Social = () =>
     <div className="socialContainer">  
         <div className="icon-bar">
             <a href="https://www.linkedin.com/company/migalooio/about/" className="linkedin" target="_blank" rel="noopener noreferrer"><img src={linkedInLogo} alt="" /></a>
-            <a href="/" className="slack" target="_blank" rel="noopener noreferrer"><img src={slackLogo} alt="" /></a>
+           {/*  <a href="/" className="slack" target="_blank" rel="noopener noreferrer"><img src={slackLogo} alt="" /></a> */}
         </div> 
     </div>
  
