@@ -16,7 +16,7 @@ import whale from '../../../files/images/logo.png'
 
 const styles = theme => ({
     button: {
-      float: 'right', 
+        marginLeft: 'auto', 
     },
     noJobs: {
       padding: '20px', 

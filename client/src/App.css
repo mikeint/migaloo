@@ -86,6 +86,7 @@ input {
     line-height: 40px;
     background: #546f82;
     color: #fff;
+    display: flex;
 }
 .pageHeadingStatic {
   width: 100%; 

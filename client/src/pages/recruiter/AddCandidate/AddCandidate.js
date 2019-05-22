@@ -15,8 +15,8 @@ import FormValidation from '../../../FormValidation';
 
 const styles = theme => ({
     alertClose: {
-        position: "absolute",
-        right: "10px",
+        marginLeft: 'auto', 
+        marginRight: "10px",
         height: "60px",
     }, 
     submitCandidateBtn:{

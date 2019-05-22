@@ -20,7 +20,7 @@ import Add from '@material-ui/icons/Add';
 
 const styles = theme => ({
     button: {
-      float: 'right', 
+        marginLeft: 'auto', 
     },
     drawer:{ 
         minWidth: "300px",

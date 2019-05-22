@@ -24,7 +24,7 @@ const styles = theme => ({
         position: "relative"
     },
     rbutton: {
-      float: 'right', 
+      marginLeft: 'auto', 
     }
 });
 

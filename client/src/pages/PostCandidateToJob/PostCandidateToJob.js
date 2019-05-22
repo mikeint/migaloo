@@ -19,7 +19,7 @@ const styles = theme => ({
         width:"100%"
     },
     rightBtn:{
-        float: "right",
+        marginLeft: 'auto', 
     }
 })
 class PostCandidateToJob extends React.Component{
