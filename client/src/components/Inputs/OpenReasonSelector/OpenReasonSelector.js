@@ -24,6 +24,9 @@ const styles = theme => ({
     },
     helperText:{
         margin: "8px 12px 0"
+    },
+    error:{
+        color: "red"
     }
 })
 const otherNumber = 99999;
@@ -75,9 +78,9 @@ class OpenReasonSelector extends React.Component{
     }
     handleChangeExplain = (e) => {
         if(this.state.onChange){
-            this.state.onChange({ openReason: e.target.value })
+            this.state.onChange({ openReasonExplain: e.target.value })
         }
-        this.setState({ openReason: otherNumber })
+        this.setState({ openReasonExplain: otherNumber })
     }
     render(){   
         const { classes } = this.props;
@@ -94,10 +97,11 @@ class OpenReasonSelector extends React.Component{
                         input={<Input name="openReason" id="open-reason-helper" />}
                         inputProps={{
                             id: 'openReason',
+                            ...(this.state.error?{className:classes.error}:{})
                         }}
                     >
                         <MenuItem value={-1}>
-                            <em>Unspecified</em>
+                            Unspecified
                         </MenuItem>
                         {this.state.openReasonList.map((d, i)=>
                             <MenuItem key={i} value={d.opening_reason_id}>{d.opening_reason_name}</MenuItem>
@@ -118,7 +122,7 @@ class OpenReasonSelector extends React.Component{
                         rowsMax={10}
                         rows={4}
                         required
-                        onChange={this.handleChange}
+                        onChange={this.handleChangeExplain}
                         margin="normal"
                         variant="outlined"
                         error={this.state.error}

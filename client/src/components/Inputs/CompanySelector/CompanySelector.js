@@ -85,7 +85,7 @@ class CompanySelector extends React.Component{
                         }}
                     >
                         <MenuItem value="">
-                            <em>Unspecified</em>
+                            Unspecified
                         </MenuItem>
                         {this.state.companies.map((d, i)=>
                             <MenuItem key={i} value={d.id}>{d.name}</MenuItem>

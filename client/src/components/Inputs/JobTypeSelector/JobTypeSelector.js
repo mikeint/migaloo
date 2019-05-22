@@ -20,6 +20,9 @@ const styles = theme => ({
     },
     helperText:{
         margin: "8px 12px 0"
+    },
+    error: {
+        color: "red"
     }
 })
 class JobTypeSelector extends React.Component{
@@ -83,10 +86,11 @@ class JobTypeSelector extends React.Component{
                         input={<Input name="jobType" id="job-type-helper" />}
                         inputProps={{
                             id: 'jobType',
+                            ...(this.state.error?{className:classes.error}:{})
                         }}
                     >
                         <MenuItem value={-1}>
-                            <em>Unspecified</em>
+                            Unspecified
                         </MenuItem>
                         {this.state.jobTypeList.map((d, i)=>
                             <MenuItem key={i} value={d.job_type_id}>{d.job_type_name}</MenuItem>
