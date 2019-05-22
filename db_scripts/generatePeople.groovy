@@ -7,14 +7,14 @@ def jobTitles = new JsonSlurper().parseText(new File("${dbscriptsPath}jobTitles.
 def jobDescriptions = new File("${dbscriptsPath}jobDescriptions.txt").readLines().collect{StringEscapeUtils.unescapeHtml(it.replaceAll(/'/, "''"))}
 def lines = new File("${dbscriptsPath}FakeNames.txt").readLines()
 def out = new File("${dbscriptsPath}fakeData.pgsql")
-def addressQuery = "INSERT INTO address (address_id, address_line_1, city, state, country, lat, lon) VALUES \n\t"
+def addressQuery = "INSERT INTO address (address_id, address_line_1, city, state_province, country, lat, lon) VALUES \n\t"
 def addressData = []
 def addressId = 5000
 
 def candidateTagsQuery = "INSERT INTO candidate_tags (candidate_id, tag_id) VALUES \n\t"
 def candidateTagsData = []
 
-def candidateQuery = "INSERT INTO candidate (candidate_id, first_name, last_name, phone_number, experience_type_id, salary_type_id, address_id) VALUES \n\t"
+def candidateQuery = "INSERT INTO candidate (candidate_id, first_name, last_name, phone_number, experience_years, salary_type_id, address_id) VALUES \n\t"
 def candidateData = []
 
 def loginQuery = "INSERT INTO login (user_id, email, created_on, user_type_id) VALUES \n\t"
@@ -32,7 +32,7 @@ def employerContactQuery = "INSERT INTO company_contact (company_contact_id, com
 def employerContactData = []
 def employerContactId = 10000000
 
-def jobPostingQuery = "INSERT INTO job_posting_all (post_id, company_id, created_on, title, requirements, experience_type_id, salary_type_id) VALUES \n\t"
+def jobPostingQuery = "INSERT INTO job_posting_all (post_id, company_id, address_id, created_on, title, requirements, experience_years, salary_type_id) VALUES \n\t"
 def jobPostingData = []
 def postId = 100
 
@@ -48,7 +48,7 @@ def accountManagerData = []
 def headers = lines[0].split("\t")
 def recruiterCount = 3
 def salaryCount = 14
-def expierenceCount = 4
+def expierenceCount = 25
 def tagCount = 24
 // Generate Candidates 
 def getTitle = {->jobTitles[(Integer)(Math.random()*jobTitles.size())]}
@@ -87,7 +87,7 @@ lines.drop(1001).take(1000).each{line->
     employerData << "(${employerId}, '${d.Company}', 'Unknown', ${addressId})"
     employerContactData << "(${employerContactId}, ${employerId}, true)"
     accountManagerData << "(${employerContactId}, '${d.GivenName}', '${d.Surname}', '${d.TelephoneNumber}')"
-    jobPostingData << "(${postId}, ${employerId}, current_date - interval '${daysBack}' day, '${title}', '${requirements}', ${exp}, ${salary})"
+    jobPostingData << "(${postId}, ${employerId}, ${addressId}, current_date - interval '${daysBack}' day, '${title}', '${requirements}', ${exp}, ${salary})"
     jobRecruiterPostingData << "(${postId}, ${recruiter})"
     jobPostingTagsData << tag.collect{"(${postId}, ${it})"}.unique().join(", ")
     addressId++
