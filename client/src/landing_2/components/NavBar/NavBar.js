@@ -7,51 +7,49 @@ import Social from '../../components/Social/Social'
 import tail from '../../../files/images/landingPage/tail.png' 
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer'
  
-const navMappings = {
-    '/landing':[ // landing
-            {
-                link:"/landing/employerPage",
-                title:"For Employers"
-            },
-            { 
-                link:"/landing/employerPage/howItWorks_employer",
-                title:"How It Works - Employers"
-            },
-            { 
-                link:"/landing/recruiterPage",
-                title:"For Recruiters"
-            },
-            { 
-                link:"/landing/recruiterPage/howItWorks_recruiter",
-                title:"How It Works - Recruiters"
-            },
-            { 
-                link:"/landing/contact",
-                title: "Contact Us"
-            },
-            { 
-                link:"/landing/about",
-                title: "About Us"
-            },
-            { 
-                link:"/team",
-                title: "The Whales"
-            }
-        ]
-}
+const navMappings = 
+[  
+    { 
+        link:"/landing/employerPage/howItWorks_employer",
+        title:"How It Works - Employers"
+    },
+    { 
+        link:"/landing/recruiterPage/howItWorks_recruiter",
+        title:"How It Works - Recruiters"
+    },
+    {
+        link:"/landing/employerPage",
+        title:"For Employers"
+    },
+    { 
+        link:"/landing/recruiterPage",
+        title:"For Recruiters"
+    },
+    { 
+        link:"/landing/contact",
+        title: "Contact Us"
+    },
+    { 
+        link:"/landing/about",
+        title: "About Us"
+    },
+    { 
+        link:"/team",
+        title: "The Whales"
+    }
+]
 
 
 class NavBar extends Component {
    
     constructor(props) {
         super(props);
-        const path = window.location.pathname;
-        const basePath = this.getBasePath(path);
-        const page = navMappings[basePath].findIndex(d=>path.startsWith(d.link)); 
+        const path = window.location.pathname; 
+        const page = navMappings.findIndex(d=>path.startsWith(d.link));  
+        console.log(page) 
 		this.state = { 
             menuOpen: false,
-            showOverlay:false, 
-            basePath: basePath, 
+            showOverlay:false,  
             page:page,
             title:"test"
         };
@@ -59,16 +57,16 @@ class NavBar extends Component {
         history.listen((location, action) => {
             const page = this.state.page;
             const path = location.pathname;
-            const newPage = this.getNewPage(path)
-            console.log(navMappings[basePath][page].title)
+            const newPage = this.getNewPage(path) 
+            console.log(navMappings[page].title)
              if(newPage !== page){
-                this.setState({title: navMappings[basePath][page].title})
+                this.setState({title: navMappings[page].title})
             }
         }); 
     }
  
     getNewPage(path){ 
-         const page = navMappings[this.state.basePath].findIndex(d=>path.startsWith(d.link)) 
+        const page = navMappings.findIndex(d=>path.startsWith(d.link)) 
         if(page === -1)
             return 0
         return page;
