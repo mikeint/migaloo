@@ -61,8 +61,8 @@ router.post('/create', passport.authentication,  (req, res) => {
         }).then((candidate_ret)=>{
             return address.addAddress(body.address, t)
             .then((address_ret)=>{
-                const q2 = t.none('INSERT INTO candidate (candidate_id, first_name, last_name, experience_years, salary, relocatable, address_id) VALUES ($1, $2, $3, $4, $5, $6, %7)',
-                                    [candidate_ret.user_id, body.firstName, body.lastName, body.experienceYears, body.salary, body.relocatable, address_ret.address_id])
+                const q2 = t.none('INSERT INTO candidate (candidate_id, first_name, last_name, experience_years, salary, relocatable, url, address_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+                                    [candidate_ret.user_id, body.firstName, body.lastName, body.experienceYears, body.salary, body.relocatable, body.url, address_ret.address_id])
                 const q3 = t.none('INSERT INTO recruiter_candidate (candidate_id, recruiter_id) VALUES ($1, $2)',
                                     [candidate_ret.user_id, jwtPayload.id])
                 var queries = [q2, q3];
