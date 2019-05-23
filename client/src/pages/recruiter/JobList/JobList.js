@@ -33,7 +33,6 @@ const styles = theme => ({
         height: "30px",
         lineHeight: "20px",
         boxShadow: "0px 0px 0px 1px #fff",
-        display: "inline-block",
         flex: "0 1 auto"
     },
     unshrinkable:{

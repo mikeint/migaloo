@@ -1,5 +1,4 @@
 import React from 'react';
-import {get, cancel} from '../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';
 import Slider from '@material-ui/lab/Slider';
 
