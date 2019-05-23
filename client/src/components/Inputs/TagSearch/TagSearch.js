@@ -39,6 +39,7 @@ class TagSearch extends React.Component{
             tagListBoxStype:{
                 marginLeft: "0px"
             },
+            jobType: props.jobType,
             textValue: '',
             onChange: props.onChange,
             error: false,
@@ -72,7 +73,7 @@ class TagSearch extends React.Component{
     queryForTags = debounce((searchString) => {
         if(searchString.trim().length > 0){
             const lowerSearchString = searchString.toLowerCase()
-            get('/api/autocomplete/tag/'+lowerSearchString)
+            get(`/api/autocomplete/tagByType/${this.state.jobType}/${lowerSearchString}`)
             .then((res) => { 
                 if(res && res.data.success) {
                     if(!res.data.tagList.find(tag=>

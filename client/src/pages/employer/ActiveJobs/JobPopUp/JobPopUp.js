@@ -171,7 +171,7 @@ class JobPopUp extends React.Component{
                     <p className={classes.requirementsIndent}>{jobObj.requirements}</p>
                     <p><span className={classes.itemLabel}>Job Type:</span> {jobObj.job_type_name}</p> 
                     <p><span className={classes.itemLabel}>Experience:</span> {jobObj.experience_years}+ years</p> 
-                    <p><span className={classes.itemLabel}>Salary:</span> {jobObj.salary_type_name}</p> 
+                    <p><span className={classes.itemLabel}>Salary:</span> {jobObj.salary}k</p> 
                     <p><span className={classes.itemLabel}>Open Positions:</span> {jobObj.open_positions}</p> 
                     <p><span className={classes.itemLabel}>Required Number of Interviewees:</span> {jobObj.interview_count}</p> 
                     {jobObj.opening_reason_id != null ?

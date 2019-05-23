@@ -4,6 +4,7 @@ const passport = require('../config/passport');
 const moment = require('moment');
 const validateCandidateInput = require('../validation/candidate');  
 const logger = require('../utils/logging');
+const address = require('../utils/address');
 
 const db = require('../config/db')
 const postgresdb = db.postgresdb
@@ -26,8 +27,9 @@ router.post('/create', passport.authentication,  (req, res) => {
      * Inputs Body:
      * firstName
      * lastName
-     * salaryTypeId (Optional)
-     * experienceTypeId (Optional)
+     * address
+     * salary (Optional)
+     * experience (Optional)
      * tagIds (Optional)
      */
     var body = req.body
@@ -57,18 +59,22 @@ router.post('/create', passport.authentication,  (req, res) => {
                     {email:body.email})
             }
         }).then((candidate_ret)=>{
-            const q2 = t.none('INSERT INTO candidate (candidate_id, first_name, last_name, experience_years, salary_type_id) VALUES ($1, $2, $3, $4, $5)',
-                                [candidate_ret.user_id, body.firstName, body.lastName, body.experienceYears, body.salaryTypeId])
-            const q3 = t.none('INSERT INTO recruiter_candidate (candidate_id, recruiter_id) VALUES ($1, $2)',
-                                [candidate_ret.user_id, jwtPayload.id])
-            var queries = [q2, q3];
-            if(body.tagIds != null && body.tagIds.length > 0){
-                const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidate_ret.user_id, tag_id: d}}), candidateTagsInsertHelper);
-                const q4 = t.none(query);
-                queries.push(q4)
-            }
-            logger.info('Recruiter added candidate', {tags:['candidate', 'recruiter'], url:req.originalUrl, userId:jwtPayload.id, body: {...req.body, candidateId:candidate_ret.user_id}});
-            return t.batch(queries)
+            return address.addAddress(body.address, t)
+            .then((address_ret)=>{
+                const q2 = t.none('INSERT INTO candidate (candidate_id, first_name, last_name, experience_years, salary, relocatable, address_id) VALUES ($1, $2, $3, $4, $5, $6, %7)',
+                                    [candidate_ret.user_id, body.firstName, body.lastName, body.experienceYears, body.salary, body.relocatable, address_ret.address_id])
+                const q3 = t.none('INSERT INTO recruiter_candidate (candidate_id, recruiter_id) VALUES ($1, $2)',
+                                    [candidate_ret.user_id, jwtPayload.id])
+                var queries = [q2, q3];
+                if(body.tagIds != null && body.tagIds.length > 0){
+                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidate_ret.user_id, tag_id: d}}), candidateTagsInsertHelper);
+                    const q4 = t.none(query);
+                    queries.push(q4)
+                }
+                logger.info('Recruiter added candidate', {tags:['candidate', 'recruiter'], url:req.originalUrl, userId:jwtPayload.id, body: {...req.body, candidateId:candidate_ret.user_id}});
+                return t.batch(queries)
+
+            })
         }).then(()=>{
             res.json({success: true})
         })
@@ -197,9 +203,8 @@ function listCandidatesForJob(req, res){
     
 
     postgresdb.task(t => {
-        return t.one('SELECT jp.post_id, jp.title, st.salary_type_name, jp.experience_years, tg.tag_names \
+        return t.one('SELECT jp.post_id, jp.title, jp.salary, jp.experience_years, tg.tag_names \
             FROM job_posting jp \
-            LEFT JOIN salary_type st ON jp.salary_type_id = st.salary_type_id \
             LEFT JOIN ( \
                 SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
                 FROM posting_tags pt \
@@ -217,7 +222,7 @@ function listCandidatesForJob(req, res){
                     coalesce(cpd.not_accepted_count, 0) as not_accepted_count, \
                     coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
                     (count(1) OVER())/10+1 AS page_count, tag_names, tag_ids, \
-                    score, total_score, score/total_score*100.0 as tag_score  \
+                    coalesce(salary_score, 0.0)*coalesce(experience_years_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score  \
                 FROM recruiter_candidate rc \
                 INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
                 INNER JOIN login l ON l.user_id = c.candidate_id \
@@ -239,27 +244,35 @@ function listCandidatesForJob(req, res){
                     GROUP BY cp.candidate_id \
                 ) cpd ON cpd.candidate_id = c.candidate_id \
                 INNER JOIN ( \
-                    SELECT ci.candidate_id, (COUNT(1) + \
-                        (CASE WHEN count(j.experience_years) = 0 OR count(ci.experience_years) = 0 THEN 0 ELSE greatest(15-abs(least(max(j.experience_years - ci.experience_years), 0)), 0)/15.0 END) + \
-                        (CASE WHEN count(j.salary_type_id) = 0 OR count(ci.salary_type_id) = 0 THEN 0 ELSE greatest(5-abs(least(max(j.salary_type_id - ci.salary_type_id), 0)), 0)/5.0 END)) as score, \
-                        ( \
-                            SELECT COUNT(1)+count(distinct ci.experience_years)+count(distinct ci.salary_type_id) \
-                            FROM posting_tags cti \
-                            WHERE cti.post_id = ${postId} \
-                        ) as total_score \
-                    FROM candidate_tags ct \
-                    INNER JOIN posting_tags pt ON pt.tag_id = ct.tag_id \
-                    INNER JOIN job_posting j ON j.post_id = pt.post_id \
-                    INNER JOIN candidate ci ON ci.candidate_id = ct.candidate_id \
-                    WHERE j.post_id = ${postId} AND j.recruiter_id = ${recruiterId} \
-                    GROUP BY ci.candidate_id \
+                    SELECT c.candidate_id, \
+                        least(greatest((max(j.salary)-max(c.salary))/10.0, -1)+1, 1) \
+                        -least(greatest((max(j.salary)-max(c.salary))/50.0, 0), 1) as salary_score, \
+                        least(greatest((max(j.experience_years)-max(c.experience_years))/15.0, -1)+1, 1) \
+                        -least(greatest((max(j.experience_years)-max(c.experience_years))/10.0, 0), 1) as experience_years_score, \
+                        max(a.lat) as lat, \
+                        max(a.lon) as lon, \
+                        SUM(similarity) / count(distinct tg.tag_id) as tag_score \
+                    FROM ( \
+                        SELECT ct.tag_id, ct.candidate_id, pt.post_id, MAX(similarity) as similarity \
+                        FROM candidate_tags ct \
+                        INNER JOIN tags_equality te ON te.tag_id_1 = ct.tag_id \
+                        INNER JOIN posting_tags pt ON te.tag_id_2 = pt.tag_id \
+                        INNER JOIN recruiter_candidate rc ON rc.candidate_id = ct.candidate_id \
+                        WHERE pt.post_id = ${postId} AND rc.recruiter_id = ${recruiterId} \
+                        GROUP BY ct.tag_id, ct.candidate_id, pt.post_id \
+                    ) tg \
+                    INNER JOIN job_posting j ON j.post_id = tg.post_id \
+                    INNER JOIN address a ON j.address_id = a.address_id \
+                    FULL JOIN candidate c ON tg.candidate_id = c.candidate_id \
+                    WHERE j.is_visible AND j.recruiter_id = ${recruiterId} AND j.post_id = ${postId} \
+                    GROUP BY c.candidate_id \
                 ) jc ON jc.candidate_id = rc.candidate_id \
                 WHERE rc.recruiter_id = ${recruiterId} AND l.active \
                 '+
                 (search ? 
                     'AND (name_search @@ to_tsquery(\'simple\', ${search}))'
                 :'')+' \
-                ORDER BY tag_score DESC, c.last_name ASC, c.first_name ASC \
+                ORDER BY coalesce(salary_score, 0.0)*coalesce(experience_years_score, 0.0)*coalesce(tag_score, 0.0)*100.0 DESC, c.last_name ASC, c.first_name ASC \
                 OFFSET ${page} \
                 LIMIT 10', sqlArgs)
             .then((data) => {

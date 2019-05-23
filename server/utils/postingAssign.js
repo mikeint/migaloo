@@ -100,20 +100,25 @@ function findRecruitersForPost(postId, limit=5){
                     avg(tp.score) as average_score_accetable_candidates, \
                     max(tp.score) as max_score_accetable_candidates \
                 FROM ( \
-                    SELECT rc.recruiter_id, ci.candidate_id, (COUNT(1) + \
-                        (CASE WHEN count(j.experience_years) = 0 OR count(ci.experience_years) = 0 THEN 0 ELSE greatest(15-abs(least(max(j.experience_years - ci.experience_years), 0)), 0)/15.0 END) + \
-                        (CASE WHEN count(j.salary_type_id) = 0 OR count(ci.salary_type_id) = 0 THEN 0 ELSE greatest(5-abs(least(max(j.salary_type_id - ci.salary_type_id), 0)), 0)/5.0 END)) / \
-                        ( \
-                            SELECT COUNT(1)+count(distinct ci.experience_years)+count(distinct ci.salary_type_id) \
-                            FROM posting_tags cti \
-                            WHERE cti.post_id = ${postId} \
-                        ) as score \
-                    FROM candidate_tags ct \
-                    INNER JOIN posting_tags pt ON pt.tag_id = ct.tag_id \
-                    INNER JOIN job_posting_all j ON j.post_id = pt.post_id \
-                    INNER JOIN candidate ci ON ci.candidate_id = ct.candidate_id \
-                    INNER JOIN recruiter_candidate rc ON rc.candidate_id = ct.candidate_id \
-                    WHERE pt.post_id = ${postId} \
+                    SELECT c.candidate_id, \
+                        (least(greatest((max(j.salary)-max(ci.salary))/10.0, -1)+1, 1) \
+                        -least(greatest((max(j.salary)-max(ci.salary))/50.0, 0), 1)) * \
+                        (least(greatest((max(j.experience_years)-max(ci.experience_years))/15.0, -1)+1, 1) \
+                        -least(greatest((max(j.experience_years)-max(ci.experience_years))/10.0, 0), 1)) * \
+                        (SUM(similarity) / count(distinct tg.tag_id)) as score \
+                    FROM ( \
+                        SELECT ct.tag_id, pt.post_id, ct.candidate_id, MAX(similarity) as similarity \
+                        FROM candidate_tags ct \
+                        INNER JOIN tags_equality te ON te.tag_id_1 = ct.tag_id \
+                        INNER JOIN posting_tags pt ON te.tag_id_2 = pt.tag_id \
+                        WHERE pt.post_id = ${postId} \
+                        GROUP BY ct.tag_id, pt.post_id, ct.candidate_id \
+                    ) tg \
+                    INNER JOIN job_posting j ON j.post_id = tg.post_id \
+                    INNER JOIN address a ON j.address_id = a.address_id \
+                    INNER JOIN candidate ci ON tg.candidate_id = ci.candidate_id \
+                    INNER JOIN recruiter_candidate rc ON rc.candidate_id = ci.candidate_id \
+                    WHERE tg.post_id = ${postId} \
                     GROUP BY rc.recruiter_id, ci.candidate_id \
                 ) tp \
                 WHERE tp.score > 0.3 \

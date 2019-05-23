@@ -10,7 +10,7 @@ const postgresdb = require('../config/db').postgresdb
 
 
 const listFilters = {
-    'salary':'AND j.salary_type_id in (${salary:csv})',
+    'salary':'AND j.salary in (${salary:csv})',
     'experience':'AND j.experience_years in (${experience:csv})',
     'tags':'AND array_intersects(tg.tag_ids, ${tags:list}::bigint[])'
 }
@@ -54,11 +54,10 @@ function getJobs(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.any('\
-        SELECT j.company_id, j.post_id, title, requirements, experience_years, salary_type_name, company_name, image_id, \
-            address_line_1, address_line_2, city, state, country, tag_ids, \
+        SELECT j.company_id, j.post_id, title, requirements, experience_years, salary, company_name, image_id, \
+            address_line_1, address_line_2, city, state_province, country, tag_ids, \
             tag_names, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting j \
-        LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
         INNER JOIN company e ON j.company_id = e.company_id \
         LEFT JOIN address a ON a.address_id = e.address_id \
         LEFT JOIN ( \
@@ -138,10 +137,9 @@ function getJobsForCandidate(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.task(t => {
-        return t.one('SELECT c.candidate_id, first_name, last_name, st.salary_type_name, c.experience_years, tg.tag_names \
+        return t.one('SELECT c.candidate_id, first_name, last_name, c.salary, c.experience_years, tg.tag_names \
             FROM recruiter_candidate rc \
             INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
-            LEFT JOIN salary_type st ON c.salary_type_id = st.salary_type_id \
             LEFT JOIN ( \
                 SELECT pt.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
                 FROM candidate_tags pt \
@@ -156,11 +154,10 @@ function getJobsForCandidate(req, res){
             if(jobId != null)
                 sqlArgs['jobId'] = jobId
             return t.any('\
-                SELECT j.post_id, title, requirements, experience_years, salary_type_name, company_name, image_id, j.company_id, \
-                    address_line_1, address_line_2, city, state, country, tag_ids, tag_names, \
-                    coalesce(score, 0.0) as score, total_score, coalesce(score, 0.0)/total_score*100.0 as tag_score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
+                SELECT j.post_id, title, requirements, experience_years, salary, company_name, image_id, j.company_id, \
+                    address_line_1, address_line_2, city, state_province, country, tag_ids, tag_names, \
+                    coalesce(salary_score, 0.0)*coalesce(experience_years_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
                 FROM job_posting j \
-                LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
                 INNER JOIN company e ON j.company_id = e.company_id \
                 LEFT JOIN address a ON a.address_id = e.address_id \
                 LEFT JOIN ( \
@@ -171,20 +168,26 @@ function getJobsForCandidate(req, res){
                 ) tg ON tg.post_id = j.post_id \
                 \
                 LEFT JOIN ( \
-                    SELECT j.post_id, (COUNT(1) + \
-                        (CASE WHEN count(j.experience_years) = 0 OR count(ci.experience_years) = 0 THEN 0 ELSE greatest(15-abs(least(max(j.experience_years - ci.experience_years), 0)), 0)/15.0 END) + \
-                        (CASE WHEN count(j.salary_type_id) = 0 OR count(ci.salary_type_id) = 0 THEN 0 ELSE greatest(5-abs(least(max(j.salary_type_id - ci.salary_type_id), 0)), 0)/5.0 END)) as score, \
-                        ( \
-                            SELECT COUNT(1)+count(distinct ci.experience_years)+count(distinct ci.salary_type_id) \
-                            FROM candidate_tags cti \
-                            INNER JOIN candidate ci ON ci.candidate_id = cti.candidate_id \
-                            WHERE cti.candidate_id = ${candidateId} \
-                        ) as total_score \
-                    FROM candidate_tags ct \
-                    INNER JOIN posting_tags pt ON pt.tag_id = ct.tag_id \
-                    INNER JOIN job_posting j ON j.post_id = pt.post_id \
-                    INNER JOIN candidate ci ON ci.candidate_id = ct.candidate_id \
-                    WHERE ci.candidate_id = ${candidateId} AND j.recruiter_id = ${recruiterId} \
+                    SELECT j.post_id, \
+                        least(greatest((max(j.salary)-max(c.salary))/10.0, -1)+1, 1) \
+                        -least(greatest((max(j.salary)-max(c.salary))/50.0, 0), 1) as salary_score, \
+                        least(greatest((max(j.experience_years)-max(c.experience_years))/15.0, -1)+1, 1) \
+                        -least(greatest((max(j.experience_years)-max(c.experience_years))/10.0, 0), 1) as experience_years_score, \
+                        max(a.lat) as lat, \
+                        max(a.lon) as lon, \
+                        SUM(similarity) / count(distinct tg.tag_id) as tag_score \
+                    FROM ( \
+                        SELECT ct.tag_id, pt.post_id, MAX(similarity) as similarity \
+                        FROM candidate_tags ct \
+                        INNER JOIN tags_equality te ON te.tag_id_1 = ct.tag_id \
+                        INNER JOIN posting_tags pt ON te.tag_id_2 = pt.tag_id \
+                        WHERE ct.candidate_id = ${candidateId} \
+                        GROUP BY ct.tag_id, pt.post_id, ct.candidate_id \
+                    ) tg \
+                    INNER JOIN job_posting j ON j.post_id = tg.post_id \
+                    INNER JOIN address a ON j.address_id = a.address_id \
+                    CROSS JOIN (SELECT * FROM candidate WHERE candidate_id = ${candidateId}) c \
+                    WHERE j.is_visible AND j.recruiter_id = ${recruiterId} \
                     GROUP BY j.post_id \
                 ) jc ON jc.post_id = j.post_id \
                 '+
@@ -195,7 +198,7 @@ function getJobsForCandidate(req, res){
                     'WHERE j.is_visible AND ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) AND j.recruiter_id = ${recruiterId} '+filtersToAdd
                 :'WHERE j.is_visible AND j.recruiter_id = ${recruiterId} '+filtersToAdd)
                 )+' \
-                ORDER BY tag_score DESC NULLS LAST, j.created_on DESC \
+                ORDER BY coalesce(salary_score, 0.0)*coalesce(experience_years_score, 0.0)*coalesce(tag_score, 0.0) DESC NULLS LAST, j.created_on DESC \
                 OFFSET ${page} \
                 LIMIT 10', {...sqlArgs, ...paramsToAdd})
                 

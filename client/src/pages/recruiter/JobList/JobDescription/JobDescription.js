@@ -251,7 +251,7 @@ class JobDescription extends React.Component{
                         </div>
                         
                         {/* <div className="backButton" onClick={() => this.closeJobPage()}></div> */}
-                        <span className="jobSalary">Salary: {this.state.jobObj.salary_type_name}</span> 
+                        <span className="jobSalary">Salary: {this.state.jobObj.salary}k</span> 
                     </div> 
                     <div className={classes.jobPostingContent}>
 
@@ -259,10 +259,10 @@ class JobDescription extends React.Component{
                         <div className={classes.jobRequirements}>{this.state.jobObj.requirements}</div>
                         <h3>{this.state.jobObj.company_name}</h3>
                         <p>
-                            {[this.state.jobObj.address_line_1, this.state.jobObj.address_line_2, this.state.jobObj.city, this.state.jobObj.state, this.state.jobObj.country].filter(d=>d!=null).join(", ")}
+                            {[this.state.jobObj.address_line_1, this.state.jobObj.address_line_2, this.state.jobObj.city, this.state.jobObj.state_province, this.state.jobObj.country].filter(d=>d!=null).join(", ")}
                         </p>
-                        <h5>Experience: {this.state.jobObj.experience_years}</h5>
-                        <span className={classes.jobSalary}>Salary: {this.state.jobObj.salary_type_name}</span> 
+                        <h5>Experience: {this.state.jobObj.experience_years} years</h5>
+                        <span className={classes.jobSalary}>Salary: {this.state.jobObj.salary}k</span> 
                         {this.state.jobObj.tag_names?<p>Tags: {this.state.jobObj.tag_names.join(", ")}</p>:''}
                         <p>Posted: {this.state.jobObj.posted}</p>
                         <div className={classes.feedbackBtnContainer}>

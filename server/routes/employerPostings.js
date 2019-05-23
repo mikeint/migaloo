@@ -30,7 +30,7 @@ router.post('/create', passport.authentication,  (req, res) => {
      * title
      * requirements
      * employer
-     * salaryTypeId (Optional)
+     * salary (Optional)
      * autoAddRecruiters (Optional)
      * experienceTypeId (Optional)
      * tagIds (Optional)
@@ -65,7 +65,7 @@ router.post('/create', passport.authentication,  (req, res) => {
                 console.log("address", addr_ret)
                 return t.one('\
                     INSERT INTO job_posting_all (company_id, title, requirements, experience_years,\
-                        salary_type_id, preliminary, is_visible, address_id, interview_count, \
+                        salary, preliminary, is_visible, address_id, interview_count, \
                         opening_reason_id, opening_reason_comment, open_positions, job_type_id) \
                     VALUES (${company}, ${title}, ${requirements}, ${experience}, ${salary}, ${preliminary},\
                          NOT ${preliminary}, ${addressId}, ${interviewCount}, ${openingReasonId}, \
@@ -123,7 +123,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
      * title
      * requirements
      * employer
-     * salaryTypeId (Optional)
+     * salary (Optional)
      * autoAddRecruiters (Optional)
      * experienceTypeId (Optional)
      * tagIds (Optional)
@@ -155,7 +155,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
             .then((addr_ret)=>{
                 return t.one('\
                     INSERT INTO job_posting_all (company_id, title, requirements, experience_years,\
-                        salary_type_id, preliminary, is_visible, address_id, interview_count, \
+                        salary, preliminary, is_visible, address_id, interview_count, \
                         opening_reason_id, opening_reason_comment, open_positions) \
                     VALUES (${company}, ${title}, ${requirements}, ${experience}, ${salary}, ${preliminary},\
                          NOT ${preliminary}, ${addressId}, ${interviewCount}, ${openingReasonId}, \
@@ -235,9 +235,9 @@ function postListing(req, res){
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>filters[k]).join(" ")
 
     postgresdb.any('\
-        SELECT j.post_id, title, requirements, experience_years, j.company_id, j.salary_type_id, \
+        SELECT j.post_id, title, requirements, experience_years, j.company_id, j.salary, \
             j.job_type_id, jt.job_type_name, j.opening_reason_id, op.opening_reason_name, j.opening_reason_comment, \
-            salary_type_name, tag_names, tag_ids, new_posts_cnt, c.company_name, \
+            tag_names, tag_ids, new_posts_cnt, c.company_name, \
             interview_count, open_positions, is_visible, \
             posts_cnt, recruiter_count, j.created_on, (count(1) OVER())/10+1 AS page_count, j.preliminary, \
             a.address_id as "addressId", a.address_line_1 as "addressLine1", a.address_line_2 as "addressLine2", a.city, a.state_province as "stateProvince", \
@@ -245,7 +245,6 @@ function postListing(req, res){
         FROM job_posting_all j \
         INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         INNER JOIN company c ON c.company_id = j.company_id \
-        LEFT JOIN salary_type st ON j.salary_type_id = st.salary_type_id \
         LEFT JOIN opening_reason op ON j.opening_reason_id = op.opening_reason_id \
         LEFT JOIN job_type jt ON j.job_type_id = jt.job_type_id \
         LEFT JOIN ( \

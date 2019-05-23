@@ -42,21 +42,11 @@ const styles = theme => ({
     },
 });
 function experienceDataCall(){
-    this.setState({data: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]});
+    this.setState({data: Array.apply(null, Array(65)).map((_, i)=>i)});
 }
 function salaryDataCall(){
-    get('/api/autocomplete/salary/')
-    .then((res) => { 
-        if(res && res.data.success) {
-            const data = res.data.salaryList
-                    .map(d=>{return {name:d.salary_type_name, id: d.salary_type_id}})
-
-            this.setState({data: data});
-        }
-    })
-    .catch(error => {
-        console.log(error);
-    });
+    
+    this.setState({data: Array.apply(null, Array(350/5)).map((_, i)=>i)});
 }
 function tagsDataCall(searchString){
     const lowerSearchString = searchString.toLowerCase()

@@ -71,7 +71,7 @@ class ExpandableRow extends React.Component{
                         <div className="nameContainer">{candidateData.first_name}&nbsp;{candidateData.last_name}</div>
                         {candidateData.new_accepted_count > 0 ? <div className="acceptedCount" title={candidateData.new_accepted_count+" New Postings Accepted"}>{/* candidateData.new_accepted_count */}</div> : ""}
                         {candidateData.new_not_accepted_count > 0 ? <div className="notAcceptedCount" title={candidateData.new_not_accepted_count+" New Postings Not Accepted"}>{/* candidateData.new_not_accepted_count */}</div> : ""}
-                        {candidateData.tag_score?<span className="score" style={{width: parseInt(candidateData.tag_score, 10)+"%"}}>{parseInt(candidateData.tag_score, 10)+"%"}</span>:''}
+                        {candidateData.score > 0?<span className="score" style={{width: parseInt(candidateData.score, 10)+"%"}}>{parseInt(candidateData.score, 10)+"%"}</span>:''}
                         <div></div>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>

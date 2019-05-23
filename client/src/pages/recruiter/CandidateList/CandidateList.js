@@ -25,6 +25,24 @@ const styles = theme => ({
     drawer:{ 
         minWidth: "300px",
         position: "relative"
+    },
+    candidateSearched:{
+        display: "inline-block",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        background: "#b1b9dbba",
+        color: "#ffffff",
+        margin: "0 20px",
+        padding: "5px 10px",
+        whiteSpace: "nowrap",
+        height: "30px",
+        lineHeight: "20px",
+        boxShadow: "0px 0px 0px 1px #fff",
+        display: "inline-block",
+        flex: "0 1 auto"
+    },
+    unshrinkable:{
+        flex: "0 0 auto"
     }
 });
 
@@ -122,15 +140,18 @@ class CandidateList extends React.Component{
                     { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
  
                     <div className="pageHeading">
-                        Candidates 
+                        <span className={classes.unshrinkable}>Candidates</span>
+                        {this.state.postData &&
+                        <NavLink to={`/recruiter/jobList/job/${this.state.postData.post_id}`} className={classes.candidateSearched}>
+                            {this.state.postData.title}
+                        </NavLink>} 
                         <Button
-                            className={classes.button}
+                            className={classes.button+" "+classes.unshrinkable}
                             variant="contained"
                             color="secondary" 
                             onClick={()=>this.callAddOverlay()}>
                             <Add/>
                         </Button>
-                        {this.state.postData? <NavLink to={`/recruiter/jobList/job/${this.state.postData.post_id}`}><div className="candidateListJobSearched">{this.state.postData.title}</div></NavLink> : ""} 
                     </div>
                     <div className={'candidateListContainer '+this.state.enterSlide}> 
                         {

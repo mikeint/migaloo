@@ -214,6 +214,7 @@ class PostAJob extends React.Component{
                             <div className={classes.tagSearch}>
                                 <TagSearch
                                     onChange={this.handleChangeKV}
+                                    jobType={this.state.jobType}
                                     value={this.state.oldPost.tag_ids}
                                     {...this.formValidation.hasError("tagIds")}/>
                             </div>
@@ -222,7 +223,7 @@ class PostAJob extends React.Component{
                             <SalarySelector 
                                 required
                                 onChange={this.handleChangeKV}
-                                value={this.state.oldPost.salary_type_id}
+                                value={this.state.oldPost.salary}
                                 {...this.formValidation.hasError("salary")}/>
                                 &nbsp;&nbsp;&nbsp;
                             <ExperienceSelector 

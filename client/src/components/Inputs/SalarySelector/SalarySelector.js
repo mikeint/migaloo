@@ -15,24 +15,12 @@ class SalarySelector extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            salaryList: [],
             onChange: props.onChange,
             salary: (props.required || false)?0:-1,
             required: props.required || false,
             error: false,
             helperText: ''
         }
-    }
-    loadData(){
-        get('/api/autocomplete/salary')
-        .then((res) => {
-            if(res && res.data.success) {
-                this.setState({salaryList:res.data.salaryList});
-            }
-        })
-        .catch(error => {
-            console.log(error);
-        });
     }
     shouldComponentUpdate(nextProps, nextState) {
         const change = this.state.error !== nextProps.error || this.state.helperText !== nextProps.helperText;
@@ -46,13 +34,6 @@ class SalarySelector extends React.Component{
             return true
         return change;
     }
- 
-    componentWillUnmount = () => {
-        cancel();
-    }
-    componentDidMount() {
-        this.loadData()
-    }
 
     handleChange = (event, value) => {
         if(this.state.onChange){
@@ -64,13 +45,13 @@ class SalarySelector extends React.Component{
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-                Salary: {this.state.salary === -1||this.state.salaryList.length === 0?'Unspecified':this.state.salaryList[this.state.salary].salary_type_name}
+                Salary: {`${this.state.salary}k+`}
                 <Slider
                     classes={{ container: classes.slider }}
                     value={this.state.salary}
-                    min={this.state.required?0:-1}
-                    max={this.state.salaryList.length-1}
-                    step={1}
+                    min={this.state.required?1:0}
+                    max={350}
+                    step={5}
                     onChange={this.handleChange}
                     // {...(this.state.error?{error:true, helperText:this.state.helperText}:{})}
                 />

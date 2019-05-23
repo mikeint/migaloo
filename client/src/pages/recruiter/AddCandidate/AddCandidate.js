@@ -3,21 +3,19 @@ import AuthFunctions from '../../../AuthFunctions';
 import {post} from '../../../ApiCalls';  
 import TagSearch from '../../../components/Inputs/TagSearch/TagSearch'; 
 import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/ExperienceSelector';
+import JobTypeSelector from '../../../components/Inputs/JobTypeSelector/JobTypeSelector';
 import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
 import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector'; 
 
-import Close from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
+import { Close } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import { TextField, FormControlLabel, Checkbox, IconButton, Button } from '@material-ui/core';
 import FormValidation from '../../../FormValidation';
 
 const styles = theme => ({
     alertClose: {
         marginLeft: 'auto', 
         marginRight: "10px",
-        height: "60px",
     }, 
     submitCandidateBtn:{
         width: "100%"
@@ -30,8 +28,8 @@ const styles = theme => ({
         flexWrap: "wrap"
     },
     textField: {
-        width: "50%",
-        margin: "10px"
+        flex: "1 0",
+        marginRight: 20
     },
     selectFormControl:{
         flex: "1 1",
@@ -113,6 +111,9 @@ class AddCandidate extends React.Component{
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
     }
+    handleChangeKV = (map) => {
+        this.setState(map, this.formValidation.shouldRevalidate)
+    }
 
     handleAddressChange(address){
         this.setState({address:address}, this.formValidation.shouldRevalidate)
@@ -139,10 +140,12 @@ class AddCandidate extends React.Component{
         return (
             <React.Fragment> 
                 {/* this.state.redirect ? <Redirect to='/recruiter/candidateList' /> : '' */}
-                <div className="pageHeading">Add a Candidate</div>
-                <IconButton color="inherit" className={classes.alertClose} onClick={this.state.onClose}>
-                    <Close color="primary" />
-                </IconButton>
+                <div className="pageHeading">
+                    Add a Candidate
+                    <IconButton color="inherit" className={classes.alertClose} onClick={this.state.onClose}>
+                        <Close color="primary" />
+                    </IconButton>
+                </div>
                 <div className={classes.addCandidateContainer}>
                     <div className={classes.formSection}>
                         <div className={classes.input2}>
@@ -155,8 +158,6 @@ class AddCandidate extends React.Component{
                                 variant="outlined"
                                 {...this.formValidation.hasError("firstName")}
                             />
-                        </div>
-                        <div className={classes.input2}>
                             <TextField
                                 name="lastName"
                                 label="Last Name"
@@ -177,6 +178,15 @@ class AddCandidate extends React.Component{
                                 variant="outlined"
                                 {...this.formValidation.hasError("email")}
                             />
+                            <TextField
+                                name="url"
+                                label="Linkdin/Profile Url"
+                                className={classes.textField}
+                                onChange={this.handleChange}
+                                margin="normal"
+                                variant="outlined"
+                                {...this.formValidation.hasError("url")}
+                            />
                         </div>
                         <div className={classes.input2}>
                             <SalarySelector 
@@ -190,17 +200,35 @@ class AddCandidate extends React.Component{
                                 {...this.formValidation.hasError("experience")}/>
                         </div>
                         <div className={classes.input2}>
-                            <TagSearch
-                                className={classes.tagSearch}
-                                onChange={(tags)=>this.setState({tagIds:tags}, this.formValidation.shouldRevalidate)}
-                                {...this.formValidation.hasError("tagIds")}/>
+                            <JobTypeSelector
+                                required
+                                onChange={this.handleChangeKV}
+                                {...this.formValidation.hasError("jobType")}/>
                         </div>
+                        {this.state.jobType !== -1 &&
+                            <div className={classes.tagSearch}>
+                                <TagSearch
+                                    onChange={this.handleChangeKV}
+                                    jobType={this.state.jobType}
+                                    {...this.formValidation.hasError("tagIds")}/>
+                            </div>
+                        }
                         <div className={classes.input2}>
                             <AddressInput
                                 onChange={this.handleAddressChange.bind(this)}
                                 {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
                             />
                         </div>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    defaultChecked={false}
+                                    onChange={(e)=>this.setState({willingToRelocate: e.target.checked})}
+                                    color="primary"
+                                />
+                            }
+                            label="Willing to Relocate"
+                        />
                         <Button
                             color="primary"
                             variant="contained"

@@ -47,35 +47,6 @@ router.post('/uploadImage', passport.authentication, generateImageFileNameAndVal
 });
 
 /**
- * Get recruiter coins
- * @route GET api/recruiter/getCoins
- * @group recruiter - Recruiter
- * @param {Object} body.optional
- * @returns {object} 200 - A map of profile information
- * @returns {Error}  default - Unexpected error
- * @access Private
- */
-router.get('/getCoins', passport.authentication,  (req, res) => {
-    var jwtPayload = req.body.jwtPayload;
-    if(jwtPayload.userType != 1){
-        const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    
-    postgresdb.one('\
-        SELECT coins \
-        FROM recruiter r \
-        WHERE r.recruiter_id = $1', [jwtPayload.id])
-    .then((data) => {
-        res.json(data)
-    })
-    .catch(err => {
-        logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
-        res.status(500).json({success:false, error:err})
-    });
-});
-/**
  * Get recruiter profile information
  * @route GET api/recruiter/getProfile
  * @group recruiter - Recruiter
@@ -142,14 +113,13 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
         var addressId = data.address_id;
         var addressIdExists = (data.address_id != null);
         var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:data[f]);
-        var addrFieldUpdates = addressFields.map(f=> bodyData[f] != null?bodyData[f]:data[f]);
         return postgresdb.tx(t => {
             // creating a sequence of transaction queries:
             var q1
             if(!addressIdExists){
                 q1 = address.addAddress(bodyData, t)
             }else{
-                q1 = address.updateAddress(bodyData, t);
+                r1 = Promise.resolve()
             }
             return q1.then((addr_ret)=>{
                 addressId = addressIdExists ? addressId : addr_ret.address_id

@@ -211,6 +211,7 @@ class EmployerJobPost extends React.Component{
                             <div className={classes.tagSearch}>
                                 <TagSearch
                                     onChange={this.handleChangeKV}
+                                    jobType={this.state.jobType}
                                     {...this.formValidation.hasError("tagIds")}/>
                             </div>
                         }

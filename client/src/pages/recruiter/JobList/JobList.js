@@ -20,6 +20,24 @@ const styles = theme => ({
     },
     noJobs: {
       padding: '20px', 
+    },
+    candidateSearched:{
+        display: "inline-block",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        background: "#b1b9dbba",
+        color: "#ffffff",
+        margin: "0 20px",
+        padding: "5px 10px",
+        whiteSpace: "nowrap",
+        height: "30px",
+        lineHeight: "20px",
+        boxShadow: "0px 0px 0px 1px #fff",
+        display: "inline-block",
+        flex: "0 1 auto"
+    },
+    unshrinkable:{
+        flex: "0 0 auto"
     }
 });
 
@@ -140,16 +158,20 @@ class JobList extends React.Component{
                     filterOptions={['salary', 'location', 'experience', 'tags']} />
                 <div className='jobListClassContainer'> 
                    <div className="pageHeading">
-                        Active Jobs Postings  
+                        <span className={classes.unshrinkable}>Active Jobs Postings</span>
+                        {this.state.candidateData &&
+                            <NavLink to={"/recruiter/candidate/"+this.state.candidateData.candidate_id} className={classes.candidateSearched}>
+                                For: {this.state.candidateData.first_name + " " + this.state.candidateData.last_name}
+                            </NavLink>
+                        }
                         <Button
-                            className={classes.button}
+                            className={classes.button+" "+classes.unshrinkable}
                             variant="contained"
                             color="secondary" 
                             onClick={()=>this.handleDrawerToggle()}>
                             <FilterList/>
                         </Button>
 
-                        {this.state.candidateData ? <NavLink to={"/recruiter/candidate/"+this.state.candidateData.candidate_id}><div className="candidateSearched">For: {this.state.candidateData.first_name + " " + this.state.candidateData.last_name}</div></NavLink> : ""}
                     </div>
                     {
                         this.state.jobList ?
@@ -178,10 +200,10 @@ class JobList extends React.Component{
                                                     <b>{item.company_name}</b>  
                                                     <div className="jobShortDesc">{item.title}</div> 
                                                     {
-                                                        item.tag_score &&
-                                                            <span className="score" style={{width:parseInt(item.tag_score, 10)+"%"}}>
-                                                                {parseInt(item.tag_score, 10)+"%"}
-                                                            </span>
+                                                        item.score > 0 ?
+                                                            <span className="score" style={{width:parseInt(item.score, 10)+"%"}}>
+                                                                {parseInt(item.score, 10)+"%"}
+                                                            </span> :''
                                                     }
                                                     <div className="jobInfo"><span className="createdTime">{item.posted}</span></div>
                                                 </div> 
