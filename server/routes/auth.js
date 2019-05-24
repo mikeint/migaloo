@@ -43,7 +43,7 @@ router.post('/login', (req, res) => {
     // Check Validation 
     if (!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['login', 'validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['login', 'validation'], url:req.originalUrl, body: req.body, error:errorMessage});
 
         return res.status(400).json(errors);
     }
@@ -123,7 +123,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
     // Check Validation 
     if (!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
     const email = body.email
@@ -269,7 +269,7 @@ function sendEmailVerification(id, email, ip){
             return ses.sendEmailVerification({name:data.display_name, user_id:id, email:email})
         })
         .then(()=>{
-            logger.info('Sent email verification', {tags:['register'], email:jwtPayload.email, userId:jwtPayload.id, ip:ip});
+            logger.info('Sent email verification', {tags:['register'], email:email, userId:id, ip:ip});
             resolve()
         })
         .catch((err)=>{
@@ -318,6 +318,5 @@ router.get('/current', passport.authentication, (req, res) => {
         return res.status(500).json({success: false, error:err})
     });
 });
-
 
 module.exports = router;

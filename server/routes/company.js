@@ -380,7 +380,7 @@ function getCompanyContactList(req, res) {
         return res.status(400).json({success:false, error:errorMessage})
     }
     var page = req.params.page;
-    if(page == null)
+    if(page == null || page < 1)
         page = 1;
     postgresdb.tx(t => {
         return t.one('SELECT ec.company_id \

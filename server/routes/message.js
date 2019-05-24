@@ -173,7 +173,7 @@ router.get('/list', passport.authentication, listMessages);
 router.get('/list/:page', passport.authentication, listMessages);
 function listMessages(req, res){
     var page = req.params.page;
-    if(page == null)
+    if(page == null || page < 1)
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     
@@ -280,7 +280,7 @@ function listConversationMessages(req, res){
     var jwtPayload = req.body.jwtPayload;
     // Validate that the user id of the user is in the requested chain
     var userId = jwtPayload.id;
-    if(page == null)
+    if(page == null || page < 1)
         page = 1;
     postgresdb.any('\
         SELECT m.message_id, ms.post_id, m.to_id, m.created_on, m.responded, m.message_type_id, \

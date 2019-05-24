@@ -72,7 +72,7 @@ function getAccountManagers(req, res) {
     var searchString = req.params.searchString;
     if(searchString != null)
     searchString = searchString.split(' ').map(d=>d+":*").join(" & ")
-    if(page == null)
+    if(page == null || page < 1)
         page = 1;
     postgresdb.any('\
         SELECT l.user_id, l.email, ac.first_name, ac.last_name, \

@@ -18,7 +18,7 @@ const camelColumnConfig = name=>{
         name: name,
         prop: camalize(name),
         skip: col => {
-            return col.source[name] == null;
+            return col.source[camalize(name)] == null;
         }
     }
 

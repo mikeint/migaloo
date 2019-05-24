@@ -50,7 +50,7 @@ function listNew(req, res) {
         lastId = 0;
     if(limit == null)
         limit = 5;
-    if(page == null)
+    if(page == null || page < 1)
         page = 1;
     notifications.getNewNotifications(jwtPayload.id, lastId)
     .then((data) => {

@@ -12,8 +12,8 @@ const pgp = db.pgp
 const camelColumnConfig = db.camelColumnConfig
 const candidateTagsInsertHelper = new pgp.helpers.ColumnSet(['candidate_id', 'tag_id'], {table: 'candidate_tags'});
 
-const candidateFields = ['first_name', 'last_name', 'experience', 'salary', 'relocatable', 'url', 'address_id'];
-const candidateInsert = new pgp.helpers.ColumnSet(['candidate_id', ...candidateFields].map(camelColumnConfig), {table: 'candidate'});
+const candidateFields = ['first_name', 'last_name', 'experience', 'salary', 'relocatable', 'url', 'email', 'address_id'];
+const candidateInsert = new pgp.helpers.ColumnSet(candidateFields.map(camelColumnConfig), {table: 'candidate'});
 const candidateUpdate = new pgp.helpers.ColumnSet(['?candidate_id', ...candidateFields.map(camelColumnConfig)], {table: 'candidate'});
 /**
  * Create a new candidate for the recruiter
@@ -51,36 +51,28 @@ router.post('/create', passport.authentication,  (req, res) => {
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-
+    var candidateId
     postgresdb.tx(t => {
         // creating a sequence of transaction queries:
-        const qCheck = t.any('SELECT user_id FROM login WHERE email = lower(${email})',
-                    {email:body.email})
-        return qCheck.then(email_exists=>{
-            if(email_exists && email_exists.length > 0){
-                return Promise.resolve(email_exists[0])
-            }else{
-                return t.one('INSERT INTO login (email) VALUES (lower(${email})) RETURNING user_id',
-                    {email:body.email})
-            }
-        }).then((candidate_ret)=>{
-            return address.addAddress(body.address, t)
-            .then((address_ret)=>{
-                const q2 = t.none(pgp.helpers.insert({...body, candidateId:candidate_ret.user_id, addressId:address_ret.address_id}, candidateInsert))
+        return address.addAddress(body.address, t)
+        .then((address_ret)=>{
+            return t.one(pgp.helpers.insert({...body, addressId:address_ret.address_id}, candidateInsert) + " RETURNING candidate_id")
+            .then((candidate_ret)=>{
+                candidateId = candidate_ret.candidate_id
                 const q3 = t.none('INSERT INTO recruiter_candidate (candidate_id, recruiter_id) VALUES ($1, $2)',
-                                    [candidate_ret.user_id, jwtPayload.id])
-                var queries = [q2, q3];
+                                    [candidateId, jwtPayload.id])
+                var queries = [q3];
                 if(body.tagIds != null && body.tagIds.length > 0){
-                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidate_ret.user_id, tag_id: d}}), candidateTagsInsertHelper);
+                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidateId, tag_id: d}}), candidateTagsInsertHelper);
                     const q4 = t.none(query);
                     queries.push(q4)
                 }
-                // logger.info('Recruiter added candidate', {tags:['candidate', 'recruiter'], url:req.originalUrl, userId:jwtPayload.id, body: {...req.body, candidateId:candidate_ret.user_id}});
+                logger.info('Recruiter added candidate', {tags:['candidate', 'recruiter'], url:req.originalUrl, userId:jwtPayload.id, body: {...req.body, candidateId:candidateId}});
                 return t.batch(queries)
             })
         })
     }).then(()=>{
-        res.json({success: true})
+        res.json({success: true, candidateId:candidateId})
     }).catch((err)=>{
         logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         return res.status(500).json({success: false, error:err})
@@ -124,7 +116,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-    if(jwtPayload.candidateId == null){
+    if(body.candidateId == null){
         const errorMessage = "Missing candidateId field"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
@@ -132,16 +124,16 @@ router.post('/edit', passport.authentication,  (req, res) => {
     
     postgresdb.tx(t => {
         var q1
-        if(bady.addressId != null)
+        if(body.addressId != null)
             q1 = Promise.resolve({address_id:null})
         else
             q1 = address.addAddress(body.address, t)
         return q1.then((address_ret)=>{
             const q2 = t.none('DELETE FROM candidate_tags WHERE candidate_id = $1', [body.candidateId])
-            const q3 = t.none(pgp.helpers.update({...body, candidateId:candidate_ret.user_id, addressId:address_ret.address_id}, candidateUpdate, null, {tableAlias: 'X', valueAlias: 'Y'}) + ' WHERE Y.candidateId = X.candidate_id')
+            const q3 = t.none(pgp.helpers.update({...body, addressId:address_ret.address_id}, candidateUpdate) + ' WHERE candidate_id = ${candidateId}', {candidateId: body.candidateId})
             return t.batch([q2, q3]).then(()=>{
                 if(body.tagIds != null && body.tagIds.length > 0){
-                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidate_ret.user_id, tag_id: d}}), candidateTagsInsertHelper);
+                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: body.candidateId, tag_id: d}}), candidateTagsInsertHelper);
                     return t.none(query).then(()=>{
                         return res.json({success: true})
                     }).catch((err)=>{
@@ -167,6 +159,44 @@ router.post('/edit', passport.authentication,  (req, res) => {
 });
 
 /**
+ * Delete a candidate for the recruiter
+ * @route POST api/candidate/delete
+ * @group candidate - Candadite Listings
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/delete', passport.authentication,  (req, res) => {
+
+    /**
+     * Inputs Body:
+     * candidateId
+     */
+    var body = req.body
+
+    var jwtPayload = body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        const errorMessage = "Must be an recruiter to add a candidate"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(body.candidateId == null){
+        const errorMessage = "Missing candidateId field"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    
+    postgresdb.none('UPDATE candidate SET active=false WHERE candidate_id = $1', [body.candidateId])
+    .then(()=>{
+        return res.json({success: true})
+    }).catch((err)=>{
+        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        return res.status(500).json({success: false, error:err})
+    });
+});
+
+/**
  * List the candidates for the recruiter
  * @route POST api/candidate/list
  * @group candidate - Candadite Listings
@@ -179,11 +209,13 @@ router.get('/list', passport.authentication, listCandidates);
 router.get('/list/:page', passport.authentication, listCandidates);
 router.get('/list/:page/:search', passport.authentication, listCandidates);
 router.get('/getCandidate/:candidateId', passport.authentication, listCandidates);
+router.get('/getCandidate/:candidateId/:only', passport.authentication, listCandidates);
 function listCandidates(req, res){
     var search = req.params.search;
     var candidateId = req.params.candidateId;
+    var only = req.params.only;
     var page = req.params.page;
-    if(page == null)
+    if(page == null || page < 1)
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
@@ -197,14 +229,13 @@ function listCandidates(req, res){
     if(candidateId != null)
         sqlArgs.push(candidateId)
     postgresdb.any(' \
-        SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, c.experience, \
+        SELECT c.*, rc.created_on, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
-            coalesce(cpd.not_accepted_count, 0) as not_accepted_count, coalesce(cpd.coins_spent, 0) as coins_spent, \
+            coalesce(cpd.not_accepted_count, 0) as not_accepted_count, \
             coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
             (count(1) OVER())/10+1 AS page_count, tag_names, tag_ids \
         FROM recruiter_candidate rc \
         INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
-        INNER JOIN login l ON l.user_id = c.candidate_id \
         LEFT JOIN ( \
             SELECT ct.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
             FROM candidate_tags ct \
@@ -216,16 +247,15 @@ function listCandidates(req, res){
                 SUM(1) as posted_count, \
                 SUM(cast(migaloo_accepted as int)) as accepted_count, \
                 SUM(cast(migaloo_accepted as int)) as not_accepted_count, \
-                SUM(coins) as coins_spent, \
                 SUM(CASE WHEN NOT has_seen_response AND migaloo_accepted THEN 1 ELSE 0 END) as new_accepted_count, \
                 SUM(CASE WHEN NOT has_seen_response AND NOT migaloo_accepted THEN 1 ELSE 0 END) as new_not_accepted_count \
             FROM candidate_posting cp\
             WHERE cp.recruiter_id = $1 \
             GROUP BY cp.candidate_id \
         ) cpd ON cpd.candidate_id = c.candidate_id\
-        WHERE rc.recruiter_id = $1 AND l.active \
+        WHERE rc.recruiter_id = $1 AND c.active \
         '+
-        (candidateId ? 'ORDER BY (CASE WHEN c.candidate_id = $3 THEN 1 ELSE 0 END) DESC, c.last_name ASC, c.first_name ASC' :
+        (candidateId ? ((only!=null?'AND c.candidate_id = $3 ':'')+'ORDER BY (CASE WHEN c.candidate_id = $3 THEN 1 ELSE 0 END) DESC, c.last_name ASC, c.first_name ASC') :
         (search ? 
             'AND (name_search @@ to_tsquery(\'simple\', $3)) \
             ORDER BY ts_rank_cd(name_search, to_tsquery(\'simple\', $3)) DESC'
@@ -267,7 +297,7 @@ router.get('/listForJob/:postId/:page/:search', passport.authentication, listCan
 function listCandidatesForJob(req, res){
     const search = req.params.search;
     var page = req.params.page;
-    if(page == null)
+    if(page == null || page < 1)
         page = 1;
     const jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
@@ -299,7 +329,7 @@ function listCandidatesForJob(req, res){
             if(search != null)
                 sqlArgs['search'] = search.split(' ').map(d=>d+":*").join(" & ")
             return t.any(' \
-                SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, c.experience, \
+                SELECT c.*, rc.created_on, \
                     coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
                     coalesce(cpd.not_accepted_count, 0) as not_accepted_count, \
                     coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
@@ -307,7 +337,6 @@ function listCandidatesForJob(req, res){
                     coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score  \
                 FROM recruiter_candidate rc \
                 INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
-                INNER JOIN login l ON l.user_id = c.candidate_id \
                 LEFT JOIN ( \
                     SELECT ct.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
                     FROM candidate_tags ct \
@@ -349,7 +378,7 @@ function listCandidatesForJob(req, res){
                     WHERE j.is_visible AND j.recruiter_id = ${recruiterId} AND j.post_id = ${postId} \
                     GROUP BY c.candidate_id \
                 ) jc ON jc.candidate_id = rc.candidate_id \
-                WHERE rc.recruiter_id = ${recruiterId} AND l.active \
+                WHERE rc.recruiter_id = ${recruiterId} AND c.active \
                 '+
                 (search ? 
                     'AND (name_search @@ to_tsquery(\'simple\', ${search}))'

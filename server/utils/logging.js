@@ -31,7 +31,7 @@ if (NODE_ENV == 'producation') {
     }
     // Create transport layer to cloud watch
     logger.add(new WinstonCloudWatch(config));
-}else{
+}else if (NODE_ENV == 'dev'){
     // Create transport layer to console
     logger.add(new (transports.Console)({
         timestamp: true,
@@ -52,7 +52,10 @@ if (NODE_ENV == 'producation') {
             })
         )
     }));
-    
+}else if(NODE_ENV == 'mocha'){
+    logger.add(new (transports.Console)({
+        silent: true
+    }));
 }
 logger.level = process.env.LOG_LEVEL || "silly";
 

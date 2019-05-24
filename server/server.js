@@ -58,6 +58,8 @@ if (NODE_ENV == 'test' || NODE_ENV == 'production') {
     app.get('*', (req,res) =>{
         res.sendFile(path.join(__dirname, '../client/build/index.html'));
     });
+}else{
+    // require('./tests/base');
 }
 //app.use('/testAPI', testAPI);
 
@@ -65,5 +67,10 @@ if (NODE_ENV == 'test' || NODE_ENV == 'production') {
  
 
 const port = process.env.PORT || 5000;
-
-app.listen(port, () => console.log(`Server running on port ${port}`));
+console.log("Run Server")
+const server = app.listen(port, () => {
+    console.log(`Server running on port ${port}`)
+    app.emit( "app_started" )
+});
+module.exports = app
+module.exports.close = server.close.bind(server)

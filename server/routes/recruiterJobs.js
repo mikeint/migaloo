@@ -30,7 +30,7 @@ function getJobs(req, res){
     var search = req.params.search;
     var page = req.params.page;
     var jobId = req.params.jobId;
-    if(page == null)
+    if(page == null || page < 1)
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
@@ -111,7 +111,7 @@ function getJobsForCandidate(req, res){
     var search = req.params.search;
     var page = req.params.page;
     var jobId = req.params.jobId;
-    if(page == null)
+    if(page == null || page < 1)
         page = 1;
     var candidateId = req.params.candidateId
     if(candidateId == null){

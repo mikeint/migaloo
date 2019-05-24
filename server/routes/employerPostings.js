@@ -212,7 +212,7 @@ router.get('/list/:page', passport.authentication, postListing);
 function postListing(req, res){
     var page = req.params.page;
     var postId = req.params.postId;
-    if(page == null)
+    if(page == null || page < 1)
         page = 1;
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
