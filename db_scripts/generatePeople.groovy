@@ -14,7 +14,7 @@ def addressId = 5000
 def candidateTagsQuery = "INSERT INTO candidate_tags (candidate_id, tag_id) VALUES \n\t"
 def candidateTagsData = []
 
-def candidateQuery = "INSERT INTO candidate (candidate_id, first_name, last_name, phone_number, experience, salary, address_id) VALUES \n\t"
+def candidateQuery = "INSERT INTO candidate (candidate_id, email, first_name, last_name, phone_number, experience, salary, address_id) VALUES \n\t"
 def candidateData = []
 
 def loginQuery = "INSERT INTO login (user_id, email, created_on, user_type_id) VALUES \n\t"
@@ -63,8 +63,7 @@ lines.drop(1).take(1000).each{line->
     def recruiter = (Integer)(Math.random()*recruiterCount+1)
     def tag = getTags()
     addressData << "(${addressId}, '${d.StreetAddress}', '${d.City}', '${d.State}', '${d.Country}', ${d.Latitude}, ${d.Longitude})"
-    loginData << "(${candidateId}, '${d.EmailAddress}', current_date - interval '${daysBack}' day, 3)"
-    candidateData << "(${candidateId}, '${d.GivenName}', '${d.Surname}', '${d.TelephoneNumber}', ${exp}, ${salary}, ${addressId})"
+    candidateData << "(${candidateId}, '${d.EmailAddress}', '${d.GivenName}', '${d.Surname}', '${d.TelephoneNumber}', ${exp}, ${salary}, ${addressId})"
     candidateTagsData << tag.collect{"(${candidateId}, ${it})"}.unique().join(", ")
     recrutierCandidateData << "(${candidateId}, ${recruiter}, current_date - interval '${daysBack}' day)"
     addressId++
@@ -105,4 +104,14 @@ out << (employerQuery + employerData.join(",\n\t")+";\n")
 out << (employerContactQuery + employerContactData.join(",\n\t")+";\n")
 out << (jobPostingQuery + jobPostingData.join(",\n\t")+";\n")
 out << (jobPostingTagsQuery + jobPostingTagsData.join(",\n\t")+";\n")
+
+out << """
+SELECT setval(pg_get_serial_sequence('_login', 'user_id'), max(user_id)) FROM _login;\n
+SELECT setval(pg_get_serial_sequence('address', 'address_id'), max(address_id)) FROM address;\n
+SELECT setval(pg_get_serial_sequence('company', 'company_id'), max(company_id)) FROM company;\n
+SELECT setval(pg_get_serial_sequence('candidate', 'candidate_id'), max(candidate_id)) FROM candidate;\n
+SELECT setval(pg_get_serial_sequence('job_posting_all', 'post_id'), max(post_id)) FROM job_posting_all;\n
+SELECT setval(pg_get_serial_sequence('recruiter', 'recruiter_id'), max(recruiter_id)) FROM recruiter;\n
+SELECT setval(pg_get_serial_sequence('account_manager', 'account_manager_id'), max(account_manager_id)) FROM account_manager;\n
+"""
 // Generate Employers 
