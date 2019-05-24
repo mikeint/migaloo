@@ -72,7 +72,13 @@
 }
 
 .jobListClassContainer .loaderContainer {
-    min-height: 75px;
+    display: flex;
+    justify-content: center;
+    height: calc(100vh - 61px); 
+    align-items: center;
+}
+.jobListClassContainer .loaderContainer .whaleWater{
+    transform: scale(10);
 }
  
 .jobListClassContainer span[class*='MuiTouchRipple-rippleVisible-']  { 
