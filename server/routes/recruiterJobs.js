@@ -11,7 +11,7 @@ const postgresdb = require('../config/db').postgresdb
 
 const listFilters = {
     'salary':'AND j.salary in (${salary:csv})',
-    'experience':'AND j.experience_years in (${experience:csv})',
+    'experience':'AND j.experience in (${experience:csv})',
     'tags':'AND array_intersects(tg.tag_ids, ${tags:list}::bigint[])'
 }
 /**
@@ -54,7 +54,7 @@ function getJobs(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.any('\
-        SELECT j.company_id, j.post_id, title, requirements, experience_years, salary, company_name, image_id, \
+        SELECT j.company_id, j.post_id, title, requirements, experience, salary, company_name, image_id, \
             address_line_1, address_line_2, city, state_province, country, tag_ids, \
             tag_names, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting j \
@@ -137,7 +137,7 @@ function getJobsForCandidate(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.task(t => {
-        return t.one('SELECT c.candidate_id, first_name, last_name, c.salary, c.experience_years, tg.tag_names \
+        return t.one('SELECT c.candidate_id, first_name, last_name, c.salary, c.experience, tg.tag_names \
             FROM recruiter_candidate rc \
             INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
             LEFT JOIN ( \
@@ -154,9 +154,9 @@ function getJobsForCandidate(req, res){
             if(jobId != null)
                 sqlArgs['jobId'] = jobId
             return t.any('\
-                SELECT j.post_id, title, requirements, experience_years, salary, company_name, image_id, j.company_id, \
+                SELECT j.post_id, title, requirements, experience, salary, company_name, image_id, j.company_id, \
                     address_line_1, address_line_2, city, state_province, country, tag_ids, tag_names, \
-                    coalesce(salary_score, 0.0)*coalesce(experience_years_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
+                    coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
                 FROM job_posting j \
                 INNER JOIN company e ON j.company_id = e.company_id \
                 LEFT JOIN address a ON a.address_id = e.address_id \
@@ -171,8 +171,8 @@ function getJobsForCandidate(req, res){
                     SELECT j.post_id, \
                         least(greatest((max(j.salary)-max(c.salary))/10.0, -1)+1, 1) \
                         -least(greatest((max(j.salary)-max(c.salary))/50.0, 0), 1) as salary_score, \
-                        least(greatest((max(j.experience_years)-max(c.experience_years))/15.0, -1)+1, 1) \
-                        -least(greatest((max(j.experience_years)-max(c.experience_years))/10.0, 0), 1) as experience_years_score, \
+                        least(greatest((max(j.experience)-max(c.experience))/15.0, -1)+1, 1) \
+                        -least(greatest((max(j.experience)-max(c.experience))/10.0, 0), 1) as experience_score, \
                         max(a.lat) as lat, \
                         max(a.lon) as lon, \
                         SUM(similarity) / count(distinct tg.tag_id) as tag_score \
@@ -198,7 +198,7 @@ function getJobsForCandidate(req, res){
                     'WHERE j.is_visible AND ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) AND j.recruiter_id = ${recruiterId} '+filtersToAdd
                 :'WHERE j.is_visible AND j.recruiter_id = ${recruiterId} '+filtersToAdd)
                 )+' \
-                ORDER BY coalesce(salary_score, 0.0)*coalesce(experience_years_score, 0.0)*coalesce(tag_score, 0.0) DESC NULLS LAST, j.created_on DESC \
+                ORDER BY coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0) DESC NULLS LAST, j.created_on DESC \
                 OFFSET ${page} \
                 LIMIT 10', {...sqlArgs, ...paramsToAdd})
                 

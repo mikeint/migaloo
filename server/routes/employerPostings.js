@@ -64,7 +64,7 @@ router.post('/create', passport.authentication,  (req, res) => {
             return address.addAddress(body.address, t).then((addr_ret)=>{
                 console.log("address", addr_ret)
                 return t.one('\
-                    INSERT INTO job_posting_all (company_id, title, requirements, experience_years,\
+                    INSERT INTO job_posting_all (company_id, title, requirements, experience,\
                         salary, preliminary, is_visible, address_id, interview_count, \
                         opening_reason_id, opening_reason_comment, open_positions, job_type_id) \
                     VALUES (${company}, ${title}, ${requirements}, ${experience}, ${salary}, ${preliminary},\
@@ -154,7 +154,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
             return address.addAddress(body.address, t)
             .then((addr_ret)=>{
                 return t.one('\
-                    INSERT INTO job_posting_all (company_id, title, requirements, experience_years,\
+                    INSERT INTO job_posting_all (company_id, title, requirements, experience,\
                         salary, preliminary, is_visible, address_id, interview_count, \
                         opening_reason_id, opening_reason_comment, open_positions) \
                     VALUES (${company}, ${title}, ${requirements}, ${experience}, ${salary}, ${preliminary},\
@@ -235,7 +235,7 @@ function postListing(req, res){
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>filters[k]).join(" ")
 
     postgresdb.any('\
-        SELECT j.post_id, title, requirements, experience_years, j.company_id, j.salary, \
+        SELECT j.post_id, title, requirements, experience, j.company_id, j.salary, \
             j.job_type_id, jt.job_type_name, j.opening_reason_id, op.opening_reason_name, j.opening_reason_comment, \
             tag_names, tag_ids, new_posts_cnt, c.company_name, \
             interview_count, open_positions, is_visible, \

@@ -9,9 +9,12 @@ const address = require('../utils/address');
 const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
+const camelColumnConfig = db.camelColumnConfig
 const candidateTagsInsertHelper = new pgp.helpers.ColumnSet(['candidate_id', 'tag_id'], {table: 'candidate_tags'});
 
-
+const candidateFields = ['first_name', 'last_name', 'experience', 'salary', 'relocatable', 'url', 'address_id'];
+const candidateInsert = new pgp.helpers.ColumnSet(['candidate_id', ...candidateFields].map(camelColumnConfig), {table: 'candidate'});
+const candidateUpdate = new pgp.helpers.ColumnSet(['?candidate_id', ...candidateFields.map(camelColumnConfig)], {table: 'candidate'});
 /**
  * Create a new candidate for the recruiter
  * @route POST api/candidate/create
@@ -28,8 +31,10 @@ router.post('/create', passport.authentication,  (req, res) => {
      * firstName
      * lastName
      * address
-     * salary (Optional)
-     * experience (Optional)
+     * url (Optional)
+     * relocatable
+     * salary
+     * experience
      * tagIds (Optional)
      */
     var body = req.body
@@ -61,8 +66,7 @@ router.post('/create', passport.authentication,  (req, res) => {
         }).then((candidate_ret)=>{
             return address.addAddress(body.address, t)
             .then((address_ret)=>{
-                const q2 = t.none('INSERT INTO candidate (candidate_id, first_name, last_name, experience_years, salary, relocatable, url, address_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-                                    [candidate_ret.user_id, body.firstName, body.lastName, body.experienceYears, body.salary, body.relocatable, body.url, address_ret.address_id])
+                const q2 = t.none(pgp.helpers.insert({...body, candidateId:candidate_ret.user_id, addressId:address_ret.address_id}, candidateInsert))
                 const q3 = t.none('INSERT INTO recruiter_candidate (candidate_id, recruiter_id) VALUES ($1, $2)',
                                     [candidate_ret.user_id, jwtPayload.id])
                 var queries = [q2, q3];
@@ -71,13 +75,91 @@ router.post('/create', passport.authentication,  (req, res) => {
                     const q4 = t.none(query);
                     queries.push(q4)
                 }
-                logger.info('Recruiter added candidate', {tags:['candidate', 'recruiter'], url:req.originalUrl, userId:jwtPayload.id, body: {...req.body, candidateId:candidate_ret.user_id}});
+                // logger.info('Recruiter added candidate', {tags:['candidate', 'recruiter'], url:req.originalUrl, userId:jwtPayload.id, body: {...req.body, candidateId:candidate_ret.user_id}});
                 return t.batch(queries)
-
             })
-        }).then(()=>{
-            res.json({success: true})
         })
+    }).then(()=>{
+        res.json({success: true})
+    }).catch((err)=>{
+        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        return res.status(500).json({success: false, error:err})
+    });
+});
+
+/**
+ * Edit a candidate for the recruiter
+ * @route POST api/candidate/edit
+ * @group candidate - Candadite Listings
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/edit', passport.authentication,  (req, res) => {
+
+    /**
+     * Inputs Body:
+     * candidateId
+     * firstName
+     * lastName
+     * address
+     * url (Optional)
+     * relocatable
+     * salary
+     * experience
+     * tagIds (Optional)
+     */
+    var body = req.body
+    const { errors, isValid } = validateCandidateInput(body);
+    //check Validation
+    if(!isValid) {
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json(errors);
+    }
+    var jwtPayload = body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        const errorMessage = "Must be an recruiter to add a candidate"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(jwtPayload.candidateId == null){
+        const errorMessage = "Missing candidateId field"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    
+    postgresdb.tx(t => {
+        var q1
+        if(bady.addressId != null)
+            q1 = Promise.resolve({address_id:null})
+        else
+            q1 = address.addAddress(body.address, t)
+        return q1.then((address_ret)=>{
+            const q2 = t.none('DELETE FROM candidate_tags WHERE candidate_id = $1', [body.candidateId])
+            const q3 = t.none(pgp.helpers.update({...body, candidateId:candidate_ret.user_id, addressId:address_ret.address_id}, candidateUpdate, null, {tableAlias: 'X', valueAlias: 'Y'}) + ' WHERE Y.candidateId = X.candidate_id')
+            return t.batch([q2, q3]).then(()=>{
+                if(body.tagIds != null && body.tagIds.length > 0){
+                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidate_ret.user_id, tag_id: d}}), candidateTagsInsertHelper);
+                    return t.none(query).then(()=>{
+                        return res.json({success: true})
+                    }).catch((err)=>{
+                        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+                        return res.status(500).json({success: false, error:err})
+                    });
+                }else{
+                    res.json({success: true})
+                    return []
+                }
+            }).catch((err)=>{
+                logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+                return res.status(500).json({success: false, error:err})
+            });
+        }).catch((err)=>{
+            logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+            return res.status(500).json({success: false, error:err})
+        });
     }).catch((err)=>{
         logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         return res.status(500).json({success: false, error:err})
@@ -115,7 +197,7 @@ function listCandidates(req, res){
     if(candidateId != null)
         sqlArgs.push(candidateId)
     postgresdb.any(' \
-        SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, c.experience_years, \
+        SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, c.experience, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
             coalesce(cpd.not_accepted_count, 0) as not_accepted_count, coalesce(cpd.coins_spent, 0) as coins_spent, \
             coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
@@ -203,7 +285,7 @@ function listCandidatesForJob(req, res){
     
 
     postgresdb.task(t => {
-        return t.one('SELECT jp.post_id, jp.title, jp.salary, jp.experience_years, tg.tag_names \
+        return t.one('SELECT jp.post_id, jp.title, jp.salary, jp.experience, tg.tag_names \
             FROM job_posting jp \
             LEFT JOIN ( \
                 SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
@@ -217,12 +299,12 @@ function listCandidatesForJob(req, res){
             if(search != null)
                 sqlArgs['search'] = search.split(' ').map(d=>d+":*").join(" & ")
             return t.any(' \
-                SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, c.experience_years, \
+                SELECT c.candidate_id, c.first_name, c.last_name, l.email, rc.created_on, c.resume_id, c.experience, \
                     coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
                     coalesce(cpd.not_accepted_count, 0) as not_accepted_count, \
                     coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
                     (count(1) OVER())/10+1 AS page_count, tag_names, tag_ids, \
-                    coalesce(salary_score, 0.0)*coalesce(experience_years_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score  \
+                    coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score  \
                 FROM recruiter_candidate rc \
                 INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
                 INNER JOIN login l ON l.user_id = c.candidate_id \
@@ -247,8 +329,8 @@ function listCandidatesForJob(req, res){
                     SELECT c.candidate_id, \
                         least(greatest((max(j.salary)-max(c.salary))/10.0, -1)+1, 1) \
                         -least(greatest((max(j.salary)-max(c.salary))/50.0, 0), 1) as salary_score, \
-                        least(greatest((max(j.experience_years)-max(c.experience_years))/15.0, -1)+1, 1) \
-                        -least(greatest((max(j.experience_years)-max(c.experience_years))/10.0, 0), 1) as experience_years_score, \
+                        least(greatest((max(j.experience)-max(c.experience))/15.0, -1)+1, 1) \
+                        -least(greatest((max(j.experience)-max(c.experience))/10.0, 0), 1) as experience_score, \
                         max(a.lat) as lat, \
                         max(a.lon) as lon, \
                         SUM(similarity) / count(distinct tg.tag_id) as tag_score \
@@ -272,7 +354,7 @@ function listCandidatesForJob(req, res){
                 (search ? 
                     'AND (name_search @@ to_tsquery(\'simple\', ${search}))'
                 :'')+' \
-                ORDER BY coalesce(salary_score, 0.0)*coalesce(experience_years_score, 0.0)*coalesce(tag_score, 0.0)*100.0 DESC, c.last_name ASC, c.first_name ASC \
+                ORDER BY coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 DESC, c.last_name ASC, c.first_name ASC \
                 OFFSET ${page} \
                 LIMIT 10', sqlArgs)
             .then((data) => {

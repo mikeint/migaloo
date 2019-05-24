@@ -96,7 +96,7 @@ class ExpandableRow extends React.Component{
                                             <span className="experience_icon"></span>
                                             <div className="candidate-info-item">
                                                 <span className="heading">Experience: </span> 
-                                                <span className="headingInfo">{candidateData.experience_years}</span>
+                                                <span className="headingInfo">{candidateData.experience}</span>
                                             </div>
                                         </div>
                                         <div>

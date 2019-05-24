@@ -93,15 +93,14 @@ class AddCandidate extends React.Component{
             firstName:'',
             lastName:'',
             email:'',
-            salary:-1,
+            salary:0,
             jobType:-1,
-            experience:-1,
+            experience:0,
             address:{},
             tagIds:[],
+            relocatable: false,
             redirect: false,
             onClose: props.onClose,
-            salaryList: [],
-            experienceList: [],
             errors:{}
         }
         this.Auth = new AuthFunctions();
@@ -191,12 +190,12 @@ class AddCandidate extends React.Component{
                         <div className={classes.input2}>
                             <SalarySelector 
                                 required
-                                onChange={(salary)=>this.setState({salary:salary}, this.formValidation.shouldRevalidate)}
+                                onChange={this.handleChangeKV}
                                 {...this.formValidation.hasError("salary")}/>
                                 &nbsp;&nbsp;&nbsp;
                             <ExperienceSelector 
                                 required
-                                onChange={(experience)=>this.setState({experience:experience}, this.formValidation.shouldRevalidate)}
+                                onChange={this.handleChangeKV}
                                 {...this.formValidation.hasError("experience")}/>
                         </div>
                         <div className={classes.input2}>
@@ -223,7 +222,7 @@ class AddCandidate extends React.Component{
                             control={
                                 <Checkbox
                                     defaultChecked={false}
-                                    onChange={(e)=>this.setState({willingToRelocate: e.target.checked})}
+                                    onChange={(e)=>this.setState({relocatable: e.target.checked})}
                                     color="primary"
                                 />
                             }

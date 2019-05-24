@@ -2,6 +2,8 @@ const db = require('../config/db');
 const logger = require('./logging'); 
 const postgresdb = db.postgresdb
 const pgp = db.pgp
+const camalize = db.camalize
+const camelColumnConfig = db.camelColumnConfig
 
 
 // address_id bigserial,
@@ -15,12 +17,6 @@ const pgp = db.pgp
 // country_code varchar(3),
 // lat float,
 // lon float
-const camalize = (str) => {
-    return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, function(match, chr)
-    {
-        return chr.toUpperCase();
-    });
-}
 const convertFieldsToMap = (dataMap) => {
     const addressMap = {}
     addressMap['addressId'] = dataMap['addressId']
@@ -35,17 +31,7 @@ const convertFieldsToMap = (dataMap) => {
 }
 
 const addressFields = ['address_line_1', 'address_line_2', 'city', 'state_province', 'state_province_code', 'country', 'country_code', 'place_id', 'lat', 'lon', 'postal_code'];
-const addressUpdate = new pgp.helpers.ColumnSet(['?address_id', ...addressFields.map(name=>{
-    return {
-        name: name,
-        prop: camalize(name),
-        skip: col => {
-            return col.source[name] == null;
-        }
-    }
-
-})
-], {table: 'address'});
+const addressUpdate = new pgp.helpers.ColumnSet(['?address_id', ...addressFields.map(camelColumnConfig)], {table: 'address'});
 
 function addAddress(bodyData, transaction=postgresdb){
     if(addressFields.some(a=>bodyData[a] != null)){

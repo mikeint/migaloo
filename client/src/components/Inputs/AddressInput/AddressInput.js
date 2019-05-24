@@ -94,41 +94,44 @@ class AddressInput extends Component {
         return this.joinBy([a.addressLine1, a.addressLine2, a.city, this.joinBy([a.stateProvinceCode, a.postalCode], " "), a.countryCode], ", ")
     }
     getAddress(result){
-        const addr = {
-            placeId: result.place_id,
-            ...getLatLng(result)
-        };
-        result.address_components.forEach(c=>{
-            if(c.types.includes("street_number")){
-                addr.addressLine1 = c.long_name;
-            }
-            else if(c.types.includes("route")){
-                if(addr.addressLine1)
-                    addr.addressLine1 = addr.addressLine1 + " " + c.short_name;
-                else
-                    addr.addressLine1 = c.short_name;
-            }
-            else if(c.types.includes("political")){
-                if(c.types.includes("locality")){
-                    addr.city = c.long_name
+        return getLatLng(result).then((latLon)=>{
+            const addr = {
+                placeId: result.place_id,
+                lat:latLon.lat,
+                lon:latLon.lng
+            };
+            result.address_components.forEach(c=>{
+                if(c.types.includes("street_number")){
+                    addr.addressLine1 = c.long_name;
                 }
-                else if(c.types.includes("administrative_area_level_1")){
-                    addr.stateProvince = c.long_name
-                    addr.stateProvinceCode = c.short_name
+                else if(c.types.includes("route")){
+                    if(addr.addressLine1)
+                        addr.addressLine1 = addr.addressLine1 + " " + c.short_name;
+                    else
+                        addr.addressLine1 = c.short_name;
                 }
-                else if(c.types.includes("country")){
-                    addr.country = c.long_name
-                    addr.countryCode = c.short_name
+                else if(c.types.includes("political")){
+                    if(c.types.includes("locality")){
+                        addr.city = c.long_name
+                    }
+                    else if(c.types.includes("administrative_area_level_1")){
+                        addr.stateProvince = c.long_name
+                        addr.stateProvinceCode = c.short_name
+                    }
+                    else if(c.types.includes("country")){
+                        addr.country = c.long_name
+                        addr.countryCode = c.short_name
+                    }
+                    else if(c.types.includes("postal_code")){
+                        addr.postalCode = c.long_name
+                    }
                 }
-                else if(c.types.includes("postal_code")){
-                    addr.postalCode = c.long_name
-                }
-            }
+            })
+            const formattedAddress = this.formatAddress(addr);
+            addr.formattedAddress = formattedAddress;
+            addr.address = formattedAddress;
+            return addr;
         })
-        const formattedAddress = this.formatAddress(addr);
-        addr.formattedAddress = formattedAddress;
-        addr.address = formattedAddress;
-        return addr;
     }
     blurredOnce(){
         if(!this.state.hasBlur)

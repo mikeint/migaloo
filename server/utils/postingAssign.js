@@ -103,8 +103,8 @@ function findRecruitersForPost(postId, limit=5){
                     SELECT c.candidate_id, \
                         (least(greatest((max(j.salary)-max(ci.salary))/10.0, -1)+1, 1) \
                         -least(greatest((max(j.salary)-max(ci.salary))/50.0, 0), 1)) * \
-                        (least(greatest((max(j.experience_years)-max(ci.experience_years))/15.0, -1)+1, 1) \
-                        -least(greatest((max(j.experience_years)-max(ci.experience_years))/10.0, 0), 1)) * \
+                        (least(greatest((max(j.experience)-max(ci.experience))/15.0, -1)+1, 1) \
+                        -least(greatest((max(j.experience)-max(ci.experience))/10.0, 0), 1)) * \
                         (SUM(similarity) / count(distinct tg.tag_id)) as score \
                     FROM ( \
                         SELECT ct.tag_id, pt.post_id, ct.candidate_id, MAX(similarity) as similarity \

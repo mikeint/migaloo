@@ -14,7 +14,7 @@ def addressId = 5000
 def candidateTagsQuery = "INSERT INTO candidate_tags (candidate_id, tag_id) VALUES \n\t"
 def candidateTagsData = []
 
-def candidateQuery = "INSERT INTO candidate (candidate_id, first_name, last_name, phone_number, experience_years, salary, address_id) VALUES \n\t"
+def candidateQuery = "INSERT INTO candidate (candidate_id, first_name, last_name, phone_number, experience, salary, address_id) VALUES \n\t"
 def candidateData = []
 
 def loginQuery = "INSERT INTO login (user_id, email, created_on, user_type_id) VALUES \n\t"
@@ -32,7 +32,7 @@ def employerContactQuery = "INSERT INTO company_contact (company_contact_id, com
 def employerContactData = []
 def employerContactId = 10000000
 
-def jobPostingQuery = "INSERT INTO job_posting_all (post_id, company_id, address_id, created_on, title, requirements, experience_years, salary) VALUES \n\t"
+def jobPostingQuery = "INSERT INTO job_posting_all (post_id, company_id, address_id, created_on, title, requirements, experience, salary) VALUES \n\t"
 def jobPostingData = []
 def postId = 100
 

@@ -229,7 +229,7 @@ class PostAJob extends React.Component{
                             <ExperienceSelector 
                                 required
                                 onChange={this.handleChangeKV}
-                                value={this.state.oldPost.experience_years}
+                                value={this.state.oldPost.experience}
                                 {...this.formValidation.hasError("experience")}/>
                         </div>
                         <div className={classes.input2}>
