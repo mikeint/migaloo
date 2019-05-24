@@ -227,7 +227,7 @@ class JobList extends React.Component{
                                 </div>
                             </React.Fragment>
                         :
-                        <div className="loaderContainer"><Loader /></div>
+                        <div className="loaderContainer"><Loader sprayColor="#263c54"/></div>
                     } 
                 </div>
             </React.Fragment>

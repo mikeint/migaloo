@@ -11,8 +11,10 @@ import JobDescription from './JobList/JobDescription/JobDescription';
 
 function RecruiterRouter({ match }) {
     return ( 
-        <React.Fragment>
-            <NavBar/>  
+        <div className="rootContainer">
+            <div className="navContainer">
+                <NavBar/>
+            </div>
             <div className="mainContainer">
                 <Switch>
                     <Route strict path="/recruiter/profile" component={RecruiterProfile} />
@@ -29,7 +31,7 @@ function RecruiterRouter({ match }) {
                     <Route strict path="/recruiter/chat" component={Chat} />
                 </Switch>
             </div>
-        </React.Fragment>
+        </div>
     );
 }
 

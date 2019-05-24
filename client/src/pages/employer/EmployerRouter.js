@@ -10,8 +10,10 @@ import Accounts from "./Accounts/Accounts";
 function EmployerRouter({ match }) {
 
     return ( 
-        <React.Fragment>
-            <NavBar />
+        <div className="rootContainer">
+            <div className="navContainer">
+                <NavBar/>
+            </div>
             <div className="mainContainer">
                 <Switch>
                     <Route strict path="/employer/postAJob/:postId" component={PostAJob} />
@@ -23,7 +25,7 @@ function EmployerRouter({ match }) {
                     <Route strict path="/employer/chat" component={Chat} />
                 </Switch>
             </div>
-        </React.Fragment>
+        </div>
     );
 }
 
