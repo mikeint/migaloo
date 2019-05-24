@@ -11,6 +11,10 @@ const logger = require('../utils/logging');
 const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
+const camelColumnConfig = db.camelColumnConfig
+const companyFields = ['company_name', 'department', 'image_id', 'address_id'];
+const companyInsert = new pgp.helpers.ColumnSet(['company_id', ...companyFields].map(camelColumnConfig), {table: 'company'});
+const companyUpdate = new pgp.helpers.ColumnSet(['?company_id', ...companyFields.map(camelColumnConfig)], {table: 'company'});
 
 /**
  * List company accounts
@@ -21,9 +25,12 @@ const pgp = db.pgp
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.get('/list', passport.authentication,  (req, res) => {
-    const jwtPayload = req.body.jwtPayload;
-    
+router.get('/list', passport.authentication, list)
+router.get('/get/:companyId', passport.authentication, list)
+function list(req, res) {
+    const jwtPayload = req.body.jwtPayload
+    const companyId = req.params.companyId
+
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
@@ -32,19 +39,20 @@ router.get('/list', passport.authentication,  (req, res) => {
     
     postgresdb.any('\
         SELECT \
-            c.company_id, company_name, department, c.image_id, \
-            address_line_1 as "addressLine1", \
-            address_line_2 as "addressLine2", \
-            city, state_province as "stateProvince", country, lat, lon, \
-            state_province_code as "stateCode", \
-            country_code as "countryCode", \
+            c.company_id, c.company_name, c.department, c.image_id, \
+            a.address_id as "addressId", \
+            a.address_line_1 as "addressLine1", \
+            a.address_line_2 as "addressLine2", \
+            a.city, a.state_province as "stateProvince", a.country, a.lat, a.lon, \
+            a.state_province_code as "stateCode", \
+            a.country_code as "countryCode", \
             ec.is_primary \
         FROM login l \
         INNER JOIN company_contact ec ON ec.company_contact_id = l.user_id \
         INNER JOIN company c ON c.company_id = ec.company_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
-        WHERE ec.company_contact_id = ${userId} \
-        ORDER BY ec.is_primary DESC, company_name', {userId:jwtPayload.id})
+        WHERE ec.company_contact_id = ${userId} '+(companyId!=null?'AND c.company_id = ${companyId}':'')+' \
+        ORDER BY ec.is_primary DESC, company_name', {userId:jwtPayload.id, companyId:companyId})
     .then((data) => {
         res.json({success:true, companies:data})
     })
@@ -52,7 +60,7 @@ router.get('/list', passport.authentication,  (req, res) => {
         logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         res.status(500).json({success:false, error:err})
     });
-});
+}
 
 /**
  * Add company account
@@ -69,35 +77,33 @@ router.post('/addCompany', passport.authentication,  (req, res) => {
     if(!isValid) {
         return res.status(400).json(errors);
     }
-    var bodyData = req.body;
-    var jwtPayload = bodyData.jwtPayload;
+    var body = req.body;
+    var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
+    var companyId
     postgresdb.tx(t => {
-        var fields = ['company_name', 'department'];
-        var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:null);
-        
         // creating a sequence of transaction queries:
-        address.addAddress(bodyData, t)
+        return address.addAddress(body.address, t)
         .then((addr_ret)=>{
             return t.one('INSERT INTO login(user_type_id) VALUES (4) RETURNING user_id')
             .then((user_ret) => {
-                const q3 = t.none('INSERT INTO company(company_id, company_name, department, address_id) VALUES ($1, $2, $3, $4)',
-                                [user_ret.user_id, ...fieldUpdates, addr_ret.address_id]);
+                companyId = user_ret.user_id
+                const q3 = t.none(pgp.helpers.insert({...body, companyId:companyId, addressId:addr_ret.address_id}, companyInsert))
                 const q4 = t.none('INSERT INTO company_contact(company_id, company_contact_id, is_primary) VALUES ($1, $2, true)',
-                                [user_ret.user_id, jwtPayload.id]);
+                                [companyId, jwtPayload.id]);
                 return t.batch([q3, q4])
                     .then(() => {
-                        res.status(200).json({success: true})
+                        res.status(200).json({companyId:companyId, success: true})
                         return []
                     })
             })
         })
     }).catch((err)=>{
-        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:{...req.body, companyId:companyId}});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -117,44 +123,30 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
     if(!isValid) {
         return res.status(400).json(errors);
     }
-    var bodyData = req.body;
-    var jwtPayload = bodyData.jwtPayload;
+    var body = req.body;
+    var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.tx(t => {
-        var fields = ['company_name', 'department'];
-        var addressFields = ['address_line_1', 'address_line_2', 'city', 'state', 'country'];
-        return t.one('SELECT ec.company_id, first_name, last_name, phone_number, company_name, department, e.address_id, address_line_1, address_line_2, city, state, country \
-                        FROM company e \
-                        INNER JOIN company_contact ec ON ec.company_id = e.company_id AND ec.is_primary \
-                        INNER JOIN account_manager ac ON ac.account_manager_id = ec.company_contact_id \
-                        LEFT JOIN address a ON e.address_id = a.address_id\
-                        WHERE ec.company_contact_id = ${userId} AND e.company_id = ${companyId}', {userId:jwtPayload.id, companyId:bodyData.companyId}).then((data)=>{
-            var company_id = bodyData.companyId;
-            var addressId = data.address_id;
-            var addressIdExists = (data.address_id != null);
-            var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:data[f]);
-            var addrFieldUpdates = addressFields.map(f=> bodyData[f] != null?bodyData[f]:data[f]);
-            // creating a sequence of transaction queries:
-            var q1
-            if(!addressIdExists){
-                q1 = address.addAddress(bodyData, t)
-            }else{
-                q1 = address.updateAddress(bodyData, t);
-            }
-            return q1.then((addr_ret)=>{
-                addressId = addressIdExists ? addressId : addr_ret.address_id
-                const q2 = t.none('UPDATE company SET company_name=$1, department=$2 address_id=$3 WHERE company_id = $4',
-                                [...fieldUpdates, addressId, company_id]);
-                return q2
-                    .then(() => {
-                        res.status(200).json({success: true})
-                        return []
-                    })
-            })
+        var addressId = body.address.address_id;
+        // creating a sequence of transaction queries:
+        var q1
+        if(addressId == null){
+            q1 = address.addAddress(body.address, t)
+        }else{
+            q1 = Promise.resolve({address_id:addressId})
+        }
+        return q1.then((addr_ret)=>{
+            addressId = addressId != null ? addressId : addr_ret.address_id
+            const q2 = t.none(pgp.helpers.update({...body, addressId:addr_ret.address_id}, companyUpdate) + ' WHERE company_id = ${companyId}', {companyId: body.companyId})
+            return q2
+                .then(() => {
+                    res.status(200).json({success: true})
+                    return []
+                })
         })
     }).catch((err)=>{
         logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
@@ -184,8 +176,8 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
      * emails <list>
      * companyId
      */
-    const bodyData = req.body;
-    const jwtPayload = bodyData.jwtPayload;
+    const body = req.body;
+    const jwtPayload = body.jwtPayload;
     const userType = jwtPayload.userType;
     if(userType !== 2 && userType !== 1){
         const errorMessage = "Invalid User Type"
@@ -196,16 +188,16 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
     postgresdb.tx(t => {
         return t.one('SELECT ec.company_id, c.company_name \
                         FROM company_contact ec \
-                        INNER JOIN company c ON cc.company_id = c.company_id \
+                        INNER JOIN company c ON ec.company_id = c.company_id \
                         WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
-                        {company_contact_id:jwtPayload.id, company_id:bodyData.companyId})
+                        {company_contact_id:jwtPayload.id, company_id:body.companyId})
             .then(()=>{
                 return new Promise((resolve, reject)=>{
-                    if(bodyData.userIds){
-                        const data = bodyData.userIds.map(id=>{
+                    if(body.userIds){
+                        const data = body.userIds.map(id=>{
                             return {
                                 company_contact_id: id,
-                                company_id: bodyData.companyId
+                                company_id: body.companyId
                             }
                         })
                         return resolve(data)
@@ -214,12 +206,12 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
                                 FROM login l \
                                 LEFT JOIN company_contact cc ON cc.company_contact_id = l.user_id \
                                 WHERE l.email in (${emails:csv}) AND l.user_type_id = ${userType}',
-                                {emails:bodyData.emails, type:userType})
+                                {emails:body.emails, type:userType})
                         .then((users)=>{
-                            const alreadyExists = users.filter(d=>d.company_id == bodyData.companyId).map(d=>d.email)
+                            const alreadyExists = users.filter(d=>d.company_id == body.companyId).map(d=>d.email)
                             const availableToJoin = users.filter(d=>d.company_id == null).map(d=>d.user_id)
-                            const usersToAsk = bodyData.emails.filter(d=>!alreadyExists.includes(d)).filter(d=>!availableToJoin.includes(d))
-                            if(leftOvers.length > 0){
+                            const usersToAsk = body.emails.filter(d=>!alreadyExists.includes(d)).filter(d=>!availableToJoin.includes(d))
+                            if(leftOvers.length > 0 && usersToAsk.length > 0){
                                 invite.inviteByEmails(usersToAsk, userType, company).then(userIds=>{
                                     // Going to skip force adding people for now
                                 })
@@ -227,7 +219,7 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
                             const data = availableToJoin.map(id=>{
                                 return {
                                     company_contact_id: id,
-                                    company_id: bodyData.companyId
+                                    company_id: body.companyId
                                 }
                             })
                             return resolve(data)
@@ -235,13 +227,18 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
                         .catch(reject)
                     }
                 }).then(data=>{
-                    const query = pgp.helpers.insert(data, companyContactHelper);
-                    return t.none(query)
-                    .then(()=>{
-                        // TODO: send request email to contact to make a password
-                        res.status(200).json({success: true})
+                    if(data.length > 0){
+                        const query = pgp.helpers.insert(data, companyContactHelper);
+                        return t.none(query)
+                        .then(()=>{
+                            // TODO: send request email to contact to make a password
+                            res.status(200).json({success: true, addedCount: data.length})
+                            return []
+                        })
+                    }else{
+                        res.status(200).json({success: true, addedCount: data.length})
                         return []
-                    })
+                    }
                 })
             })
     }).catch((err)=>{
@@ -260,14 +257,14 @@ router.post('/removeContactFromCompany', passport.authentication,  (req, res) =>
      * userId
      * companyId
      */
-    var bodyData = req.body;
-    var jwtPayload = bodyData.jwtPayload;
+    var body = req.body;
+    var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-    if(bodyData.userId === jwtPayload.id){
+    if(body.userId === jwtPayload.id){
         const errorMessage = "Can not remove yourself"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
@@ -276,11 +273,11 @@ router.post('/removeContactFromCompany', passport.authentication,  (req, res) =>
         return t.one('SELECT ec.company_id \
                         FROM company_contact ec \
                         WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
-                        {company_contact_id:jwtPayload.id, company_id:bodyData.companyId})
+                        {company_contact_id:jwtPayload.id, company_id:body.companyId})
             .then(()=>{
                 return t.none('DELETE FROM company_contact \
                 WHERE company_contact_id = ${company_contact_id} AND company_id = ${company_id}',
-                {company_contact_id:bodyData.userId, company_id:bodyData.companyId})
+                {company_contact_id:body.userId, company_id:body.companyId})
                 .then(()=>{
                     // TODO: send request email to contact to make a password
                     res.status(200).json({success: true})
@@ -314,8 +311,8 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
      * isPrimary
      * companyId
      */
-    var bodyData = req.body;
-    var jwtPayload = bodyData.jwtPayload;
+    var body = req.body;
+    var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
@@ -344,7 +341,7 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
         return t.one('SELECT ec.company_id \
                         FROM company_contact ec \
                         WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
-                        {company_contact_id:jwtPayload.id, company_id:bodyData.companyId})
+                        {company_contact_id:jwtPayload.id, company_id:body.companyId})
             .then(()=>{
                 return t.none('UPDATE company_contact SET is_primary=${is_primary} WHERE company_contact_id = ${companyContactId}',
                     {is_primary:isPrimary, companyContactId:companyContactId})

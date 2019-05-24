@@ -150,6 +150,9 @@ describe('Candidate', function() {
                     assert.ok(res.success)
                     assert.notEqual(res.candidateList, null)
                     assert.notStrictEqual(res.candidateList.length, 0)
+                    assert.strictEqual(res.candidateList[0].first_name, 'TestEdit')
+                    assert.strictEqual(res.candidateList[0].email, 'tes2t@test.com')
+                    assert.strictEqual(res.candidateList[0].url, 'test-edit.com')
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)
@@ -184,6 +187,24 @@ describe('Candidate', function() {
             })
         });
     });
+    describe('List for job', () => {
+        it('check if search returns data', () => {
+            return get(`/api/candidate/listForJob/1`, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    assert.notEqual(res.candidateList, null)
+                    assert.notEqual(res.postData, null)
+                    assert.equal(res.postData.post_id, 1)
+                    assert.notStrictEqual(res.candidateList.length, 0)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
+    
 });
 
 describe('Candidate Recruiter 2', function() {

@@ -33,21 +33,21 @@ const convertFieldsToMap = (dataMap) => {
 const addressFields = ['address_line_1', 'address_line_2', 'city', 'state_province', 'state_province_code', 'country', 'country_code', 'place_id', 'lat', 'lon', 'postal_code'];
 const addressUpdate = new pgp.helpers.ColumnSet(['?address_id', ...addressFields.map(camelColumnConfig)], {table: 'address'});
 
-function addAddress(bodyData, transaction=postgresdb){
-    if(addressFields.some(a=>bodyData[a] != null)){
+function addAddress(body, transaction=postgresdb){
+    if(addressFields.some(a=>body[a] != null)){
         return transaction.one('INSERT INTO address (address_line_1, address_line_2, city, state_province, state_province_code, country, country_code, place_id, lat, lon, postal_code) \
                     VALUES (${addressLine1}, ${addressLine2}, ${city}, ${stateProvince}, ${stateProvinceCode}, ${country}, ${countryCode}, ${placeId}, ${lat}, ${lon}, ${postalCode}) RETURNING address_id',
-                    bodyData)
+                    body)
     }else{
         return Promise.resolve({address_id: null})
     }
 }
-function updateAddress(bodyData, transaction=postgresdb){
-    if(addressFields.some(a=>bodyData[a] != null)){
-        if(bodyData['addressId']  == null)
+function updateAddress(body, transaction=postgresdb){
+    if(addressFields.some(a=>body[a] != null)){
+        if(body['addressId']  == null)
             throw Error('Missing field address_id')
 
-        return transaction.none(pgp.helpers.update(bodyData, addressUpdate) + ' WHERE address_id = ${addressId}', {addressId:bodyData['addressId']})
+        return transaction.none(pgp.helpers.update(body, addressUpdate) + ' WHERE address_id = ${addressId}', {addressId:body['addressId']})
     }else{
         return Promise.resolve({address_id: null})
     }

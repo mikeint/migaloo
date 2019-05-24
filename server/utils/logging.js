@@ -7,6 +7,7 @@ const logger = new createLogger({
     exitOnError: false,
 });
 
+logger.level = process.env.LOG_LEVEL || "silly";
 if (NODE_ENV == 'producation') {
     const os = require("os");
     const hostname = os.hostname();
@@ -54,10 +55,10 @@ if (NODE_ENV == 'producation') {
     }));
 }else if(NODE_ENV == 'mocha'){
     logger.add(new (transports.Console)({
-        silent: true
+        silent: false
     }));
+    logger.level = "error";
 }
-logger.level = process.env.LOG_LEVEL || "silly";
 
 
 module.exports = logger;

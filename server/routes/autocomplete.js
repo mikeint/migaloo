@@ -88,9 +88,9 @@ router.get('/tagByType/:tagTypeId/:find', passport.authentication, (req, res) =>
             LEFT JOIN ( \
                 SELECT tag_id, count(1) as tag_count \
                 FROM ( \
-                SELECT tag_id FROM posting_tags \
-                UNION ALL \
-                SELECT tag_id FROM candidate_tags \
+                    SELECT tag_id FROM posting_tags \
+                    UNION ALL \
+                    SELECT tag_id FROM candidate_tags \
                 ) un \
                 GROUP BY tag_id \
             ) cnt ON cnt.tag_id = t.tag_id \
@@ -119,7 +119,7 @@ router.get('/tagByType/:tagTypeId', passport.authentication, (req, res) => {
                 GROUP BY tag_id \
             ) cnt ON cnt.tag_id = t.tag_id \
             INNER JOIN tag_type tt ON tt.tag_type_id = t.tag_type_id \
-            ORDER BY CASE WHEN t.tag_type_id = ${tag_type_id} THEN 1 ELSE 0 END DESC, t.frequency DESC \
+            ORDER BY CASE WHEN t.tag_type_id = ${tagTypeId} THEN 1 ELSE 0 END DESC, t.frequency DESC \
             LIMIT 10', {tagTypeId:req.params.tagTypeId})
     .then(data => {
         res.json({success:true, tagList: data});
@@ -185,12 +185,14 @@ router.get('/tag', passport.authentication, (req, res) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/addTag/:tag', passport.authentication, (req, res) => {
+router.post('/addTag/:tagTypeId/:tag', passport.authentication, (req, res) => {
     // TODO: BIG NOTE, XSS potential ensure we are using pre tag on front end, and cleaning this out periodically
     var tag = req.params.tag
-    postgresdb.one('INSERT INTO tags (tag_name) VALUES ($1) RETURNING tag_id', tag)
+    var tagTypeId = req.params.tagTypeId
+    postgresdb.one('INSERT INTO tags (tag_name, tag_type_id) \
+    VALUES (${tagName}, ${tagTypeId}) ON CONFLICT("tag_name", "tag_type_id") DO UPDATE SET tag_name=EXCLUDED.tag_name RETURNING tag_id', {tagName:tag, tagTypeId:tagTypeId})
     .then(data => {
-        res.json({tag_id: data.tag_id, tag_name:tag});
+        res.json({success:true, tag_id:data.tag_id, tag_name:tag});
     })
     .catch(err => {
         logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:req.body.jwtPayload.id, error:err.message || err, body:req.body});

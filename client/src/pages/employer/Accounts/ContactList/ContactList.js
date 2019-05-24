@@ -56,7 +56,7 @@ const styles = theme => ({
 });
 const errorText = [
     {
-        stateName: "company_name",
+        stateName: "companyName",
         errorText: "Please enter a name for the company"
     },
     {
@@ -75,7 +75,7 @@ class ContactList extends React.Component{
 		this.state = {
             contactList: [],
             company: props.company,
-            company_name: props.company.company_name,
+            companyName: props.company.company_name,
             department: props.company.department,
             page: 1,
             pageCount: 1,
@@ -159,8 +159,7 @@ class ContactList extends React.Component{
     }
     saveCompany = (user) => {
         if(this.formValidation.isValid()){
-            post(`/api/company/setCompanyProfile`,
-                {companyId:this.state.company.company_id, company_name:this.state.company_name, department:this.state.department})
+            post(`/api/company/setCompanyProfile`, this.state)
             .then((res)=>{
                 if(res && res.data.success){
                     this.setState({didSave: true, isModified:false})
@@ -197,7 +196,7 @@ class ContactList extends React.Component{
         return ( 
             <div> 
                 <div className={classes.alertTitle} color="primary">
-                    <span>{this.state.company.company_name + ' - Contact List'}</span>
+                    <span>{this.state.company.companyName + ' - Contact List'}</span>
                     <IconButton color="inherit" className={classes.alertClose} onClick={this.closeSelf.bind(this)}>
                         <Close />
                     </IconButton>
@@ -210,15 +209,15 @@ class ContactList extends React.Component{
                     
                     <div>
                     <TextField
-                        name="company_name"
+                        name="companyName"
                         label="Company Name"
                         className={classes.textField}
-                        defaultValue={this.state.company_name}
+                        defaultValue={this.state.companyName}
                         required
                         onChange={this.handleChange}
                         margin="normal"
                         variant="outlined"
-                        {...this.formValidation.hasError("company_name")}
+                        {...this.formValidation.hasError("companyName")}
                     />
                     </div>
                     <div>
@@ -316,7 +315,7 @@ class ContactList extends React.Component{
                     onClick={()=>this.setState({showGetAccountManager:true})}>Add Contact</Button>
                 </div>
                 <GetAccountManager
-                    subject={this.state.company.company_name}
+                    subject={this.state.company.companyName}
                     open={this.state.showGetAccountManager}
                     onClose={this.handleCloseGetAccountManager}/>
                 <br/>

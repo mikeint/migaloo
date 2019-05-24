@@ -101,8 +101,8 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
-    var bodyData = req.body;
-    var jwtPayload = bodyData.jwtPayload;
+    var body = req.body;
+    var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
@@ -112,7 +112,7 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
     postgresdb.one('SELECT first_name, last_name, phone_number \
                     FROM account_manager e \
                     WHERE account_manager_id = ${account_manager_id}', {account_manager_id:jwtPayload.id}).then((data)=>{
-        var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:data[f]);
+        var fieldUpdates = fields.map(f=> body[f] != null?body[f]:data[f]);
         postgresdb.none('UPDATE account_manager SET first_name=$1, last_name=$2, phone_number=$3 WHERE account_manager_id = $4',
             [...fieldUpdates, jwtPayload.id])
         .then(() => {

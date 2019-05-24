@@ -97,8 +97,8 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json(errors);
     }
-    var bodyData = req.body;
-    var jwtPayload = bodyData.jwtPayload;
+    var body = req.body;
+    var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
@@ -112,12 +112,12 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
                     WHERE recruiter_id = $1', [jwtPayload.id]).then((data)=>{
         var addressId = data.address_id;
         var addressIdExists = (data.address_id != null);
-        var fieldUpdates = fields.map(f=> bodyData[f] != null?bodyData[f]:data[f]);
+        var fieldUpdates = fields.map(f=> body[f] != null?body[f]:data[f]);
         return postgresdb.tx(t => {
             // creating a sequence of transaction queries:
             var q1
             if(!addressIdExists){
-                q1 = address.addAddress(bodyData, t)
+                q1 = address.addAddress(body, t)
             }else{
                 r1 = Promise.resolve()
             }

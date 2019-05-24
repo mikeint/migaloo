@@ -223,11 +223,11 @@ function listCandidates(req, res){
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-    var sqlArgs = [jwtPayload.id, (page-1)*10]
+    var sqlArgs = {recruiterId:jwtPayload.id, page:(page-1)*10}
     if(search != null)
-        sqlArgs.push(search.split(' ').map(d=>d+":*").join(" & "))
+        sqlArgs['search'] = search.split(' ').map(d=>d+":*").join(" & ")
     if(candidateId != null)
-        sqlArgs.push(candidateId)
+        sqlArgs['candidateId'] = candidateId
     postgresdb.any(' \
         SELECT c.*, rc.created_on, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
@@ -250,19 +250,19 @@ function listCandidates(req, res){
                 SUM(CASE WHEN NOT has_seen_response AND migaloo_accepted THEN 1 ELSE 0 END) as new_accepted_count, \
                 SUM(CASE WHEN NOT has_seen_response AND NOT migaloo_accepted THEN 1 ELSE 0 END) as new_not_accepted_count \
             FROM candidate_posting cp\
-            WHERE cp.recruiter_id = $1 \
+            WHERE cp.recruiter_id = ${recruiterId} \
             GROUP BY cp.candidate_id \
         ) cpd ON cpd.candidate_id = c.candidate_id\
-        WHERE rc.recruiter_id = $1 AND c.active \
+        WHERE rc.recruiter_id = ${recruiterId} AND c.active \
         '+
-        (candidateId ? ((only!=null?'AND c.candidate_id = $3 ':'')+'ORDER BY (CASE WHEN c.candidate_id = $3 THEN 1 ELSE 0 END) DESC, c.last_name ASC, c.first_name ASC') :
+        (candidateId ? ((only!=null?'AND c.candidate_id = ${candidateId} ':'')+'ORDER BY (CASE WHEN c.candidate_id = ${candidateId} THEN 1 ELSE 0 END) DESC, c.last_name ASC, c.first_name ASC') :
         (search ? 
-            'AND (name_search @@ to_tsquery(\'simple\', $3)) \
-            ORDER BY ts_rank_cd(name_search, to_tsquery(\'simple\', $3)) DESC'
+            'AND (name_search @@ to_tsquery(\'simple\', ${search})) \
+            ORDER BY ts_rank_cd(name_search, to_tsquery(\'simple\', ${search})) DESC'
         :
             'ORDER BY c.last_name ASC, c.first_name ASC'
         ))+' \
-        OFFSET $2 \
+        OFFSET ${page} \
         LIMIT 10', sqlArgs)
     .then((data) => {
         // Marshal data
