@@ -71,7 +71,7 @@ function getAccountManagers(req, res) {
     var page = req.params.page;
     var searchString = req.params.searchString;
     if(searchString != null)
-    searchString = searchString.split(' ').map(d=>d+":*").join(" & ")
+        searchString = searchString.toLowerCase().split(' ').map(d=>d+":*").join(" & ")
     if(page == null || page < 1)
         page = 1;
     postgresdb.any('\
@@ -81,9 +81,10 @@ function getAccountManagers(req, res) {
         FROM account_manager ac \
         INNER JOIN login l ON l.user_id = ac.account_manager_id \
         WHERE l.user_type_id = 2 AND l.active \
-        '+(searchString?' \
+        '+(searchString != null?' \
         AND ((name_search) @@ to_tsquery(\'simple\', ${searchString})) \
-        ORDER BY ts_rank_cd(name_search, to_tsquery(\'simple\', ${searchString})) DESC ':
+        ORDER BY ts_rank_cd(name_search, to_tsquery(\'simple\', ${searchString})) DESC \
+        ':
         'ORDER BY ac.last_name ASC, ac.first_name ASC ')+
         'OFFSET ${page} \
         LIMIT 10', {page:(page-1)*10, searchString:searchString})
@@ -111,7 +112,7 @@ function getAccountManagers(req, res) {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.get('/generateToken', passport.authentication,  generateToken)
+router.post('/generateToken', passport.authentication,  generateToken)
 function generateToken(req, res) {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
@@ -124,7 +125,7 @@ function generateToken(req, res) {
         FROM login l \
         INNER JOIN company_contact cc ON cc.company_contact_id = l.user_id \
         INNER JOIN company c ON cc.company_id = c.company_id \
-        WHERE l.active AND l.user_id = ${user_id}', {user_id:req.body.user_id})
+        WHERE l.active AND l.user_id = ${user_id}', {user_id:req.body.userId})
     .then((args) => { 
         const randNumber = Math.trunc(Math.random()*100000000)
         const jwtPayload = {
