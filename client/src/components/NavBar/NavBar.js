@@ -24,10 +24,16 @@ const styles = theme => ({
     tabsContainer:{
         display: 'flex',
         flexDirection: 'column',
-        width: '100%', 
+        width: '100%',
+        '@media (max-width: 1024px)': {
+            flexDirection: 'row',
+        },
     },
     linkButton:{ 
         display: 'flex',  
+        '@media (max-width: 1024px)': {
+            flex: '1',
+        },
     },  
     tabsIndicator: {
       backgroundColor: '#6f90a14d',
