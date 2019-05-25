@@ -19,11 +19,11 @@ const camelColumnConfig = db.camelColumnConfig
 // lon float
 const convertFieldsToMap = (dataMap) => {
     const addressMap = {}
-    addressMap['addressId'] = dataMap['addressId']
+    addressMap['addressId'] = dataMap['addressId'] || dataMap['address_id']
     delete dataMap['addressId']
+    delete dataMap['address_id']
     addressFields.forEach(k=>{
-        k = camalize(k)
-        addressMap[k] = dataMap[k]
+        addressMap[camalize(k)] = dataMap[k]
         delete dataMap[k]
     })
     dataMap['address'] = addressMap
@@ -34,7 +34,7 @@ const addressFields = ['address_line_1', 'address_line_2', 'city', 'state_provin
 const addressUpdate = new pgp.helpers.ColumnSet(['?address_id', ...addressFields.map(camelColumnConfig)], {table: 'address'});
 
 function addAddress(body, transaction=postgresdb){
-    if(addressFields.some(a=>body[a] != null)){
+    if(body != null && addressFields.some(a=>body[a] != null)){
         return transaction.one('INSERT INTO address (address_line_1, address_line_2, city, state_province, state_province_code, country, country_code, place_id, lat, lon, postal_code) \
                     VALUES (${addressLine1}, ${addressLine2}, ${city}, ${stateProvince}, ${stateProvinceCode}, ${country}, ${countryCode}, ${placeId}, ${lat}, ${lon}, ${postalCode}) RETURNING address_id',
                     body)
@@ -43,7 +43,7 @@ function addAddress(body, transaction=postgresdb){
     }
 }
 function updateAddress(body, transaction=postgresdb){
-    if(addressFields.some(a=>body[a] != null)){
+    if(body != null && addressFields.some(a=>body[a] != null)){
         if(body['addressId']  == null)
             throw Error('Missing field address_id')
 

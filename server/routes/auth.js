@@ -297,13 +297,7 @@ router.get('/current', passport.authentication, (req, res) => {
     const ip = req.connection.remoteAddress;
     postgresdb.one('\
         SELECT c.company_id as "company", \
-            a.address_id as "addressId", \
-            a.address_line_1 as "addressLine1", \
-            a.address_line_2 as "addressLine2", \
-            a.city, a.state_province as "stateProvince", a.country, a.lat, a.lon, \
-            a.state_province_code as "stateProvinceCode", \
-            a.place_id as "placeId", \
-            a.country_code as "countryCode" \
+            a.* \
         FROM company_contact ec \
         INNER JOIN company c ON c.company_id = ec.company_id \
         LEFT JOIN address a ON a.address_id = c.address_id \

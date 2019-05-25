@@ -100,7 +100,7 @@ function findRecruitersForPost(postId, limit=5){
                     avg(tp.score) as average_score_accetable_candidates, \
                     max(tp.score) as max_score_accetable_candidates \
                 FROM ( \
-                    SELECT c.candidate_id, \
+                    SELECT rc.recruiter_id, ci.candidate_id, \
                         (least(greatest((max(j.salary)-max(ci.salary))/10.0, -1)+1, 1) \
                         -least(greatest((max(j.salary)-max(ci.salary))/50.0, 0), 1)) * \
                         (least(greatest((max(j.experience)-max(ci.experience))/15.0, -1)+1, 1) \

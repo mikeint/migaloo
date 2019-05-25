@@ -12,6 +12,13 @@ const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const postingTagsInsertHelper = new pgp.helpers.ColumnSet(['post_id', 'tag_id'], {table: 'posting_tags'});
+const camelColumnConfig = db.camelColumnConfig
+const jobPostFields = ['company_id', 'title', 'requirements', 'experience',
+    'salary', 'preliminary', 'is_visible', 'address_id', 'interview_count',
+    'opening_reason_id', 'opening_reason_comment', 'open_positions', 'job_type_id'];
+const jobPostInsert = new pgp.helpers.ColumnSet([...jobPostFields].map(camelColumnConfig), {table: 'job_posting_all'});
+const jobPostUpdate = new pgp.helpers.ColumnSet(['?post_id', ...jobPostFields.map(camelColumnConfig)], {table: 'job_posting_all'});
+
 
 
 /**
@@ -29,10 +36,10 @@ router.post('/create', passport.authentication,  (req, res) => {
      * Inputs Body:
      * title
      * requirements
-     * employer
+     * company
      * salary (Optional)
      * autoAddRecruiters (Optional)
-     * experienceTypeId (Optional)
+     * experience
      * tagIds (Optional)
      */
     var body = req.body
@@ -62,17 +69,10 @@ router.post('/create', passport.authentication,  (req, res) => {
         return postgresdb.tx(t => {
             // creating a sequence of transaction queries:
             return address.addAddress(body.address, t).then((addr_ret)=>{
-                console.log("address", addr_ret)
-                return t.one('\
-                    INSERT INTO job_posting_all (company_id, title, requirements, experience,\
-                        salary, preliminary, is_visible, address_id, interview_count, \
-                        opening_reason_id, opening_reason_comment, open_positions, job_type_id) \
-                    VALUES (${company}, ${title}, ${requirements}, ${experience}, ${salary}, ${preliminary},\
-                         NOT ${preliminary}, ${addressId}, ${interviewCount}, ${openingReasonId}, \
-                         ${openingReasonComment}, ${openPositions}, ${jobType}) RETURNING post_id',
-                    {company:body.company, title:body.title, requirements:body.requirements, experience:body.experience, salary:body.salary, preliminary:preliminary,
-                        addressId:addr_ret.addressId, interviewCount:body.interviewCount, openingReasonId:body.openReason,
-                        openingReasonComment:body.openReasonExplain, openPositions:body.numOpenings, jobType:body.jobType})
+                return t.one(pgp.helpers.insert({companyId:body.company, title:body.title, requirements:body.requirements,
+                        preliminary:preliminary, isVisible:!preliminary, experience:body.experience, salary:body.salary,
+                        addressId:addr_ret.address_id, interviewCount:body.interviewCount, openingReasonId:body.openReason,
+                        openingReasonComment:body.openReasonExplain, openPositions:body.numOpenings, jobTypeId:body.jobType}, jobPostInsert) + 'RETURNING post_id, address_id')
             })
             .then((post_ret)=>{
                 logger.info('Add new job posting', {tags:['job', 'new'], url:req.originalUrl, email:jwtPayload.email, ...body, preliminary: preliminary});
@@ -91,7 +91,7 @@ router.post('/create', passport.authentication,  (req, res) => {
                 }
             })
             .then((post_id) => {
-                res.status(200).json({success: true})
+                res.status(200).json({success: true, postId: post_id})
                 if(body.autoAddRecruiters !== false && preliminary !== true){
                     postingAssign.findRecruitersForPost(post_id).then((data)=>{
                         postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: post_id, recruiter_id: d.recruiter_id}}))
@@ -108,7 +108,7 @@ router.post('/create', passport.authentication,  (req, res) => {
     });
 });
 /**
- * Create a new job posting for the employer
+ * Edit a job posting for the employer
  * @route POST api/employerPostings/edit
  * @group postings - Job postings for employers
  * @param {Object} body.optional
@@ -137,8 +137,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
         return res.status(400).json(errors);
     }
     var jwtPayload = body.jwtPayload;
-    const validUser = (jwtPayload.userType == 2) || // Account manager
-                (jwtPayload.userType == 3) // Company
+    const validUser = (jwtPayload.userType == 2)
     if(!validUser){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
@@ -153,37 +152,34 @@ router.post('/edit', passport.authentication,  (req, res) => {
             // creating a sequence of transaction queries:
             return address.addAddress(body.address, t)
             .then((addr_ret)=>{
-                return t.one('\
-                    INSERT INTO job_posting_all (company_id, title, requirements, experience,\
-                        salary, preliminary, is_visible, address_id, interview_count, \
-                        opening_reason_id, opening_reason_comment, open_positions) \
-                    VALUES (${company}, ${title}, ${requirements}, ${experience}, ${salary}, ${preliminary},\
-                         NOT ${preliminary}, ${addressId}, ${interviewCount}, ${openingReasonId}, \
-                         ${openingReasonComment}, ${openPositions}) RETURNING post_id',
-                    {company:body.company, title:body.title, requirements:body.requirements, experience:body.experience, salary:body.salary, preliminary:preliminary,
-                        addressId:addr_ret.addressId, interviewCount:body.interviewCount, openingReasonId:body.openReason, openingReasonComment:body.openReasonExplain, openPositions:body.numOpenings})
+                const q1 = t.none('DELETE FROM posting_tags WHERE post_id = $1', [body.postId])
+                const q2 = t.none(pgp.helpers.update({companyId:body.company, title:body.title, requirements:body.requirements,
+                    preliminary:false, experience:body.experience, salary:body.salary,
+                    addressId:addr_ret.address_id, interviewCount:body.interviewCount, openingReasonId:body.openReason,
+                    openingReasonComment:body.openReasonExplain, openPositions:body.numOpenings, jobTypeId:body.jobType}, jobPostUpdate) + ' WHERE post_id = ${postId}', {postId: body.postId})
+                return t.batch([q1, q2])
             })
-            .then((post_ret)=>{
-                logger.info('Add new job posting', {tags:['job', 'new'], url:req.originalUrl, email:jwtPayload.email, ...body, preliminary: preliminary});
+            .then(()=>{
+                logger.info('Edit job posting', {tags:['job', 'edit'], url:req.originalUrl, email:jwtPayload.email, ...body});
                 if(body.tagIds != null && body.tagIds.length > 0){
-                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper);
+                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: body.postId, tag_id: d}}), postingTagsInsertHelper);
                     const q2 = t.none(query);
                     return q2
                         .then(() => {
-                            return Promise.resolve(post_ret.post_id)
+                            return Promise.resolve()
                         })
                         .catch(err => {
                             return Promise.reject(err)
                         });
                 }else{
-                    return Promise.resolve(post_ret.post_id)
+                    return Promise.resolve()
                 }
             })
-            .then((post_id) => {
+            .then(() => {
                 res.status(200).json({success: true})
-                if(body.autoAddRecruiters !== false && preliminary !== true){
-                    postingAssign.findRecruitersForPost(post_id).then((data)=>{
-                        postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: post_id, recruiter_id: d.recruiter_id}}))
+                if(body.autoAddRecruiters !== false){
+                    postingAssign.findRecruitersForPost(body.postId).then((data)=>{
+                        postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: body.postId, recruiter_id: d.recruiter_id}}))
                     }) // Async call to add posts to the new recruiter
                 }
             }).catch((err)=>{
@@ -235,13 +231,9 @@ function postListing(req, res){
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>filters[k]).join(" ")
 
     postgresdb.any('\
-        SELECT j.post_id, title, requirements, experience, j.company_id, j.salary, \
-            j.job_type_id, jt.job_type_name, j.opening_reason_id, op.opening_reason_name, j.opening_reason_comment, \
+        SELECT j.*, a.*, op.opening_reason_name \
             tag_names, tag_ids, new_posts_cnt, c.company_name, \
-            interview_count, open_positions, is_visible, \
-            posts_cnt, recruiter_count, j.created_on, (count(1) OVER())/10+1 AS page_count, j.preliminary, \
-            a.address_id as "addressId", a.address_line_1 as "addressLine1", a.address_line_2 as "addressLine2", a.city, a.state_province as "stateProvince", \
-            a.state_province_code as "stateProvinceCode", a.postal_code as "postalCode", a.place_id as "placeId", a.country, a.country_code as "countryCode" \
+            posts_cnt, recruiter_count, (count(1) OVER())/10+1 AS page_count \
         FROM job_posting_all j \
         INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         INNER JOIN company c ON c.company_id = j.company_id \
