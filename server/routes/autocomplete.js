@@ -14,7 +14,7 @@ const postgresdb = require('../config/db').postgresdb;
  * @access Private
  */
 router.get('/jobType/:find', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT job_type_name, job_type_id \
+    postgresdb.any('SELECT job_type_name as "jobTypeName", job_type_id as "jobTypeId" \
             FROM job_type \
             WHERE lower(job_type_name) LIKE $1 \
             ORDER BY job_type_id ASC \
@@ -28,7 +28,7 @@ router.get('/jobType/:find', passport.authentication, (req, res) => {
     });
 });
 router.get('/jobType', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT job_type_name, job_type_id \
+    postgresdb.any('SELECT job_type_name as "jobTypeName", job_type_id as "jobTypeId" \
             FROM job_type \
             ORDER BY job_type_id ASC')
     .then(data => {
@@ -48,7 +48,7 @@ router.get('/jobType', passport.authentication, (req, res) => {
  * @access Private
  */
 router.get('/openReason/:find', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT opening_reason_name, opening_reason_id \
+    postgresdb.any('SELECT opening_reason_name as "openingReasonName", opening_reason_id as "openingReasonId" \
             FROM opening_reason \
             WHERE lower(opening_reason_name) LIKE $1 \
             ORDER BY opening_reason_id ASC \
@@ -62,7 +62,7 @@ router.get('/openReason/:find', passport.authentication, (req, res) => {
     });
 });
 router.get('/openReason', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT opening_reason_name, opening_reason_id \
+    postgresdb.any('SELECT opening_reason_name as "openingReasonName", opening_reason_id as "openingReasonId" \
             FROM opening_reason \
             ORDER BY opening_reason_id ASC')
     .then(data => {
@@ -83,7 +83,7 @@ router.get('/openReason', passport.authentication, (req, res) => {
  * @access Private
  */
 router.get('/tagByType/:tagTypeId/:find', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT t.tag_name, t.tag_id, tt.tag_type_name, COALESCE(cnt.tag_count, 0) as tag_count \
+    postgresdb.any('SELECT t.tag_name as "tagName", t.tag_id as "tagId", tt.tag_type_name as "tagTypeName", COALESCE(cnt.tag_count, 0) as "tagCount" \
             FROM tags t \
             LEFT JOIN ( \
                 SELECT tag_id, count(1) as tag_count \
@@ -107,7 +107,7 @@ router.get('/tagByType/:tagTypeId/:find', passport.authentication, (req, res) =>
     });
 });
 router.get('/tagByType/:tagTypeId', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT t.tag_name, t.tag_id, tt.tag_type_name, COALESCE(cnt.tag_count, 0) as tag_count \
+    postgresdb.any('SELECT t.tag_name as "tagName", t.tag_id as "tagId", tt.tag_type_name as "tagTypeName", COALESCE(cnt.tag_count, 0) as "tagCount" \
             FROM tags t \
             LEFT JOIN ( \
                 SELECT tag_id, count(1) as tag_count \
@@ -130,7 +130,7 @@ router.get('/tagByType/:tagTypeId', passport.authentication, (req, res) => {
     });
 });
 router.get('/tag/:find', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT t.tag_name, t.tag_id, tt.tag_type_name, COALESCE(cnt.tag_count, 0) as tag_count \
+    postgresdb.any('SELECT t.tag_name as "tagName", t.tag_id as "tagId", tt.tag_type_name as "tagTypeName", COALESCE(cnt.tag_count, 0) as "tagCount" \
             FROM tags t \
             LEFT JOIN ( \
                 SELECT tag_id, count(1) as tag_count \
@@ -154,7 +154,7 @@ router.get('/tag/:find', passport.authentication, (req, res) => {
     });
 });
 router.get('/tag', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT t.tag_name, t.tag_id, tt.tag_type_name, COALESCE(cnt.tag_count, 0) as tag_count \
+    postgresdb.any('SELECT t.tag_name as "tagName", t.tag_id as "tagId", tt.tag_type_name as "tagTypeName", COALESCE(cnt.tag_count, 0) as "tagCount" \
             FROM tags t \
             LEFT JOIN ( \
                 SELECT tag_id, count(1) as tag_count \
@@ -192,7 +192,7 @@ router.post('/addTag/:tagTypeId/:tag', passport.authentication, (req, res) => {
     postgresdb.one('INSERT INTO tags (tag_name, tag_type_id) \
     VALUES (${tagName}, ${tagTypeId}) ON CONFLICT("tag_name", "tag_type_id") DO UPDATE SET tag_name=EXCLUDED.tag_name RETURNING tag_id', {tagName:tag, tagTypeId:tagTypeId})
     .then(data => {
-        res.json({success:true, tag_id:data.tag_id, tag_name:tag});
+        res.json({success:true, tagId:data.tag_id, tagName:tag});
     })
     .catch(err => {
         logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:req.body.jwtPayload.id, error:err.message || err, body:req.body});
@@ -209,7 +209,7 @@ router.post('/addTag/:tagTypeId/:tag', passport.authentication, (req, res) => {
  * @access Private
  */
 router.get('/denialReason/:find', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT denial_reason_text, denial_reason_id \
+    postgresdb.any('SELECT denial_reason_text as "denialReasonText", denial_reason_id as "denialReasonId" \
             FROM denial_reason \
             WHERE lower(denial_reason_text) LIKE $1 \
             ORDER BY denial_reason_id ASC \
@@ -223,7 +223,7 @@ router.get('/denialReason/:find', passport.authentication, (req, res) => {
     });
 });
 router.get('/denialReason', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT denial_reason_text, denial_reason_id \
+    postgresdb.any('SELECT denial_reason_text as "denialReasonText", denial_reason_id as "denialReasonId" \
             FROM denial_reason \
             ORDER BY denial_reason_id ASC')
     .then(data => {

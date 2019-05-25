@@ -36,7 +36,7 @@ class RecruiterView extends React.Component{
         this.getRecruiters();
     } 
     getRecruiters = () => {
-        get('/api/employerPostings/listNewRecruiters/'+this.state.jobObj.post_id)
+        get('/api/employerPostings/listNewRecruiters/'+this.state.jobObj.postId)
         .then((res)=>{
             if(res && res.data.success){
                 this.setState({recruiters:res.data.recruiters});
@@ -47,10 +47,10 @@ class RecruiterView extends React.Component{
     }
     addRecruiter = (recruiterId) => {
         post('/api/employerPostings/addRecruiter',
-            {postId:this.state.jobObj.post_id, recruiterId:recruiterId})
+            {postId:this.state.jobObj.postId, recruiterId:recruiterId})
         .then((res)=>{
             if(res && res.data.success){
-            this.setState({recruiters:this.state.recruiters.filter(r=>r.recruiter_id !== recruiterId)});
+            this.setState({recruiters:this.state.recruiters.filter(r=>r.recruiterId !== recruiterId)});
             }
         }).catch(errors => 
             console.log(errors)
@@ -77,14 +77,14 @@ class RecruiterView extends React.Component{
                     </TableRow> :
                     this.state.recruiters.map((d, i)=>{
                         return <TableRow key={i} className={classes.tableRow}>
-                            <TableCell className={classes.tableCell}>{d.first_name}</TableCell>
-                            <TableCell className={classes.tableCell}>{d.last_name}</TableCell>
+                            <TableCell className={classes.tableCell}>{d.firstName}</TableCell>
+                            <TableCell className={classes.tableCell}>{d.lastName}</TableCell>
                             <TableCell className={classes.tableCell}>{Math.trunc(d.score*100)+"%"}</TableCell>
                             <TableCell className={classNames(classes.tableCell, classes.center)}>
                                 <Button 
                                     variant="outlined"
                                     color="primary"
-                                    onClick={()=>this.addRecruiter(d.recruiter_id)}>Assign</Button>
+                                    onClick={()=>this.addRecruiter(d.recruiterId)}>Assign</Button>
                             </TableCell>
                         </TableRow>
                     })

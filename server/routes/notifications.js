@@ -55,11 +55,11 @@ function listNew(req, res) {
     notifications.getNewNotifications(jwtPayload.id, lastId)
     .then((data) => {
         // Marshal data
-        data = data.map(m=>{
-            var timestamp = moment(m.created_on);
+        data = data.map(db.camelizeFields).map(m=>{
+            var timestamp = moment(m.createdOn);
             var ms = timestamp.diff(moment());
             m.created = moment.duration(ms).humanize() + " ago";
-            m.created_on = timestamp.format("x");
+            m.createdOn = timestamp.format("x");
             return m
         })
         res.json({success:true, notificationList:data})
@@ -97,14 +97,14 @@ function list(req, res) {
         var counts = ret[0]
         var data = ret[1]
         // Marshal data
-        data = data.map(m=>{
-            var timestamp = moment(m.created_on);
+        data = data.map(db.camelizeFields).map(m=>{
+            var timestamp = moment(m.createdOn);
             var ms = timestamp.diff(moment());
             m.created = moment.duration(ms).humanize() + " ago";
-            m.created_on = timestamp.format("x");
+            m.createdOn = timestamp.format("x");
             return m
         })
-        res.json({success:true, notificationList:data, counts:counts})
+        res.json({success:true, notificationList:data, counts:db.camelizeFields(counts)})
     })
     .catch(err => {
         logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

@@ -125,7 +125,7 @@ class DenialReason extends React.Component{
                                 }}
                             >
                                 {this.state.denialReasonList.map((d, i)=>
-                                    <MenuItem key={i} value={d.denial_reason_id}>{d.denial_reason_text}</MenuItem>
+                                    <MenuItem key={i} value={d.denialReasonId}>{d.denialReasonText}</MenuItem>
                                 )}
                             </Select>
                             <FormHelperText>{this.formValidation.hasError("denialReasonId").helperText}</FormHelperText>

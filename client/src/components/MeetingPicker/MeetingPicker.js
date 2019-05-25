@@ -170,7 +170,7 @@ class MeetingPicker extends React.Component{
                                     }}
                                 >
                                     {this.state.locationList.map((d, i)=>
-                                        <MenuItem key={i} value={d.location_type_id}>{d.location_type_name}</MenuItem>
+                                        <MenuItem key={i} value={d.locationTypeId}>{d.locationTypeName}</MenuItem>
                                     )}
                                 </Select>
                             </FormControl>

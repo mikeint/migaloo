@@ -109,9 +109,9 @@ class Accounts extends React.Component{
                                 {
                                     this.state.companyList.map((item, i) => {
                                         return <Button key={i} className={classes.row} onClick={()=>this.openContactList(item)}>
-                                            {item.company_name}
+                                            {item.companyName}
                                             <span className={classes.createdTime}>{item.created}</span>
-                                            <span className={classes.isPrimary}>{item.is_primary && <div className={classes.isPrimaryBox}>Primary</div>}</span>
+                                            <span className={classes.isPrimary}>{item.isPrimary && <div className={classes.isPrimaryBox}>Primary</div>}</span>
                                         </Button>
                                     })
                                 }

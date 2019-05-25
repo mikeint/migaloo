@@ -9,18 +9,18 @@ class AlertItem extends React.Component{
 
         };
     }
-    // candidate_id, post_id, posted_on, c.first_name, coins, alert_count, title
-    // cp.candidate_id, post_id, migaloo_accepted, migaloo_responded_on, coins, alert_count, c.first_name, c.last_name
+    // candidateId, postId, postedOn, c.firstName, coins, alertCount, title
+    // cp.candidateId, postId, migalooAccepted, migaloo_respondedOn, coins, alertCount, c.firstName, c.lastName
     render(){
         const alert = this.props.alert;
         var row1, row2, row3;
         if(alert.userType === 1){ // Recuiter
-            row1 = `${alert.first_name} ${alert.last_name} has ${alert.migaloo_accepted?'':'not '} been accepted`;
+            row1 = `${alert.firstName} ${alert.lastName} has ${alert.migalooAccepted?'':'not '} been accepted`;
             row3 = alert.responded;
         }else{ // Employer
             var title = alert.title;
             title = title.length > 30 ? title.substring(0, 27).replace(/(^[^A-Za-z0-9]+|[^A-Za-z0-9]+$)/g, '').trim()+'...': title; // Limit the title to 30 characters
-            row1 = `${alert.first_name} has been posted to`;
+            row1 = `${alert.firstName} has been posted to`;
             row2 = `${title}`;
             row3 = alert.created;
         }

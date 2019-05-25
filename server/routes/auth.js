@@ -305,7 +305,6 @@ router.get('/current', passport.authentication, (req, res) => {
         LIMIT 1', {userId:req.body.jwtPayload.id})
     .then((data) => {
         address.convertFieldsToMap(data)
-        console.log({...req.body.jwtPayload, ...data})
         res.json({success: true, data: {...req.body.jwtPayload, ...data}})
     }).catch((err)=>{
         logger.error('Get current jwt data', {tags:['jwt', 'sql'], url:req.originalUrl, ...req.body.jwtPayload, ip:ip, error:err.message || err});

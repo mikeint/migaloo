@@ -54,7 +54,7 @@ class TagSearch extends React.Component{
     }
     changed = () => {
         if(this.state.onChange)
-            this.state.onChange(this.state.tags.map(t=>t.tag_id));
+            this.state.onChange(this.state.tags.map(t=>t.tagId));
         this.updateInputLocation();
     }
     shouldComponentUpdate(nextProps, nextState) {
@@ -77,11 +77,11 @@ class TagSearch extends React.Component{
             .then((res) => { 
                 if(res && res.data.success) {
                     if(!res.data.tagList.find(tag=>
-                        tag.tag_name.toLowerCase() === lowerSearchString
+                        tag.tagName.toLowerCase() === lowerSearchString
                     )){
-                        res.data.tagList.unshift({tag_name:searchString,
-                            tag_count: 0,
-                            tag_id:-1 })
+                        res.data.tagList.unshift({tagName:searchString,
+                            tagCount: 0,
+                            tagId:-1 })
                     }
                     this.setState({potentialTagList: res.data.tagList})
                 }
@@ -133,8 +133,8 @@ class TagSearch extends React.Component{
     }
     editTag = (e, i) => {
         const removedTag = this.removeTag(e, i);
-        // this.textInput.current.value = removedTag.tag_name;
-        this.setState({textValue: removedTag.tag_name});
+        // this.textInput.current.value = removedTag.tagName;
+        this.setState({textValue: removedTag.tagName});
         this.textInput.current.focus();
     }
     render(){  
@@ -151,7 +151,7 @@ class TagSearch extends React.Component{
                         <span className="tag-listing" style={this.state.tagListBoxStype} ref={this.tagListBox}>
                             {this.state.tags.map((tag, i)=>
                                 <Chip
-                                    label={tag.tag_name}
+                                    label={tag.tagName}
                                     key={i}
                                     onDelete={(e)=>this.removeTag(e, i)}
                                     className={classes.chip}
@@ -175,7 +175,7 @@ class TagSearch extends React.Component{
                         <div className="autoCompleteBox">
                             {!this.state.searching?this.state.potentialTagList.map((tag, i)=>
                                 <div className="potentialTag" key={i} onClick={()=>this.addTag(tag)}>
-                                    {tag.tag_name} <span className="tagCount">({tag.tag_count})</span>
+                                    {tag.tagName} <span className="tagCount">({tag.tagCount})</span>
                                 </div>
                             ):<div className="loadingTags"><Loader/></div>}
                         </div>

@@ -112,7 +112,7 @@ class OpenReasonSelector extends React.Component{
                             Unspecified
                         </MenuItem>
                         {this.state.openReasonList.map((d, i)=>
-                            <MenuItem key={i} value={d.opening_reason_id}>{d.opening_reason_name}</MenuItem>
+                            <MenuItem key={i} value={d.openingReasonId}>{d.openingReasonName}</MenuItem>
                         )}
                         <MenuItem value={otherNumber}>
                             Other (Please Explain)

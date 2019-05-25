@@ -60,8 +60,8 @@ describe('Company', function() {
                 try{
                     assert.ok(res.success)
                     assert.notEqual(res.companies, null)
-                    assert.strictEqual(res.companies[0].company_name, 'Test Company')
-                    assert.strictEqual(res.companies[0].addressLine1, 'Tremont St')
+                    assert.strictEqual(res.companies[0].companyName, 'Test Company')
+                    assert.strictEqual(res.companies[0].address.addressLine1, 'Tremont St')
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)
@@ -107,8 +107,8 @@ describe('Company', function() {
                 try{
                     assert.ok(res.success)
                     assert.notEqual(res.companies, null)
-                    assert.strictEqual(res.companies[0].company_name, 'Test Company Edit')
-                    assert.strictEqual(res.companies[0].addressLine1, 'Tremont St Edit')
+                    assert.strictEqual(res.companies[0].companyName, 'Test Company Edit')
+                    assert.strictEqual(res.companies[0].address.addressLine1, 'Tremont St Edit')
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)

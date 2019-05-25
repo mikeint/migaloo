@@ -71,12 +71,12 @@ class CandidateView extends React.Component{
     }
     
     handleRead = () => {
-        if(!this.state.candidate.has_seen_post){
+        if(!this.state.candidate.hasSeenPost){
             var newRowObj = {};
             Object.assign(newRowObj, this.state.candidate);
-            newRowObj.has_seen_post = true;
+            newRowObj.hasSeenPost = true;
             this.setState({candidate:newRowObj});
-            post(`/api/employerPostings/setRead/${this.props.job.post_id}/${this.props.obj.candidate_id}`, {})
+            post(`/api/employerPostings/setRead/${this.props.job.postId}/${this.props.obj.candidateId}`, {})
             .then((res)=>{
 
             }).catch(errors => 
@@ -85,7 +85,7 @@ class CandidateView extends React.Component{
         }
     }
     getResumeURL = () => {
-        get('/api/resume/view/'+this.props.obj.candidate_id)
+        get('/api/resume/view/'+this.props.obj.candidateId)
         .then((res)=>{
             if(res && res.data.success)
                 window.open(res.data.url, '_blank');
@@ -107,13 +107,13 @@ class CandidateView extends React.Component{
         }
     }
     postResponse = (type, accepted, denialReasonId) => {
-        post(`/api/employerPostings/setAccepted/${type}/${this.state.jobObj.post_id}/${this.state.candidate.candidate_id}/${this.state.candidate.recruiter_id}`,
+        post(`/api/employerPostings/setAccepted/${type}/${this.state.jobObj.postId}/${this.state.candidate.candidateId}/${this.state.candidate.recruiterId}`,
             {accepted:accepted, denialReasonId: denialReasonId})
         .then((res)=>{
             if(res == null) return
             var newRowObj = {};
             Object.assign(newRowObj, this.state.candidate);
-            newRowObj[type+'_accepted'] = accepted;
+            newRowObj[type+'Accepted'] = accepted;
             this.setState({candidate:newRowObj});
         }).catch(errors => 
             console.log(errors.response.data)
@@ -133,15 +133,15 @@ class CandidateView extends React.Component{
         return (
             <ExpansionPanel onClick={this.handleRead.bind(this)}>
                 <ExpansionPanelSummary>
-                    <span>{this.state.candidate.candidate_first_name}</span>
-                    {this.state.candidate.has_seen_post ? '' : <FiberNew className={classes.newIndicator} />}
+                    <span>{this.state.candidate.candidateFirstName}</span>
+                    {this.state.candidate.hasSeenPost ? '' : <FiberNew className={classes.newIndicator} />}
                     {/* <span className="coins">{this.state.candidate.coins} coins(s)</span> */}
                     <div></div>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
                     <div className={classes.flex}>
                         <div className={classes.flexColumn}>
-                            {this.state.candidate.resume_id != null && 
+                            {this.state.candidate.resumeId != null && 
                                 <Button
                                     variant="contained" 
                                     color="primary"
@@ -152,10 +152,10 @@ class CandidateView extends React.Component{
                         </div>
                         <div className={classes.flexColumn}>
                             <div className={classes.rowMargin}>Recruiter: <span className={classes.rowData}>
-                                {this.state.candidate.first_name} {this.state.candidate.last_name}
+                                {this.state.candidate.firstName} {this.state.candidate.lastName}
                             </span></div>
                             <div className={classes.rowMargin}>Phone Number: <span className={classes.rowData}>
-                                <a className={classes.a} href={"tel:"+this.state.candidate.phone_number}>{this.state.candidate.phone_number}</a>
+                                <a className={classes.a} href={"tel:"+this.state.candidate.phoneNumber}>{this.state.candidate.phoneNumber}</a>
                             </span></div>
                             <div className={classes.rowMargin}>Email: <span className={classes.rowData}>
                                 <a className={classes.a} href={"mailto:"+this.state.candidate.email}>{this.state.candidate.email}</a>
@@ -167,14 +167,14 @@ class CandidateView extends React.Component{
                                 color="primary"
                                 onClick={()=>this.handleResponse('migaloo', true)}
                                 className={classes.marginRight}>
-                                <ThumbUp className={this.trueFalseNull(this.state.candidate.migaloo_accepted, classes.selected, classes.notselected, '')}/>&nbsp;Migaloo Accepts
+                                <ThumbUp className={this.trueFalseNull(this.state.candidate.migalooAccepted, classes.selected, classes.notselected, '')}/>&nbsp;Migaloo Accepts
                             </Button>
                             <Button
                                 variant="contained" 
                                 color="primary"
                                 onClick={()=>this.handleResponse('migaloo', false)}
                                 className={classes.marginRight}>
-                                <ThumbDown className={this.trueFalseNull(this.state.candidate.migaloo_accepted, classes.notselected, classes.selected, '')}/>&nbsp;Reject
+                                <ThumbDown className={this.trueFalseNull(this.state.candidate.migalooAccepted, classes.notselected, classes.selected, '')}/>&nbsp;Reject
                             </Button>
                         </div>
                         <div className={classes.flexColumn}>
@@ -185,7 +185,7 @@ class CandidateView extends React.Component{
                             <Chat/>&nbsp;Open Chat
                             </Button>
                         </div>
-                        {this.state.candidate.migaloo_accepted === true && 
+                        {this.state.candidate.migalooAccepted === true && 
                             <React.Fragment>
                                 <div className={classes.flexColumn}>
                                     <Button
@@ -193,31 +193,31 @@ class CandidateView extends React.Component{
                                         color="primary"
                                         onClick={()=>this.handleResponse('employer', true)}
                                         className={classes.marginRight}>
-                                        <Interview className={this.trueFalseNull(this.state.candidate.employer_accepted, classes.selected, classes.notselected, '')}/>&nbsp;Employer Accepts
+                                        <Interview className={this.trueFalseNull(this.state.candidate.employerAccepted, classes.selected, classes.notselected, '')}/>&nbsp;Employer Accepts
                                     </Button>
                                     <Button
                                         variant="contained" 
                                         color="primary"
                                         onClick={()=>this.handleResponse('employer', false)}
                                         className={classes.marginRight}>
-                                        <NoInterview className={this.trueFalseNull(this.state.candidate.employer_accepted, classes.notselected, classes.selected, '')}/>&nbsp;Rejects
+                                        <NoInterview className={this.trueFalseNull(this.state.candidate.employerAccepted, classes.notselected, classes.selected, '')}/>&nbsp;Rejects
                                     </Button>
                                 </div>
-                                {this.state.candidate.employer_accepted === true && 
+                                {this.state.candidate.employerAccepted === true && 
                                     <div className={classes.flexColumn}>
                                         <Button
                                             variant="contained" 
                                             color="primary"
                                             onClick={()=>this.handleResponse('job', true)}
                                             className={classes.marginRight}>
-                                            <Work className={this.trueFalseNull(this.state.candidate.job_accepted, classes.selected, classes.notselected, '')}/>&nbsp;Got the Job
+                                            <Work className={this.trueFalseNull(this.state.candidate.jobAccepted, classes.selected, classes.notselected, '')}/>&nbsp;Got the Job
                                         </Button>
                                         <Button
                                             variant="contained" 
                                             color="primary"
                                             onClick={()=>this.handleResponse('job', false)}
                                             className={classes.marginRight}>
-                                            <NoWork className={this.trueFalseNull(this.state.candidate.job_accepted, classes.notselected, classes.selected, '')}/>&nbsp;Rejected
+                                            <NoWork className={this.trueFalseNull(this.state.candidate.jobAccepted, classes.notselected, classes.selected, '')}/>&nbsp;Rejected
                                         </Button>
                                     </div>
                                 }
@@ -225,7 +225,7 @@ class CandidateView extends React.Component{
                         }
                         {this.state.showChat && 
                             <Conversation
-                                messageSubjectId={this.state.candidate.message_subject_id}
+                                messageSubjectId={this.state.candidate.messageSubjectId}
                                 loadByMessageSubjectId={true}
                                 open={this.state.showChat} onClose={()=>this.setState({showChat:false})}/>
                         }

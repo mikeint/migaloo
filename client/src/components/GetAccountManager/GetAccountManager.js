@@ -45,8 +45,8 @@ class GetAccountManager extends Component {
         .then((res)=>{
             if(res.data && res.data.success){
                 const data = res.data.accountManagers.map(d=>{
-                    d.id = d.user_id
-                    d.name = d.first_name+" "+d.last_name
+                    d.id = d.userId
+                    d.name = d.firstName+" "+d.lastName
                     return d;
                 })
                 this.setState({

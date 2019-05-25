@@ -187,7 +187,7 @@ function listMessages(req, res){
             ms.company_contact_ids, \
             c.company_name, \
             r.recruiter_id, r.first_name as recruiter_first_name, r.last_name as recruiter_last_name, \
-            (count(1) OVER())/10+1 AS page_count, ${userId} as my_id \
+            (count(1) OVER())/10+1 as "pageCount", ${userId} as my_id \
         FROM ( \
             SELECT gm.message_subject_id, gm.user_id_1, gm.user_id_2, gm.subject_user_id, gm.created_on, gm.post_id, gm.company_id, gm.recruiter_id, array_agg(gm.company_contact_id) as company_contact_ids  \
             FROM \
@@ -225,27 +225,27 @@ function listMessages(req, res){
         ', {userId:userId, page:(page-1)*10, messageSubjectId:messageSubjectId})
     .then((data) => {
         // Marshal data
-        data = data.map(m=>{
-            m.toMe = jwtPayload.userType === 1 ? m.to_id === m.recruiter_id : m.to_id !== m.recruiter_id;
+        data = data.map(db.camelizeFields).map(m=>{
+            m.toMe = jwtPayload.userType === 1 ? m.toId === m.recruiterId : m.toId !== m.recruiterId;
             let contactName = jwtPayload.userType === 1?
-                (m.company_name):
-                (m.recruiter_first_name+" "+m.recruiter_last_name);
+                (m.companyName):
+                (m.recruiterFirstName+" "+m.recruiterLastName);
             m.contactName = contactName;
 
-            var dateOfferTimestamp = moment(m.date_offer);
-            m.date_offer_str = dateOfferTimestamp.format("LLL");
-            timestamp = moment(m.subject_created_on);
+            var dateOfferTimestamp = moment(m.dateOffer);
+            m.dateOfferStr = dateOfferTimestamp.format("LLL");
+            timestamp = moment(m.subjectCreatedOn);
             ms = timestamp.diff(moment());
-            m.subject_created = moment.duration(ms).humanize() + " ago";
-            m.subject_created_on = timestamp.format("x");
-            if(m.created_on == null){
-                m.created = m.subject_created;
-                m.created_on = m.subject_created_on;
+            m.subjectCreated = moment.duration(ms).humanize() + " ago";
+            m.subjectCreatedOn = timestamp.format("x");
+            if(m.createdOn == null){
+                m.created = m.subjectCreated;
+                m.createdOn = m.subjectCreatedOn;
             }else{
-                var timestamp = moment(m.created_on);
+                var timestamp = moment(m.createdOn);
                 var ms = timestamp.diff(moment());
                 m.created = moment.duration(ms).humanize() + " ago";
-                m.created_on = timestamp.format("x");
+                m.createdOn = timestamp.format("x");
             }
             return m
         })
@@ -266,11 +266,11 @@ function listMessages(req, res){
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.get('/listConversationMessages/:message_subject_id', passport.authentication, listConversationMessages);
-router.get('/listConversationMessages/:message_subject_id/:page', passport.authentication, listConversationMessages);
+router.get('/listConversationMessages/:messageSubjectId', passport.authentication, listConversationMessages);
+router.get('/listConversationMessages/:messageSubjectId/:page', passport.authentication, listConversationMessages);
 function listConversationMessages(req, res){
     var page = req.params.page;
-    var messageSubjectId = parseInt(req.params.message_subject_id, 10);
+    var messageSubjectId = parseInt(req.params.messageSubjectId, 10);
     if(messageSubjectId == null){
         const errorMessage = "Missing Message Subject Id"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
@@ -290,7 +290,7 @@ function listConversationMessages(req, res){
             ms.company_contact_ids, \
             c.company_name, \
             r.recruiter_id, r.first_name as recruiter_first_name, r.last_name as recruiter_last_name, \
-            (count(1) OVER())/10+1 AS page_count, ${userId} as my_id \
+            (count(1) OVER())/10+1 as "pageCount", ${userId} as my_id \
         FROM messages m \
         INNER JOIN ( \
             SELECT gm.message_subject_id, gm.user_id_1, gm.user_id_2, gm.subject_user_id, gm.created_on, gm.post_id, gm.company_id, gm.recruiter_id, array_agg(gm.company_contact_id) as company_contact_ids  \
@@ -318,18 +318,18 @@ function listConversationMessages(req, res){
         ', {userId:userId, messageSubjectId:messageSubjectId, page:(page-1)*10})
     .then((data) => {
         // Marshal data
-        data = data.map(m=>{
-            m.toMe = jwtPayload.userType === 1 ? m.to_id === m.recruiter_id : m.to_id !== m.recruiter_id;
+        data = data.map(db.camelizeFields).map(m=>{
+            m.toMe = jwtPayload.userType === 1 ? m.toId === m.recruiterId : m.toId !== m.recruiterId;
             let contactName = jwtPayload.userType === 1?
-                (m.company_name):
-                (m.recruiter_first_name+" "+m.recruiter_last_name);
+                (m.companyName):
+                (m.recruiterFirstName+" "+m.recruiterLastName);
             m.contactName = contactName;
-            var dateOfferTimestamp = moment(m.date_offer);
-            m.date_offer_str = dateOfferTimestamp.format("LLL");
-            var timestamp = moment(m.created_on);
+            var dateOfferTimestamp = moment(m.dateOffer);
+            m.dateOfferStr = dateOfferTimestamp.format("LLL");
+            var timestamp = moment(m.createdOn);
             var ms = timestamp.diff(moment());
             m.created = moment.duration(ms).humanize() + " ago";
-            m.created_on = timestamp.format("x");
+            m.createdOn = timestamp.format("x");
             return m
         })
         res.json(data)

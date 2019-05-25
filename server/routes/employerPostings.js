@@ -233,7 +233,7 @@ function postListing(req, res){
     postgresdb.any('\
         SELECT j.*, a.*, op.opening_reason_name \
             tag_names, tag_ids, new_posts_cnt, c.company_name, \
-            posts_cnt, recruiter_count, (count(1) OVER())/10+1 AS page_count \
+            posts_cnt, recruiter_count, (count(1) OVER())/10+1 as "pageCount" \
         FROM job_posting_all j \
         INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         INNER JOIN company c ON c.company_id = j.company_id \
@@ -262,12 +262,12 @@ function postListing(req, res){
         LIMIT 10', {contactId:jwtPayload.id, page:(page-1)*10, ...paramsToAdd, postId:postId})
     .then((data) => {
         // Marshal data
-        data = data.map(m=>{
+        data = data.map(db.camelizeFields).map(m=>{
             address.convertFieldsToMap(m)
-            var timestamp = moment(m.created_on)
+            var timestamp = moment(m.createdOn)
             var ms = timestamp.diff(moment());
             m.created = moment.duration(ms).humanize() + " ago";
-            m.created_on = timestamp.format("x");
+            m.createdOn = timestamp.format("x");
             return m
         })
         res.json({success:true, jobPosts:data})
@@ -315,11 +315,11 @@ function listRecruiters(req, res){
         ORDER BY j.created_on DESC', {postId:postId})
     .then((data) => {
         // Marshal data
-        data = data.map(m=>{
-            var timestamp = moment(m.recruiter_created_on)
+        data = data.map(db.camelizeFields).map(m=>{
+            var timestamp = moment(m.recruiterCreatedOn)
             var ms = timestamp.diff(moment());
-            m.recruiter_created = moment.duration(ms).humanize() + " ago";
-            m.recruiter_created_on = timestamp.format("x");
+            m.recruiterCreated = moment.duration(ms).humanize() + " ago";
+            m.recruiterCreatedOn = timestamp.format("x");
             return m
         })
         res.json({success:true, recruiters:data})
@@ -354,7 +354,7 @@ function listNewRecruiters(req, res){
     }
     postingAssign.findRecruitersForPost(postId)
     .then((data) => {
-        res.json({success:true, recruiters:data})
+        res.json({success:true, recruiters:data.map(db.camelizeFields)})
     })
     .catch(err => {
         logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
@@ -655,11 +655,12 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
 
     postgresdb.any(' \
         SELECT c.candidate_id, r.first_name, r.last_name, r.phone_number, r.recruiter_id, rl.email, cp.migaloo_accepted, cp.employer_accepted,\
-            cp.job_accepted, cp.has_seen_post, c.first_name as candidate_first_name, j.created_on as posted_on, c.resume_id, ms.message_subject_id \
+            cp.job_accepted, cp.has_seen_post, c.first_name as candidate_first_name, j.created_on as posted_on, c.resume_id, ms.message_subject_id, a.* \
         FROM job_posting_all j \
         INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         INNER JOIN candidate_posting cp ON cp.post_id = j.post_id \
         INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
+        LEFT JOIN address a ON a.address_id = c.address_id \
         INNER JOIN recruiter r ON r.recruiter_id = cp.recruiter_id \
         INNER JOIN messages_subject ms ON ms.subject_user_id = cp.candidate_id AND ms.post_id = j.post_id AND (ms.user_id_1 = cp.recruiter_id OR ms.user_id_2 = cp.recruiter_id)  \
         INNER JOIN login rl ON r.recruiter_id = rl.user_id \
@@ -667,11 +668,12 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
         ORDER BY cp.created_on DESC', {postId:postId, userId:jwtPayload.id})
     .then((data) => {
         // Marshal data
-        data = data.map(m=>{
-            var timestamp = moment(m.posted_on);
+        data = data.map(db.camelizeFields).map(m=>{
+            address.convertFieldsToMap(m)
+            var timestamp = moment(m.postedOn);
             var ms = timestamp.diff(moment());
             m.posted = moment.duration(ms).humanize() + " ago";
-            m.posted_on = timestamp.format("x");
+            m.postedOn = timestamp.format("x");
             return m
         })
         res.json({success:true, candidateList:data})
@@ -714,11 +716,11 @@ router.get('/listRecruiters/:postId', passport.authentication,  (req, res) => {
         ORDER BY cp.created_on DESC', {postId:postId, userId:jwtPayload.id})
     .then((data) => {
         // Marshal data
-        data = data.map(m=>{
-            var timestamp = moment(m.recruiter_created_on);
+        data = data.map(db.camelizeFields).map(m=>{
+            var timestamp = moment(m.recruiterCreatedOn);
             var ms = timestamp.diff(moment());
-            m.recruiter_created = moment.duration(ms).humanize() + " ago";
-            m.recruiter_created_on = timestamp.format("x");
+            m.recruiterCreated = moment.duration(ms).humanize() + " ago";
+            m.recruiterCreatedOn = timestamp.format("x");
             return m
         })
         res.json({success:true, recruiterList:data})

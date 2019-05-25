@@ -8,7 +8,7 @@ const cn = {
 };
 var db = pgp(cn);
 const camalize = (str) => {
-    return str.toLowerCase().replace(/[^a-zA-Z0-9]+(.)/g, function(match, chr)
+    return str.toLowerCase().replace(/_(.)/g, function(match, chr)
     {
         return chr.toUpperCase();
     });
@@ -21,11 +21,19 @@ const camelColumnConfig = name=>{
             return col.source[camalize(name)] == null;
         }
     }
+}
 
+const camelizeFields = (dataMap) => {
+    const newMap = {}
+    Object.keys(dataMap).forEach(k=>{
+        newMap[camalize(k)] = dataMap[k]
+    })
+    return newMap
 }
 module.exports = {
     postgresdb: db,
     pgp: pgp,
     camalize: camalize,
-    camelColumnConfig: camelColumnConfig
+    camelColumnConfig: camelColumnConfig,
+    camelizeFields: camelizeFields
 };

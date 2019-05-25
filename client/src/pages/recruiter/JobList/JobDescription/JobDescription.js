@@ -100,28 +100,28 @@ class CandidateRow extends React.Component{
         const { classes, i } = this.props;
         const { candidate } = this.state;
         return <TableRow key={i} className={classes.tableRow}>
-            <TableCell className={classes.tableCell}>{candidate.first_name}</TableCell>
-            <TableCell className={classes.tableCell}>{candidate.last_name}</TableCell>
+            <TableCell className={classes.tableCell}>{candidate.firstName}</TableCell>
+            <TableCell className={classes.tableCell}>{candidate.lastName}</TableCell>
             <TableCell className={classes.tableCell}>{candidate.created}</TableCell>
             <TableCell className={classes.tableCell}>
                 {
-                    (candidate.migaloo_accepted === false || candidate.employer_accepted === false || candidate.job_accepted === false)?
+                    (candidate.migalooAccepted === false || candidate.employerAccepted === false || candidate.jobAccepted === false)?
                         "Denied" :
                         (
-                            candidate.migaloo_accepted === null ? "Pending Migaloo Acceptance" :
+                            candidate.migalooAccepted === null ? "Pending Migaloo Acceptance" :
                             (
-                                candidate.employer_accepted === null ? "Pending Employer Acceptance" :
+                                candidate.employerAccepted === null ? "Pending Employer Acceptance" :
                                 (
-                                    candidate.job_accepted === null ? "Pending Job Acceptance" :
+                                    candidate.jobAccepted === null ? "Pending Job Acceptance" :
                                         "Accepted By Employer"
                                 )
                             )
                         )
                 }
-                {(candidate.migaloo_accepted === false || candidate.employer_accepted === false || candidate.job_accepted === false) &&
+                {(candidate.migalooAccepted === false || candidate.employerAccepted === false || candidate.jobAccepted === false) &&
                     <Tooltip classes={{tooltip: classes.toolTipText}}
                     data-html="true"
-                    title={<div>{candidate.denial_reason_text+'.'}<br/>{candidate.denial_comment}</div>}
+                    title={<div>{candidate.denialReasonText+'.'}<br/>{candidate.denialComment}</div>}
                     aria-label="Denial Reason">
                         <Info className={classes.toolTip}/>
                     </Tooltip>
@@ -136,7 +136,7 @@ class CandidateRow extends React.Component{
                 </Button>
                 {this.state.showChat && 
                     <Conversation
-                        messageSubjectId={candidate.message_subject_id}
+                        messageSubjectId={candidate.messageSubjectId}
                         loadByMessageSubjectId={true}
                         open={this.state.showChat}
                         onClose={()=>this.setState({showChat: false})}/>
@@ -200,8 +200,8 @@ class JobDescription extends React.Component{
     }
 
     getImage = () => {
-        if(this.state.jobObj.company_id != null){
-            get(`/api/profileImage/view/2/${this.state.jobObj.company_id}/small`)
+        if(this.state.jobObj.companyId != null){
+            get(`/api/profileImage/view/2/${this.state.jobObj.companyId}/small`)
             .then((res)=>{
                 if(res == null) return
                 if(res.data.success){
@@ -244,7 +244,7 @@ class JobDescription extends React.Component{
                             className={classes.rightBtn}>
                             <Close color="primary"/>
                         </IconButton>
-                        {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobObj.post_id}/> : ''}
+                        {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobObj.postId}/> : ''}
                         {this.state.profileImage !== ''?<img className={classes.profileImage} src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
                         <div className={classes.jobTitle}>
                             {this.state.jobObj.title}
@@ -257,13 +257,13 @@ class JobDescription extends React.Component{
 
                         <h3>Description</h3>
                         <div className={classes.jobRequirements}>{this.state.jobObj.requirements}</div>
-                        <h3>{this.state.jobObj.company_name}</h3>
+                        <h3>{this.state.jobObj.companyName}</h3>
                         <p>
-                            {[this.state.jobObj.address_line_1, this.state.jobObj.address_line_2, this.state.jobObj.city, this.state.jobObj.state_province, this.state.jobObj.country].filter(d=>d!=null).join(", ")}
+                            {[this.state.jobObj.addressLine1, this.state.jobObj.addressLine2, this.state.jobObj.city, this.state.jobObj.stateProvince, this.state.jobObj.country].filter(d=>d!=null).join(", ")}
                         </p>
                         <h5>Experience: {this.state.jobObj.experience} years</h5>
                         <span className={classes.jobSalary}>Salary: {this.state.jobObj.salary}k</span> 
-                        {this.state.jobObj.tag_names?<p>Tags: {this.state.jobObj.tag_names.join(", ")}</p>:''}
+                        {this.state.jobObj.tagNames?<p>Tags: {this.state.jobObj.tagNames.join(", ")}</p>:''}
                         <p>Posted: {this.state.jobObj.posted}</p>
                         <div className={classes.feedbackBtnContainer}>
                             <Button

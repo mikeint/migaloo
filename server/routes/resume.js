@@ -44,7 +44,7 @@ const generateResumeFileNameAndValidation = (req, res, next) => {
 router.post('/upload/:candidateId', passport.authentication, generateResumeFileNameAndValidation, upload.single('filepond'), (req, res) => {
     postgresdb.none('UPDATE candidate SET resume_id=$1 WHERE candidate_id = $2', [req.params.finalFileName, req.params.candidateId])
     .then((data) => {
-        res.json({success:true, resume_id:req.params.finalFileName})
+        res.json({success:true, resumeId:req.params.finalFileName})
     })
     .catch(err => {
         logger.error('Resume SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

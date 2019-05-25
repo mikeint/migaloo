@@ -54,7 +54,7 @@ function tagsDataCall(searchString){
     .then((res) => { 
         if(res && res.data.success) {
             const data = res.data.tagList
-                    .map(d=>{return {name:d.tag_name, id: d.tag_id, secname:d.tag_type_name}})
+                    .map(d=>{return {name:d.tagName, id: d.tagId, secname:d.tagTypeName}})
             this.setState({data: data});
         }
     })
@@ -67,7 +67,7 @@ function employerDataCall(){
     .then((res) => {
         if(res && res.data.success) {
             const data = res.data.companies
-                    .map(d=>{return {name:d.company_name, id:d.company_id}})
+                    .map(d=>{return {name:d.companyName, id:d.companyId}})
             this.setState({data: data});
         }
     })

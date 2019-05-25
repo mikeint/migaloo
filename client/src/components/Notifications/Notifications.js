@@ -94,7 +94,7 @@ class Notifications extends React.Component{
             notificationList: [],
             open: false,
             messageInfo: {message:''},
-            search_after: null
+            searchAfter: null
         };
         this.Auth = new AuthFunctions();
     } 
@@ -136,11 +136,11 @@ class Notifications extends React.Component{
         this.setState({ open: false });
     };
     handleGotoPopUp = (item) => {
-        this.setSeen([item.notification_id]);
+        this.setSeen([item.notificationId]);
         this.setState({ open: false });
     };
     handleGotoDrawer = (item) => {
-        this.setSeen([item.notification_id]);
+        this.setSeen([item.notificationId]);
         this.setState({"showOverlay":false})
     };
 
@@ -166,19 +166,19 @@ class Notifications extends React.Component{
         })
     }
     getNotifications = () => {
-        get(this.state.search_after == null ?'/api/notifications/list/5':`/api/notifications/list/5/${this.state.search_after}`)
+        get(this.state.searchAfter == null ?'/api/notifications/list/5':`/api/notifications/list/5/${this.state.searchAfter}`)
         .then((res) => {
             if(res && res.data.success) {
-                res.data.notificationList.forEach(d=>d.notification_id = parseInt(d.notification_id, 10));
-                var count = parseInt(res.data.counts.new_notification_count, 10);
-                const minId = res.data.notificationList.length === 0 ? 0 : res.data.notificationList.map(d=>d.notification_id).reduce((a,b)=>Math.min(a,b));
+                res.data.notificationList.forEach(d=>d.notificationId = parseInt(d.notificationId, 10));
+                var count = parseInt(res.data.counts.newNotificationCount, 10);
+                const minId = res.data.notificationList.length === 0 ? 0 : res.data.notificationList.map(d=>d.notificationId).reduce((a,b)=>Math.min(a,b));
                 var notificationList = this.state.notificationList?this.state.notificationList:[];
                 notificationList = notificationList.concat(res.data.notificationList);
                 this.setState({
-                    search_after: minId,
+                    searchAfter: minId,
                     notificationList: notificationList,
                     newNotificationCount: count,
-                    totalCount: parseInt(res.data.counts.notification_count, 10)
+                    totalCount: parseInt(res.data.counts.notificationCount, 10)
                 });
             }
         })
@@ -195,9 +195,9 @@ class Notifications extends React.Component{
         const notificationList = this.state.notificationList;
         var minusCount = 0;
         notificationIds.forEach(id=>{
-            const data = notificationList.find(d=>d.notification_id === id);
+            const data = notificationList.find(d=>d.notificationId === id);
             if(data != null){
-                data.has_seen = true;
+                data.hasSeen = true;
                 minusCount--;
             }
         })
@@ -213,7 +213,7 @@ class Notifications extends React.Component{
         get(lastNotificationId == null?`/api/notifications/listNew`:`/api/notifications/listNew/${lastNotificationId}`)
         .then((res) => {
             if(res && res.data.success) {
-                lastNotificationId = res.data.notificationList.reduce((t,a)=>Math.max(a.notification_id, t), lastNotificationId);
+                lastNotificationId = res.data.notificationList.reduce((t,a)=>Math.max(a.notificationId, t), lastNotificationId);
                 const newNotificationCount = this.state.newNotificationCount + res.data.notificationList.length;
                 const allNotifications = this.state.notificationList;
                 res.data.notificationList.forEach(d=>allNotifications.unshift(d));
@@ -260,7 +260,7 @@ class Notifications extends React.Component{
                             this.state.notificationList.map((item, i) => {
                                 return <div key={i} className={classes.notificationItem}>
                                     <div className={classes.notificationColumn1}>
-                                        <div className={classes.notificationRowTitle}>{item.notification_id+" - "+item.title}</div>
+                                        <div className={classes.notificationRowTitle}>{item.notificationId+" - "+item.title}</div>
                                         <div className={classes.notificationRow}>{
                                                 item.message.split("\r\n").reduce((acc, curr, i) => 
                                                     (acc.length ? [...acc, <br key={i}/>, curr] : [curr]
@@ -270,7 +270,7 @@ class Notifications extends React.Component{
                                         <div className={classes.notificationTimeRow}>{item.created}</div>
                                     </div>
                                     <div className={classes.notificationColumn2}>
-                                        {!item.has_seen && <div>
+                                        {!item.hasSeen && <div>
                                             <FiberNew fontSize="large"/>
                                         </div>}
                                         {item.url != null && <div>
@@ -297,7 +297,7 @@ class Notifications extends React.Component{
                 </Drawer>
 
                 <Snackbar
-                    key={this.state.messageInfo.notification_id}
+                    key={this.state.messageInfo.notificationId}
                     anchorOrigin={{
                         vertical: 'bottom',
                         horizontal: 'left',

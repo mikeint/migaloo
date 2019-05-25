@@ -24,7 +24,7 @@ class ExpandableRow extends React.Component{
         super(props);
         // Initial state
         this.state = { 
-            open: props.candidateId === props.candidateData.candidate_id,
+            open: props.candidateId === props.candidateData.candidateId,
             showUpload: false,
             resumeId: null,
             files: [],
@@ -49,7 +49,7 @@ class ExpandableRow extends React.Component{
         this.setState({redirectCandidate:true})
     }
     getResumeURL = () => {
-        get('/api/resume/view/'+this.props.candidateData.candidate_id)
+        get('/api/resume/view/'+this.props.candidateData.candidateId)
         .then((res)=>{
             if(res && res.data.success)
                 window.open(res.data.url, '_blank');
@@ -64,13 +64,13 @@ class ExpandableRow extends React.Component{
         const { classes, candidateData, postData } = this.props;
         return (
             <div className="expandableRow">
-                {this.state.redirectCandidate && <Redirect to={`/recruiter/jobList/${this.props.candidateData.candidate_id}`}/>}
+                {this.state.redirectCandidate && <Redirect to={`/recruiter/jobList/${this.props.candidateData.candidateId}`}/>}
                 
                 <ExpansionPanel>
                     <ExpansionPanelSummary>
-                        <div className="nameContainer">{candidateData.first_name}&nbsp;{candidateData.last_name}</div>
-                        {candidateData.new_accepted_count > 0 ? <div className="acceptedCount" title={candidateData.new_accepted_count+" New Postings Accepted"}>{/* candidateData.new_accepted_count */}</div> : ""}
-                        {candidateData.new_not_accepted_count > 0 ? <div className="notAcceptedCount" title={candidateData.new_not_accepted_count+" New Postings Not Accepted"}>{/* candidateData.new_not_accepted_count */}</div> : ""}
+                        <div className="nameContainer">{candidateData.firstName}&nbsp;{candidateData.lastName}</div>
+                        {candidateData.newAcceptedCount > 0 ? <div className="acceptedCount" title={candidateData.newAcceptedCount+" New Postings Accepted"}>{/* candidateData.newAcceptedCount */}</div> : ""}
+                        {candidateData.newNotAcceptedCount > 0 ? <div className="notAcceptedCount" title={candidateData.newNotAcceptedCount+" New Postings Not Accepted"}>{/* candidateData.newNotAcceptedCount */}</div> : ""}
                         {candidateData.score > 0?<span className="score" style={{width: parseInt(candidateData.score, 10)+"%"}}>{parseInt(candidateData.score, 10)+"%"}</span>:''}
                         <div></div>
                     </ExpansionPanelSummary>
@@ -103,8 +103,8 @@ class ExpandableRow extends React.Component{
                                             <span className="tags_icon"></span>
                                             <div className="candidate-info-item">
                                                 <span className="headingInfo">
-                                                    {candidateData.tag_names && <span className="rowMargin">
-                                                    <span className="heading">Tags: </span> {candidateData.tag_names.join(", ")}</span>}
+                                                    {candidateData.tagNames && <span className="rowMargin">
+                                                    <span className="heading">Tags: </span> {candidateData.tagNames.join(", ")}</span>}
                                                 </span>
                                             </div>
                                         </div>
@@ -112,7 +112,7 @@ class ExpandableRow extends React.Component{
                                             <span className="posted_icon"></span>
                                             <div className="candidate-info-item">
                                                 <span className="heading">Posted to Job: </span> 
-                                                <span className="headingInfo">{candidateData.posted_count} time(s)</span>
+                                                <span className="headingInfo">{candidateData.postedCount} time(s)</span>
                                             </div>
                                         </div>
                                     </div>
@@ -123,11 +123,11 @@ class ExpandableRow extends React.Component{
                             <div className="flexColumn">
                                 <div className="flex-item"> 
                                     <img className="candidate_image" src="http://placehold.it/100x100" alt="" />
-                                    <p><span className="accepted_icon"></span><span className="heading">Accepted by Postings: </span> {candidateData.accepted_count} time(s)</p>
-                                    <p><span className="not_accepted_icon"></span><span className="heading">Not Accepted by Postings: </span> {candidateData.not_accepted_count} time(s)</p> 
+                                    <p><span className="accepted_icon"></span><span className="heading">Accepted by Postings: </span> {candidateData.acceptedCount} time(s)</p>
+                                    <p><span className="notAccepted_icon"></span><span className="heading">Not Accepted by Postings: </span> {candidateData.notAcceptedCount} time(s)</p> 
 
                                     <div className="resumeButtons">
-                                        {candidateData.resume_id != null && <Button variant="contained" color="primary" onClick={this.getResumeURL}>View Resume</Button>}
+                                        {candidateData.resumeId != null && <Button variant="contained" color="primary" onClick={this.getResumeURL}>View Resume</Button>}
                                         <Button variant="contained" color="primary" onClick={this.showUpload}>Upload Resume</Button>
                                     </div>
                                     {postData && <div className="resumeButtons">
@@ -146,7 +146,7 @@ class ExpandableRow extends React.Component{
                                                                     handleClose={()=>this.setState({showPostJob:false})} />
                                     </Drawer>
                                     
-                                    {this.state.showUpload && <UploadResume id={candidateData.candidate_id} handleClose={this.handleClose} />}
+                                    {this.state.showUpload && <UploadResume id={candidateData.candidateId} handleClose={this.handleClose} />}
                                 </div> 
                             </div>
                         </div>

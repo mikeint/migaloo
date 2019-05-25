@@ -31,7 +31,7 @@ class RecruiterView extends React.Component{
         this.getRecruiters();
     } 
     getRecruiters = () => {
-        get('/api/employerPostings/listRecruiters/'+this.state.jobObj.post_id)
+        get('/api/employerPostings/listRecruiters/'+this.state.jobObj.postId)
         .then((res)=>{
             if(res && res.data.success){
                 this.setState({recruiters:res.data.recruiters});
@@ -62,11 +62,11 @@ class RecruiterView extends React.Component{
                     </TableRow> :
                     this.state.recruiters.map((d, i)=>{
                         return <TableRow key={i} className={classes.tableRow}>
-                            <TableCell className={classes.tableCell}>{d.first_name}</TableCell>
-                            <TableCell className={classes.tableCell}>{d.last_name}</TableCell>
-                            <TableCell className={classes.tableCell}>{d.recruiter_created}</TableCell>
+                            <TableCell className={classes.tableCell}>{d.firstName}</TableCell>
+                            <TableCell className={classes.tableCell}>{d.lastName}</TableCell>
+                            <TableCell className={classes.tableCell}>{d.recruiterCreated}</TableCell>
                             <TableCell className={classes.tableCell}>{d.response === 1 ? 'Working on it': (d.response === 2 ? 'Will not be working on it' : 'None')}</TableCell>
-                            <TableCell className={classes.tableCell}>{d.candidate_count}</TableCell>
+                            <TableCell className={classes.tableCell}>{d.candidateCount}</TableCell>
                         </TableRow>
                     })
                 }

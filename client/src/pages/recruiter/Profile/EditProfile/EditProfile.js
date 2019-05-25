@@ -82,7 +82,7 @@ class EditProfile extends React.Component{
     saveProfile = (user) => {
         if(this.formValidation.isValid()){
             post(`/api/recruiter/setProfile`,
-                {companyId:this.state.company_id, company_name:this.state.company_name, department:this.state.department})
+                {companyId:this.state.companyId, companyName:this.state.companyName, department:this.state.department})
             .then((res)=>{
                 if(res && res.data.success){
                     this.setState({didSave: true, isModified:false})

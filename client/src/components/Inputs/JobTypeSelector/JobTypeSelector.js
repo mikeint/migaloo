@@ -96,7 +96,7 @@ class JobTypeSelector extends React.Component{
                             Unspecified
                         </MenuItem>
                         {this.state.jobTypeList.map((d, i)=>
-                            <MenuItem key={i} value={d.job_type_id}>{d.job_type_name}</MenuItem>
+                            <MenuItem key={i} value={d.jobTypeId}>{d.jobTypeName}</MenuItem>
                         )}
                     </Select>
                     <FormHelperText className={classes.helperText}>{this.state.helperText}</FormHelperText>

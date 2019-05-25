@@ -27,7 +27,7 @@ class Conversation extends Component {
                 toId: null,
             }
         }else{
-            const toId = (props.conversation.my_id===props.conversation.user_id_1?props.conversation.user_id_2:props.conversation.user_id_1);
+            const toId = (props.conversation.myId===props.conversation.userId1?props.conversation.userId2:props.conversation.userId1);
             extraState = {
                 conversation: props.conversation,
                 toId: toId
@@ -51,7 +51,7 @@ class Conversation extends Component {
             .then((res)=>{
                 if(res && res.data.length > 0){
                     const conversation = res.data[0]
-                    const toId = (conversation.my_id===conversation.user_id_1?conversation.user_id_2:conversation.user_id_1);
+                    const toId = (conversation.myId===conversation.userId1?conversation.userId2:conversation.userId1);
                     this.setState({ 
                         conversation: conversation,
                         toId:toId,
@@ -74,14 +74,14 @@ class Conversation extends Component {
     }
     getMessageList = () => {
         if(this.state.pageNumber <= this.state.pageCount || this.state.pageCount === -1){
-            get(`/api/message/listConversationMessages/${this.state.conversation.message_subject_id}/${this.state.pageNumber}`)
+            get(`/api/message/listConversationMessages/${this.state.conversation.messageSubjectId}/${this.state.pageNumber}`)
             .then((res)=>{
                 if(res == null) return
                 this.setState({showLoader:false})
                 if(res.data && res.data.length > 0){
                     var oldMessageList = this.state.messageList; // Get the previous page
                     var messageList = [];
-                    var pageCount = (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1
+                    var pageCount = (res.data&&res.data.length>0)?parseInt(res.data[0].pageCount, 10):1
                     oldMessageList.pop() // Remove the load div from the previous page
                     res.data.reverse().forEach((d, i)=>{
                         if(i === 0){ // Get contact name
@@ -90,30 +90,30 @@ class Conversation extends Component {
                             else
                                 messageList.unshift({type:'loadnomore'})
                         }
-                        if(d.message_type_id === 1){ // Is a chat message
+                        if(d.messageTypeId === 1){ // Is a chat message
                             // Write the message text
                             messageList.unshift({type:'message', 
                             mine:!d.toMe,  // From me
                             text:d.message, 
                             date:d.created})
-                        }else if(d.message_type_id === 2){ // Is a meeting request
+                        }else if(d.messageTypeId === 2){ // Is a meeting request
                             messageList.unshift({type:'calendar',
                                 mine:!d.toMe, // From me
-                                dateOffer:d.date_offer_str,
+                                dateOffer:d.dateOfferStr,
                                 length:d.minute_length >= 60?((d.minute_length/60).toString()+" hour"+(d.minute_length === 60?'':'s')):(d.minute_length+" minutes"),
                                 responded: d.responded,
                                 response:d.response,
-                                messageId: d.message_id,
-                                subject: d.meeting_subject,
-                                date:d.created, locationType: d.location_type_name})
+                                messageId: d.messageId,
+                                subject: d.meetingSubject,
+                                date:d.created, locationType: d.locationTypeName})
                             if(d.response !== 0){
                                 messageList.unshift({type:'calendar_response',
                                     mine:d.toMe, // Reponses are duplicates of the invite
-                                    dateOffer:d.date_offer_str,
+                                    dateOffer:d.dateOfferStr,
                                     length:d.minute_length >= 60?((d.minute_length/60).toString()+" hour"+(d.minute_length === 60?'':'s')):(d.minute_length+" minutes"),
                                     response:d.response,
-                                    subject: d.meeting_subject,
-                                    date:d.created, locationType: d.location_type_name})
+                                    subject: d.meetingSubject,
+                                    date:d.created, locationType: d.locationTypeName})
                             }
                         }
                     })
@@ -141,7 +141,7 @@ class Conversation extends Component {
             var location = this.state.meetingCreate.location;//this.state.meetingCreate.value;
             var subject = this.state.meetingCreate.subject;//this.state.meetingCreate.value;
             data = {
-                messageSubjectId: this.state.conversation.message_subject_id,
+                messageSubjectId: this.state.conversation.messageSubjectId,
                 toId: this.state.toId,
                 messageType: 2,
                 dateOffer: startDateTime,
@@ -151,7 +151,7 @@ class Conversation extends Component {
             }
         }else if(message && message !== ""){
             data = {
-                messageSubjectId: this.state.conversation.message_subject_id,
+                messageSubjectId: this.state.conversation.messageSubjectId,
                 toId: this.state.toId,
                 messageType: 1,
                 message:message
@@ -176,7 +176,7 @@ class Conversation extends Component {
     }
     setCalendarResponse = (row, response) => {
         var data = {
-            messageSubjectId: this.state.conversation.message_subject_id,
+            messageSubjectId: this.state.conversation.messageSubjectId,
             response: response,
             messageId: row.messageId
         }
@@ -220,7 +220,7 @@ class Conversation extends Component {
                         aria-labelledby="dialog-title"
                         open={other.open}> 
                     <DialogTitle id="dialog-title">
-                        <span>Conversation {this.state.conversation.contactName ? ` - ${this.state.conversation.contactName}, for ${this.state.conversation.subject_first_name} ${this.state.conversation.subject_last_name}` : ''}</span>
+                        <span>Conversation {this.state.conversation.contactName ? ` - ${this.state.conversation.contactName}, for ${this.state.conversation.subjectFirstName} ${this.state.conversation.subjectLastName}` : ''}</span>
                         <IconButton color="inherit" onClick={this.handleChatDialogClose} className={classes.rightBtn}>
                             <Close color="primary"/>
                         </IconButton>

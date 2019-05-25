@@ -109,7 +109,7 @@ class JobList extends React.Component{
                 this.setState({
                     jobList: jobList,
                     candidateData: candidateData,
-                    pageCount: jobList.length>0?parseInt(jobList[0].page_count, 10):1 }) 
+                    pageCount: jobList.length>0?parseInt(jobList[0].pageCount, 10):1 }) 
             }
         }).catch(errors => 
             console.log(errors.response.data)
@@ -148,7 +148,7 @@ class JobList extends React.Component{
         const { classes } = this.props; 
         return (
             <React.Fragment>
-                { this.state.openJob && <Redirect to={"/recruiter/jobList/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidate_id:'')} />}
+                { this.state.openJob && <Redirect to={"/recruiter/jobList/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidateId:'')} />}
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
                 <Filters 
                     onChange={this.handleFilterChange}
@@ -159,8 +159,8 @@ class JobList extends React.Component{
                    <div className="pageHeading">
                         <span className={classes.unshrinkable}>Active Jobs Postings</span>
                         {this.state.candidateData &&
-                            <NavLink to={"/recruiter/candidate/"+this.state.candidateData.candidate_id} className={classes.candidateSearched}>
-                                For: {this.state.candidateData.first_name + " " + this.state.candidateData.last_name}
+                            <NavLink to={"/recruiter/candidate/"+this.state.candidateData.candidateId} className={classes.candidateSearched}>
+                                For: {this.state.candidateData.firstName + " " + this.state.candidateData.lastName}
                             </NavLink>
                         }
                         <Button
@@ -194,9 +194,9 @@ class JobList extends React.Component{
                                             </div>
                                         :
                                         this.state.jobList.map((item, i) => {
-                                            return <div className="jobListItem" key={i} onClick={() => this.callNewJobPage(item.post_id)}> 
+                                            return <div className="jobListItem" key={i} onClick={() => this.callNewJobPage(item.postId)}> 
                                                 <div className="jobInfo"> 
-                                                    <b>{item.company_name}</b>  
+                                                    <b>{item.companyName}</b>  
                                                     <div className="jobShortDesc">{item.title}</div> 
                                                     {
                                                         item.score > 0 ?
