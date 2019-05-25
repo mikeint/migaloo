@@ -73,6 +73,7 @@ class ContactList extends React.Component{
             contactList: [],
             company: props.company,
             companyName: props.company.companyName,
+            address: props.company.address,
             page: 1,
             pageCount: 1,
             loading: true,
@@ -178,7 +179,7 @@ class ContactList extends React.Component{
         this.setState({ [e.target.name]: e.target.value, isModified:this.state.isModified||this.state[e.target.name]!==e.target.value })
     }
     handleAddressChange(address){
-        this.setState({addressChange:address})
+        this.setState({address:address})
     }
     render(){
         const { classes } = this.props; 
@@ -218,7 +219,7 @@ class ContactList extends React.Component{
                     </div>
                     <div className={classes.addressField}>
                         <AddressInput
-                        {...this.state.company}
+                        value={this.state.address}
                         onChange={this.handleAddressChange.bind(this)}
                         {...(this.formValidation.hasError("addressChange.placeId").error?{error:true}:{})}/>
                     </div>

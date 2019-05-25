@@ -6,7 +6,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import ModifiableProfileImage from '../../../../components/ModifiableProfileImage/ModifiableProfileImage';
-// import AddressInput from '../../../../components/Inputs/AddressInput/AddressInput';
 import FormValidation from '../../../../FormValidation';
 
 const styles = theme => ({
