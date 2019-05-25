@@ -13,6 +13,9 @@ import Snackbar from '@material-ui/core/Snackbar';
 import { Link } from 'react-router-dom'
 
 const styles = theme => ({
+    root: { 
+        borderRadius: 0,
+    },
     drawer:{
         width: "80%",
         minWidth: "300px",
@@ -232,7 +235,7 @@ class Notifications extends React.Component{
         const { classes } = this.props;
         return (
             <React.Fragment>
-                <IconButton color="inherit" onClick={() => this.openNotifications()}>
+                <IconButton className={classes.root} color="inherit" onClick={() => this.openNotifications()}>
                     <Badge badgeContent={this.state.newNotificationCount} color="error">
                         <NotificationsIcon />
                     </Badge>

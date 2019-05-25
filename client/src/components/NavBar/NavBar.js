@@ -14,25 +14,32 @@ import { withStyles } from '@material-ui/core/styles';
 //import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
+
 function LinkTab(props) {
     return <Tab component={NavLink} {...props} />;
 }
 function getByPath(object, path) {
     return path.reduce((t,a)=>t == null || t[a] == null ? null : t[a], object)
 };
+
 const styles = theme => ({
     tabsContainer:{
+        width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        width: '100%',
         '@media (max-width: 1024px)': {
             flexDirection: 'row',
         },
     },
     linkButton:{ 
-        display: 'flex',  
+        display: 'flex',
+        minWidth: '100%',
         '@media (max-width: 1024px)': {
             flex: '1',
+            minWidth: 'unset',
+        },
+        '&.active': {
+            backgroundColor: '#6f90a14d',
         },
     },  
     tabsIndicator: {
@@ -50,8 +57,10 @@ const styles = theme => ({
         minWidth: '50px',
         maxWidth: '50px',
         padding: 0
-    }
-})
+    },  
+  
+    
+}) 
 const navMappings = {
     1:{'/recruiter':[ // Recruiter
             {
@@ -171,7 +180,9 @@ class NavBar extends React.Component{
             <React.Fragment> 
                 <AppBar position='static'>
                     <Notifications/>
-                    <Toolbar>
+                    <Toolbar
+                        disableGutters={true}
+                    >
                         <div variant='fullWidth'
                             value={this.state.page}
                             className={classes.tabsContainer}
