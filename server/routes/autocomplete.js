@@ -3,7 +3,9 @@ const router = express.Router();
 const passport = require('../config/passport');
 const logger = require('../utils/logging');
 
-const postgresdb = require('../config/db').postgresdb;
+const db = require('../config/db')
+const postgresdb = db.postgresdb
+const pgp = db.pgp
 
 /**
  * Get job type by autocomplete

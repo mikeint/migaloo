@@ -6,7 +6,9 @@ const validateCandidatePosting = require('../validation/jobs');
 const notifications = require('../utils/notifications');
 const logger = require('../utils/logging');
 
-const postgresdb = require('../config/db').postgresdb
+const db = require('../config/db')
+const postgresdb = db.postgresdb
+const pgp = db.pgp
 
 
 const listFilters = {

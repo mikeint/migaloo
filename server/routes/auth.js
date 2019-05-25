@@ -6,7 +6,9 @@ const ses = require('../utils/ses');
 const postingAssign = require('../utils/postingAssign');
 const logger = require('../utils/logging');
 const address = require('../utils/address');
-const postgresdb = require('../config/db').postgresdb;
+const db = require('../config/db')
+const postgresdb = db.postgresdb
+const pgp = db.pgp
 
 //load input validation
 const validateRegisterInput = require('../validation/register'); 

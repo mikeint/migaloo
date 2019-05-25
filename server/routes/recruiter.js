@@ -7,7 +7,9 @@ const logger = require('../utils/logging');
 //load input validation
 const validateEmployerInput = require('../validation/recruiter');  
 
-const postgresdb = require('../config/db').postgresdb
+const db = require('../config/db')
+const postgresdb = db.postgresdb
+const pgp = db.pgp
 const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
 const upload = generateUploadMiddleware('profile_image/')
 
@@ -66,7 +68,7 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
     postgresdb.one('\
         SELECT email, first_name, last_name, \
             phone_number, image_id, \
-            address_line_1, address_line_2, city, state, country \
+            address_line_1, address_line_2, city, state_province, country \
         FROM recruiter r \
         INNER JOIN login l ON l.user_id = r.recruiter_id \
         LEFT JOIN address a ON a.address_id = r.address_id \
@@ -105,7 +107,7 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:errorMessage})
     }
     var fields = ['first_name', 'last_name', 'phone_number'];
-    postgresdb.one('SELECT first_name, last_name, phone_number, r.address_id, address_line_1, address_line_2, city, state, country \
+    postgresdb.one('SELECT first_name, last_name, phone_number, r.address_id, address_line_1, address_line_2, city, state_province, country \
                     FROM recruiter r \
                     LEFT JOIN address a ON r.address_id = a.address_id\
                     WHERE recruiter_id = $1', [jwtPayload.id]).then((data)=>{
