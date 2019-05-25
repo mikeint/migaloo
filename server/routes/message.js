@@ -53,7 +53,7 @@ router.post('/create', passport.authentication,  (req, res) => {
         return t.one('\
             SELECT ms.company_contact_ids, ms.recruiter_id, \
                 c.company_name as "companyName", \
-                umsub.user_id as "candidateId", \
+                umsub.candidate_id as "candidateId", \
                 ms.post_id as "postId", \
                 jpa.title as "postTitle", \
                 concat(umsub.first_name, \' \', umsub.last_name) as "candidateName", \
@@ -75,7 +75,7 @@ router.post('/create', passport.authentication,  (req, res) => {
                 GROUP BY gm.message_subject_id, gm.user_id_1, gm.user_id_2, gm.subject_user_id, gm.created_on, gm.post_id, gm.company_id, gm.recruiter_id \
             ) ms \
             INNER JOIN job_posting_all jpa ON jpa.post_id = ms.post_id \
-            INNER JOIN user_master umsub ON umsub.user_id = ms.subject_user_id \
+            INNER JOIN candidate umsub ON umsub.candidate_id = ms.subject_user_id \
             INNER JOIN company c ON c.company_id = ms.company_id \
             INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
             WHERE (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active \
@@ -182,8 +182,7 @@ function listMessages(req, res){
     postgresdb.any('\
         SELECT ms.post_id, jpa.title as job_post_title, m.to_id, m.created_on, ms.created_on as subject_created_on, \
             m.message, m.response, m.date_offer, m.has_seen, m.message_id, ms.message_subject_id, \
-            umsub.user_type_id as subject_user_type_id, umsub.user_type_name as subject_user_type_name, \
-            umsub.user_id as subject_user_id, umsub.first_name as subject_first_name, umsub.last_name as subject_last_name, \
+            umsub.candidate_id as subject_user_id, umsub.first_name as subject_first_name, umsub.last_name as subject_last_name, \
             ms.user_id_1, ms.user_id_2, \
             ms.company_contact_ids, \
             c.company_name, \
@@ -215,7 +214,7 @@ function listMessages(req, res){
             WHERE mo.rn = 1 \
         ) m ON ms.message_subject_id = m.message_subject_id \
         INNER JOIN job_posting_all jpa ON jpa.post_id = ms.post_id \
-        INNER JOIN user_master umsub ON umsub.user_id = ms.subject_user_id \
+        INNER JOIN candidate umsub ON umsub.candidate_id = ms.subject_user_id \
         INNER JOIN company c ON c.company_id = ms.company_id \
         INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
         WHERE (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active \
@@ -287,8 +286,7 @@ function listConversationMessages(req, res){
             m.message, m.has_seen, m.date_offer, m.response, m.minute_length, m.location_type_name, m.meeting_subject, \
             ms.user_id_1, ms.user_id_2, \
             m.message_subject_id, \
-            umsub.user_type_id as subject_user_type_id, umsub.user_type_name as subject_user_type_name, \
-            umsub.user_id as subject_user_id, umsub.first_name as subject_first_name, umsub.last_name as subject_last_name, \
+            umsub.candidate_id as subject_user_id, umsub.first_name as subject_first_name, umsub.last_name as subject_last_name, \
             ms.company_contact_ids, \
             c.company_name, \
             r.recruiter_id, r.first_name as recruiter_first_name, r.last_name as recruiter_last_name, \
@@ -309,7 +307,7 @@ function listConversationMessages(req, res){
             ) gm \
             GROUP BY gm.message_subject_id, gm.user_id_1, gm.user_id_2, gm.subject_user_id, gm.created_on, gm.post_id, gm.company_id, gm.recruiter_id \
         ) ms ON m.message_subject_id = ms.message_subject_id \
-        INNER JOIN user_master umsub ON umsub.user_id = ms.subject_user_id \
+        INNER JOIN candidate umsub ON umsub.candidate_id = ms.subject_user_id \
         INNER JOIN job_posting_all jpa ON jpa.post_id = ms.post_id \
         INNER JOIN company c ON c.company_id = ms.company_id \
         INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
