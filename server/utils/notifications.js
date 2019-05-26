@@ -147,7 +147,6 @@ function addNotification(userId, templateName, params){
     const template = applyTemplate(templateName, params)
     // Add email logic, and check notification settings
     const data = userId.map(id=>{return {...template, user_id:id}})
-    console.log('notification', data)
     const query = pgp.helpers.insert(data, addNotificationHelper)
     return postgresdb.none(query)
 }

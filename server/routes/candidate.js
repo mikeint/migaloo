@@ -43,7 +43,7 @@ router.post('/create', passport.authentication,  (req, res) => {
     if(!isValid) {
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json(errors);
+        return res.status(400).json({success:false, errors:errors});
     }
     var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 1){
@@ -108,7 +108,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
     if(!isValid) {
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json(errors);
+        return res.status(400).json({success:false, errors:errors});
     }
     var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 1){

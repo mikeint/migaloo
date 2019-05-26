@@ -68,7 +68,7 @@ router.post('/addCompany', passport.authentication,  (req, res) => {
     const { errors, isValid } = validateCompanyInput(req.body);
     //check Validation
     if(!isValid) {
-        return res.status(400).json(errors);
+        return res.status(400).json({success:false, errors:errors});
     }
     var body = req.body;
     var jwtPayload = body.jwtPayload;
@@ -114,7 +114,7 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
     const { errors, isValid } = validateCompanyInput(req.body);
     //check Validation
     if(!isValid) {
-        return res.status(400).json(errors);
+        return res.status(400).json({success:false, errors:errors});
     }
     var body = req.body;
     var jwtPayload = body.jwtPayload;
@@ -161,7 +161,7 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
     // const { errors, isValid } = validateCompanyInput(req.body);
     //check Validation
     // if(!isValid) {
-    //     return res.status(400).json(errors);
+    //     return res.status(400).json({success:false, errors:errors});
     // }
     /**
      * Input: Must be admin, either use emails field or userIds field, cannot use both
@@ -243,7 +243,7 @@ router.post('/removeContactFromCompany', passport.authentication,  (req, res) =>
     // const { errors, isValid } = validateCompanyInput(req.body);
     //check Validation
     // if(!isValid) {
-    //     return res.status(400).json(errors);
+    //     return res.status(400).json({success:false, errors:errors});
     // }
     /**
      * Input: Must be admin
@@ -296,7 +296,7 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
     // const { errors, isValid } = validateCompanyInput(req.body);
     //check Validation
     // if(!isValid) {
-    //     return res.status(400).json(errors);
+    //     return res.status(400).json({success:false, errors:errors});
     // }
     /**
      * Input: Must be admin

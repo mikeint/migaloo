@@ -97,7 +97,7 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
     if(!isValid) {
         const errorMessage = "Invalid Parameters"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json(errors);
+        return res.status(400).json({success:false, errors:errors});
     }
     var body = req.body;
     var jwtPayload = body.jwtPayload;

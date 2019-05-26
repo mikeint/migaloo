@@ -32,14 +32,14 @@ router.post('/create', passport.authentication,  (req, res) => {
      * locationType
      */
     var body = req.body
+    var jwtPayload = body.jwtPayload;
     const { errors, isValid } = validateMessageInput(body);
     //check Validation
     if(!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage, errors:errors});
         return res.status(400).json(errors);
     }
-    var jwtPayload = body.jwtPayload;
     var userId = jwtPayload.id;
     var messageType = null;
     if(body.message){ // Chat Message
@@ -48,6 +48,7 @@ router.post('/create', passport.authentication,  (req, res) => {
     if(body.dateOffer){ // Calander Invite
         messageType = 2;
     }
+    
     postgresdb.tx(t => {
         // Get basic data, and ensure they can message, candidate posting must be accepted
         return t.one('\
@@ -90,7 +91,7 @@ router.post('/create', passport.authentication,  (req, res) => {
             const userIds = jwtPayload.userType === 1?data.company_contact_ids:data.recruiter_id
             if(messageType === 1) // Chat Message
                 notifications.addNotification(userIds, jwtPayload.userType === 1 ? 'employerNewChat' : 'recruiterNewChat', data)
-            else // Meeting REquest
+            else // Meeting Request
                 notifications.addNotification(userIds, jwtPayload.userType === 1 ? 'employerNewMeeting' : 'recruiterNewMeeting', data)
             // Ensure the person is in this chain
             const makeMessage = {
@@ -103,10 +104,10 @@ router.post('/create', passport.authentication,  (req, res) => {
                 location_type: body.locationType,
                 meeting_subject: body.subject
             }
-            const query = pgp.helpers.insert(makeMessage, messageType===1?messagesInsertHelper:calendarInsertHelper);
+            const query = pgp.helpers.insert(makeMessage, messageType===1?messagesInsertHelper:calendarInsertHelper) + 'RETURNING message_id';
 
-            return t.none(query).then(() => {
-                res.json({success: true})
+            return t.one(query).then((data) => {
+                res.json({success: true, messageId:data.message_id})
             })
         })
     }).catch((err)=>{
@@ -249,7 +250,7 @@ function listMessages(req, res){
             }
             return m
         })
-        res.json(data)
+        res.json({success:true, conversations:data})
     })
     .catch(err => {
         logger.error('Message SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
@@ -290,7 +291,7 @@ function listConversationMessages(req, res){
             ms.company_contact_ids, \
             c.company_name, \
             r.recruiter_id, r.first_name as recruiter_first_name, r.last_name as recruiter_last_name, \
-            (count(1) OVER())/10+1 as "pageCount", ${userId} as my_id \
+            (count(1) OVER())/10+1 as "pageCount", ${userId} as "myId" \
         FROM messages m \
         INNER JOIN ( \
             SELECT gm.message_subject_id, gm.user_id_1, gm.user_id_2, gm.subject_user_id, gm.created_on, gm.post_id, gm.company_id, gm.recruiter_id, array_agg(gm.company_contact_id) as company_contact_ids  \
@@ -332,7 +333,7 @@ function listConversationMessages(req, res){
             m.createdOn = timestamp.format("x");
             return m
         })
-        res.json(data)
+        res.json({success:true, messages:data})
     })
     .catch(err => {
         logger.error('Message SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
@@ -348,7 +349,7 @@ function listConversationMessages(req, res){
  * @access Private
  */
 router.get('/locations', passport.authentication, (req, res) => {
-    postgresdb.any('SELECT location_type_name, location_type_id \
+    postgresdb.any('SELECT location_type_name as "locationTypeName", location_type_id as "locationTypeId" \
             FROM location_type \
             ORDER BY location_type_id ASC')
     .then(data => {

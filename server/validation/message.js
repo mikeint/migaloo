@@ -1,5 +1,6 @@
 const Validator = require('validator');
 const isEmpty = require('./isEmpty');
+const moment = require('moment');
 
 module.exports = function validateMessageInput(data) {
     let errors = {};
@@ -16,6 +17,8 @@ module.exports = function validateMessageInput(data) {
     }else if(data.messageType === 2){
         if(!data.dateOffer || Validator.isEmpty(data.dateOffer)){
             errors.dateOffer = 'Date Offer field is required';
+        }else if(moment().diff(moment(data.dateOffer)) > 0){
+            errors.dateOffer = 'Date Offer field is in the past';
         }
         if(!data.minuteLength || data.minuteLength <= 0){
             errors.minuteLength = 'Minute Length field is required';
