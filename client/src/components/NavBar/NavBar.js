@@ -23,6 +23,13 @@ function getByPath(object, path) {
 };
 
 const styles = theme => ({
+    root: {
+        height:'100vh', 
+        alignItems: 'unset',
+        '@media (max-width: 1024px)': {
+            height: 'initial',
+        },
+    },
     tabsContainer:{
         width: '100%',
         display: 'flex',
@@ -31,9 +38,10 @@ const styles = theme => ({
             flexDirection: 'row',
         },
     },
-    linkButton:{ 
+    linkButton:{
         display: 'flex',
         minWidth: '100%',
+        paddingTop: '0px',
         '@media (max-width: 1024px)': {
             flex: '1',
             minWidth: 'unset',
@@ -41,24 +49,23 @@ const styles = theme => ({
         '&.active': {
             backgroundColor: '#6f90a14d',
         },
+        '&:last-child': {
+            '@media (max-width: 1024px)': {
+                flex: 'unset',
+            },
+        },
+        '&:nth-last-child(2)': {
+            marginTop: 'auto',
+            '@media (max-width: 1024px)': {
+                flex: 'unset',
+                marginTop: 'unset',
+            },
+        }, 
     },  
     tabsIndicator: {
       backgroundColor: '#6f90a14d',
       height: "80px"
-    },
-    leftButton:{
-        width: '50px',
-        minWidth: '50px',
-        maxWidth: '50px',
-        padding: 0, 
-    },
-    smallButton:{
-        width: '50px',
-        minWidth: '50px',
-        maxWidth: '50px',
-        padding: 0
-    },  
-  
+    }, 
     
 }) 
 const navMappings = {
@@ -83,13 +90,13 @@ const navMappings = {
             },
             {
                 icon:<AccountCircle />,
-                link:'/recruiter/profile',
-                className: 'leftButton'
+                link:'/recruiter/profile', 
+                className: 'linkButton'
             },
             {
                 icon:<AccountBalance />,
                 link:'/recruiter/account',
-                className: 'smallButton',
+                className: 'linkButton', 
                 showOnState: ['user', 'isPrimary']
             }
         ]
@@ -117,12 +124,12 @@ const navMappings = {
             {
                 icon:<AccountBalance />,
                 link:'/employer/accounts',
-                className: 'leftButton'
+                className: 'linkButton'
             },
             {
                 icon:<AccountCircle />,
                 link:'/employer/profile',
-                className: 'smallButton'
+                className: 'linkButton'
             }
         ]
     }
@@ -182,6 +189,7 @@ class NavBar extends React.Component{
                     <Notifications/>
                     <Toolbar
                         disableGutters={true}
+                        className={classes.root} 
                     >
                         <div variant='fullWidth'
                             value={this.state.page}

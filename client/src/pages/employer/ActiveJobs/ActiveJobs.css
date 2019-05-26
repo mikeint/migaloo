@@ -1,15 +1,3 @@
-.activeJobContainer .addJobButton {
-    width: 110px;
-    height: 110px;
-    border-radius: 10px;
-    line-height: 110px;
-    text-align: center;
-    font-size: 130px;
-    color: #fff;
-    background: #e6e8ef;
-    margin: auto;
-    margin-top: 30px; 
-}
 .activeJobContainer .noJobsText {
     text-align: center;
     font-size: 10px;

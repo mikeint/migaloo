@@ -14,8 +14,11 @@ import { Link } from 'react-router-dom'
 
 const styles = theme => ({
     root: { 
-        borderRadius: 0,
-    },
+        borderRadius: 0, 
+        justifyContent: 'start',
+        height: '60px',
+        padding: '10px',
+    }, 
     drawer:{
         width: "80%",
         minWidth: "300px",
@@ -236,7 +239,7 @@ class Notifications extends React.Component{
         return (
             <React.Fragment>
                 <IconButton className={classes.root} color="inherit" onClick={() => this.openNotifications()}>
-                    <Badge badgeContent={this.state.newNotificationCount} color="error">
+                    <Badge className={classes.label} badgeContent={this.state.newNotificationCount} color="error">
                         <NotificationsIcon />
                     </Badge>
                 </IconButton>
