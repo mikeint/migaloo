@@ -95,7 +95,7 @@ class CompanySelector extends React.Component{
                             Unspecified
                         </MenuItem>
                         {this.state.companies.map((d, i)=>
-                            <MenuItem key={i} value={d.company_id}>{d.company_name}</MenuItem>
+                            <MenuItem key={i} value={d.companyId}>{d.companyName}</MenuItem>
                         )}
                     </Select>
                     <FormHelperText className={classes.helperText}>{this.state.helperText}</FormHelperText>

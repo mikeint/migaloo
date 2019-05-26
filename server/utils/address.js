@@ -19,11 +19,11 @@ const camelColumnConfig = db.camelColumnConfig
 // lon float
 const convertFieldsToMap = (dataMap) => {
     const addressMap = {}
-    addressMap['addressId'] = dataMap['addressId'] || dataMap['address_id']
+    addressMap['addressId'] = dataMap['addressId']
     delete dataMap['addressId']
-    delete dataMap['address_id']
     addressFields.forEach(k=>{
-        addressMap[camalize(k)] = dataMap[k]
+        k = camalize(k)
+        addressMap[k] = dataMap[k]
         delete dataMap[k]
     })
     dataMap['address'] = addressMap

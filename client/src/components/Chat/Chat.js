@@ -30,7 +30,7 @@ class Chat extends Component {
         .then((res)=>{
             if(res)
                 this.setState({ conversationList: res.data,
-                    pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].page_count, 10):1 }) 
+                    pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].pageCount, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )
@@ -49,8 +49,8 @@ class Chat extends Component {
                     {
                         this.state.conversationList != null ?
                             this.state.conversationList.map((conv, i)=>{
-                                const initialOpen = conv.subject_user_id === this.props.match.params.candidateId &&
-                                    conv.post_id === this.props.match.params.postId
+                                const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
+                                    conv.postId === this.props.match.params.postId
                                 return <ConversationRow key={i} conversation={conv} defaultOpenState={initialOpen} />
                             })
                         : <Loader/>

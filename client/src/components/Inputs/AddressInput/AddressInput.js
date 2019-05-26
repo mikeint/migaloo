@@ -42,23 +42,26 @@ class AddressInput extends Component {
 
     constructor(props) {
         super(props);
-        const formattedAddress = this.formatAddress(props)
+        if(props.value == null)
+            props.value = {}
+        const formattedAddress = this.formatAddress(props.value)
 		this.state = {
             hasBlur: false,
             address: formattedAddress,
             formattedAddress: formattedAddress,
             onChange: props.onChange,
-            addressLine1: props.addressLine1 || '',
-            addressLine2: props.addressLine2 || '',
-            placeId: props.placeId, // Nullable
-            city: props.city || '',
-            stateProvince: props.stateProvince || '', 
-            stateProvinceCode: props.stateProvinceCode || '', 
-            country: props.country || '', 
-            countryCode: props.countryCode || '', 
-            postalCode: props.postalCode || '', 
-            lat: props.lat, // Nullable
-            lon: props.lon, // Nullable
+            addressId: props.value.addressId || null,
+            addressLine1: props.value.addressLine1 || '',
+            addressLine2: props.value.addressLine2 || '',
+            placeId: props.value.placeId, // Nullable
+            city: props.value.city || '',
+            stateProvince: props.value.stateProvince || '', 
+            stateProvinceCode: props.value.stateProvinceCode || '', 
+            country: props.value.country || '', 
+            countryCode: props.value.countryCode || '', 
+            postalCode: props.value.postalCode || '', 
+            lat: props.value.lat, // Nullable
+            lon: props.value.lon, // Nullable
             error: false
         };
     }
@@ -82,7 +85,7 @@ class AddressInput extends Component {
                 return this.getAddress(results[0])
             })
             .then(addressData => {
-                this.setState({ ...addressData, error: false });
+                this.setState({ ...addressData, error: false, addressId: null });
                 this.state.onChange(this.state);
             })
             .catch(error => console.error('Error', error));

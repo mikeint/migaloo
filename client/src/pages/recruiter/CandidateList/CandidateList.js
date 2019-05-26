@@ -79,7 +79,7 @@ class CandidateList extends React.Component{
         get(`/api/candidate/getCandidate/${candidateId}`)
         .then((res) => {
             if(res)
-                this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].page_count, 10):1 }) 
+                this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].pageCount, 10):1 }) 
         });
     }
 
@@ -114,7 +114,7 @@ class CandidateList extends React.Component{
             get('/api/candidate/list/'+this.state.page+(searchString?`/${searchString}`:'')))
         .then((res)=>{
             if(res)
-                this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].page_count, 10):1 }) 
+                this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].pageCount, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
         )
@@ -141,7 +141,7 @@ class CandidateList extends React.Component{
                     <div className="pageHeading">
                         <span className={classes.unshrinkable}>Candidates</span>
                         {this.state.postData &&
-                        <NavLink to={`/recruiter/jobList/job/${this.state.postData.post_id}`} className={classes.candidateSearched}>
+                        <NavLink to={`/recruiter/jobList/job/${this.state.postData.postId}`} className={classes.candidateSearched}>
                             {this.state.postData.title}
                         </NavLink>} 
                         <Button

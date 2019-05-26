@@ -41,7 +41,7 @@ const styles = theme => ({
 });
 const errorText = [
     {
-        stateName: "company_name",
+        stateName: "companyName",
         errorText: "Please enter a name for the recruiter"
     },
     {
@@ -55,7 +55,7 @@ class AddRecruiter extends React.Component{
         super(props);
 		this.state = {
             onClose: props.onClose,
-            company_name: '',
+            companyName: '',
             address:{},
             errors: {}
         };
@@ -67,7 +67,7 @@ class AddRecruiter extends React.Component{
     addRecruiter = () => {
         if(this.formValidation.isValid()){
             const data = {
-                company_name:this.state.company_name,
+                companyName:this.state.companyName,
                 ...this.state.address
             }
             post(`/api/recruiter/addRecruiter`, data)
@@ -96,14 +96,14 @@ class AddRecruiter extends React.Component{
                 <div className={classes.contents}>
                     <div>
                         <TextField
-                            name="company_name"
+                            name="companyName"
                             label="Company Name"
                             className={classes.textField}
                             required
                             onChange={this.handleChange}
                             margin="normal"
                             variant="outlined"
-                            {...this.formValidation.hasError("company_name")}
+                            {...this.formValidation.hasError("companyName")}
                         />
                     </div>
                     <AddressInput

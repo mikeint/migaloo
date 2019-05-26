@@ -6,7 +6,9 @@ const validateCandidatePosting = require('../validation/jobs');
 const notifications = require('../utils/notifications');
 const logger = require('../utils/logging');
 
-const postgresdb = require('../config/db').postgresdb
+const db = require('../config/db')
+const postgresdb = db.postgresdb
+const pgp = db.pgp
 
 
 const listFilters = {
@@ -56,7 +58,7 @@ function getJobs(req, res){
     postgresdb.any('\
         SELECT j.company_id, j.post_id, title, requirements, experience, salary, company_name, image_id, \
             address_line_1, address_line_2, city, state_province, country, tag_ids, \
-            tag_names, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
+            tag_names, j.created_on as posted_on, (count(1) OVER())/10+1 as "pageCount" \
         FROM job_posting j \
         INNER JOIN company e ON j.company_id = e.company_id \
         LEFT JOIN address a ON a.address_id = e.address_id \
@@ -80,11 +82,11 @@ function getJobs(req, res){
         LIMIT 10', {...sqlArgs, ...paramsToAdd})
     .then((data) => {
         // Marshal data
-        data = data.map(m=>{
-            var timestamp = moment(m.posted_on);
+        data = data.map(db.camelizeFields).map(m=>{
+            var timestamp = moment(m.postedOn);
             var ms = timestamp.diff(moment());
             m.posted = moment.duration(ms).humanize() + " ago";
-            m.posted_on = timestamp.format("x");
+            m.postedOn = timestamp.format("x");
             return m
         })
         res.json({jobList:data, success:true})
@@ -156,7 +158,7 @@ function getJobsForCandidate(req, res){
             return t.any('\
                 SELECT j.post_id, title, requirements, experience, salary, company_name, image_id, j.company_id, \
                     address_line_1, address_line_2, city, state_province, country, tag_ids, tag_names, \
-                    coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score, j.created_on as posted_on, (count(1) OVER())/10+1 AS page_count \
+                    coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score, j.created_on as posted_on, (count(1) OVER())/10+1 as "pageCount" \
                 FROM job_posting j \
                 INNER JOIN company e ON j.company_id = e.company_id \
                 LEFT JOIN address a ON a.address_id = e.address_id \
@@ -205,14 +207,14 @@ function getJobsForCandidate(req, res){
                 // WHERE NOT EXISTS (SELECT 1 FROM candidate_posting cp WHERE cp.candidate_id = $1) \
             .then((data) => {
                 // Marshal data
-                data = data.map(m=>{
-                    var timestamp = moment(m.posted_on);
+                data = data.map(db.camelizeFields).map(m=>{
+                    var timestamp = moment(m.postedOn);
                     var ms = timestamp.diff(moment());
                     m.posted = moment.duration(ms).humanize() + " ago";
-                    m.posted_on = timestamp.format("x");
+                    m.postedOn = timestamp.format("x");
                     return m
                 })
-                res.json({jobList:data, candidate:candidate_data, success:true})
+                res.json({jobList:data, candidate:db.camelizeFields(candidate_data), success:true})
             })
         })
     })
@@ -344,11 +346,11 @@ router.get('/listPostedCandidates/:jobId', passport.authentication,  (req, res) 
             // WHERE NOT EXISTS (SELECT 1 FROM candidate_posting cp WHERE cp.candidate_id = $1) \
         .then((data) => {
             // Marshal data
-            data = data.map(m=>{
-                var timestamp = moment(m.created_on);
+            data = data.map(db.camelizeFields).map(m=>{
+                var timestamp = moment(m.createdOn);
                 var ms = timestamp.diff(moment());
                 m.created = moment.duration(ms).humanize() + " ago";
-                m.created_on = timestamp.format("x");
+                m.createdOn = timestamp.format("x");
                 return m
             })
             res.json({candidates:data, success:true})

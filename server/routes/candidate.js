@@ -229,13 +229,14 @@ function listCandidates(req, res){
     if(candidateId != null)
         sqlArgs['candidateId'] = candidateId
     postgresdb.any(' \
-        SELECT c.*, rc.created_on, \
+        SELECT c.*, a.*, rc.created_on, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
             coalesce(cpd.not_accepted_count, 0) as not_accepted_count, \
             coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
-            (count(1) OVER())/10+1 AS page_count, tag_names, tag_ids \
+            (count(1) OVER())/10+1 as "pageCount", tag_names, tag_ids \
         FROM recruiter_candidate rc \
         INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
+        LEFT JOIN address a ON a.address_id = c.address_id \
         LEFT JOIN ( \
             SELECT ct.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
             FROM candidate_tags ct \
@@ -266,11 +267,12 @@ function listCandidates(req, res){
         LIMIT 10', sqlArgs)
     .then((data) => {
         // Marshal data
-        data = data.map(m=>{
-            var timestamp = moment(m.created_on);
+        data = data.map(db.camelizeFields).map(m=>{
+            address.convertFieldsToMap(m)
+            var timestamp = moment(m.createdOn);
             var ms = timestamp.diff(moment());
             m.created = moment.duration(ms).humanize() + " ago";
-            m.created_on = timestamp.format("x");
+            m.createdOn = timestamp.format("x");
             return m
         })
         res.json({candidateList:data, success:true})
@@ -315,7 +317,7 @@ function listCandidatesForJob(req, res){
     
 
     postgresdb.task(t => {
-        return t.one('SELECT jp.post_id, jp.title, jp.salary, jp.experience, tg.tag_names \
+        return t.one('SELECT jp.post_id as "postId", jp.title, jp.salary, jp.experience, tg.tag_names as "tagNames" \
             FROM job_posting jp \
             LEFT JOIN ( \
                 SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
@@ -329,14 +331,15 @@ function listCandidatesForJob(req, res){
             if(search != null)
                 sqlArgs['search'] = search.split(' ').map(d=>d+":*").join(" & ")
             return t.any(' \
-                SELECT c.*, rc.created_on, \
-                    coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
-                    coalesce(cpd.not_accepted_count, 0) as not_accepted_count, \
-                    coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
-                    (count(1) OVER())/10+1 AS page_count, tag_names, tag_ids, \
+                SELECT c.*, a.*, rc.created_on as "createdOn", \
+                    coalesce(cpd.posted_count, 0) as "posted_count", coalesce(cpd.accepted_count, 0) as "acceptedCount", \
+                    coalesce(cpd.not_accepted_count, 0) as "notAcceptedCount", \
+                    coalesce(cpd.new_accepted_count, 0) as "newAcceptedCount", coalesce(cpd.new_not_accepted_count, 0) as "newNotAcceptedCount", \
+                    (count(1) OVER())/10+1 as "pageCount", tag_names as "tagNames", tag_ids as "tagIds", \
                     coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score  \
                 FROM recruiter_candidate rc \
                 INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
+                LEFT JOIN address a ON a.address_id = c.address_id \
                 LEFT JOIN ( \
                     SELECT ct.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
                     FROM candidate_tags ct \
@@ -388,11 +391,12 @@ function listCandidatesForJob(req, res){
                 LIMIT 10', sqlArgs)
             .then((data) => {
                 // Marshal data
-                data = data.map(m=>{
-                    var timestamp = moment(m.created_on);
+                data = data.map(db.camelizeFields).map(m=>{
+                    address.convertFieldsToMap(m)
+                    var timestamp = moment(m.createdOn);
                     var ms = timestamp.diff(moment());
                     m.created = moment.duration(ms).humanize() + " ago";
-                    m.created_on = timestamp.format("x");
+                    m.createdOn = timestamp.format("x");
                     return m
                 })
                 res.json({candidateList:data, postData:job_data, success:true})

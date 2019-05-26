@@ -3,7 +3,9 @@ const router = express.Router();
 const passport = require('../config/passport');
 const logger = require('../utils/logging');
 
-const postgresdb = require('../config/db').postgresdb
+const db = require('../config/db')
+const postgresdb = db.postgresdb
+const pgp = db.pgp
 const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
 const upload = generateUploadMiddleware('resumes/')
 const useAWS = process.env.AWS ? true : false;
@@ -44,7 +46,7 @@ const generateResumeFileNameAndValidation = (req, res, next) => {
 router.post('/upload/:candidateId', passport.authentication, generateResumeFileNameAndValidation, upload.single('filepond'), (req, res) => {
     postgresdb.none('UPDATE candidate SET resume_id=$1 WHERE candidate_id = $2', [req.params.finalFileName, req.params.candidateId])
     .then((data) => {
-        res.json({success:true, resume_id:req.params.finalFileName})
+        res.json({success:true, resumeId:req.params.finalFileName})
     })
     .catch(err => {
         logger.error('Resume SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

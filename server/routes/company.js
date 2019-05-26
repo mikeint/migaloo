@@ -39,14 +39,7 @@ function list(req, res) {
     
     postgresdb.any('\
         SELECT \
-            c.company_id, c.company_name, c.department, c.image_id, \
-            a.address_id as "addressId", \
-            a.address_line_1 as "addressLine1", \
-            a.address_line_2 as "addressLine2", \
-            a.city, a.state_province as "stateProvince", a.country, a.lat, a.lon, \
-            a.state_province_code as "stateCode", \
-            a.country_code as "countryCode", \
-            ec.is_primary \
+            c.company_id, c.company_name, c.department, c.image_id, a.*, ec.is_primary \
         FROM login l \
         INNER JOIN company_contact ec ON ec.company_contact_id = l.user_id \
         INNER JOIN company c ON c.company_id = ec.company_id \
@@ -54,7 +47,7 @@ function list(req, res) {
         WHERE ec.company_contact_id = ${userId} '+(companyId!=null?'AND c.company_id = ${companyId}':'')+' \
         ORDER BY ec.is_primary DESC, company_name', {userId:jwtPayload.id, companyId:companyId})
     .then((data) => {
-        res.json({success:true, companies:data})
+        res.json({success:true, companies:data.map(db.camelizeFields).map(address.convertFieldsToMap)})
     })
     .catch(err => {
         logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
@@ -389,7 +382,7 @@ function getCompanyContactList(req, res) {
                     SELECT ec.company_contact_id, um.email, um.first_name, um.last_name, \
                         um.phone_number, um.image_id, um.created_on, ec.is_primary, \
                         um.account_active, \
-                        (count(1) OVER())/10+1 AS page_count \
+                        (count(1) OVER())/10+1 as "pageCount" \
                     FROM company_contact ec \
                     INNER JOIN user_master um ON ec.company_contact_id = um.user_id \
                     WHERE ec.company_id = ${company_id} AND um.active \
@@ -398,12 +391,12 @@ function getCompanyContactList(req, res) {
                     LIMIT 10', {company_id:companyId, page:(page-1)*10})
                 .then((data) => {
                     // Marshal data
-                    data = data.map(m=>{
-                        m.isMe = (jwtPayload.id === m.company_contact_id);
-                        var timestamp = moment(m.created_on);
+                    data = data.map(db.camelizeFields).map(m=>{
+                        m.isMe = (jwtPayload.id === m.companyContactId);
+                        var timestamp = moment(m.createdOn);
                         var ms = timestamp.diff(moment());
                         m.created = moment.duration(ms).humanize() + " ago";
-                        m.created_on = timestamp.format("x");
+                        m.createdOn = timestamp.format("x");
                         return m
                     })
                     res.json({success: true, contactList:data})

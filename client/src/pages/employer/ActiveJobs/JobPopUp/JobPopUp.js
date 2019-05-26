@@ -72,7 +72,7 @@ class JobPopUp extends React.Component{
     constructor(props) {
         super(props);
 		this.state = {
-            postId: props.obj.post_id,
+            postId: props.obj.postId,
             onClose: props.onClose,
             candidateList: [],
             tabValue: 0
@@ -161,7 +161,7 @@ class JobPopUp extends React.Component{
         return ( 
             <div className={classes.activeJobContainer}> 
                 <div className={classes.alertTitle} color="primary">
-                    <span>{`${jobObj.title} - ${jobObj.company_name}`}</span>
+                    <span>{`${jobObj.title} - ${jobObj.companyName}`}</span>
                     <IconButton color="inherit" className={classes.alertClose} onClick={this.state.onClose}>
                         <Close />
                     </IconButton>
@@ -169,19 +169,19 @@ class JobPopUp extends React.Component{
                 <div className={classes.jobPostingContainer}>
                     <p><span className={classes.itemLabel}>Requirements:</span></p>
                     <p className={classes.requirementsIndent}>{jobObj.requirements}</p>
-                    <p><span className={classes.itemLabel}>Job Type:</span> {jobObj.job_type_name}</p> 
+                    <p><span className={classes.itemLabel}>Job Type:</span> {jobObj.jobTypeName}</p> 
                     <p><span className={classes.itemLabel}>Experience:</span> {jobObj.experience}+ years</p> 
                     <p><span className={classes.itemLabel}>Salary:</span> {jobObj.salary}k</p> 
-                    <p><span className={classes.itemLabel}>Open Positions:</span> {jobObj.open_positions}</p> 
-                    <p><span className={classes.itemLabel}>Required Number of Interviewees:</span> {jobObj.interview_count}</p> 
-                    {jobObj.opening_reason_id != null ?
-                        <p><span className={classes.itemLabel}>Opening Reason:</span> {jobObj.opening_reason_name}</p>
+                    <p><span className={classes.itemLabel}>Open Positions:</span> {jobObj.openPositions}</p> 
+                    <p><span className={classes.itemLabel}>Required Number of Interviewees:</span> {jobObj.interviewCount}</p> 
+                    {jobObj.openingReasonId != null ?
+                        <p><span className={classes.itemLabel}>Opening Reason:</span> {jobObj.openingReasonName}</p>
                         :
-                        <p><span className={classes.itemLabel}>Opening Reason Comment:</span> {jobObj.opening_reason_comment}</p> 
+                        <p><span className={classes.itemLabel}>Opening Reason Comment:</span> {jobObj.openingReasonComment}</p> 
                     }
-                    {jobObj.tag_names?<p><span>Tags:</span> {jobObj.tag_names.join(", ")}</p>:''}
+                    {jobObj.tagNames?<p><span>Tags:</span> {jobObj.tagNames.join(", ")}</p>:''}
                     <p><span className={classes.itemLabel}>Created:</span> {jobObj.created}</p>
-                    <NavLink to={`/employer/postAJob/${jobObj.post_id}`}>
+                    <NavLink to={`/employer/postAJob/${jobObj.postId}`}>
                         <Button
                             variant="contained"
                             color="primary"

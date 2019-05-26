@@ -27,10 +27,10 @@ class PostCandidateToJob extends React.Component{
         super(props);
         this.state = {   
             candidate: props.candidate,
-            candidateId: props.candidate.candidate_id,
+            candidateId: props.candidate.candidateId,
             job: props.job,
             handleClose: this.props.handleClose,
-            postId: props.job.post_id,
+            postId: props.job.postId,
             comment: '',
             // coins:1,
             profileInfo: {},
@@ -78,7 +78,7 @@ class PostCandidateToJob extends React.Component{
         )
     }
     getResumeURL = () => {
-        get('/api/resume/view/'+this.props.candidateData.candidate_id)
+        get('/api/resume/view/'+this.props.candidateData.candidateId)
         .then((res)=>{
             if(res && res.data.success)
                 window.open(res.data.url, '_blank');
@@ -109,11 +109,11 @@ class PostCandidateToJob extends React.Component{
                         <div className="candidateContainer">
                             <h3>Candidate</h3>
                             <div>
-                                <div className="rowMargin">{this.state.candidate.first_name} {this.state.candidate.last_name}</div>
+                                <div className="rowMargin">{this.state.candidate.firstName} {this.state.candidate.lastName}</div>
                                 <div className="rowMargin"><span className="heading">Experience:</span> {this.state.candidate.experience} years</div>
                                 <div className="rowMargin"><span className="heading">Salary:</span> {this.state.candidate.salary}k</div>
-                                {this.state.candidate.tag_names && <div className="rowMargin"><span className="heading">Tags:</span> {this.state.candidate.tag_names.length === 0 ? 'Not Specified' : this.state.candidate.tag_names.join(", ")}</div>}
-                                {this.state.candidate.resume_id != null && <div className="rowButton" onClick={this.getResumeURL}>View Resume</div>}
+                                {this.state.candidate.tagNames && <div className="rowMargin"><span className="heading">Tags:</span> {this.state.candidate.tagNames.length === 0 ? 'Not Specified' : this.state.candidate.tagNames.join(", ")}</div>}
+                                {this.state.candidate.resumeId != null && <div className="rowButton" onClick={this.getResumeURL}>View Resume</div>}
                             </div>
                         </div>
                         <div className="jobContainer">
@@ -122,7 +122,7 @@ class PostCandidateToJob extends React.Component{
                                 <div className="rowMargin">{this.state.job.title}</div>
                                 <div className="rowMargin"><span className="heading">Experience:</span> {this.state.job.experience} years</div>
                                 <div className="rowMargin"><span className="heading">Salary:</span> {this.state.job.salary}k</div>
-                                {this.state.job.tag_names && <div className="rowMargin"><span className="heading">Tags:</span> {this.state.job.tag_names.length === 0 ? 'Not Specified' : this.state.job.tag_names.join(", ")}</div>}
+                                {this.state.job.tagNames && <div className="rowMargin"><span className="heading">Tags:</span> {this.state.job.tagNames.length === 0 ? 'Not Specified' : this.state.job.tagNames.join(", ")}</div>}
                             </div>
                         </div>
                     </div>

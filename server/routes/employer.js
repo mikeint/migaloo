@@ -40,7 +40,7 @@ router.post('/uploadImage', passport.authentication, generateImageFileNameAndVal
     var jwtPayload = req.params.jwtPayload;
     postgresdb.none('UPDATE employer SET image_id=$1 WHERE company_id = $2', [req.params.finalFileName, jwtPayload.id])
     .then((data) => {
-        res.json({success:true, image_id:req.params.finalFileName})
+        res.json({success:true, imageId:req.params.finalFileName})
     })
     .catch(err => {
         logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
@@ -75,9 +75,9 @@ function getAccountManagers(req, res) {
     if(page == null || page < 1)
         page = 1;
     postgresdb.any('\
-        SELECT l.user_id, l.email, ac.first_name, ac.last_name, \
-            ac.phone_number, ac.image_id, l.created_on, \
-            (count(1) OVER())/10+1 AS page_count \
+        SELECT l.user_id as "userId", l.email, ac.first_name as "firstName", ac.last_name as "lastName", \
+            ac.phone_number as "phoneNumber", ac.image_id as "imageId", l.created_on as "createdOn", \
+            (count(1) OVER())/10+1 as "pageCount" \
         FROM account_manager ac \
         INNER JOIN login l ON l.user_id = ac.account_manager_id \
         WHERE l.user_type_id = 2 AND l.active \
@@ -90,10 +90,10 @@ function getAccountManagers(req, res) {
         LIMIT 10', {page:(page-1)*10, searchString:searchString})
     .then((data) => { 
         data = data.map(m=>{
-            var timestamp = moment(m.created_on);
+            var timestamp = moment(m.createdOn);
             var ms = timestamp.diff(moment());
             m.created = moment.duration(ms).humanize() + " ago";
-            m.created_on = timestamp.format("x");
+            m.createdOn = timestamp.format("x");
             return m
         })
         res.json({success: true, accountManagers:data})

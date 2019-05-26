@@ -63,9 +63,9 @@ describe('Candidate', function() {
                 try{
                     assert.ok(res.success)
                     assert.notEqual(res.candidateList, null)
-                    assert.strictEqual(res.candidateList[0].first_name, 'Test')
+                    assert.strictEqual(res.candidateList[0].firstName, 'Test')
                     assert.strictEqual(res.candidateList[0].email, 'tes1t@test.com')
-                    assert.deepEqual(res.candidateList[0].tag_ids, [2, 3])
+                    assert.deepEqual(res.candidateList[0].tagIds, [2, 3])
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)
@@ -117,10 +117,10 @@ describe('Candidate', function() {
                 try{
                     assert.ok(res.success)
                     assert.notEqual(res.candidateList, null)
-                    assert.strictEqual(res.candidateList[0].first_name, 'TestEdit')
+                    assert.strictEqual(res.candidateList[0].firstName, 'TestEdit')
                     assert.strictEqual(res.candidateList[0].email, 'tes2t@test.com')
                     assert.strictEqual(res.candidateList[0].url, 'test-edit.com')
-                    assert.deepEqual(res.candidateList[0].tag_ids, [3, 4, 5])
+                    assert.deepEqual(res.candidateList[0].tagIds, [3, 4, 5])
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)
@@ -150,7 +150,7 @@ describe('Candidate', function() {
                     assert.ok(res.success)
                     assert.notEqual(res.candidateList, null)
                     assert.notStrictEqual(res.candidateList.length, 0)
-                    assert.strictEqual(res.candidateList[0].first_name, 'TestEdit')
+                    assert.strictEqual(res.candidateList[0].firstName, 'TestEdit')
                     assert.strictEqual(res.candidateList[0].email, 'tes2t@test.com')
                     assert.strictEqual(res.candidateList[0].url, 'test-edit.com')
                     return Promise.resolve()
@@ -194,7 +194,7 @@ describe('Candidate', function() {
                     assert.ok(res.success)
                     assert.notEqual(res.candidateList, null)
                     assert.notEqual(res.postData, null)
-                    assert.equal(res.postData.post_id, 1)
+                    assert.equal(res.postData.postId, 1)
                     assert.notStrictEqual(res.candidateList.length, 0)
                     return Promise.resolve()
                 }catch(e){
@@ -268,7 +268,7 @@ describe('Candidate Recruiter 2', function() {
                 try{
                     assert.ok(res.success)
                     assert.notEqual(res.candidateList, null)
-                    assert.strictEqual(res.candidateList[0].first_name, 'Test2')
+                    assert.strictEqual(res.candidateList[0].firstName, 'Test2')
                     assert.strictEqual(res.candidateList[0].email, 'tes2t@test.com')
                     return Promise.resolve()
                 }catch(e){

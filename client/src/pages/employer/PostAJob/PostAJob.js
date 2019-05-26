@@ -186,7 +186,7 @@ class PostAJob extends React.Component{
                             <CompanySelector
                                 required
                                 onChange={(company)=>this.setState(company, this.formValidation.shouldRevalidate)}
-                                value={this.state.oldPost.company_id}
+                                value={this.state.oldPost.companyId}
                                 {...this.formValidation.hasError("company")}/>
                         </div>
                         <div className={classes.input2}>  
@@ -207,7 +207,7 @@ class PostAJob extends React.Component{
                             <JobTypeSelector
                                 required
                                 onChange={this.handleChangeKV}
-                                value={this.state.oldPost.job_type_id}
+                                value={this.state.oldPost.jobTypeId}
                                 {...this.formValidation.hasError("jobType")}/>
                         </div>
                         {this.state.jobType !== -1 &&
@@ -215,7 +215,7 @@ class PostAJob extends React.Component{
                                 <TagSearch
                                     onChange={this.handleChangeKV}
                                     jobType={this.state.jobType}
-                                    value={this.state.oldPost.tag_ids}
+                                    value={this.state.oldPost.tagIds}
                                     {...this.formValidation.hasError("tagIds")}/>
                             </div>
                         }
@@ -236,20 +236,20 @@ class PostAJob extends React.Component{
                             <InterviewCountSelector 
                                 required
                                 onChange={this.handleChangeKV}
-                                value={this.state.oldPost.interview_count}
+                                value={this.state.oldPost.interviewCount}
                                 {...this.formValidation.hasError("interviewCount")}/>
                                 &nbsp;&nbsp;&nbsp;
                             <NumberOpeningsSelector 
                                 required
                                 onChange={this.handleChangeKV}
-                                value={this.state.oldPost.open_positions}
+                                value={this.state.oldPost.openPositions}
                                 {...this.formValidation.hasError("numOpenings")}/>
                         </div>
                         <div className={classes.input2}>
                             <OpenReasonSelector 
                                 required
                                 onChange={this.handleChangeKV}
-                                value={this.state.oldPost.opening_reason_id || this.state.oldPost.opening_reason_comment}
+                                value={this.state.oldPost.openingReasonId || this.state.oldPost.openingReasonComment}
                                 {...this.formValidation.hasError("openReason")}/>
                         </div>
                         <div className={classes.input2}>
@@ -259,7 +259,7 @@ class PostAJob extends React.Component{
                                 {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
                             />
                         </div>
-                        {(this.state.oldPost.post_id == null || this.state.oldPost.preliminary) && 
+                        {(this.state.oldPost.postId == null || this.state.oldPost.preliminary) && 
                             <FormControlLabel
                                 control={
                                     <Checkbox
@@ -276,7 +276,7 @@ class PostAJob extends React.Component{
                             variant="contained"
                             className={classes.postButton}
                             onClick={this.handleSubmit}>
-                            {this.state.oldPost.post_id == null ? 'Post' :
+                            {this.state.oldPost.postId == null ? 'Post' :
                                 (this.state.oldPost.preliminary ? 'Save & Post' : 'Save')}
                         </Button>
                     </div>

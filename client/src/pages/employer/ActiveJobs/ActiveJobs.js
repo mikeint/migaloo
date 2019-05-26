@@ -97,7 +97,7 @@ class ActiveJobs extends React.Component{
         .then((res)=>{
             if(res == null || !res.data.success) return
             this.setState({ jobList: res.data.jobPosts,
-                pageCount: (res.data.jobPosts&&res.data.jobPosts.length>0)?parseInt(res.data.jobPosts[0].page_count, 10):1 })
+                pageCount: (res.data.jobPosts&&res.data.jobPosts.length>0)?parseInt(res.data.jobPosts[0].pageCount, 10):1 })
         }).catch(errors => 
             console.log(errors)
         )
@@ -150,9 +150,9 @@ class ActiveJobs extends React.Component{
                                 {
                                     this.state.jobList.map((item, i) => {
                                         return <MenuItem key={i} onClick={()=>this.callOverlay(i)}>
-                                            {item.preliminary && <NavLink to={`/employer/postAJob/${item.post_id}`}><Button className={classes.isPrimaryBox}>Preliminary</Button></NavLink>}
+                                            {item.preliminary && <NavLink to={`/employer/postAJob/${item.postId}`}><Button className={classes.isPrimaryBox}>Preliminary</Button></NavLink>}
                                             <Typography>{item.title}</Typography>
-                                            {item.new_posts_cnt > 0 ? <span className="newPostingCount" title={item.new_posts_cnt+" New Candidate Postings"}>{item.new_posts_cnt}</span> : ""}
+                                            {item.newPostsCnt > 0 ? <span className="newPostingCount" title={item.newPostsCnt+" New Candidate Postings"}>{item.newPostsCnt}</span> : ""}
                                             <Typography className={classNames(classes.createdTime)}>{item.created}</Typography>
                                         </MenuItem>
                                     })

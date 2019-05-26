@@ -144,7 +144,7 @@ describe('AutoComplete', function() {
             return post(`/api/autocomplete/addTag/1/blahblahblah`, {}, process.env.recruiterToken).then((res)=>{
                 try{
                     assert.ok(res.success)
-                    assert.notEqual(res.tag_id, null)
+                    assert.notEqual(res.tagId, null)
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)
@@ -158,7 +158,7 @@ describe('AutoComplete', function() {
                     assert.ok(res.success)
                     assert.notEqual(res.tagList, null)
                     assert.strictEqual(res.tagList.length, 1)
-                    assert.strictEqual(res.tagList[0].tag_name, 'blahblahblah')
+                    assert.strictEqual(res.tagList[0].tagName, 'blahblahblah')
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)

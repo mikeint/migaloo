@@ -76,7 +76,7 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
         LEFT JOIN address a ON a.address_id = ac.address_id \
         WHERE ac.account_manager_id = $1', [jwtPayload.id])
     .then((data) => {
-        res.json({success: true, profile:data})
+        res.json({success: true, profile:db.camelizeFields(data)})
     })
     .catch(err => {
         logger.error('Get Profile', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
