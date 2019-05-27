@@ -1,6 +1,6 @@
 import React from "react"
 import './WhaleHead.scss'
-import WhaleSpray from '../../../components/Loader/Loader'
+import WhaleSpray from '../../../components/WhaleSpray/WhaleSpray'
 import whaleHead from "../../../files/images/landingPage/whaleHead.png"
  
 

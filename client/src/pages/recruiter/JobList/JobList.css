@@ -53,12 +53,9 @@
 }
 
 .jobListClassContainer .loaderContainer {
-    display: flex;
     justify-content: center;
-}
-
-.jobListClassContainer .loaderContainer .whaleWater{
-    transform: scale(10);
+    display: flex;
+    padding-top: 80px;
 }
  
 .jobListClassContainer span[class*='MuiTouchRipple-rippleVisible-']  { 

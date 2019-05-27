@@ -1,7 +1,7 @@
 import React from 'react';
 import {get, post, cancel} from '../../../../ApiCalls';  
 import Pagination from "react-js-pagination";
-import Loader from '../../../../components/Loader/Loader';
+import LoaderSquare from '../../../../components/LoaderSquare/LoaderSquare';
 import { withStyles } from '@material-ui/core/styles';  
 import Close from '@material-ui/icons/Close';
 import IconButton from '@material-ui/core/IconButton';
@@ -261,7 +261,7 @@ class ContactList extends React.Component{
                     </TableHead>
                     <TableBody>
                     {
-                        this.state.loading ? <Loader/> :
+                        this.state.loading ? <LoaderSquare/> :
                         this.state.contactList.map((d, i)=>{
                             return <TableRow key={i} className={classes.tableRow}>
                                 <TableCell className={classes.tableCell}>{d.email}</TableCell>

@@ -24,10 +24,12 @@ function getByPath(object, path) {
 
 const styles = theme => ({
     root: {
-        height:'100vh', 
+        height:'100vh',
+        paddingBottom: '50px',
         alignItems: 'unset',
         '@media (max-width: 1024px)': {
             height: 'initial',
+            paddingBottom: '0px',
         },
     },
     tabsContainer:{
@@ -60,10 +62,16 @@ const styles = theme => ({
                 flex: 'unset',
                 marginTop: 'unset',
             },
-        }, 
+        },
     },  
-    tabsIndicator: {
-      backgroundColor: '#6f90a14d',
+    linkWrapper: {
+        flexDirection: 'row',
+        justifyContent: 'unset',
+        padding: '10px',
+        textAlign: 'left',
+    },
+
+    tabsIndicator: { 
       height: "80px"
     }, 
     
@@ -90,7 +98,7 @@ const navMappings = {
             },
             {
                 icon:<AccountCircle />,
-                link:'/recruiter/profile', 
+                link:'/recruiter/profile',  
                 className: 'linkButton'
             },
             {
@@ -198,7 +206,7 @@ class NavBar extends React.Component{
                             onChange={this.handleChange}>
                             {
                                 this.getNavMappings().filter(d=>d.showOnState == null ||  getByPath(this.state, d.showOnState)).map((d, i)=>{
-                                    return <LinkTab className={classes[d.className]} label={d.name} icon={d.icon} key={i} to={d.link} />
+                                    return <LinkTab classes={{wrapper:classes.linkWrapper}} className={classes[d.className]} label={d.name} icon={d.icon} key={i} to={d.link} />
                                 })
                             }
                         </div>

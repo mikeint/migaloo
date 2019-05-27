@@ -3,7 +3,7 @@ import './CandidateList.css';
 import { NavLink } from 'react-router-dom';
 import {get,cancel} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
-import Loader from '../../../components/Loader/Loader';
+import LoaderSquare from '../../../components/LoaderSquare/LoaderSquare';
 import ExpandableRow from './ExpandableRow/ExpandableRow'; 
 import debounce from 'lodash/debounce'; 
 
@@ -136,7 +136,7 @@ class CandidateList extends React.Component{
  
         return (
             <React.Fragment>  
-                    { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
+                    { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"></div></div>:"" }
  
                     <div className="pageHeading">
                         <span className={classes.unshrinkable}>Candidates</span>
@@ -186,7 +186,7 @@ class CandidateList extends React.Component{
                                     </div>
                                 </React.Fragment>
                             :
-                            <Loader />
+                            <LoaderSquare />
                         }
                         </div>
  

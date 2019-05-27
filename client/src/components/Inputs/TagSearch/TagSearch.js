@@ -3,7 +3,7 @@ import AuthFunctions from '../../../AuthFunctions';
 import './TagSearch.css';    
 import debounce from 'lodash/debounce';
 import {get} from '../../../ApiCalls';  
-import Loader from '../../Loader/Loader';
+import LoaderSquare from '../../LoaderSquare/LoaderSquare';
 import Chip from '@material-ui/core/Chip';
 import TextField from '@material-ui/core/TextField';
 import { withStyles } from '@material-ui/core/styles';
@@ -177,7 +177,7 @@ class TagSearch extends React.Component{
                                 <div className="potentialTag" key={i} onClick={()=>this.addTag(tag)}>
                                     {tag.tagName} <span className="tagCount">({tag.tagCount})</span>
                                 </div>
-                            ):<div className="loadingTags"><Loader/></div>}
+                            ):<div className="loadingTags"><LoaderSquare/></div>}
                         </div>
                     /* :'' */}
                 </div> 

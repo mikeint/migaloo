@@ -1,6 +1,6 @@
 import React from 'react';
 import './JobList.css';    
-import Loader from '../../../components/Loader/Loader';
+import LoaderSquare from '../../../components/LoaderSquare/LoaderSquare';
 import Filters from '../../../components/Filters/Filters';
 import {getWithParams, cancel} from '../../../ApiCalls';  
 import { NavLink, Redirect } from 'react-router-dom';
@@ -149,7 +149,7 @@ class JobList extends React.Component{
         return (
             <React.Fragment>
                 { this.state.openJob && <Redirect to={"/recruiter/jobList/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidateId:'')} />}
-                { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
+                { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"></div></div>:"" }
                 <Filters 
                     onChange={this.handleFilterChange}
                     onClose={this.handleDrawerClose}
@@ -227,7 +227,7 @@ class JobList extends React.Component{
                                 </div>
                             </React.Fragment>
                         :
-                        <div className="loaderContainer"><Loader sprayColor="#263c54"/></div>
+                        <div className="loaderContainer"><LoaderSquare /></div>
                     } 
                 </div>
             </React.Fragment>

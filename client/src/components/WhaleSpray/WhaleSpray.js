@@ -1,7 +1,7 @@
 import React from 'react';
-import './Loader.css';    
+import './WhaleSpray.css';    
 
-class Loader extends React.Component{ 
+class WhaleSpray extends React.Component{ 
 
     render(){  
         return (
@@ -24,4 +24,4 @@ class Loader extends React.Component{
     }
 };
 
-export default Loader;
+export default WhaleSpray;

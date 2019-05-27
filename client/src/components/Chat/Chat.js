@@ -4,7 +4,7 @@ import AuthFunctions from '../../AuthFunctions';
 import {get,cancel} from '../../ApiCalls';  
 import ConversationRow from "./ConversationRow/ConversationRow"; 
 import Pagination from "react-js-pagination";
-import Loader from "../Loader/Loader"; 
+import LoaderSquare from "../LoaderSquare/LoaderSquare"; 
 
 class Chat extends Component {
 
@@ -53,7 +53,7 @@ class Chat extends Component {
                                     conv.postId === this.props.match.params.postId
                                 return <ConversationRow key={i} conversation={conv} defaultOpenState={initialOpen} />
                             })
-                        : <Loader/>
+                        : <LoaderSquare/>
                     }
                     <div className="paginationContainer">
                         <Pagination

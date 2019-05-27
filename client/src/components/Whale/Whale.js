@@ -1,6 +1,6 @@
 import React, { Component } from "react";  
 import './Whale.css';  
-import WhaleSpray from '../Loader/Loader';
+import WhaleSpray from '../WhaleSpray/WhaleSpray';
 import migaloo from "../../files/images/landingPage/whaleWs.png"
 
 class Whale extends Component {

@@ -2,7 +2,7 @@ import React from 'react';
 import {get, cancel} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import { withStyles } from '@material-ui/core/styles';
-import Loader from '../../../components/Loader/Loader';
+import LoaderSquare from '../../../components/LoaderSquare/LoaderSquare';
 import Add from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
 import Drawer from '@material-ui/core/Drawer';
@@ -117,7 +117,7 @@ class Accounts extends React.Component{
                                 }
                             </div>
                         :
-                        <Loader />
+                        <LoaderSquare />
                     } 
                 </div> 
                 <Drawer

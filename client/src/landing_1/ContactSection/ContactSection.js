@@ -1,8 +1,7 @@
 import React, { Component } from "react";  
-import axios from 'axios';
-//import Whale from '../../components/Whale/Whale';
+import axios from 'axios'; 
 
-import Loader from '../../components/Loader/Loader';
+import LoaderSquare from '../../components/LoaderSquare/LoaderSquare';
 
 import './ContactSection.css'; 
 
@@ -50,7 +49,6 @@ class ContactSection extends Component {
 
 
     render() {
-        //const whaleOptions={whaleImg:'whaleBs.png', sprayColor:'#fff'};
 
         const buttonSpot = this.state.buttonState ?
             (<div id='formSubmitText'> Thank you for filling out the form.< br />  Your information has been successfully sent!</div>)
@@ -105,7 +103,7 @@ class ContactSection extends Component {
                             </div> 
                             <div className="submitContainer">
                                 {this.state.sending ?
-                                <Loader sprayColor="#fff" />
+                                <LoaderSquare />
                                 :
                                 buttonSpot
                                 }

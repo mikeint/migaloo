@@ -5,7 +5,7 @@ import {getWithParams, cancel} from '../../../ApiCalls';
 import AuthFunctions from '../../../AuthFunctions'; 
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
-import Loader from '../../../components/Loader/Loader';
+import LoaderSquare from '../../../components/LoaderSquare/LoaderSquare';
 import Add from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
 import Filters from '../../../components/Filters/Filters';
@@ -125,7 +125,7 @@ class ActiveJobs extends React.Component{
         const { classes } = this.props; 
         return (
             <React.Fragment>
-                { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"><img src={whale} alt="whale" /></div></div>:"" }
+                { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"></div></div>:"" }
                 <Filters
                 onChange={this.handleFilterChange}
                 onClose={this.handleDrawerClose}
@@ -188,7 +188,7 @@ class ActiveJobs extends React.Component{
                                 </Drawer>
                             </div>
                         :
-                        <Loader />
+                        <LoaderSquare />
                     } 
                 </div> 
             </React.Fragment>

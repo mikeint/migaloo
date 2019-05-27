@@ -1,6 +1,6 @@
 import React, { Component } from "react"; 
 import "./Conversation.css"; 
-import Loader from '../Loader/Loader'; 
+import LoaderSquare from '../LoaderSquare/LoaderSquare'; 
 import {get, post} from '../../ApiCalls';  
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import Close from '@material-ui/icons/Close';
@@ -233,7 +233,7 @@ class Conversation extends Component {
                             open={this.state.meetingDialogOpen}
                             onClose={this.handleMeetingDialogClose} />
                         <div className='chatWindow'>
-                            {this.state.showLoader?<Loader/>:''}
+                            {this.state.showLoader?<LoaderSquare/>:''}
                             {
                                 this.state.messageList.map((d, i)=>{
                                     return <div className={d.mine?"messageRow mine":"messageRow theirs"} key={i}>
