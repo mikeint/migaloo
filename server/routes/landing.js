@@ -44,17 +44,17 @@ router.post('/sendContactEmail', (req, res) => {
     const message = req.body.message;
     if(name == null || name.length === 0){
         const errorMessage = "Missing name field"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl,body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl,body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(email == null || email.length === 0){
         const errorMessage = "Missing email field"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(message == null || message.length === 0){
         const errorMessage = "Missing message field"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     

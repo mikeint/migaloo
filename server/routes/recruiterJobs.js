@@ -37,7 +37,7 @@ function getJobs(req, res){
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var sqlArgs = {page:(page-1)*10, recruiterId: jwtPayload.id}
@@ -118,7 +118,7 @@ function getJobsForCandidate(req, res){
     var candidateId = req.params.candidateId
     if(candidateId == null){
         const errorMessage = "Missing Candidate Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
 
     }
@@ -126,7 +126,7 @@ function getJobsForCandidate(req, res){
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     // Define the filters
@@ -241,13 +241,13 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
     //check Validation
     if(!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json(errors);
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, errors:errors});
     }
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
 
@@ -318,14 +318,14 @@ router.get('/listPostedCandidates/:jobId', passport.authentication,  (req, res) 
     var jobId = req.params.jobId;
     if(jobId == null){
         const errorMessage = "Missing Job Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.one('SELECT 1 \

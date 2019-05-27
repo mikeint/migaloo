@@ -21,7 +21,7 @@ router.get('/view/:size', passport.authentication, (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(req.params.size == null){
         const errorMessage = "Missing Size"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var query;
@@ -82,17 +82,17 @@ router.get('/view/:type/:id/:size', passport.authentication, (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     if(req.params.type == null){
         const errorMessage = "Missing Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(req.params.id == null || Number.isNaN(parseInt(req.params.id, 10))){
         const errorMessage = "Missing Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(req.params.size == null){
         const errorMessage = "Missing Size"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var query;

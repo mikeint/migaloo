@@ -42,15 +42,16 @@ router.post('/create', passport.authentication,  (req, res) => {
     //check Validation
     if(!isValid) {
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json(errors);
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, errors:errors});
     }
     var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Must be an recruiter to add a candidate"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
+    if(body.address == null) body.address = {}
     var candidateId
     postgresdb.tx(t => {
         // creating a sequence of transaction queries:
@@ -107,30 +108,31 @@ router.post('/edit', passport.authentication,  (req, res) => {
     //check Validation
     if(!isValid) {
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
-        return res.status(400).json(errors);
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, errors:errors});
     }
     var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Must be an recruiter to add a candidate"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(body.candidateId == null){
         const errorMessage = "Missing candidateId field"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
+    if(body.address == null) body.address = {}
     
     postgresdb.tx(t => {
         var q1
-        if(body.addressId != null)
+        if(body.address.addressId != null)
             q1 = Promise.resolve({address_id:null})
         else
             q1 = address.addAddress(body.address, t)
         return q1.then((address_ret)=>{
             const q2 = t.none('DELETE FROM candidate_tags WHERE candidate_id = $1', [body.candidateId])
-            const q3 = t.none(pgp.helpers.update({...body, addressId:address_ret.address_id}, candidateUpdate) + ' WHERE candidate_id = ${candidateId}', {candidateId: body.candidateId})
+            const q3 = t.none(pgp.helpers.update({...body, addressId:address_ret.address_id}, candidateUpdate, null, {emptyUpdate:true}) + ' WHERE candidate_id = ${candidateId}', {candidateId: body.candidateId})
             return t.batch([q2, q3]).then(()=>{
                 if(body.tagIds != null && body.tagIds.length > 0){
                     const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: body.candidateId, tag_id: d}}), candidateTagsInsertHelper);
@@ -178,12 +180,12 @@ router.post('/delete', passport.authentication,  (req, res) => {
     var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Must be an recruiter to add a candidate"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(body.candidateId == null){
         const errorMessage = "Missing candidateId field"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     
@@ -220,7 +222,7 @@ function listCandidates(req, res){
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var sqlArgs = {recruiterId:jwtPayload.id, page:(page-1)*10}
@@ -304,13 +306,13 @@ function listCandidatesForJob(req, res){
     const jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     const postId = req.params.postId
     if(postId == null){
         const errorMessage = "Missing post Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     const recruiterId = jwtPayload.id;

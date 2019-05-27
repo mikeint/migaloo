@@ -45,9 +45,9 @@ router.post('/login', (req, res) => {
     // Check Validation 
     if (!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['login', 'validation'], url:req.originalUrl, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['login', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage});
 
-        return res.status(400).json(errors);
+        return res.status(400).json({success:false, errors:errors});
     }
     const loginIp = req.connection.remoteAddress;
     const email = req.body.email;
@@ -74,7 +74,7 @@ router.post('/login', (req, res) => {
         if (!user) {
             errors.email = 'Email not registered';
             logger.error('Email not registered', {tags:['login'], email:email, ip:loginIp});
-            return res.status(400).json(errors);
+            return res.status(400).json({success:false, errors:errors});
         } else {
             bcrypt.compare(password, user.passwordhash).then(isMatch => {
                 if(isMatch) {
@@ -91,7 +91,7 @@ router.post('/login', (req, res) => {
                 } else {
                     errors.password = "Password Incorrect";
                     logger.error('Password Incorrect', {tags:['login'], email:email, ip:loginIp});
-                    return res.status(400).json(errors)
+                    return res.status(400).json({success:false, errors:errors})
                 }
             });
     
@@ -125,8 +125,8 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
     // Check Validation 
     if (!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, body: req.body, error:errorMessage});
-        return res.status(400).json(errors);
+        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, errors:errors});
     }
     const email = body.email
     const type = body.type;
@@ -134,7 +134,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
         if (user) {
             logger.error('Email already exists', {tags:['register'], url:req.originalUrl, email:email, ip:loginIp});
             errors.email = 'Email already exists';
-            return res.status(400).json(errors);
+            return res.status(400).json({success:false, errors:errors});
         } else {
             bcrypt.hash(body.password, 10).then((hash)=>{
                 postgresdb.tx(t => {

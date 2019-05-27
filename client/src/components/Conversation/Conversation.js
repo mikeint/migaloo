@@ -49,8 +49,8 @@ class Conversation extends Component {
         return new Promise((resolve, reject)=>{
             get(`/api/message/get/${this.state.messageSubjectId}`)
             .then((res)=>{
-                if(res && res.data.length > 0){
-                    const conversation = res.data[0]
+                if(res && res.success){
+                    const conversation = res.data.conversations[0]
                     const toId = (conversation.myId===conversation.userId1?conversation.userId2:conversation.userId1);
                     this.setState({ 
                         conversation: conversation,
@@ -78,12 +78,13 @@ class Conversation extends Component {
             .then((res)=>{
                 if(res == null) return
                 this.setState({showLoader:false})
-                if(res.data && res.data.length > 0){
+                if(res.data && res.data.success){
+                    const messages = res.data.messages;
                     var oldMessageList = this.state.messageList; // Get the previous page
                     var messageList = [];
-                    var pageCount = (res.data&&res.data.length>0)?parseInt(res.data[0].pageCount, 10):1
+                    var pageCount = (messages&&messages.length>0)?parseInt(messages[0].pageCount, 10):1
                     oldMessageList.pop() // Remove the load div from the previous page
-                    res.data.reverse().forEach((d, i)=>{
+                    messages.reverse().forEach((d, i)=>{
                         if(i === 0){ // Get contact name
                             if(this.state.pageNumber < pageCount)
                                 messageList.unshift({type:'load'})

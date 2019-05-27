@@ -71,8 +71,9 @@ class PostCandidateToJob extends React.Component{
     getProfileInfo = () => {
         get('/api/recruiter/getProfile')
         .then((res)=>{    
-            if(res == null) return
-            this.setState({ profileInfo: res.data }) 
+            if(res != null && res.data.success){
+                this.setState({ profileInfo: res.data.profile }) 
+            }
         }).catch(errors => 
             console.log(errors.response.data)
         )

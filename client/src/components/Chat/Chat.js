@@ -28,8 +28,8 @@ class Chat extends Component {
     getConversationList = () => {
         get('/api/message/list/'+this.state.page)
         .then((res)=>{
-            if(res)
-                this.setState({ conversationList: res.data,
+            if(res && res.data.success)
+                this.setState({ conversationList: res.data.conversations,
                     pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].pageCount, 10):1 }) 
         }).catch(errors => 
             console.log(errors.response.data)
