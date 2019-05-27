@@ -84,6 +84,7 @@ input {
 .mainContainer {
   display: flex;
   flex-direction: column;
+  background: #f6f7f8;
   width: calc(100% - 300px);  
 }
 .pageHeading {
@@ -220,7 +221,6 @@ input {
 
 .paginationContainer li {
     display: inline-block;
-    font-weight: bold;
     color: #263c54;
 }
 .paginationContainer a {
@@ -232,10 +232,11 @@ input {
     color: black;
 }
 .paginationContainer a:hover {
-    background-color: #263c54;
+    background-color: #263c542e;
     color: #fff;
 }
-.paginationContainer .active {
+.paginationContainer .active { 
+    font-weight: bold;
     background-color: #263c542e;
 }
 /* Pagination End */

@@ -11,16 +11,23 @@
     overflow: hidden;
     text-overflow: ellipsis;
     background: #b1b9dbba;
-    color: #ffffff;
+    color: #c2c2c2;
     margin-top: 20px;
     padding-left: 5px;
     line-height: 30px;
     box-shadow: 0px 0px 0px 1px #fff;
 }
+.jobListClassContainer .jobListItem:nth-child(even) {
+    background: #f2f3f5;
+}
+.jobListClassContainer .jobListItem:hover {
+    background: #fff;
+}
 .jobListClassContainer .searchJobList {
     width: 100%;
     height: 45px;
     font-size: 20px;
+    background: #f2f3f5;
     padding: 10px;
     border: none; 
     border-bottom: 1px solid #1a2b6d14;
@@ -29,12 +36,14 @@
 }
 .jobListClassContainer .jobListItem{ 
     padding: 15px 10px;
-    font-size: 15px; 
-    background: #ffffff;
+    font-size: 1rem;  
     color: #263c54;
     cursor: pointer;
     position: relative;
     border-bottom: 1px solid #1a2b6d14;
+    border-top: 1px solid #1a2b6d14;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 .jobListClassContainer .createdTime{
     font-size: 12px;
