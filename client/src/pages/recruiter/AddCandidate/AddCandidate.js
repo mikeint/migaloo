@@ -1,7 +1,7 @@
 import React from 'react';
 import AuthFunctions from '../../../AuthFunctions'; 
 import {post} from '../../../ApiCalls';  
-import TagSearch from '../../../components/Inputs/TagSearch/TagSearch'; 
+import SkillSearch from '../../../components/Inputs/SkillSearch/SkillSearch'; 
 import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/ExperienceSelector';
 import JobTypeSelector from '../../../components/Inputs/JobTypeSelector/JobTypeSelector';
 import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
@@ -20,7 +20,7 @@ const styles = theme => ({
     submitCandidateBtn:{
         width: "100%"
     },
-    tagSearch:{
+    SkillSearch:{
         marginTop: "10px"
     },
     input2: {
@@ -205,8 +205,8 @@ class AddCandidate extends React.Component{
                                 {...this.formValidation.hasError("jobType")}/>
                         </div>
                         {this.state.jobType !== -1 &&
-                            <div className={classes.tagSearch}>
-                                <TagSearch
+                            <div className={classes.SkillSearch}>
+                                <SkillSearch
                                     onChange={this.handleChangeKV}
                                     jobType={this.state.jobType}
                                     {...this.formValidation.hasError("tagIds")}/>

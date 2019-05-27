@@ -1,6 +1,6 @@
 import React from 'react';
 import {get, post, setAuthToken} from '../../ApiCalls';  
-import TagSearch from '../../components/Inputs/TagSearch/TagSearch';
+import SkillSearch from '../../components/Inputs/SkillSearch/SkillSearch';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import FormValidation from '../../FormValidation';
@@ -22,7 +22,7 @@ const styles = theme => ({
     selectFormControl:{
         flex: "1 1",
     },
-    tagSearch:{
+    SkillSearch:{
     },
     postButton:{
         width:"100%",
@@ -208,8 +208,8 @@ class EmployerJobPost extends React.Component{
                                 {...this.formValidation.hasError("jobType")}/>
                         </div>
                         {this.state.jobType !== -1 &&
-                            <div className={classes.tagSearch}>
-                                <TagSearch
+                            <div className={classes.SkillSearch}>
+                                <SkillSearch
                                     onChange={this.handleChangeKV}
                                     jobType={this.state.jobType}
                                     {...this.formValidation.hasError("tagIds")}/>

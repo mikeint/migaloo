@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import AuthFunctions from '../../../AuthFunctions'; 
 
 import {get, post} from '../../../ApiCalls';  
-import TagSearch from '../../../components/Inputs/TagSearch/TagSearch';
+import SkillSearch from '../../../components/Inputs/SkillSearch/SkillSearch';
 import CompanySelector from '../../../components/Inputs/CompanySelector/CompanySelector';
 import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
 import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector';
@@ -29,7 +29,7 @@ const styles = theme => ({
         flex: "1 1",
         margin: "10px"
     },
-    tagSearch:{
+    SkillSearch:{
         margin: "10px"
     },
     postButton:{
@@ -211,8 +211,8 @@ class PostAJob extends React.Component{
                                 {...this.formValidation.hasError("jobType")}/>
                         </div>
                         {this.state.jobType !== -1 &&
-                            <div className={classes.tagSearch}>
-                                <TagSearch
+                            <div className={classes.SkillSearch}>
+                                <SkillSearch
                                     onChange={this.handleChangeKV}
                                     jobType={this.state.jobType}
                                     value={this.state.oldPost.tagIds}

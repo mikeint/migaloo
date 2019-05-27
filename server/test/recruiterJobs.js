@@ -51,7 +51,7 @@ describe('Recruiter Jobs', function() {
             })
         });
     });
-    describe('List Jobs', () => {
+    describe('List Jobs For Candidates', () => {
         it('should return ok and data', () => {
             return get('/api/recruiterJobs/listForCandidate/1000', process.env.recruiterToken).then((res)=>{
                 try{
