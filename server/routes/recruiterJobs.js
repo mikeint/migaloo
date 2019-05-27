@@ -57,8 +57,6 @@ function getJobs(req, res){
             paramsToAdd[k] = v
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
-    console.log(filtersToAdd)
-    console.log(paramsToAdd)
     postgresdb.any('\
         SELECT j.company_id, j.post_id, title, requirements, experience, salary, company_name, image_id, \
             address_line_1, address_line_2, city, state_province, country, tag_ids, \
