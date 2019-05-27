@@ -223,11 +223,13 @@ function postListing(req, res){
         'employer':'AND j.company_id in (${employer:csv})',
         'contactType':'AND ec.is_primary in (${contactType:csv})'
     }
-    const validKeys = Object.keys(filters).filter(d=>Object.keys(req.query).includes(d))
     const paramsToAdd = {};
-    validKeys.forEach(k=>{
+    Object.keys(req.query).forEach(k=>{
         const v = JSON.parse(req.query[k])
+        if(v == null) return
         if(v.length > 0)
+            paramsToAdd[k] = v
+        else if(!isNaN(v))
             paramsToAdd[k] = v
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>filters[k]).join(" ")

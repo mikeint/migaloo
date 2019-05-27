@@ -1,19 +1,9 @@
 import React from 'react';
-import List from '@material-ui/core/List';
 import debounce from 'lodash/debounce';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Input from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
-import Collapse from '@material-ui/core/Collapse';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import Check from '@material-ui/icons/Check';
-import Close from '@material-ui/icons/Close';
-import Search from '@material-ui/icons/Search';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
+import {List, ListItem, ListItemIcon, ListItemText, Collapse,
+    Input, InputAdornment, IconButton} from '@material-ui/core';
+import {ExpandLess, ExpandMore, Close, Check, Search} from '@material-ui/icons';
 
 const styles = theme => ({
     selectedHeader:{

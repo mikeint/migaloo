@@ -12,8 +12,8 @@ const pgp = db.pgp
 
 
 const listFilters = {
-    'salary':'AND j.salary in (${salary:csv})',
-    'experience':'AND j.experience in (${experience:csv})',
+    'salary1':'AND j.salary >= ${salary1} AND j.salary <= ${salary2}',
+    'experience1':'AND j.experience >= ${experience1} AND j.experience <= ${experience2}',
     'tags':'AND array_intersects(tg.tag_ids, ${tags:list}::bigint[])'
 }
 /**
@@ -47,14 +47,18 @@ function getJobs(req, res){
         sqlArgs['jobId'] = jobId
         
     // Define the filters
-    const validKeys = Object.keys(listFilters).filter(d=>Object.keys(req.query).includes(d))
     const paramsToAdd = {};
-    validKeys.forEach(k=>{
+    Object.keys(req.query).forEach(k=>{
         const v = JSON.parse(req.query[k])
+        if(v == null) return
         if(v.length > 0)
+            paramsToAdd[k] = v
+        else if(!isNaN(v))
             paramsToAdd[k] = v
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
+    console.log(filtersToAdd)
+    console.log(paramsToAdd)
     postgresdb.any('\
         SELECT j.company_id, j.post_id, title, requirements, experience, salary, company_name, image_id, \
             address_line_1, address_line_2, city, state_province, country, tag_ids, \
@@ -130,11 +134,13 @@ function getJobsForCandidate(req, res){
         return res.status(400).json({success:false, error:errorMessage})
     }
     // Define the filters
-    const validKeys = Object.keys(listFilters).filter(d=>Object.keys(req.query).includes(d))
     const paramsToAdd = {};
-    validKeys.forEach(k=>{
+    Object.keys(req.query).forEach(k=>{
         const v = JSON.parse(req.query[k])
+        if(v == null) return
         if(v.length > 0)
+            paramsToAdd[k] = v
+        else if(!isNaN(v))
             paramsToAdd[k] = v
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")

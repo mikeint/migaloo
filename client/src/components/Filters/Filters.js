@@ -1,28 +1,17 @@
 import React from 'react';
 
 import {get} from '../../ApiCalls';  
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Clear from '@material-ui/icons/Clear';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Typography from '@material-ui/core/Typography'; 
-import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
-import FilterList from '@material-ui/icons/FilterList'; 
-import AttachMoney from '@material-ui/icons/AttachMoney';
-import Business from '@material-ui/icons/Business';
-import Gavel from '@material-ui/icons/Gavel';
-import Assignment from '@material-ui/icons/Assignment';
-import LocationOn from '@material-ui/icons/LocationOn';
-import ImportContacts from '@material-ui/icons/ImportContacts';
 import ListFilter from './FilterComponents/ListFilter';
 import SearchFilter from './FilterComponents/SearchFilter';
 import DistanceFilter from './FilterComponents/DistanceFilter';
+import RangeFilter from './FilterComponents/RangeFilter';
 import { Subject } from 'rxjs';
+import debounce from 'lodash/debounce';
+import {List, ListItem, ListItemIcon, ListItemText, Typography,
+    Drawer, IconButton, Divider} from '@material-ui/core';
+import {AttachMoney, Business, Gavel, FilterList, Assignment,
+    LocationOn, ImportContacts, Clear, ChevronLeft} from '@material-ui/icons';
 
 const clearFilterSubject = new Subject();
 
@@ -41,13 +30,6 @@ const styles = theme => ({
       marginLeft:"auto"
     },
 });
-function experienceDataCall(){
-    this.setState({data: Array.apply(null, Array(65)).map((_, i)=>i)});
-}
-function salaryDataCall(){
-    
-    this.setState({data: Array.apply(null, Array(350/5)).map((_, i)=>i)});
-}
 function tagsDataCall(searchString){
     const lowerSearchString = searchString.toLowerCase()
     get('/api/autocomplete/tag/'+lowerSearchString)
@@ -86,14 +68,18 @@ class Filters extends React.Component{
 
     constructor(props) {
         super(props);
-        this.handleFilterChange = this.handleFilterChange.bind(this)
+        this.handleFilterRangeChange = this.handleFilterRangeChange.bind(this)
+        this.handleFilterChangeWithIds = this.handleFilterChangeWithIds.bind(this)
         var filterList = [
-            (<ListFilter
+            (<RangeFilter
                 text={"Salary"}
                 id={"salary"}
                 icon={<AttachMoney />}
-                dataFunc={salaryDataCall}
-                onChange={this.handleFilterChange}
+                step={5}
+                min={0}
+                max={350}
+                endAdornment={'k'}
+                onChange={this.handleFilterRangeChange}
                 clearSubject={clearFilterSubject.asObservable()} />),
             (<ListFilter
                 text={"Employer"}
@@ -101,7 +87,7 @@ class Filters extends React.Component{
                 icon={<Business />}
                 type={"radio"}
                 dataFunc={employerDataCall}
-                onChange={this.handleFilterChange}
+                onChange={this.handleFilterChangeWithIds}
                 clearSubject={clearFilterSubject.asObservable()} />),
             (<ListFilter
                 text={"Contact Type"}
@@ -109,27 +95,30 @@ class Filters extends React.Component{
                 icon={<ImportContacts />}
                 type={"radio"}
                 dataFunc={contactTypeDataCall}
-                onChange={this.handleFilterChange}
+                onChange={this.handleFilterChangeWithIds}
                 clearSubject={clearFilterSubject.asObservable()} />),
-            (<ListFilter
+            (<RangeFilter
                 text={"Experience"}
                 id={"experience"}
                 icon={<Gavel />}
-                dataFunc={experienceDataCall}
-                onChange={this.handleFilterChange}
+                step={1}
+                min={0}
+                max={65}
+                endAdornment={' years'}
+                onChange={this.handleFilterRangeChange}
                 clearSubject={clearFilterSubject.asObservable()} />),
             (<SearchFilter
                 text={"Tags"}
                 id={"tags"}
                 icon={<Assignment />}
                 dataFunc={tagsDataCall}
-                onChange={this.handleFilterChange}
+                onChange={this.handleFilterChangeWithIds}
                 clearSubject={clearFilterSubject.asObservable()} />),
             (<DistanceFilter
                 text={"Location"}
                 id={"location"}
                 icon={<LocationOn />}
-                onChange={this.handleFilterChange}
+                onChange={this.handleFilterRangeChange}
                 clearSubject={clearFilterSubject.asObservable()} />)
         ]
         if(props.filterOptions)
@@ -152,13 +141,19 @@ class Filters extends React.Component{
             return true
         return change;
     }
-    onChange(){
+    onChange = debounce(()=>{
         if(this.state.onChange != null)
             this.state.onChange(this.state.filters)
-    }
-    handleFilterChange(event){
+    }, 300)
+    handleFilterChangeWithIds(event){
         const filters = this.state.filters;
         filters[event.id] = event.selected.map(d=>d.id);
+        this.setState({ filters: filters }, ()=>this.onChange());
+    }
+    handleFilterRangeChange(event){
+        const filters = this.state.filters;
+        filters[event.id+'1'] = event.selected == null ? null : event.selected[0];
+        filters[event.id+'2'] = event.selected == null ? null : event.selected[1];
         this.setState({ filters: filters }, ()=>this.onChange());
     }
     handleDrawerToggle = () => {
@@ -190,7 +185,7 @@ class Filters extends React.Component{
                             <FilterList/>&nbsp;Filter
                         </Typography>
                         <IconButton className={classes.drawerReturnBtn} onClick={this.handleDrawerClose}>
-                            <ChevronLeftIcon />
+                            <ChevronLeft />
                         </IconButton>
                     </div>
                     <Divider />

@@ -2,9 +2,8 @@ import React from 'react';
 import AuthFunctions from '../../../AuthFunctions'; 
 import debounce from 'lodash/debounce';
 import {get} from '../../../ApiCalls';  
-import Chip from '@material-ui/core/Chip';
 import { withStyles } from '@material-ui/core/styles';
-import { MenuItem, Input, InputLabel, FormControl, FormHelperText } from '@material-ui/core';
+import { MenuItem, Input, FormControl, FormHelperText, Chip } from '@material-ui/core';
   
 const styles = theme => ({
     chip: {

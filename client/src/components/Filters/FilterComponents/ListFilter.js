@@ -1,14 +1,7 @@
 import React from 'react';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
 import { withStyles } from '@material-ui/core/styles';
-import Collapse from '@material-ui/core/Collapse';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import Check from '@material-ui/icons/Check';
-import Close from '@material-ui/icons/Close';
+import {List, ListItem, ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
+import {ExpandLess, ExpandMore, Check, Close} from '@material-ui/icons';
   
 const styles = theme => ({
     selectedHeader:{

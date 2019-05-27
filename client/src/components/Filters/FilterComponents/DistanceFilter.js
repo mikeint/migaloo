@@ -1,15 +1,10 @@
 import React from 'react';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Input from '@material-ui/core/Input';
 import { withStyles } from '@material-ui/core/styles';
-import Collapse from '@material-ui/core/Collapse';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import Check from '@material-ui/icons/Check';
-import Close from '@material-ui/icons/Close';
+import {List, ListItem, ListItemIcon, ListItemText, Collapse,
+    Input} from '@material-ui/core';
+import {ExpandLess, ExpandMore, Close, Check} from '@material-ui/icons';
+import 'rc-slider/assets/index.css';
+import Slider from 'rc-slider';
 
 const styles = theme => ({
     selectedHeader:{
@@ -39,13 +34,13 @@ class DistanceFilter extends React.Component{
         this.setState({collapse: !this.state.collapse});
     }
     select(i){
-        this.setState({selected: i}, ()=>this.state.onChange(this.state));
+        this.setState({selected: i, rangeValue: i}, ()=>this.state.onChange(this.state));
     }
     rangeSelect(e){
-        this.setState({selected: e.target.value, rangeValue:e.target.value}, ()=>this.state.onChange(this.state));
+        this.setState({selected: e, rangeValue:e}, ()=>this.state.onChange(this.state));
     }
     clearSelected(){
-        this.setState({selected: null}, ()=>this.state.onChange(this.state));
+        this.setState({selected: null, rangeValue: 50}, ()=>this.state.onChange(this.state));
     }
   
     render(){
@@ -81,11 +76,13 @@ class DistanceFilter extends React.Component{
                         )}
                         <ListItem
                             className={classes.nested}>
-                            <Input min={1}
-                                defaultValue={this.state.rangeValue}
-                                type="range"
+                            <Slider
+                                min={1}
+                                max={100} 
+                                tep={1}
+                                value={this.state.rangeValue}
                                 onChange={this.rangeSelect.bind(this)}
-                            />&nbsp;<span>{`${this.state.rangeValue} ${this.state.metric?'km':'mi'}`}</span>
+                                />&nbsp;<span>{`${this.state.rangeValue} ${this.state.metric?'km':'mi'}`}</span>
                         </ListItem>
                     </List>
                 </Collapse>
