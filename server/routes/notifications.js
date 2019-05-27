@@ -124,6 +124,9 @@ router.post('/setSeen', passport.authentication, setSeen)
 function setSeen(req, res) {
     const jwtPayload = req.body.jwtPayload;
     const notificationIds = req.body.notificationIds; // List
+    if(notificationIds == null || notificationIds.length === 0){
+        return res.json({success:true})
+    }
     notifications.notificationsSetSeen(jwtPayload.id, notificationIds)
     .then((data) => {
         res.json({success:true})
@@ -136,7 +139,7 @@ function setSeen(req, res) {
 router.get('/test', passport.authentication, test)
 function test(req, res) {
     const jwtPayload = req.body.jwtPayload;
-    notifications.addNotification(jwtPayload.id, 'newJobPosting', {companyName: "Beggings", postId:1, postTitle:"I want food"})
+    notifications.addNotification(jwtPayload.id, 'newJobPosting', {companyName: "Begging", postId:1, postTitle:"I want food"})
     .then((data) => {
         res.json({success:true})
     })

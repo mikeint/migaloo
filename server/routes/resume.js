@@ -17,7 +17,7 @@ const generateResumeFileNameAndValidation = (req, res, next) => {
     var jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 1){
         const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.one('\
@@ -54,9 +54,9 @@ router.post('/upload/:candidateId', passport.authentication, generateResumeFileN
     });
 });
 /**
- * Get recruiter profile information
- * @route GET api/recruiter/getProfile
- * @group recruiter - Recruiter
+ * Get candidate resume
+ * @route GET api/resume/view
+ * @group resume - Resume
  * @param {Object} body.optional
  * @returns {object} 200 - A map of profile information
  * @returns {Error}  default - Unexpected error

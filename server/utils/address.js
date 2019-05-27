@@ -47,7 +47,7 @@ function updateAddress(body, transaction=postgresdb){
         if(body['addressId']  == null)
             throw Error('Missing field address_id')
 
-        return transaction.none(pgp.helpers.update(body, addressUpdate) + ' WHERE address_id = ${addressId}', {addressId:body['addressId']})
+        return transaction.none(pgp.helpers.update(body, addressUpdate, null, {emptyUpdate:true}) + ' WHERE address_id = ${addressId}', {addressId:body['addressId']})
     }else{
         return Promise.resolve({address_id: null})
     }

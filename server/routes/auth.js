@@ -45,7 +45,7 @@ router.post('/login', (req, res) => {
     // Check Validation 
     if (!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['login', 'validation'], url:req.originalUrl, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['login', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage});
 
         return res.status(400).json({success:false, errors:errors});
     }
@@ -125,7 +125,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
     // Check Validation 
     if (!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, errors:errors});
     }
     const email = body.email

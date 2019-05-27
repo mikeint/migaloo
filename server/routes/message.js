@@ -37,7 +37,7 @@ router.post('/create', passport.authentication,  (req, res) => {
     //check Validation
     if(!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage, errors:errors});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage, errors:errors});
         return res.status(400).json(errors);
     }
     var userId = jwtPayload.id;
@@ -132,7 +132,7 @@ router.post('/setResponse', passport.authentication,  (req, res) => {
     let response = req.body.response;
     if(response !== 1 && response !== 2){
         const errorMessage = "Invalid response"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
 
@@ -274,7 +274,7 @@ function listConversationMessages(req, res){
     var messageSubjectId = parseInt(req.params.messageSubjectId, 10);
     if(messageSubjectId == null){
         const errorMessage = "Missing Message Subject Id"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
     var jwtPayload = req.body.jwtPayload;
