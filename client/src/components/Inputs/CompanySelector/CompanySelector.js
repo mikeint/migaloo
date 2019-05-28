@@ -29,6 +29,7 @@ class CompanySelector extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            label: props.label || 'Employer',
             companies: [{}],
             onChange: props.onChange,
             company: -1,
@@ -81,7 +82,7 @@ class CompanySelector extends React.Component{
                 <FormControl
                         className={classes.selectFormControl}
                         {...(this.state.error?{error:true}:{})}>
-                    <InputLabel htmlFor="employer-helper">Employer</InputLabel>
+                    <InputLabel htmlFor="employer-helper">{this.state.label}</InputLabel>
                     <Select
                         value={this.state.company}
                         onChange={this.handleChange}

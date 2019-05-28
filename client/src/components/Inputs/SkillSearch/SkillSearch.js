@@ -26,6 +26,7 @@ class SkillSearch extends React.Component{
     constructor(props){
         super(props);
         this.state = { 
+            label: props.label || 'Skills',
             tags: [],
             potentialTagList:[],
             searching: false,
@@ -107,7 +108,7 @@ class SkillSearch extends React.Component{
                     <FormControl
                             {...(this.state.error?{error:true}:{})}>
                         
-                        Skills
+                        {this.state.label}
                         <div className={classes.userTagWrp}>
                             {this.state.tags.map((tag, i)=>
                                 <Chip

@@ -30,6 +30,7 @@ class JobTypeSelector extends React.Component{
         super(props);
         const multiple = this.props.multiple || false
         this.state = {
+            label: props.label || 'Job Type',
             multiple: multiple,
             jobTypeList: [],
             onChange: props.onChange,
@@ -85,7 +86,7 @@ class JobTypeSelector extends React.Component{
                 <FormControl 
                         className={classes.selectFormControl}
                         {...(this.state.error?{error:true}:{})}>
-                    <InputLabel htmlFor="job-type-helper">Job Type</InputLabel>
+                    <InputLabel htmlFor="job-type-helper">{this.state.label}</InputLabel>
                     <Select
                         value={this.state.jobType}
                         className={classes.textField}

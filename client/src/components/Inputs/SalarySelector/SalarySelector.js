@@ -14,6 +14,7 @@ class SalarySelector extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            label: props.label || 'Salary',
             onChange: props.onChange,
             salary: (props.required || false)?0:-1,
             required: props.required || false,
@@ -44,7 +45,7 @@ class SalarySelector extends React.Component{
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-                Salary: {`${this.state.salary}k+`}
+                {this.state.label}: {`${this.state.salary}k+`}
                 <Slider
                     classes={{ container: classes.slider }}
                     value={this.state.salary}

@@ -34,6 +34,7 @@ class OpenReasonSelector extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            label: props.label || 'Reason for the Opening(s)',
             openReasonList: [{}],
             onChange: props.onChange,
             openReason: -1,
@@ -97,7 +98,7 @@ class OpenReasonSelector extends React.Component{
                 <FormControl 
                         className={classes.selectFormControl}
                         {...(this.state.error?{error:true}:{})}>
-                    <InputLabel htmlFor="open-reason-helper">Reason for the Opening(s)</InputLabel>
+                    <InputLabel htmlFor="open-reason-helper">{this.state.label}</InputLabel>
                     <Select
                         value={this.state.openReason}
                         className={classes.textField}

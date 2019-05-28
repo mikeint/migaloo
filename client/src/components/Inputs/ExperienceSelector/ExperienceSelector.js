@@ -15,6 +15,7 @@ class ExperienceSelector extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            label: props.label || 'Experience',
             onChange: props.onChange,
             experience: (props.required || false)?0:-1,
             required: props.required || false,
@@ -45,7 +46,7 @@ class ExperienceSelector extends React.Component{
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-                Experience:  {this.state.experience===-1?'Unspecified':`${this.state.experience}${maxValue===this.state.experience?'+':''} years experience`}
+                {this.state.label}:  {this.state.experience===-1?'Unspecified':`${this.state.experience}${maxValue===this.state.experience?'+':''} years experience`}
                 <Slider
                     classes={{ container: classes.slider }}
                     value={this.state.experience}

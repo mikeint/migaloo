@@ -15,6 +15,7 @@ class NumberOpeningsSelector extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            label: props.label || 'Number of Openings',
             onChange: props.onChange,
             numberOpenings: (props.required || false)?1:0,
             required: props.required || false,
@@ -45,7 +46,7 @@ class NumberOpeningsSelector extends React.Component{
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-                Number of Openings:  {this.state.numberOpenings===-1?'Unspecified':`${this.state.numberOpenings}${maxValue===this.state.numberOpenings?'+':''}`}
+                {this.state.label}:  {this.state.numberOpenings===-1?'Unspecified':`${this.state.numberOpenings}${maxValue===this.state.numberOpenings?'+':''}`}
                 <Slider
                     classes={{ container: classes.slider }}
                     value={this.state.numberOpenings}

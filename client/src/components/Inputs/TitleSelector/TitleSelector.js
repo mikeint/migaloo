@@ -11,6 +11,7 @@ class TitleSelector extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            label: props.label || 'Title',
             onChange: props.onChange,
             title: '',
             required: props.required || false,
@@ -43,7 +44,7 @@ class TitleSelector extends React.Component{
         return (
             <TextField
                 name="title"
-                label={`Title (${256-this.state.title.length} Left)`}
+                label={`${this.state.label} (${256-this.state.title.length} Left)`}
                 className={classes.textField}
                 value={this.state.title}
                 onChange={this.handleChange}

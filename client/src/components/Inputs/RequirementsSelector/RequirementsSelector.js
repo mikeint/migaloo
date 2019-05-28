@@ -11,6 +11,7 @@ class RequirementsSelector extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            label: props.label || 'Requirements',
             onChange: props.onChange,
             requirements: '',
             required: props.required || false,
@@ -44,7 +45,7 @@ class RequirementsSelector extends React.Component{
         return (
             <TextField
                 name="requirements"
-                label="Requirements"
+                label={this.state.label}
                 multiline={true}
                 className={classes.textArea}
                 placeholder="A list of requirements"

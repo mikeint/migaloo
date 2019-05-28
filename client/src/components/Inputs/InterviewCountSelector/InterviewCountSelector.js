@@ -15,6 +15,7 @@ class InterviewCountSelector extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
+            label: props.label || 'Number of Candidates to Interview',
             onChange: props.onChange,
             numberOfInterviews: (props.required || false)?0:-1,
             required: props.required || false,
@@ -45,7 +46,7 @@ class InterviewCountSelector extends React.Component{
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-                Number of Candidates to Interview:  {this.state.numberOfInterviews===-1?'Unspecified':`${this.state.numberOfInterviews}${maxValue===this.state.numberOfInterviews?'+':''}`}
+                {this.state.label}:  {this.state.numberOfInterviews===-1?'Unspecified':`${this.state.numberOfInterviews}${maxValue===this.state.numberOfInterviews?'+':''}`}
                 <Slider
                     classes={{ container: classes.slider }}
                     value={this.state.numberOfInterviews}
