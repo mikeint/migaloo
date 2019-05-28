@@ -4,9 +4,9 @@ import { Redirect } from 'react-router-dom';
 import {get, cancel, getNewAuthToken} from '../../../ApiCalls';  
 import defaultProfileImage from '../../../files/images/profile.png'
 import { withStyles } from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
-import Drawer from '@material-ui/core/Drawer';
+import {MenuItem, Drawer} from '@material-ui/core';
 import EditProfile from './EditProfile/EditProfile';  
+import NotificationSettings from '../../../components/NotificationSettings/NotificationSettings';  
 
 const styles = theme => ({
     dataContainer: {
@@ -51,7 +51,8 @@ class Profile extends React.Component{
             profile: '',
             profileInfo: {},
             profileImage: defaultProfileImage,
-            openEditProfile: false
+            openEditProfile: false,
+            openEditNotifications: false
         }
     } 
 
@@ -70,6 +71,11 @@ class Profile extends React.Component{
             this.getProfileInfo();
             this.getImage();
         }
+    }
+    handleEditNotificationsClose(didChange) {
+        this.setState({
+            openEditNotifications: false
+        })
     }
     handleLogout = () => { 
         this.Auth.logout();
@@ -121,7 +127,7 @@ class Profile extends React.Component{
                         </div>
                     </div>
                     <MenuItem className={classes.menuItem} onClick={()=>this.setState({openEditProfile: true})}>Edit Account info</MenuItem>
-                    <MenuItem className={classes.menuItem}>Edit Notification Settings</MenuItem>
+                    <MenuItem className={classes.menuItem} onClick={()=>this.setState({openEditNotifications: true})}>Edit Notification Settings</MenuItem>
                     <MenuItem className={classes.menuItem} onClick={this.handleLogout}>Log Out</MenuItem>
                 </div> 
 
@@ -133,6 +139,14 @@ class Profile extends React.Component{
                     <EditProfile
                         defaultData={this.state.profileInfo}
                         onClose={this.handleEditProfileClose.bind(this)} />
+                </Drawer>
+                <Drawer
+                    anchor="bottom"
+                    open={this.state.openEditNotifications}
+                    onClose={this.handleEditNotificationsClose.bind(this)}
+                    >
+                    <NotificationSettings
+                        onClose={this.handleEditNotificationsClose.bind(this)} />
                 </Drawer>
             </React.Fragment>
         );

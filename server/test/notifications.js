@@ -21,6 +21,35 @@ describe('Notifications', function() {
     after((done)=>{
         server.close(done)
     })
+    describe('Settings', () => {
+        var notificationSettings
+        it('get settings', () => {
+            return get('/api/notifications/settings', process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    assert.notEqual(res.notificationSettings, null)
+                    notificationSettings = res.notificationSettings
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('set settings', () => {
+            return post('/api/notifications/settings', {
+                notificationSettings:notificationSettings
+            }, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
     describe('Get last Id', () => {
         it('should return ok and last id', () => {
             return get('/api/notifications/lastId', process.env.recruiterToken).then((res)=>{

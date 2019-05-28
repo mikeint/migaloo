@@ -8,10 +8,73 @@ const postgresdb = db.postgresdb
 const pgp = db.pgp
 const logger = require('../utils/logging');
 
+/**
+ * Get the notification settings
+ * @route GET api/notifications/settings
+ * @group notifications - Notifications
+ * @param {Object} body.optional
+ * @returns {object} 200 - A list of notifications
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/settings', passport.authentication, (req, res) => {
+    const jwtPayload = req.body.jwtPayload;
+    return postgresdb.any('SELECT ns.*, nt.topic_name \
+    FROM notification_settings ns \
+    INNER JOIN notification_topic nt ON nt.topic_id = ns.topic_id \
+    WHERE ns.user_id = ${userId} AND nt.user_type_id = ${userTypeId}', {
+        userId: jwtPayload.id,
+        userTypeId: jwtPayload.userType
+    })
+    .then((data) => {
+        res.json({success:true, notificationSettings:data.map(d=>db.camelizeFields(d))})
+    })
+    .catch(err => {
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+})
+/**
+ * Set the notification settings
+ * @route POST api/notifications/settings
+ * @group notifications - Notifications
+ * @param {Object} body.optional
+ * @returns {object} 200 - A list of notifications
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/settings', passport.authentication, (req, res) => {
+    const jwtPayload = req.body.jwtPayload;
+    const notificationSettings = req.body.notificationSettings
+    if(notificationSettings == null){
+        const errorMessage = "Missing notificationSettings field"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    postgresdb.tx(t => {
+        t.batch(notificationSettings.map(d=>{
+            return t.none('UPDATE notification_settings \
+            SET email=${email}, notification=${notification} \
+            WHERE user_id = ${userId} AND topic_id = ${topicId}', {
+                userId: jwtPayload.id,
+                topicId: d.topicId,
+                notification: d.notification,
+                email: d.email
+            })
+        }))
+    })
+    .then((data) => {
+        res.json({success:true})
+    })
+    .catch(err => {
+        logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+})
 
 /**
  * Get the last notification id for future reference
- * @route GET api/lastId
+ * @route GET api/notifications/lastId
  * @group notifications - Notifications
  * @param {Object} body.optional
  * @returns {object} 200 - A list of notifications
