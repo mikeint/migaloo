@@ -72,14 +72,15 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
     }
     
     postgresdb.one('\
-        SELECT email, first_name, last_name, \
-            phone_number, image_id, a.* \
+        SELECT email, first_name as "firstName", last_name as "lastName", \
+            phone_number as "phoneNumber", image_id as "imageId", \
+            job_type_id as "jobTypeId", a.* \
         FROM recruiter r \
         INNER JOIN login l ON l.user_id = r.recruiter_id \
         LEFT JOIN address a ON a.address_id = r.address_id \
         WHERE r.recruiter_id = $1', [jwtPayload.id])
     .then((data) => {
-        res.json({success:true, profile: db.camelizeFields(data)})
+        res.json({success:true, profile: address.convertFieldsToMap(db.camelizeFields(data))})
     })
     .catch(err => {
         logger.error('Recruiter SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

@@ -1,7 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import {List, ListItem, ListItemIcon, ListItemText, Collapse,
-    Input} from '@material-ui/core';
+import {List, ListItem, ListItemIcon, ListItemText, Collapse} from '@material-ui/core';
 import {ExpandLess, ExpandMore, Close, Check} from '@material-ui/icons';
 import 'rc-slider/assets/index.css';
 import Slider from 'rc-slider';

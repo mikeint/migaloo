@@ -8,7 +8,7 @@ const cn = {
 };
 var db = pgp(cn);
 const camalize = (str) => {
-    return str.toLowerCase().replace(/_(.)/g, function(match, chr)
+    return str.replace(/_(.)/g, function(match, chr)
     {
         return chr.toUpperCase();
     });

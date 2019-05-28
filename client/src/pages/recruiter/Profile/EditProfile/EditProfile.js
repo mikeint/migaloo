@@ -7,14 +7,17 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import ModifiableProfileImage from '../../../../components/ModifiableProfileImage/ModifiableProfileImage';
 import FormValidation from '../../../../FormValidation';
+import JobTypeSelector from '../../../../components/Inputs/JobTypeSelector/JobTypeSelector';
+import classNames from 'classnames';
+import AddressInput from '../../../../components/Inputs/AddressInput/AddressInput';
 
 const styles = theme => ({
-    button:{ 
+    saveButton:{ 
         width: "80%",
-        display: "inline-block"
+        marginBottom: 20
     },
     textField: {
-        width: "50%",
+        width: 400,
         margin: "10px"
     },
     tableBody:theme.table.tableBody,
@@ -22,8 +25,8 @@ const styles = theme => ({
     tableCellHeader:theme.table.tableCellHeader,
     tableCell:theme.table.tableCell,
     center:{
-        textAlign:"center",
-        marginBottom: "20px"
+        marginLeft:"auto",
+        marginRight:"auto",
     },
     addressField:{
         width: "80%",
@@ -43,6 +46,10 @@ const styles = theme => ({
         fontSize: "24px",
         fontWeight: "bold", 
         position: "relative"
+    },
+    flexBox:{
+        display: "flex",
+        flexDirection: "column"
     }
 });
 const errorText = [
@@ -57,6 +64,16 @@ const errorText = [
     {
         stateName: "phoneNumber",
         errorText: "Please select a valid phone number"
+    },
+    { 
+        stateName: "jobType", 
+        errorText: "Please select the job type",
+        type: "number",
+        gt: -1
+    },
+    {
+        stateName: "address.placeId",
+        errorText: "Please select an address for the company"
     }
 ]
 class EditProfile extends React.Component{
@@ -80,8 +97,7 @@ class EditProfile extends React.Component{
     }
     saveProfile = (user) => {
         if(this.formValidation.isValid()){
-            post(`/api/recruiter/setProfile`,
-                {companyId:this.state.companyId, companyName:this.state.companyName, department:this.state.department})
+            post(`/api/recruiter/setProfile`, this.state)
             .then((res)=>{
                 if(res && res.data.success){
                     this.setState({didSave: true, isModified:false})
@@ -94,13 +110,16 @@ class EditProfile extends React.Component{
         }
     }
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, isModified:this.state.isModified||this.state[e.target.name]!==e.target.value })
+        this.setState({ [e.target.name]: e.target.value, isModified:this.state.isModified||this.state[e.target.name]!==e.target.value }, this.formValidation.shouldRevalidate)
+    }
+    handleChangeKV = (map) => {
+        this.setState(map, this.formValidation.shouldRevalidate)
     }
     closeSelf(){
         this.state.onClose(this.state.didSave)
     }
     handleAddressChange(address){
-        this.setState({addressChange:address})
+        this.setState({address:address})
     }
     render(){
         const { classes } = this.props; 
@@ -112,53 +131,66 @@ class EditProfile extends React.Component{
                         <Close />
                     </IconButton>
                 </div>
-                <div className={classes.center}>
+                <div className={classes.flexBox}>
                     <br/>
-                    <div>
+                    <div className={classes.center}>
                         <ModifiableProfileImage user={this.state.company} type={'accountManager'}/>
                     </div>
                     
-                    <div>
-                    <TextField
-                        name="firstName"
-                        label="First Name"
-                        className={classes.textField}
-                        defaultValue={this.state.firstName}
-                        required
-                        onChange={this.handleChange}
-                        margin="normal"
-                        variant="outlined"
-                        {...this.formValidation.hasError("firstName")}
-                    />
+                    <div className={classes.center}>
+                        <TextField
+                            name="firstName"
+                            label="First Name"
+                            className={classes.textField}
+                            defaultValue={this.state.firstName}
+                            required
+                            onChange={this.handleChange}
+                            margin="normal"
+                            variant="outlined"
+                            {...this.formValidation.hasError("firstName")}
+                        />
                     </div>
-                    <div>
-                    <TextField
-                        name="lastName"
-                        label="Last Name"
-                        className={classes.textField}
-                        defaultValue={this.state.lastName}
-                        required
-                        onChange={this.handleChange}
-                        margin="normal"
-                        variant="outlined"
-                        {...this.formValidation.hasError("lastName")}
-                    />
+                    <div className={classes.center}>
+                        <TextField
+                            name="lastName"
+                            label="Last Name"
+                            className={classes.textField}
+                            defaultValue={this.state.lastName}
+                            required
+                            onChange={this.handleChange}
+                            margin="normal"
+                            variant="outlined"
+                            {...this.formValidation.hasError("lastName")}
+                        />
                     </div>
-                    <div>
-                    <TextField
-                        name="phoneNumber"
-                        label="Phone Number"
-                        className={classes.textField}
-                        defaultValue={this.state.phoneNumber}
+                    <div className={classes.center}>
+                        <TextField
+                            name="phoneNumber"
+                            label="Phone Number"
+                            className={classes.textField}
+                            defaultValue={this.state.phoneNumber}
+                            required
+                            onChange={this.handleChange}
+                            margin="normal"
+                            variant="outlined"
+                            {...this.formValidation.hasError("phoneNumber")}
+                        />
+                    </div>
+                    <JobTypeSelector
                         required
-                        onChange={this.handleChange}
-                        margin="normal"
-                        variant="outlined"
-                        {...this.formValidation.hasError("phoneNumber")}
-                    />
+                        classes={{root:classes.center}}
+                        onChange={this.handleChangeKV}
+                        value={this.state.jobTypeId}
+                        {...this.formValidation.hasError("jobType")}/>
+                    <div className={classes.center}>
+                        <AddressInput
+                            value={this.state.address}
+                            onChange={this.handleAddressChange.bind(this)}
+                            {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
+                        />
                     </div>
                     <Button
-                        className={classes.button}
+                        className={classNames(classes.saveButton, classes.center)}
                         color="primary"
                         variant="contained"
                         disabled={!this.state.isModified}
