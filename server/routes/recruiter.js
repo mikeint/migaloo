@@ -15,6 +15,7 @@ const camelColumnConfig = db.camelColumnConfig
 const recruiterFields = ['first_name', 'last_name', 'phone_number', 'image_id', 'address_id'];
 const recruiterInsert = new pgp.helpers.ColumnSet(['recruiter_id', ...recruiterFields].map(camelColumnConfig), {table: 'recruiter'});
 const recruiterUpdate = new pgp.helpers.ColumnSet(['?recruiter_id', ...recruiterFields.map(camelColumnConfig)], {table: 'recruiter'});
+const recruiterJobTypeInsert = new pgp.helpers.ColumnSet(['recruiter_id', 'job_type_id'].map(camelColumnConfig), {table: 'recruiter_job_type'});
 
 const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
 const upload = generateUploadMiddleware('profile_image/')
@@ -76,9 +77,14 @@ router.get('/getProfile', passport.authentication,  (req, res) => {
             phone_number as "phoneNumber", image_id as "imageId", \
             job_type_id as "jobTypeId", a.* \
         FROM recruiter r \
+        LEFT JOIN (\
+            SELECT recruiter_id, array_agg(job_type_id) as job_type_id\
+            FROM recruiter_job_type \
+            WHERE recruiter_id = ${recruiterId} \
+            GROUP BY recruiter_id) rjt ON rjt.recruiter_id = r.recruiter_id \
         INNER JOIN login l ON l.user_id = r.recruiter_id \
         LEFT JOIN address a ON a.address_id = r.address_id \
-        WHERE r.recruiter_id = $1', [jwtPayload.id])
+        WHERE r.recruiter_id = ${recruiterId}', {recruiterId:jwtPayload.id})
     .then((data) => {
         res.json({success:true, profile: address.convertFieldsToMap(db.camelizeFields(data))})
     })
@@ -125,8 +131,11 @@ router.post('/setProfile', passport.authentication,  (req, res) => {
         }
         return q1.then((addr_ret)=>{
             addressId = addressId != null ? addressId : addr_ret.address_id
-            const q2 = t.none(pgp.helpers.update({...body, addressId:addr_ret.address_id}, recruiterUpdate, null, {emptyUpdate:true}) + ' WHERE recruiter_id = ${recruiterId}', {recruiterId: jwtPayload.id})
-            return q2
+            const q2 = t.none('DELETE FROM recruiter_job_type WHERE recruiter_id = ${recruiterId}', {recruiterId:jwtPayload.id})
+            const q3 = t.none(pgp.helpers.update({...body, addressId:addr_ret.address_id}, recruiterUpdate, null, {emptyUpdate:true}) + ' WHERE recruiter_id = ${recruiterId}', {recruiterId: jwtPayload.id})
+            const jobTypeData = body.jobTypeId.map(d=>{return {jobTypeId:d, recruiterId:jwtPayload.id}})
+            const q4 = t.none(pgp.helpers.insert(jobTypeData, recruiterJobTypeInsert))
+            return t.batch([q2, q3, q4])
                 .then(() => {
                     res.status(200).json({success: true})
                     return []

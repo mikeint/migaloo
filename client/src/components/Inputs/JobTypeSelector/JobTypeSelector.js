@@ -28,10 +28,12 @@ const styles = theme => ({
 class JobTypeSelector extends React.Component{
     constructor(props) {
         super(props);
+        const multiple = this.props.multiple || false
         this.state = {
-            jobTypeList: [{}],
+            multiple: multiple,
+            jobTypeList: [],
             onChange: props.onChange,
-            jobType: -1,
+            jobType: multiple?[]:-1,
             required: props.required || false,
             error: false,
             helperText: ''
@@ -53,7 +55,9 @@ class JobTypeSelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
-        if(nextProps.value != null && this.state.jobType !== nextProps.value){
+        if(nextProps.value != null && JSON.stringify(this.state.jobType) !== JSON.stringify(nextProps.value)){
+            if(this.state.multiple && !Array.isArray(nextProps.value))
+                throw new Error('Value property must be a list if the prop multiple is specified.')
             this.setState({ jobType: nextProps.value });
         }
         if(this.state !== nextState)
@@ -86,15 +90,16 @@ class JobTypeSelector extends React.Component{
                         value={this.state.jobType}
                         className={classes.textField}
                         onChange={this.handleChange}
+                        multiple={this.state.multiple}
                         input={<Input name="jobType" id="job-type-helper" />}
                         inputProps={{
                             id: 'jobType',
                             ...(this.state.error?{className:classes.error}:{})
                         }}
                     >
-                        <MenuItem value={-1}>
+                        {this.state.multiple ? '' : <MenuItem value={-1}>
                             Unspecified
-                        </MenuItem>
+                        </MenuItem>}
                         {this.state.jobTypeList.map((d, i)=>
                             <MenuItem key={i} value={d.jobTypeId}>{d.jobTypeName}</MenuItem>
                         )}

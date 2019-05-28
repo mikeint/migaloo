@@ -178,6 +178,7 @@ class EditProfile extends React.Component{
                     </div>
                     <JobTypeSelector
                         required
+                        multiple={true}
                         classes={{root:classes.center}}
                         onChange={this.handleChangeKV}
                         value={this.state.jobTypeId}

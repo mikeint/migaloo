@@ -42,7 +42,8 @@ describe('Recruiter', function() {
         it('check can set', () => {
             return post(`/api/recruiter/setProfile`, {
                 firstName: "Test",
-                lastName: "Test2"
+                lastName: "Test2",
+                jobTypeId: [1,3,5]
             }, process.env.recruiterToken).then((res)=>{
                 try{
                     assert.ok(res.success)
@@ -60,6 +61,7 @@ describe('Recruiter', function() {
                     assert.notEqual(res.profile.email, null)
                     assert.strictEqual(res.profile.firstName, "Test")
                     assert.strictEqual(res.profile.lastName, "Test2")
+                    assert.deepEqual(res.profile.jobTypeId, [1,3,5])
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)
@@ -70,7 +72,8 @@ describe('Recruiter', function() {
         it('reset data', () => {
             return post(`/api/recruiter/setProfile`, {
                 ...currentProfile
-            }, process.env.recruiterToken).then((res)=>{                try{
+            }, process.env.recruiterToken).then((res)=>{
+                try{
                     assert.ok(res.success)
                     return Promise.resolve()
                 }catch(e){
