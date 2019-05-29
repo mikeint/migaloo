@@ -38,13 +38,13 @@
 } 
 
 @media only screen and (max-width: 677px) {
-	.loginContent {
+	/* .loginContent {
         min-height:unset; 
         height: 100%;
 		width: 100%; 
 		border-radius: 0px;  
 		top: 0px;
-    } 
+    }  */
     .tab-item.active {
         color: #263c54;
     } 
