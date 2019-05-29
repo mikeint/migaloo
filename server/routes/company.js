@@ -12,7 +12,7 @@ const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const camelColumnConfig = db.camelColumnConfig
-const companyFields = ['company_name', 'department', 'image_id', 'address_id'];
+const companyFields = ['company_name', 'department', 'image_id', 'address_id', 'company_type'];
 const companyInsert = new pgp.helpers.ColumnSet(['company_id', ...companyFields].map(camelColumnConfig), {table: 'company'});
 const companyUpdate = new pgp.helpers.ColumnSet(['?company_id', ...companyFields.map(camelColumnConfig)], {table: 'company'});
 
@@ -54,6 +54,41 @@ function list(req, res) {
         res.status(500).json({success:false, error:err})
     });
 }
+router.get('/listUnassignedEmployer', passport.authentication, listUnassigned)
+router.get('/getUnassignedEmployer/:companyId', passport.authentication, listUnassigned)
+function listUnassigned(req, res) {
+    const jwtPayload = req.body.jwtPayload
+    const companyId = req.params.companyId
+
+    if(jwtPayload.userType !== 2 && jwtPayload.userType !== 1){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    
+    postgresdb.any('\
+        SELECT \
+            c.company_id, c.company_name, c.department, c.image_id, a.* \
+        FROM login l \
+        INNER JOIN company c ON c.company_id = l.user_id \
+        LEFT JOIN address a ON a.address_id = c.address_id \
+        WHERE \
+            NOT EXISTS ( \
+                SELECT 1 \
+                FROM login l \
+                INNER JOIN company_contact ec ON ec.company_contact_id = l.user_id \
+                WHERE l.user_type_id = 3 AND ec.company_id = c.company_id \
+            ) AND c.company_type = 1 \
+        '+(companyId!=null?'AND c.company_id = ${companyId}':'')+' \
+        ORDER BY company_name', {userId:jwtPayload.id, companyId:companyId})
+    .then((data) => {
+        res.json({success:true, companies:data.map(db.camelizeFields).map(address.convertFieldsToMap)})
+    })
+    .catch(err => {
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+}
 
 /**
  * Add company account
@@ -86,7 +121,7 @@ router.post('/addCompany', passport.authentication,  (req, res) => {
             return t.one('INSERT INTO login(user_type_id) VALUES (4) RETURNING user_id')
             .then((user_ret) => {
                 companyId = user_ret.user_id
-                const q3 = t.none(pgp.helpers.insert({...body, companyId:companyId, addressId:addr_ret.address_id}, companyInsert))
+                const q3 = t.none(pgp.helpers.insert({...body, companyId:companyId, addressId:addr_ret.address_id, companyType: 1}, companyInsert))
                 const q4 = t.none('INSERT INTO company_contact(company_id, company_contact_id, is_primary) VALUES ($1, $2, true)',
                                 [companyId, jwtPayload.id]);
                 return t.batch([q3, q4])

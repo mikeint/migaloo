@@ -40,6 +40,7 @@ class Accounts extends React.Component{
         super(props);
 		this.state = {
             companyList: [],
+            newCompanyList: [],
             openContact: false,
             openAddCompany: false,
             clickedCompany: null
@@ -63,6 +64,15 @@ class Accounts extends React.Component{
         }).catch(errors => 
             console.log(errors)
         )
+        get('/api/company/listUnassignedEmployer')
+        .then((res)=>{    
+            if(res == null) return
+            this.setState({ newCompanyList: res.data.companies.map(d=>{d.unassigned = true; return d}) })
+        }).catch(errors => 
+            console.log(errors)
+
+        )
+        
     }
     openContactList(company){
         this.setState({
@@ -107,11 +117,14 @@ class Accounts extends React.Component{
                         this.state.companyList ?
                             <div>
                                 {
-                                    this.state.companyList.map((item, i) => {
+                                    this.state.companyList.concat(this.state.newCompanyList).map((item, i) => {
                                         return <Button key={i} className={classes.row} onClick={()=>this.openContactList(item)}>
                                             {item.companyName}
                                             <span className={classes.createdTime}>{item.created}</span>
-                                            <span className={classes.isPrimary}>{item.isPrimary && <div className={classes.isPrimaryBox}>Primary</div>}</span>
+                                            <span className={classes.isPrimary}>
+                                                {item.isPrimary && <div className={classes.isPrimaryBox}>Primary</div>}
+                                                {item.unassigned && <div className={classes.isPrimaryBox}>Unassigned</div>}
+                                            </span>
                                         </Button>
                                     })
                                 }

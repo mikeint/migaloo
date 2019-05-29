@@ -24,7 +24,7 @@ def recrutierCandidateQuery = "INSERT INTO recruiter_candidate (candidate_id, re
 def recrutierCandidateData = []
 def candidateId = 10000
 
-def employerQuery = "INSERT INTO company (company_id, company_name, department, address_id) VALUES \n\t"
+def employerQuery = "INSERT INTO company (company_id, company_name, department, address_id, company_type) VALUES \n\t"
 def employerData = []
 def employerId = 1000000
 
@@ -83,7 +83,7 @@ lines.drop(1001).take(1000).each{line->
     loginData << "(${employerContactId}, '${d.EmailAddress}', current_date - interval '${daysBack}' day, 2)"
     loginData << "(${employerId}, null, current_date - interval '${daysBack}' day, 4)"
     addressData << "(${addressId}, '${d.StreetAddress}', '${d.City}', '${d.State}', '${d.Country}', ${d.Latitude}, ${d.Longitude})"
-    employerData << "(${employerId}, '${d.Company}', 'Unknown', ${addressId})"
+    employerData << "(${employerId}, '${d.Company}', 'Unknown', ${addressId}, 1)"
     employerContactData << "(${employerContactId}, ${employerId}, true)"
     accountManagerData << "(${employerContactId}, '${d.GivenName}', '${d.Surname}', '${d.TelephoneNumber}')"
     jobPostingData << "(${postId}, ${employerId}, ${addressId}, current_date - interval '${daysBack}' day, '${title}', '${requirements}', ${exp}, ${salary})"

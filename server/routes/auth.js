@@ -172,7 +172,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                             }
                             const lh = t.none('INSERT INTO login_history (user_id, login_ip) VALUES ($1, $2)',
                                     [login_ret.user_id, loginIp])
-                            const q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3)',
+                            const q2 = t.none('INSERT INTO company (company_id, company_name, address_id, company_type) VALUES ($1, $2, $3, 2)',
                                     [company_login_ret.user_id, body.companyName, null])
                             const q3 = t.none('INSERT INTO employer (employer_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
                                     [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
@@ -217,7 +217,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                         }
                         const lh = t.none('INSERT INTO login_history (user_id, login_ip) VALUES ($1, $2)',
                                 [login_ret.user_id, loginIp])
-                        const q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3)',
+                        const q2 = t.none('INSERT INTO company (company_id, company_name, address_id, company_type) VALUES ($1, $2, $3, 1)',
                                 [company_login_ret.user_id, body.companyName, null])
                         const q3 = t.none('INSERT INTO employer (employer_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
                                 [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
