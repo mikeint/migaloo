@@ -42,6 +42,27 @@ router.get('/jobType', passport.authentication, (req, res) => {
     });
 });
 /**
+ * Get benefit listing
+ * @route GET api/autocomplete/benefits
+ * @group autocomplete - Autocomplete
+ * @returns {object} 200 - A list of maps containing autocompletes
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/benefits', passport.authentication, (req, res) => {
+    postgresdb.any('SELECT * \
+            FROM benefits \
+            ORDER BY group_num ASC, benefits_id ASC')
+    .then(data => {
+        console.log(data)
+        res.json({success:true, benefits: data.map(d=>db.camelizeFields(d))});
+    })
+    .catch(err => {
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:req.body.jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+});
+/**
  * Get job type by autocomplete
  * @route GET api/autocomplete/openReason
  * @group autocomplete - Autocomplete
