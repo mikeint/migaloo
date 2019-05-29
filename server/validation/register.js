@@ -44,13 +44,15 @@ module.exports = function validateRegisterInput(data) {
 
 	if(data.type == 1){ // Recruiter
 		
-    }else if(data.type == 2){ // Employer
+    }else if(data.type == 3){ // Employer
 		if (Validator.isEmpty(data.phoneNumber)) {
 			errors.phoneNumber = 'Phone Number field is required';
 		}
         if (Validator.isEmpty(data.companyName)) {
             errors.companyName = 'Comapany Name field is required';
         }
+	}else{
+		errors.type = 'Invalid Type'
 	}
 	
 

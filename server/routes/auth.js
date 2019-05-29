@@ -37,9 +37,15 @@ function createJWT(payload){
 //     res.redirect('/')
 //   })
 
-// @route       GET api/auth/login
-// @desc        Login user route
-// @access      Public
+/**
+ * Login Route
+ * @route GET api/auth/login
+ * @group auth - Auth
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Public
+ */
 router.post('/login', (req, res) => {
     const { errors, isValid } = validateLoginInput(req.body);
     // Check Validation 
@@ -115,9 +121,15 @@ function checkEmailExists(email){
     })
 }
 
-// @route       GET api/auth/register
-// @desc        Register route
-// @access      Public
+/**
+ * Register User
+ * @route GET api/auth/register
+ * @group auth - Auth
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Public
+ */
 router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
     var body = req.body;
     const { errors, isValid } = validateRegisterInput(body);
@@ -157,9 +169,9 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                         if(type == 1){ // Recruiter
                             const q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3)',
                                     [company_login_ret.user_id, body.companyName, null])
-                            var q3 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
+                            const q3 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
                                     [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
-                            var q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
+                            const q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
                                 [login_ret.user_id, company_login_ret.user_id])
                             return t.batch([lh, q2, q3, q4]).then(() => {
                                 sendEmailVerification(payload.id, payload.email) // Async to send email verification
@@ -168,12 +180,14 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                                     res.status(200).json(token)
                                 })
                             })
-                        }else if(type == 2){ // Employer
-                            var q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6)',
+                        }else if(type == 3){ // Employer
+                            const q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6)',
                                     [company_login_ret.user_id, body.companyName, null])
-                            var q3 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
-                                [login_ret.user_id, company_login_ret.user_id, body.firstName, body.lastName, body.phoneNumber])
-                            return t.batch([lh, q2, q3]).then(() => {
+                            const q3 = t.none('INSERT INTO employer (employer_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
+                                    [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
+                            const q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
+                                    [login_ret.user_id, company_login_ret.user_id])
+                            return t.batch([lh, q2, q3, q4]).then(() => {
                                 sendEmailVerification(payload.id, payload.email) // Async to send email verification
 
                                 return createJWT(payload).then((token)=>{
@@ -200,9 +214,16 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
         return res.status(500).json({success: false, error:err})
     });
 });
-// @route       POST api/auth/resetPassword
-// @desc        Reset password route
-// @access      Public
+
+/**
+ * Reset a user's password
+ * @route POST api/auth/resetPassword
+ * @group auth - Auth
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Public
+ */
 router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
     var body = req.body;
     passport.decodeToken(body.token).then(payload=>{
@@ -215,6 +236,16 @@ router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt toek
         })
     }).catch(err=>res.status(500).json({success:false, error:err}))
 });
+
+/**
+ * Sent a password reset email
+ * @route POST api/auth/sendPasswordReset
+ * @group auth - Auth
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Public
+ */
 router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
     const email = req.body.email.trim();
     const ip = req.connection.remoteAddress;
@@ -234,7 +265,17 @@ router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt 
         res.status(500).json({success:false, error:err})
     });
 });
+
 // Todo: Add that the user must be authenticated, requires page redirects reroutes on login
+/**
+ * Verify a registered user's email
+ * @route POST api/auth/verifyEmail
+ * @group auth - Auth
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Public
+ */
 router.post('/verifyEmail', /*passport.authentication,*/ (req, res) => {
     var body = req.body;
     const ip = req.connection.remoteAddress;
@@ -280,6 +321,16 @@ function sendEmailVerification(id, email, ip){
         });
     })
 }
+
+/**
+ * Send a verification email
+ * @route POST api/auth/sendEmailVerification
+ * @group auth - Auth
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.post('/sendEmailVerification', passport.authentication, (req, res) => {
     const jwtPayload = req.body.jwtPayload;
     const ip = req.connection.remoteAddress;
@@ -291,11 +342,16 @@ router.post('/sendEmailVerification', passport.authentication, (req, res) => {
     });
 });
 
-// @route       GET api/auth/current
-// @desc        return current user
-// @access      Private
+/**
+ * Get user's current information
+ * @route POST api/auth/current
+ * @group auth - Auth
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
 router.get('/current', passport.authentication, (req, res) => {
-    console.log(req.body.jwtPayload.id)
     const ip = req.connection.remoteAddress;
     postgresdb.one('\
         SELECT c.company_id as "company", \

@@ -77,7 +77,6 @@ class LoginForm extends Component {
     return (
        
         <React.Fragment>
-
             <Whale {...whaleOptions}/>
             <div className="formItem"> 
                 <input onKeyPress={(event) => this.submit(event)} className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name='email' type='text' onChange={this.handleChange} value={email} required />

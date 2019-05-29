@@ -1,16 +1,16 @@
 .formItem { 
 	width: 100%;
     padding: 5px 20px;
-    float: left;
+    /* float: left; */
 }
 .formItem label{
 	width: 110px;
-	float: left;
+	/* float: left; */
 }
 .formItem input{
 	width: 100%;
 	height: 40px;
-	float: left;
+	/* float: left; */
 	padding: 10px;
 	border: 0px; 
 	font-size: 18px;

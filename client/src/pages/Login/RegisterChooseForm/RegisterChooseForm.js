@@ -7,7 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Whale from '../../../components/Whale/Whale';
 
 const styles = theme => ({
-    buttonLabel:{
+	buttonLabel:{
 		display: "block"
 	},
 	buttonContained:{
@@ -22,23 +22,26 @@ const styles = theme => ({
 	flexContainer:{
 		display: "flex",
 		flexWrap: "wrap"
+	},
+	container:{
+		width: "100%"
 	}
 });
 class RegisterChooseForm extends Component {
 	constructor() {
 		super();
 		this.state = {  
-            tabState: 0, 
+			tabState: 0, 
 		}; 
 	}    
 
 	changeTab = (tab) => {
-        this.setState({ tabState: tab });
+		this.setState({ tabState: tab });
 	}
 
 	render() {
-        const whaleOptions={whaleImg:'whaleWs.png', sprayColor:'#fff'};
-        const { classes } = this.props;
+		const whaleOptions={whaleImg:'whaleWs.png', sprayColor:'#fff'};
+		const { classes } = this.props;
 		return ( 
 			<div className={classes.flexContainer}>
 				{ this.state.tabState !== 0 &&
@@ -50,12 +53,16 @@ class RegisterChooseForm extends Component {
 						<ChevronLeft />
 					</Fab>}
 				<Whale {...whaleOptions}/>
-				{ this.state.tabState === 1 ?
-					<RegisterEmployerForm />
-					:
-					(this.state.tabState === 2 ?
-						<RegisterRecruiterForm />
+				<div className={classes.container}>
+					{ this.state.tabState === 1 ?
+						<RegisterEmployerForm />
 						:
+						(this.state.tabState === 2 ?
+							<RegisterRecruiterForm /> : ''
+						)
+					}
+				</div>
+				{ this.state.tabState === 0 &&
 						<React.Fragment>
 							<Button 
 								classes={{root:classes.buttonContained, label: classes.buttonLabel}}
@@ -72,7 +79,6 @@ class RegisterChooseForm extends Component {
 								<Person  fontSize="large"/><br/>Recruiter
 							</Button>
 						</React.Fragment>
-					)
 				}
 			</div>
 		)

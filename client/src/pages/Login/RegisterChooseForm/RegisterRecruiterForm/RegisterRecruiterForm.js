@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import AuthFunctions from '../../../../AuthFunctions';
 import { Redirect } from 'react-router-dom';
+import { input } from '@material-ui/core';
 
 class RegisterRecruiterForm extends Component {
     constructor() {
@@ -10,6 +11,7 @@ class RegisterRecruiterForm extends Component {
             firstName: '',
             lastName: '',
             email: '',
+            phoneNumber: '',
             password: '',
             password2: '', 
             errorList: '',
@@ -68,7 +70,7 @@ class RegisterRecruiterForm extends Component {
     }
 
     render() {
-        const { firstName, lastName, email, password, password2, companyName } = this.state;
+        const { firstName, lastName, email, phoneNumber, companyName, password, password2 } = this.state;
 
         if(this.Auth.loggedIn()){
             if (this.state.user)
@@ -89,7 +91,10 @@ class RegisterRecruiterForm extends Component {
                     <input type="email" className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name="email" value={email} onChange={this.onChange} required />
                 </div>
                 <div className="formItem"> 
-                    <input type="companyName" className={this.state.errorList.companyName ? "formControl error" : "formControl"} placeholder="Company Name" name="companyName" value={companyName} onChange={this.onChange} required />
+                    <input type="text" className={this.state.errorList.phoneNumber ? "formControl error" : "formControl"} placeholder="Phone Number" name="phoneNumber" value={phoneNumber} onChange={this.onChange} required />
+                </div>
+                <div className="formItem"> 
+                    <input type="text" className={this.state.errorList.companyName ? "formControl error" : "formControl"} placeholder="Company Name" name="companyName" value={companyName} onChange={this.onChange} required />
                 </div>
                 <div className="formItem">
                     <input type="password" className={this.state.errorList.password ? "formControl error" : "formControl"} placeholder="Password" name="password" value={password} onChange={this.onChange} required />
