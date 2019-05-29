@@ -1,8 +1,7 @@
 import React from 'react';
 import {post} from '../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import AuthFunctions from '../../../AuthFunctions'; 
+import {Button, TextField} from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 
 const styles = theme => ({
@@ -21,34 +20,35 @@ const styles = theme => ({
         color:"white",
         fontSize: 18,
         margin: "20px 0px"
+    },
+    white: {
+        color: "white !important",
+        borderColor: "white !important",
     }
 });
 
 class VerifyEmail extends React.Component{
     constructor(props) {
         super(props);
-        this.Auth = new AuthFunctions();
-        const user = this.Auth.getUser()
 		this.state = {
             token: props.match.params.token,
             backToLogin: false,
             goToIt: false,
-            verifySuccess: false,
-            email: user.email,
-            userType: user.userType
+            email: '',
+            verified: null
         };
     }
 
     componentDidMount = () => {
         post("/api/auth/verifyEmail", {token: this.state.token}).then(()=>{
-            this.setState({ verifySuccess: true });
+            this.setState({ verified: true });
         })
     }
     sendRequest = () => {
-        post("/api/auth/sendEmailVerification", {}).then(()=>{});
+        post("/api/auth/sendEmailVerification", {email: this.state.email}).then(()=>{});
     };
     handleSubmit = () => {
-        if(this.state.verifySuccess)
+        if(this.state.verified === true)
             this.setState({goToIt: true});
         else
             this.setState({backToLogin: true});
@@ -64,9 +64,14 @@ class VerifyEmail extends React.Component{
             <div className={classes.root}>
                 <div className={"pageHeading "+classes.header}>Account Verification</div>
                 {
-                    this.state.verifySuccess ?
+                    this.state.verified === null ?
                     <React.Fragment>
-                        <div className={classes.formItem}>You account has been verified!</div>
+                        <div className={classes.formItem}>Checking the validity of your token.</div>
+                    </React.Fragment>
+                    :
+                    (this.state.verified === true ?
+                    <React.Fragment>
+                        <div className={classes.formItem}>Your account has been verified!</div>
                         <br/>
                         <div className={classes.formItem}>
                             <Button 
@@ -78,10 +83,27 @@ class VerifyEmail extends React.Component{
                     </React.Fragment>
                     :
                     <React.Fragment>
-                        <div className={classes.formItem}>An email has been sent to {this.state.email}</div>
-                        <div className={classes.formItem}>Please wait up to 10 minutes for the email to be recieved.</div>
+                        <div className={classes.formItem}>The Account verification link has expired.</div>
+                        <div className={classes.formItem}>Please resend the request and wait up to 10 minutes for the email to be recieved.</div>
                         <div className={classes.formItem}>If you do not recieve the email in this time resend the request</div>
                         <br/>
+                        <TextField
+                            variant="outlined"
+                            className={classes.textField}
+                            value={this.state.email}
+                            InputLabelProps={{
+                              classes: {
+                                root: classes.white,
+                              },
+                            }}
+                            InputProps={{
+                                classes: {
+                                  root: classes.white,
+                                  notchedOutline: classes.white,
+                                }
+                            }}
+                            onChange={(e)=>this.setState({email:e.target.value})}
+                            label="Email" />
                         <div className={classes.formItem}>
                             <Button 
                                 color="primary"
@@ -96,7 +118,7 @@ class VerifyEmail extends React.Component{
                                 className={classes.button}
                                 onClick={this.handleSubmit}>Back To Login</Button>
                         </div>
-                    </React.Fragment>
+                    </React.Fragment>)
                 }
             </div>
         );

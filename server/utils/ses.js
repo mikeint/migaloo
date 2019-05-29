@@ -16,6 +16,7 @@ function sendEmailVerification(args){
             user_id: args.user_id,
             name: args.name,
             email: args.email,
+            type: args.type,
             rand: Math.random()
         }
         passport.signToken(jwtPayload, "1h").then(token=>{

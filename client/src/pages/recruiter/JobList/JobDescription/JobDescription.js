@@ -3,7 +3,7 @@ import './JobDescription.css';
 import {get} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import {Redirect} from 'react-router-dom';
-import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
+import PostCandidateToJob from '../../PostCandidateToJob/PostCandidateToJob';
 import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';

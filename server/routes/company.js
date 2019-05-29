@@ -361,12 +361,12 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.get('/getCompanyContactList/:companyId', passport.authentication,  getCompanyContactList)
-router.get('/getCompanyContactList/:companyId/:page', passport.authentication,  getCompanyContactList)
-function getCompanyContactList(req, res) {
+router.get('/getCompanyAccountManagerList/:companyId', passport.authentication, getCompanyAccountManagerList)
+router.get('/getCompanyAccountManagerList/:companyId/:page', passport.authentication, getCompanyAccountManagerList)
+function getCompanyAccountManagerList(req, res) {
     const jwtPayload = req.body.jwtPayload;
     var companyId = req.params.companyId
-    if(jwtPayload.userType !== 2 && jwtPayload.userType != 1){
+    if(jwtPayload.userType !== 2){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
@@ -387,7 +387,65 @@ function getCompanyContactList(req, res) {
                         (count(1) OVER())/10+1 as "pageCount" \
                     FROM company_contact ec \
                     INNER JOIN user_master um ON ec.company_contact_id = um.user_id \
-                    WHERE ec.company_id = ${company_id} AND um.active \
+                    WHERE ec.company_id = ${company_id} AND um.active AND um.user_type_id = 2 \
+                    ORDER BY um.last_name ASC, um.first_name ASC \
+                    OFFSET ${page} \
+                    LIMIT 10', {company_id:companyId, page:(page-1)*10})
+                .then((data) => {
+                    // Marshal data
+                    data = data.map(db.camelizeFields).map(m=>{
+                        m.isMe = (jwtPayload.id === m.companyContactId);
+                        var timestamp = moment(m.createdOn);
+                        var ms = timestamp.diff(moment());
+                        m.created = moment.duration(ms).humanize() + " ago";
+                        m.createdOn = timestamp.format("x");
+                        return m
+                    })
+                    res.json({success: true, contactList:data})
+                })
+            })
+    })
+    .catch(err => {
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success: false, error:err})
+    });
+}
+/**
+ * Get company contact list
+ * @route GET api/company/getCompanyContactList
+ * @group company - Company
+ * @param {Object} body.optional
+ * @returns {object} 200 - A list of contacts
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/getCompanyContactList/:companyId', passport.authentication, getCompanyContactList)
+router.get('/getCompanyContactList/:companyId/:page', passport.authentication, getCompanyContactList)
+function getCompanyContactList(req, res) {
+    const jwtPayload = req.body.jwtPayload;
+    var companyId = req.params.companyId
+    if(jwtPayload.userType !== 2 && jwtPayload.userType != 1){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    var page = req.params.page;
+    if(page == null || page < 1)
+        page = 1;
+    postgresdb.tx(t => {
+        return t.one('SELECT ec.company_id \
+                        FROM company_contact ec \
+                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
+                        {company_contact_id:jwtPayload.id, company_id:companyId})
+            .then(()=>{
+                return t.any('\
+                    SELECT ec.company_contact_id, um.email, um.first_name, um.last_name, um.user_type_id, \
+                        um.phone_number, um.image_id, um.created_on, ec.is_primary, \
+                        um.account_active, \
+                        (count(1) OVER())/10+1 as "pageCount" \
+                    FROM company_contact ec \
+                    INNER JOIN user_master um ON ec.company_contact_id = um.user_id \
+                    WHERE ec.company_id = ${company_id} AND um.active AND um.user_type_id = 3 \
                     ORDER BY um.last_name ASC, um.first_name ASC \
                     OFFSET ${page} \
                     LIMIT 10', {company_id:companyId, page:(page-1)*10})

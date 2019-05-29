@@ -24,6 +24,26 @@ class PrivateRecruiterRoute extends Route {
         }
     }
 }
+class PrivateAccountManagerRoute extends Route {
+    render(){
+        if(this.state.match){
+            if(this.props.redirect != null)
+                return <Redirect to={this.props.redirect} />
+            else{
+                if(Auth.loggedIn() === true && Auth.getUser().userType === 2){
+                    if(Auth.isVerified())
+                        return super.render()
+                    else
+                        return <Redirect to='/auth/pendingVerification' />
+                }
+                else
+                    return <Redirect to='/login' />
+            }
+        }else{
+            return null
+        }
+    }
+}
 class PrivateEmployerRoute extends Route {
     render(){
         if(this.state.match){
@@ -45,6 +65,7 @@ class PrivateEmployerRoute extends Route {
     }
 }
 export {
-    PrivateEmployerRoute,
-    PrivateRecruiterRoute
- };
+    PrivateAccountManagerRoute,
+    PrivateRecruiterRoute,
+    PrivateEmployerRoute
+};

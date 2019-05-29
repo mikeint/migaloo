@@ -4,7 +4,7 @@ import UploadResume from '../UploadResume/UploadResume';
 import {get} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import Redirect from 'react-router-dom/Redirect';
-import PostCandidateToJob from '../../../PostCandidateToJob/PostCandidateToJob';
+import PostCandidateToJob from '../../PostCandidateToJob/PostCandidateToJob';
 import { withStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import Button from '@material-ui/core/Button';

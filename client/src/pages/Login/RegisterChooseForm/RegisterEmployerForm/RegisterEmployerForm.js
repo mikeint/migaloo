@@ -12,9 +12,8 @@ class RegisterEmployerForm extends Component {
             email: '',
             phoneNumber: '',
             companyName: '',
-            password: '',
-            password2: '', 
-            errorList: ''
+            errorList: '',
+            registered: false
         };
         this.Auth = new AuthFunctions();
         this.onChange = this.onChange.bind(this);
@@ -34,34 +33,13 @@ class RegisterEmployerForm extends Component {
 			firstName: this.state.firstName,
 			lastName: this.state.lastName,
 			email: this.state.email,
-			type: 2, // Employer
+			type: 3, // Employer
 			phoneNumber: this.state.phoneNumber,
 			companyName: this.state.companyName,
-			password: this.state.password,
-			password2: this.state.password2
 		}; 
         
-        axios.post('/api/auth/register', newUser).then((res)=>{ 
-            axios.post('/api/auth/login', {
-                email: this.state.email,
-                password: this.state.password
-            }).then((res)=>{
-                sessionStorage.setItem("migalooOverlay", true);
-                this.Auth.clearToken();
-                let token = res.data.token.replace(/Bearer/g, '').trim();
-
-                this.Auth.setToken(token, ()=>{
-                    this.setState({
-                        token: token
-                    })
-                });
-                this.Auth.setUser(res.data.user, ()=> {
-                    this.setState({
-                        user: res.data.user
-                    })
-                });
-            })
-
+        axios.post('/api/auth/register', newUser).then((res)=>{
+            this.setState({registered: true})
         }).catch(errors => 
             this.showErrors(errors)
         );  
@@ -73,7 +51,7 @@ class RegisterEmployerForm extends Component {
 
 
     render() {
-        const { firstName, lastName, email, phoneNumber, companyName, password, password2 } = this.state;
+        const { firstName, lastName, email, phoneNumber, companyName } = this.state;
 
         if(this.Auth.loggedIn()){
             if (this.state.user)
@@ -83,7 +61,13 @@ class RegisterEmployerForm extends Component {
         return (
         
             <div className="container">
-                {/* <form onSubmit={this.register}> */}
+                {this.state.registered?
+                <div>
+                    You have been sent a verification email.<br />
+                    Once you have validated your email address you will automatically be assigned an account manager and a link to post jobs.
+                </div>
+                :
+                <React.Fragment>
                     <div className="formItem"> 
                         <input type="text" className={this.state.errorList.firstName ? "formControl error" : "formControl"} placeholder="First Name" name="firstName" value={firstName} onChange={this.onChange} required />
                     </div>
@@ -99,16 +83,10 @@ class RegisterEmployerForm extends Component {
                     <div className="formItem"> 
                         <input type="text" className={this.state.errorList.companyName ? "formControl error" : "formControl"} placeholder="Company Name" name="companyName" value={companyName} onChange={this.onChange} required />
                     </div>
-                    <div className="formItem">
-                        <input type="password" className={this.state.errorList.password ? "formControl error" : "formControl"} placeholder="Password" name="password" value={password} onChange={this.onChange} required />
-                    </div>
-                    <div className="formItem">
-                        <input type="password" className={this.state.errorList.password2 ? "formControl error" : "formControl"} placeholder="Confirm Password" name="password2" value={password2} onChange={this.onChange} required />
-                    </div> 
     
                     <input onClick={this.register} type="submit" value="Register" className="loginBtn" />
-                {/* </form> */}
-            </div> 
+                </React.Fragment>}
+            </div>
         );
     }
 }

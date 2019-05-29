@@ -7,8 +7,6 @@ module.exports = function validateRegisterInput(data) {
 	data.firstName = !isEmpty(data.firstName) ? data.firstName : '';
 	data.lastName = !isEmpty(data.lastName) ? data.lastName : '';
 	data.email = !isEmpty(data.email) ? data.email : '';
-	data.password = !isEmpty(data.password) ? data.password : '';
-	data.password2 = !isEmpty(data.password2) ? data.password2 : '';
 
     if (data.type == null) {
         errors.type = "Type is required"
@@ -16,8 +14,8 @@ module.exports = function validateRegisterInput(data) {
     else if (!data.type instanceof Number) {
         errors.type = "Type is should be number"
     }
-    else if (data.type < 1 || data.type > 2) {
-        errors.type = "Type must be between 1 and 2"
+    else if (data.type !== 1 && data.type !== 3) {
+        errors.type = "Type must be 1 or 3"
     }
 	if (Validator.isEmpty(data.firstName)) {
 		errors.firstName = 'First Name field is required';
@@ -42,36 +40,31 @@ module.exports = function validateRegisterInput(data) {
 		errors.email = 'Email is invalid';
 	}
 
-	if(data.type == 1){ // Recruiter
-		
-    }else if(data.type == 3){ // Employer
-		if (Validator.isEmpty(data.phoneNumber)) {
-			errors.phoneNumber = 'Phone Number field is required';
+	if (Validator.isEmpty(data.phoneNumber)) {
+		errors.phoneNumber = 'Phone Number field is required';
+	}
+	if (Validator.isEmpty(data.companyName)) {
+		errors.companyName = 'Comapany Name field is required';
+	}
+
+	if(data.type === 1){
+		data.password = !isEmpty(data.password) ? data.password : '';
+		data.password2 = !isEmpty(data.password2) ? data.password2 : '';
+		if (Validator.isEmpty(data.password)) {
+			errors.password = 'Password field is required';
 		}
-        if (Validator.isEmpty(data.companyName)) {
-            errors.companyName = 'Comapany Name field is required';
-        }
-	}else{
-		errors.type = 'Invalid Type'
-	}
+		if (!Validator.isLength(data.password, {min: 6, max: 30})) {
+			errors.password = 'Password must be at least 6 characters';
+		}
 	
-
-
-
-	if (Validator.isEmpty(data.password)) {
-		errors.password = 'Password field is required';
-	}
-	if (!Validator.isLength(data.password, {min: 6, max: 30})) {
-		errors.password = 'Password must be at least 6 characters';
-	}
-
-
-	if (Validator.isEmpty(data.password2)) {
-		errors.password2 = 'Confirm Password field is required';
-	}
-	//validator function equals(string1, string2) .
-	if (!Validator.equals(data.password, data.password2)) {
-		errors.password2 = 'Passwords must match';
+	
+		if (Validator.isEmpty(data.password2)) {
+			errors.password2 = 'Confirm Password field is required';
+		}
+		//validator function equals(string1, string2) .
+		if (!Validator.equals(data.password, data.password2)) {
+			errors.password2 = 'Passwords must match';
+		}
 	}
 
 	return {

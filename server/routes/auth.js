@@ -51,7 +51,7 @@ router.post('/login', (req, res) => {
     // Check Validation 
     if (!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['login', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['login', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage, errors:errors});
 
         return res.status(400).json({success:false, errors:errors});
     }
@@ -77,7 +77,12 @@ router.post('/login', (req, res) => {
             isPrimary: user.is_primary,
             isVerified: user.email_verified
         }
-        if (!user) {
+        if(user.user_type_id !== 1 && user.user_type_id !== 2){
+            errors.email = 'This type of user cannot login';
+            logger.error('Email not registered', {tags:['login'], email:email, ip:loginIp});
+            return res.status(400).json({success:false, errors:errors});
+        }
+        else if (!user) {
             errors.email = 'Email not registered';
             logger.error('Email not registered', {tags:['login'], email:email, ip:loginIp});
             return res.status(400).json({success:false, errors:errors});
@@ -137,7 +142,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
     // Check Validation 
     if (!isValid) {
         const errorMessage = "Invalid Parameters"
-        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage});
+        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage, errors:errors});
         return res.status(400).json({success:false, errors:errors});
     }
     const email = body.email
@@ -148,11 +153,57 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
             errors.email = 'Email already exists';
             return res.status(400).json({success:false, errors:errors});
         } else {
-            bcrypt.hash(body.password, 10).then((hash)=>{
+            if(type == 1){ // Recruiter
+                bcrypt.hash(body.password, 10).then((hash)=>{
+                    postgresdb.tx(t => {
+                        // creating a sequence of transaction queries:
+                        const q1 = t.one('INSERT INTO login (email, passwordhash, user_type_id) VALUES ($1, $2, $3) RETURNING user_id',
+                                        [email, hash, type]);
+                        const qc = t.one('INSERT INTO login (user_type_id) VALUES (4) RETURNING user_id', []);
+                        return t.batch([q1, qc]).then((ret)=>{
+                            const login_ret = ret[0];
+                            const company_login_ret = ret[1];
+                            const payload = {
+                                id: login_ret.user_id,
+                                userType: type,
+                                email: email,
+                                isPrimary: true,
+                                isVerified: false
+                            }
+                            const lh = t.none('INSERT INTO login_history (user_id, login_ip) VALUES ($1, $2)',
+                                    [login_ret.user_id, loginIp])
+                            const q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3)',
+                                    [company_login_ret.user_id, body.companyName, null])
+                            const q3 = t.none('INSERT INTO employer (employer_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
+                                    [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
+                            const q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
+                                    [login_ret.user_id, company_login_ret.user_id])
+                            return t.batch([lh, q2, q3, q4]).then(() => {
+                                sendEmailVerification(payload.id, payload.email) // Async to send email verification
+
+                                return createJWT(payload).then((token)=>{
+                                    res.status(200).json(token)
+                                })
+                            })
+                        })
+                        .catch(err => {
+                            logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err.message || err});
+                            res.status(500).json({success: false, error:err})
+                        })
+                    }).catch((err)=>{
+                        logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err.message || err});
+                        return res.status(500).json({success: false, error:err})
+                    });
+                }, (err)=>{
+                    logger.error('Error registering', {tags:['register', 'password'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err});
+                    return res.status(500).json({success: false, error:err})
+                })
+            }
+            else if(type == 3){ // Employer
                 postgresdb.tx(t => {
                     // creating a sequence of transaction queries:
-                    const q1 = t.one('INSERT INTO login (email, passwordhash, user_type_id) VALUES ($1, $2, $3) RETURNING user_id',
-                                    [email, hash, type]);
+                    const q1 = t.one('INSERT INTO login (email, user_type_id) VALUES ($1, $2) RETURNING user_id',
+                                    [email, type]);
                     const qc = t.one('INSERT INTO login (user_type_id) VALUES (4) RETURNING user_id', []);
                     return t.batch([q1, qc]).then((ret)=>{
                         const login_ret = ret[0];
@@ -166,35 +217,19 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                         }
                         const lh = t.none('INSERT INTO login_history (user_id, login_ip) VALUES ($1, $2)',
                                 [login_ret.user_id, loginIp])
-                        if(type == 1){ // Recruiter
-                            const q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3)',
-                                    [company_login_ret.user_id, body.companyName, null])
-                            const q3 = t.none('INSERT INTO recruiter (recruiter_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
-                                    [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
-                            const q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
+                        const q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3)',
+                                [company_login_ret.user_id, body.companyName, null])
+                        const q3 = t.none('INSERT INTO employer (employer_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
+                                [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
+                        const q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
                                 [login_ret.user_id, company_login_ret.user_id])
-                            return t.batch([lh, q2, q3, q4]).then(() => {
-                                sendEmailVerification(payload.id, payload.email) // Async to send email verification
+                        return t.batch([lh, q2, q3, q4]).then(() => {
+                            sendEmailVerification(payload.id, payload.email) // Async to send email verification
 
-                                return createJWT(payload).then((token)=>{
-                                    res.status(200).json(token)
-                                })
+                            return createJWT(payload).then((token)=>{
+                                res.status(200).json(token)
                             })
-                        }else if(type == 3){ // Employer
-                            const q2 = t.none('INSERT INTO company (company_id, company_name, address_id) VALUES ($1, $2, $3, $4, $5, $6)',
-                                    [company_login_ret.user_id, body.companyName, null])
-                            const q3 = t.none('INSERT INTO employer (employer_id, first_name, last_name, phone_number, address_id) VALUES ($1, $2, $3, $4, $5)',
-                                    [login_ret.user_id, body.firstName, body.lastName, body.phoneNumber, null])
-                            const q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
-                                    [login_ret.user_id, company_login_ret.user_id])
-                            return t.batch([lh, q2, q3, q4]).then(() => {
-                                sendEmailVerification(payload.id, payload.email) // Async to send email verification
-
-                                return createJWT(payload).then((token)=>{
-                                    res.status(200).json(token)
-                                })
-                            })
-                        }
+                        })
                     })
                     .catch(err => {
                         logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err.message || err});
@@ -204,10 +239,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                     logger.error('Error registering', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err.message || err});
                     return res.status(500).json({success: false, error:err})
                 });
-            }, (err)=>{
-                logger.error('Error registering', {tags:['register', 'password'], url:req.originalUrl, email:email, ip:loginIp, type: type, error:err});
-                return res.status(500).json({success: false, error:err})
-            })
+            }
         }
     }).catch((err)=>{
         logger.error('Error checking for registered email', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:loginIp, error:err.message || err});
@@ -280,18 +312,24 @@ router.post('/verifyEmail', /*passport.authentication,*/ (req, res) => {
     var body = req.body;
     const ip = req.connection.remoteAddress;
     passport.decodeToken(body.token).then(payload=>{
-        const userId = payload.user_id;
+        const userId = payload.userId;
         postgresdb.none('UPDATE login SET email_verified=true WHERE user_id = ${id}',
                         {id:userId})
             .then(() => {
-                return postingAssign.findPostsForNewRecruiter(payload.id)
+                if(payload.type === 3)
+                    return Promise.resolve()
+                else
+                    return postingAssign.findPostsForNewRecruiter(payload.id)
             })
             .then((data)=>{
                 logger.info('Recieved email verification', {tags:['register'], userId:userId, ip:ip});
-                return postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: d.post_id, recruiter_id: payload.id}}))
+                if(payload.type === 3)
+                    return Promise.resolve()
+                else
+                    return postingAssign.assignJobToRecruiter(data.map(d=> {return {post_id: d.post_id, recruiter_id: payload.id}}))
             }) // Async call to add posts to the new recruiter
             .then(() => {
-                res.json({success:true})
+                res.json({success:true, type: payload.type})
             })
             .catch(err=>{
                 logger.error('Error recieving email verification', {tags:['register', 'sql'], url:req.originalUrl, userId:userId, ip:ip, error:err.message || err});
@@ -305,11 +343,11 @@ router.post('/verifyEmail', /*passport.authentication,*/ (req, res) => {
 function sendEmailVerification(id, email, ip){
     return new Promise((resolve, reject)=>{
         return postgresdb.one('\
-            SELECT concat(first_name, \' \', last_name) as display_name \
+            SELECT concat(first_name, \' \', last_name) as display_name, user_type_id \
             FROM user_master um \
             WHERE um.user_id = ${id}', {id:id})
         .then((data) => {
-            return ses.sendEmailVerification({name:data.display_name, user_id:id, email:email})
+            return ses.sendEmailVerification({name:data.display_name, userId:id, type:data.user_type_id, email:email})
         })
         .then(()=>{
             logger.info('Sent email verification', {tags:['register'], email:email, userId:id, ip:ip});
@@ -329,15 +367,24 @@ function sendEmailVerification(id, email, ip){
  * @param {Object} body.optional
  * @returns {object} 200 - A map of profile information
  * @returns {Error}  default - Unexpected error
- * @access Private
+ * @access Public
  */
-router.post('/sendEmailVerification', passport.authentication, (req, res) => {
-    const jwtPayload = req.body.jwtPayload;
+router.post('/sendEmailVerification', (req, res) => {
     const ip = req.connection.remoteAddress;
-    sendEmailVerification(jwtPayload.id, jwtPayload.email, ip).then(result=>{
-        res.json({success:true})
+    return postgresdb.one('\
+        SELECT user_id, email \
+        FROM user_master um \
+        WHERE um.email = ${email}', {email:req.body.email})
+    .then((data) => {
+        sendEmailVerification(data.user_id, data.email, ip).then(result=>{
+            res.json({success:true})
+        })
+        .catch(err => {
+            res.status(500).json({success:false, error:err})
+        });
     })
     .catch(err => {
+        logger.error('Error sending email verification', {tags:['register', 'sql'], url:req.originalUrl, body: req.body, ip:ip, error:err.message || err});
         res.status(500).json({success:false, error:err})
     });
 });

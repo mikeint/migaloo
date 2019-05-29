@@ -1,14 +1,15 @@
-import React, { Component } from "react"
-import { Route, BrowserRouter, Switch } from "react-router-dom"
-import { PrivateEmployerRoute, PrivateRecruiterRoute } from './PrivateRoute'
+import React, { Component } from 'react'
+import { Route, BrowserRouter, Switch } from 'react-router-dom'
+import { PrivateAccountManagerRoute, PrivateRecruiterRoute, PrivateEmployerRoute } from './PrivateRoute'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 import BrowserTracer from './components/BrowserTracer/BrowserTracer'
 
 //App routes
 import Login from './pages/Login/Login'
 import RecruiterRouter from './pages/recruiter/RecruiterRouter'
+import AccountManagerRouter from './pages/accountManager/AccountManagerRouter'
 import EmployerRouter from './pages/employer/EmployerRouter'
-import EmployerJobPost from './pages/EmployerJobPost/EmployerJobPost'
+import EmployerJobPost from './pages/employer/EmployerJobPost/EmployerJobPost'
 import AuthRouter from './pages/auth/AuthRouter'
 
 
@@ -25,31 +26,31 @@ const theme = createMuiTheme({
         useNextVariants: true,
     },
     movingBackground:{
-        backgroundImage: "linear-gradient(120deg, #a6c4ce 0%, #465c74 100%)",
-        animation: "Gradient 7s ease infinite",
-        textAlign: "center",
-        position: "fixed",
-        width: "100%",
-        height: "100%",
-        backgroundSize: "400% 400%"
+        backgroundImage: 'linear-gradient(120deg, #a6c4ce 0%, #465c74 100%)',
+        animation: 'Gradient 7s ease infinite',
+        textAlign: 'center',
+        position: 'fixed',
+        width: '100%',
+        height: '100%',
+        backgroundSize: '400% 400%'
     },
     table:{
         tableBody:{
-            width: "80%",
-            margin: "20px auto 20px auto"
+            width: '80%',
+            margin: '20px auto 20px auto'
         },
         tableHeading:{
-            backgroundColor: "rgb(197, 197, 197)",
-            fontWeight: "bold"
+            backgroundColor: 'rgb(197, 197, 197)',
+            fontWeight: 'bold'
         },
         tableCellHeader:{
-            border: "1px solid #999999",
-            textAlign: "center",
-            padding: "0px 5px"
+            border: '1px solid #999999',
+            textAlign: 'center',
+            padding: '0px 5px'
         },
         tableCell:{
-            border: "1px solid #999999",
-            padding: "0px 5px"
+            border: '1px solid #999999',
+            padding: '0px 5px'
         }
     },
     palette: {
@@ -94,23 +95,27 @@ class App extends Component {
                 <BrowserRouter>
                     <React.Fragment>
                         <Switch>
-                            <PrivateRecruiterRoute exact path="/recruiter" redirect="/recruiter/jobList" /> { /* Reroute to the first recruiter page */ }
-                            <PrivateRecruiterRoute strict path="/recruiter" component={RecruiterRouter} />
+                            <PrivateRecruiterRoute exact path='/recruiter' redirect='/recruiter/jobList' /> { /* Reroute to the first recruiter page */ }
+                            <PrivateRecruiterRoute strict path='/recruiter' component={RecruiterRouter} />
                         </Switch>
                         <Switch>
-                            <PrivateEmployerRoute exact path="/employer" redirect="/employer/activeJobs" /> { /* Reroute to the first employer page */ }
-                            <PrivateEmployerRoute strict path="/employer" component={EmployerRouter} />
+                            <PrivateAccountManagerRoute exact path='/accountManager' redirect='/accountManager/activeJobs' /> { /* Reroute to the first employer page */ }
+                            <PrivateAccountManagerRoute strict path='/accountManager' component={AccountManagerRouter} />
+                        </Switch>
+                        <Switch>
+                            <PrivateEmployerRoute exact path='/employer' redirect='/employer/activeJobs' /> { /* Reroute to the first employer page */ }
+                            <PrivateEmployerRoute strict path='/employer' component={EmployerRouter} />
                         </Switch>
                         <Route exact path='/login' render={ () => (<Login />) } />
                         <Route exact path='/postJob/:token' component={EmployerJobPost} />
-                        <Route exact path="/" component={Landing} />
+                        <Route exact path='/' component={Landing} />
 
-                        <Route strict path="/recruiterPage" component={LandingRouter} />
-                        <Route strict path="/employerPage" component={LandingRouter} />
-                        <Route strict path="/landing" component={LandingRouter} />
-                        <Route strict path="/auth" component={AuthRouter} />
-                        <Route exact path="/signUpFormEmployer" component={SignUpFormEmployer} /> 
-                        <Route exact path="/signUpFormRecruiter" component={SignUpFormRecruiter} /> 
+                        <Route strict path='/recruiterPage' component={LandingRouter} />
+                        <Route strict path='/employerPage' component={LandingRouter} />
+                        <Route strict path='/landing' component={LandingRouter} />
+                        <Route strict path='/auth' component={AuthRouter} />
+                        <Route exact path='/signUpFormEmployer' component={SignUpFormEmployer} /> 
+                        <Route exact path='/signUpFormRecruiter' component={SignUpFormRecruiter} /> 
                     </React.Fragment>
                 </BrowserRouter> 
                 <BrowserTracer />

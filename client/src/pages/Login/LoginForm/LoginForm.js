@@ -70,12 +70,13 @@ class LoginForm extends Component {
             sessionStorage.setItem("migalooOverlay", true);
         if(this.state.user.userType === 1)
             return <Redirect to='/recruiter'/>
-        else
-            return <Redirect to='/employer'/>
+        else if(this.state.user.userType === 2)
+            return <Redirect to='/accountManager'/>
+        // else if(this.state.user.userType === 3)
+        //     return <Redirect to='/employer'/>
     }
     
     return (
-       
         <React.Fragment>
             <Whale {...whaleOptions}/>
             <div className="formItem"> 

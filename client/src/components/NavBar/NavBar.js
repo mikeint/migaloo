@@ -110,33 +110,33 @@ const navMappings = {
         ]
     },
     2:{
-        '/employer':[ // Employer
+        '/accountManager':[ // Employer
             {
                 icon:<ListAlt/>,
-                link:'/employer/activeJobs',
+                link:'/accountManager/activeJobs',
                 name:'Active Jobs',
                 className: 'linkButton'
             },
             {
                 icon:<Search/>,
-                link:'/employer/postAJob',
+                link:'/accountManager/postAJob',
                 name:'Post a Job',
                 className: 'linkButton'
             },
             {
                 icon:<Chat/>,
-                link:'/employer/chat',
+                link:'/accountManager/chat',
                 name:'Chat',
                 className: 'linkButton'
             },
             {
                 icon:<AccountBalance />,
-                link:'/employer/accounts',
+                link:'/accountManager/accounts',
                 className: 'linkButton'
             },
             {
                 icon:<AccountCircle />,
-                link:'/employer/profile',
+                link:'/accountManager/profile',
                 className: 'linkButton'
             }
         ]
