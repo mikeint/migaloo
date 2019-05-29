@@ -76,7 +76,7 @@ class AddRecruiter extends React.Component{
                     this.state.onClose(true)
                 }
             }).catch(errors => {
-                console.log(errors.response.data)
+                console.log(errors)
             })
         }
     }

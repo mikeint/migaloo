@@ -29,7 +29,7 @@ class Account extends React.Component{
             if(res == null) return
             this.setState({ company: res.data.companies[0] })
         }).catch(errors => 
-            console.log(errors.response.data)
+            console.log(errors)
         )
     }
 

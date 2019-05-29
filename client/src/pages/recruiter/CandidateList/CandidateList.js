@@ -116,7 +116,7 @@ class CandidateList extends React.Component{
             if(res)
                 this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].pageCount, 10):1 }) 
         }).catch(errors => 
-            console.log(errors.response.data)
+            console.log(errors)
         )
     }
     callAddOverlay = () => {

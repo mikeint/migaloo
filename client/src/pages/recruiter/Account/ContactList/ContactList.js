@@ -103,7 +103,7 @@ class ContactList extends React.Component{
             }
         }).catch(errors => {
             this.setState({loading: false});
-            console.log(errors.response.data)
+            console.log(errors)
         })
     }
     setAdmin = (e, recruiterContact) => {
@@ -119,7 +119,7 @@ class ContactList extends React.Component{
             }
         })
         .catch(errors => 
-            console.log(errors.response.data)
+            console.log(errors)
         )
     }
     addContact = (users) => {
@@ -133,7 +133,7 @@ class ContactList extends React.Component{
                 }
             })
             .catch(errors => 
-                console.log(errors.response.data)
+                console.log(errors)
             )
         }
     }
@@ -146,7 +146,7 @@ class ContactList extends React.Component{
             }
         })
         .catch(errors => 
-            console.log(errors.response.data)
+            console.log(errors)
         )
     }
     saveRecruiter = (user) => {
@@ -160,7 +160,7 @@ class ContactList extends React.Component{
                 }
             })
             .catch(errors => 
-                console.log(errors.response.data)
+                console.log(errors)
             )
         }
     }

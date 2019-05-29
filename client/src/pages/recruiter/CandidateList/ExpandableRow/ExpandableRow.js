@@ -54,7 +54,7 @@ class ExpandableRow extends React.Component{
             if(res && res.data.success)
                 window.open(res.data.url, '_blank');
         }).catch(errors => 
-            console.log(errors.response.data)
+            console.log(errors)
         )
     }
     postToJob = () =>{

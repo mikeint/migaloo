@@ -58,8 +58,8 @@ class LoginForm extends Component {
     }
 
     showErrors = (errors) => { 
-            this.setState({ errorList: errors.response.data }); 
-        };
+        // this.setState({ errorList: errors.response.data }); 
+    };
 
   render() {
     const whaleOptions={whaleImg:'whaleWs.png', sprayColor:'#fff'};

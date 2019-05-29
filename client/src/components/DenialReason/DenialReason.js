@@ -81,7 +81,7 @@ class DenialReason extends React.Component{
             if(res == null) return
             this.setState({denialReasonList: res.data.denialReasonList})
         }).catch(errors => {
-            console.log(errors.response.data)
+            console.log(errors)
         })
     }
     handleChange = (e) => {

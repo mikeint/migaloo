@@ -112,7 +112,7 @@ class JobList extends React.Component{
                     pageCount: jobList.length>0?parseInt(jobList[0].pageCount, 10):1 }) 
             }
         }).catch(errors => 
-            console.log(errors.response.data)
+            console.log(errors)
         )
     }
 

@@ -76,7 +76,7 @@ class MeetingPicker extends React.Component{
             if(res == null) return
             this.setState({locationList: res.data.locationList})
         }).catch(errors => {
-            console.log(errors.response.data)
+            console.log(errors)
         })
     }
     validateTime(){

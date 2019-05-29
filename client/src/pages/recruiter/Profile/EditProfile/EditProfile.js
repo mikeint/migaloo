@@ -105,7 +105,7 @@ class EditProfile extends React.Component{
                 }
             })
             .catch(errors => 
-                console.log(errors.response.data)
+                console.log(errors)
             )
         }
     }

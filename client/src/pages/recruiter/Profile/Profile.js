@@ -90,7 +90,7 @@ class Profile extends React.Component{
                 this.setState({ profileInfo: res.data.profile }) 
             }
         }).catch(errors => 
-            console.log(errors.response.data)
+            console.log(errors)
         )
     }
     getImage = () => {

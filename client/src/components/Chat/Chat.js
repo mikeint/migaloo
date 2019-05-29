@@ -32,7 +32,7 @@ class Chat extends Component {
                 this.setState({ conversationList: res.data.conversations,
                     pageCount: (res.data&&res.data.length>0)?parseInt(res.data[0].pageCount, 10):1 }) 
         }).catch(errors => 
-            console.log(errors.response.data)
+            console.log(errors)
         )
     }
     handlePageClick = selected => {

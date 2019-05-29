@@ -129,7 +129,7 @@ class Conversation extends Component {
                     })
             }).catch(errors => {
                 this.setState({showLoader:false})
-                console.log(errors.response.data)
+                console.log(errors)
             })
         }
     }
@@ -170,7 +170,7 @@ class Conversation extends Component {
                     messageList: []
                 }, this.getMessageList)
             }).catch(errors => {
-                console.log(errors.response.data)
+                console.log(errors)
             })
         }
 
@@ -191,7 +191,7 @@ class Conversation extends Component {
                 messageList: []
             }, this.getMessageList)
         }).catch(errors => {
-            console.log(errors.response.data)
+            console.log(errors)
         })
     }
     handleMeetingDialogOpen = () => {
