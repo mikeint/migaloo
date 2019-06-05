@@ -29,18 +29,20 @@ const styles = theme => ({
     rightBtn:{
         float: "right",
     },
-    searchBtn:{
-        width: "80%",
+    searchBtn:{ 
         flex: "1 100%",
-        margin: 10,
+        margin: 20,
     },
     feedbackBtnContainer:{
         display: "flex",
         flexWrap: "wrap",
+        padding: "20px",
     },
     feedbackBtn:{
-        flex: "1 1",
-        margin: 10,
+        flex: "1 1", 
+        margin: "10px 5px",
+        maxWidth: "300px",
+
     },
     rightIcon: {
       marginLeft: theme.spacing.unit,
@@ -54,12 +56,51 @@ const styles = theme => ({
         margin: "20px",
         width: "200px"
     },
+    
+    tableBody: {
+        width: "100%", 
+    },
+    tableCellHeader: { 
+        color: "#000", 
+        backgroundColor: "#efefef", 
+        padding: "0px 5px 0px 20px",
+        textAlign: "left",
+        '@media (max-width: 1024px)': {
+            padding: "0px 5px 0px 5px",
+        }, 
+    },
+    tableRow: {
+        "&:nth-child(even)": {
+            background: "#f2f3f5",
+        },  
+    }, 
+    tableCell: {
+        borderTop: "1px solid #1a2b6d14",
+        borderBottom: "1px solid #1a2b6d14",
+        padding: "0px 5px 0px 20px",
+        textAlign: "left",
+        '@media (max-width: 1024px)': {
+            padding: "0px 5px 0px 5px",
+        }, 
+    },
+
+    openChatText: {
+        '@media (max-width: 1024px)': {
+            display:"none"
+        }, 
+    },
+
+
+
+    summaryContainer: {
+        padding: "0px 20px", 
+    },
+    summaryItem: {
+        padding: "5px"
+    },
     jobTitle: {
         fontWeight: "bold"
-    },
-    jobSalary: {
-        fontSize: "14px"
-    },
+    }, 
     jobPostingHeader: {
         background: "#546f82",
         color: "#fff",
@@ -67,8 +108,7 @@ const styles = theme => ({
         fontSize: "22px"
     },
     jobPostingContent: {    
-        fontSize: "16px",
-        margin: "0px 10px"
+        fontSize: "16px", 
     },
     jobRequirements: {
         padding: "20px",
@@ -132,7 +172,7 @@ class CandidateRow extends React.Component{
                     variant="contained" 
                     color="primary"
                     onClick={()=>this.setState({showChat:true})}>
-                    <Chat/>&nbsp;Open Chat
+                    <Chat/>&nbsp;<span className={classes.openChatText}>Open Chat</span>
                 </Button>
                 {this.state.showChat && 
                     <Conversation
@@ -255,22 +295,27 @@ class JobDescription extends React.Component{
                     </div> 
                     <div className={classes.jobPostingContent}>
 
-                        <h3>Description</h3>
-                        <div className={classes.jobRequirements}>{this.state.jobObj.requirements}</div>
-                        <h3>{this.state.jobObj.companyName}</h3>
-                        <p>
-                            {[this.state.jobObj.addressLine1, this.state.jobObj.addressLine2, this.state.jobObj.city, this.state.jobObj.stateProvince, this.state.jobObj.country].filter(d=>d!=null).join(", ")}
-                        </p>
-                        <h5>Experience: {this.state.jobObj.experience} years</h5>
-                        <span className={classes.jobSalary}>Salary: {this.state.jobObj.salary}k</span> 
-                        {this.state.jobObj.tagNames?<p>Tags: {this.state.jobObj.tagNames.join(", ")}</p>:''}
-                        <p>Posted: {this.state.jobObj.posted}</p>
-                        <div className={classes.feedbackBtnContainer}>
-                            <Button
+                        
+                        <div className={classes.jobRequirements}>
+                            <h3>Description</h3>
+                            {this.state.jobObj.requirements}
+                        </div>
+                        <Button
                                 className={classes.searchBtn} 
                                 color="primary"
                                 variant="contained"
                                 onClick={this.searchJobsForCandidates}>Search For Candidates</Button>
+
+                        <div className={classes.summaryContainer}>
+                            <div className={classes.summaryItem}><b>Company </b>{this.state.jobObj.companyName}</div>
+                            <div className={classes.summaryItem}><b>Address </b> {[this.state.jobObj.addressLine1, this.state.jobObj.addressLine2, this.state.jobObj.city, this.state.jobObj.stateProvince, this.state.jobObj.country].filter(d=>d!=null).join(", ")}</div>
+                            <div className={classes.summaryItem}><b>Experience </b>{this.state.jobObj.experience} years</div>
+                            <div className={classes.summaryItem}><b>Salary </b>{this.state.jobObj.salary}k</div> 
+                            <div className={classes.summaryItem}>{this.state.jobObj.tagNames?<div><b>Tags </b>{this.state.jobObj.tagNames.join(", ")}</div>:''}</div>
+                            <div className={classes.summaryItem}><b>Posted </b>{this.state.jobObj.posted}</div>
+                        </div>
+                        
+                        <div className={classes.feedbackBtnContainer}> 
                             {this.state.candidateData && <Button
                                 className={classes.searchBtn} 
                                 color="primary"
@@ -288,7 +333,7 @@ class JobDescription extends React.Component{
                         
                         <Table className={classes.tableBody}>
                             <TableHead className={classes.tableHeading}>
-                                <TableRow>
+                                <TableRow className={classes.tableHeaderContainer}>
                                     <TableCell align="center" className={classes.tableCellHeader}>First Name</TableCell>
                                     <TableCell align="center" className={classes.tableCellHeader}>Last Name</TableCell>
                                     <TableCell align="center" className={classes.tableCellHeader}>Posted</TableCell>

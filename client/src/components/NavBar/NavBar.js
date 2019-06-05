@@ -51,24 +51,50 @@ const styles = theme => ({
         '&.active': {
             backgroundColor: '#6f90a14d',
         },
-        '&:last-child': {
+        '&:last-child': { 
+            '&.active': {
+                backgroundColor: '#263c54bf',
+            },
             '@media (max-width: 1024px)': {
-                flex: 'unset',
+                flex: 'unset', 
+                position: "fixed",
+                bottom: "0px",  
+                background: "#263c54",
+                minWidth: "50%",
+                opacity:"1",
             },
         },
         '&:nth-last-child(2)': {
             marginTop: 'auto',
+            '&.active': {
+                backgroundColor: '#263c54bf',
+            },
             '@media (max-width: 1024px)': {
                 flex: 'unset',
-                marginTop: 'unset',
-            },
+                marginTop: 'unset', 
+                position: "fixed",
+                bottom: "0px",
+                width: "100%",
+                marginLeft: "50%",
+                background: "#263c54",
+                minWidth: "50%",
+                opacity:"1",
+                borderLeft: "1px solid #fff",
+            }, 
         },
-    },  
+    },
+
     linkWrapper: {
         flexDirection: 'row',
         justifyContent: 'unset',
         padding: '10px',
         textAlign: 'left',
+
+        '@media (max-width: 1024px)': {
+            flexDirection: "column",
+            textAlign: "center",
+            fontSize: "12px",
+        }, 
     },
 
     tabsIndicator: { 
