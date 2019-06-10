@@ -12,7 +12,7 @@ const pgp = db.pgp
 const camelColumnConfig = db.camelColumnConfig
 const candidateTagsInsertHelper = new pgp.helpers.ColumnSet(['candidate_id', 'tag_id'], {table: 'candidate_tags'});
 
-const candidateFields = ['first_name', 'last_name', 'experience', 'salary', 'relocatable', 'url', 'email', 'address_id'];
+const candidateFields = ['first_name', 'last_name', 'experience', 'salary', 'relocatable', 'commute', 'url', 'email', 'address_id'];
 const candidateInsert = new pgp.helpers.ColumnSet(candidateFields.map(camelColumnConfig), {table: 'candidate'});
 const candidateUpdate = new pgp.helpers.ColumnSet(['?candidate_id', ...candidateFields.map(camelColumnConfig)], {table: 'candidate'});
 /**
@@ -285,6 +285,129 @@ function listCandidates(req, res){
     });
 }
 
+/**
+ * Add note for the candidate
+ * @route POST api/candidate/addNote
+ * @group candidate - Candadite Listings
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/addNote/:candidateId', passport.authentication, addNote);
+function addNote(req, res){
+    var candidateId = req.params.candidateId;
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    postgresdb.one(' \
+        SELECT 1 \
+        FROM candidate c \
+        INNER JOIN recruiter_candidate rc ON rc.candidate_id = c.candidate_id \
+        WHERE rc.recruiter_id = ${recruiterId} AND c.candidate_id = ${candidateId}',
+        {recruiterId:jwtPayload.id, candidateId:candidateId})
+    .then((data) => {
+        postgresdb.any(' \
+            INSERT INTO candidate_note (candidate_id, creator_id, note) VALUES (${candidateId}, ${creatorId}, ${note}) RETURNING note_id',
+            {candidateId:candidateId, creatorId: jwtPayload.id, note:req.body.note})
+        .then((noteData) => {
+            res.json({success:true, noteIds:noteData.map(d=>d.note_id)})
+        })
+        .catch(err => {
+            logger.error('Candidate Note Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+            res.status(500).json({success:false, error:err})
+        });
+    })
+    .catch(err => {
+        logger.error('Candidate Note Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+}
+/**
+ * Delete note from the candidate
+ * @route POST api/candidate/deleteNote
+ * @group candidate - Candadite Listings
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/deleteNote/:candidateId', passport.authentication, deleteNote);
+function deleteNote(req, res){
+    var candidateId = req.params.candidateId;
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    postgresdb.one(' \
+        SELECT 1 \
+        FROM candidate c \
+        INNER JOIN recruiter_candidate rc ON rc.candidate_id = c.candidate_id \
+        WHERE rc.recruiter_id = ${recruiterId} AND c.candidate_id = ${candidateId}',
+        {recruiterId:jwtPayload.id, candidateId:candidateId})
+    .then((data) => {
+        postgresdb.none(' \
+            DELETE FROM candidate_note \
+            WHERE note_id = ${noteId}',
+            {noteId:req.body.noteId})
+        .then((data) => {
+            res.json({success:true})
+        })
+        .catch(err => {
+            logger.error('Candidate Note Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+            res.status(500).json({success:false, error:err})
+        });
+    })
+    .catch(err => {
+        logger.error('Candidate Note Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+}
+/**
+ * List the notes for the candidate
+ * @route POST api/candidate/listNotes
+ * @group candidate - Candadite Listings
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/listNotes/:candidateId', passport.authentication, listNotes);
+function listNotes(req, res){
+    var candidateId = req.params.candidateId;
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    postgresdb.any(' \
+        SELECT cn.* \
+        FROM candidate_note cn \
+        INNER JOIN recruiter_candidate rc ON rc.candidate_id = cn.candidate_id \
+        WHERE rc.recruiter_id = ${recruiterId} AND cn.candidate_id = ${candidateId}',
+        {recruiterId:jwtPayload.id, candidateId:candidateId})
+    .then((data) => {
+        // Marshal data
+        data = data.map(db.camelizeFields).map(m=>{
+            var timestamp = moment(m.createdOn);
+            var ms = timestamp.diff(moment());
+            m.created = moment.duration(ms).humanize() + " ago";
+            m.createdOn = timestamp.format("x");
+            return m
+        })
+        res.json({notes:data, success:true})
+    })
+    .catch(err => {
+        logger.error('Candidate Note Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+}
 
 /**
  * List the candidates for the recruiter

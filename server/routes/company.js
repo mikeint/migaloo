@@ -389,7 +389,7 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
 
 /**
  * Get company contact list
- * @route GET api/company/getCompanyContactList
+ * @route GET api/company/getCompanyAccountManagerList
  * @group company - Company
  * @param {Object} body.optional
  * @returns {object} 200 - A list of contacts

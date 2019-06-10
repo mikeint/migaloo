@@ -28,6 +28,7 @@ describe('Candidate', function() {
                 "salary": 15,
                 "jobType": 2,
                 "experience": 3,
+                "commute": 10,
                 "address": {
                     "address": "Tremont St, Boston, MA, US",
                     "formattedAddress": "Tremont St, Boston, MA, US",
@@ -83,6 +84,7 @@ describe('Candidate', function() {
                 "email": "tes2t@test.com",
                 "salary": 14,
                 "jobType": 3,
+                "commute": 10,
                 "experience": 4,
                 "address": {
                     "address": "Tremont St, Boston, MA, US",
@@ -204,6 +206,45 @@ describe('Candidate', function() {
             })
         });
     });
+    describe('Notes', () => {
+        var addedNoteIds
+        it('check if can add notes', () => {
+            return post(`/api/candidate/addNote/${candidateId}`, {note: "text of note"}, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    assert.notEqual(res.noteIds, null)
+                    addedNoteIds = res.noteIds
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('check if can list notes', () => {
+            return get(`/api/candidate/listNotes/${candidateId}`, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    assert.notEqual(res.notes, null)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('check if can delete notes', () => {
+            return post(`/api/candidate/deleteNote/${candidateId}`, {noteId:addedNoteIds[0]}, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
     
 });
 
@@ -233,6 +274,7 @@ describe('Candidate Recruiter 2', function() {
                 "salary": 15,
                 "jobType": 2,
                 "experience": 3,
+                "commute": 10,
                 "address": {
                     "address": "Tremont St, Boston, MA, US",
                     "formattedAddress": "Tremont St, Boston, MA, US",
