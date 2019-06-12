@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('../config/passport');
 const moment = require('moment');
 const logger = require('../utils/logging');
+const accessToken = require('../utils/accessToken');
 
 //load input validation
 const validateEmployerInput = require('../validation/employer');  
@@ -127,17 +128,13 @@ function generateToken(req, res) {
         INNER JOIN company c ON cc.company_id = c.company_id \
         WHERE l.active AND l.user_id = ${user_id}', {user_id:req.body.userId})
     .then((args) => { 
-        const randNumber = Math.trunc(Math.random()*100000000)
         const jwtPayload = {
             id: args.user_id,
             companyName: args.company_name,
             userType: args.user_type_id,
-            email: args.email,
-            rand: randNumber
+            email: args.email
         }
-        passport.signToken(jwtPayload, 'never').then(token=>{
-            res.json({success: true, token:token})
-        })
+        return accessToken.generateAccessToken(args.user_id, jwtPayload)
     })
     .catch(err => {
         logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
@@ -153,17 +150,17 @@ function test(id){
         INNER JOIN company c ON cc.company_id = c.company_id \
         WHERE l.active AND l.user_id = ${user_id}', {user_id:id})
     .then((args) => { 
-        const randNumber = Math.trunc(Math.random()*100000000)
         const jwtPayload = {
             id: args.user_id,
             userType: args.user_type_id,
             companyName: args.company_name,
-            email: args.email,
-            rand: randNumber
+            email: args.email
         }
-        passport.signToken(jwtPayload, 'never').then(token=>{
-            console.log('/postJob/'+token)
-        })
+        return accessToken.generateAccessToken(args.user_id, jwtPayload)
+    })
+    .then(token=>{
+        
+        console.log('/postJob/'+token)
     })
     .catch(err => {
         logger.error('Employer SQL Call Failed', {tags:['sql'], error:err.message || err});

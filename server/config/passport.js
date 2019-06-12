@@ -46,11 +46,24 @@ function signToken(payload, expiresIn="1d"){
         }
     })
 }
+function validateAccessToken(userId, accessToken) {
+    return postgresdb.one('SELECT 1 FROM access_token WHERE user_id = ${userId} AND token = ${token}', {userId:userId, token:accessToken})
+}
 function decodeToken(token){
     return new Promise((resolve, reject)=>{
         jwt.verify(token, keys.secretOrKey, (err, decoded) => {
             if(err) return reject(err)
-            resolve(decoded)
+            if(decoded['accessToken'] != null){
+                validateAccessToken(decoded['userId'], decoded['accessToken'])
+                .then(() => { 
+                    resolve(decoded)
+                })
+                .catch(err => {
+                    logger.error('Access Token Invalid or SQL Call Failed', {tags:['sql', 'invalid', 'token'], error:err.message || err, body:decoded});
+                    reject(err)
+                });
+            }else
+                resolve(decoded)
         });
     })
 }
