@@ -4,8 +4,7 @@ import { NavLink } from 'react-router-dom';
 import {getWithParams, cancel} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
 import Drawer from '@material-ui/core/Drawer';
-import { withStyles } from '@material-ui/core/styles';
-import LoaderSquare from '../../../components/LoaderSquare/LoaderSquare';
+import { withStyles } from '@material-ui/core/styles'; 
 import Add from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
 import Filters from '../../../components/Filters/Filters';
@@ -15,8 +14,8 @@ import Pagination from "react-js-pagination";
 import '../../../constants/AnimateMigalooOverlay';
 import Button from '@material-ui/core/Button';
 import FilterList from '@material-ui/icons/FilterList';
-
-import whale from '../../../files/images/logo.png'
+import LinearProgress from '@material-ui/core/LinearProgress';
+ 
 import { Typography, MenuItem } from '@material-ui/core';
 import classNames from 'classnames';
 
@@ -188,7 +187,7 @@ class ActiveJobs extends React.Component{
                                 </Drawer>
                             </div>
                         :
-                        <LoaderSquare />
+                        <LinearProgress />
                     } 
                 </div> 
             </React.Fragment>

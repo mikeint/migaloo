@@ -81,8 +81,7 @@ const styles = theme => ({
                 borderLeft: "1px solid #fff",
             }, 
         },
-    },
-
+    }, 
     linkWrapper: {
         flexDirection: 'row',
         justifyContent: 'unset',
@@ -92,7 +91,8 @@ const styles = theme => ({
         '@media (max-width: 1024px)': {
             flexDirection: "column",
             textAlign: "center",
-            fontSize: "12px",
+            fontSize: "10px",
+            padding: "0px"
         }, 
     },
 

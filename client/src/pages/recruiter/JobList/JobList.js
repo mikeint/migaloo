@@ -1,6 +1,5 @@
 import React from 'react';
-import './JobList.css';    
-import LoaderSquare from '../../../components/LoaderSquare/LoaderSquare';
+import './JobList.css';     
 import Filters from '../../../components/Filters/Filters';
 import {getWithParams, cancel} from '../../../ApiCalls';  
 import { NavLink, Redirect } from 'react-router-dom';
@@ -11,8 +10,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import FilterList from '@material-ui/icons/FilterList';
 import '../../../constants/AnimateMigalooOverlay';
-
-import whale from '../../../files/images/logo.png'
+import LinearProgress from '@material-ui/core/LinearProgress';
+ 
 
 const styles = theme => ({
     button: {
@@ -145,7 +144,28 @@ class JobList extends React.Component{
     /* end FOR CHANGING TABS */
     
     render(){
-        const { classes } = this.props; 
+        const { classes } = this.props;
+         
+/*         const [completed, setCompleted] = React.useState(0);
+
+        React.useEffect(() => {
+            function progress() {
+                setCompleted(oldCompleted => {
+                    if (oldCompleted === 100) {
+                    return 0;
+                    }
+                    const diff = Math.random() * 10;
+                    return Math.min(oldCompleted + diff, 100);
+                });
+            }
+
+            const timer = setInterval(progress, 500);
+            return () => {
+                clearInterval(timer);
+            };
+        }, []);
+ */
+        
         return (
             <React.Fragment>
                 { this.state.openJob && <Redirect to={"/recruiter/jobList/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidateId:'')} />}
@@ -227,7 +247,7 @@ class JobList extends React.Component{
                                 </div>
                             </React.Fragment>
                         :
-                        <div className="loaderContainer"><LoaderSquare /></div>
+                        <LinearProgress />
                     } 
                 </div>
             </React.Fragment>

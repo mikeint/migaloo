@@ -1,6 +1,5 @@
 import React, { Component } from "react"; 
-import "./Conversation.css"; 
-import LoaderSquare from '../LoaderSquare/LoaderSquare'; 
+import "./Conversation.css";  
 import {get, post} from '../../ApiCalls';  
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import Close from '@material-ui/icons/Close';
@@ -9,6 +8,7 @@ import IconButton from '@material-ui/core/IconButton';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import { withStyles } from '@material-ui/core/styles';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const styles = theme => ({
     rightBtn:{
@@ -234,7 +234,7 @@ class Conversation extends Component {
                             open={this.state.meetingDialogOpen}
                             onClose={this.handleMeetingDialogClose} />
                         <div className='chatWindow'>
-                            {this.state.showLoader?<LoaderSquare/>:''}
+                            {this.state.showLoader?<LinearProgress/>:''}
                             {
                                 this.state.messageList.map((d, i)=>{
                                     return <div className={d.mine?"messageRow mine":"messageRow theirs"} key={i}>

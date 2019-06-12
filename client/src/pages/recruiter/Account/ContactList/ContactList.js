@@ -1,7 +1,6 @@
 import React from 'react';
 import {get, post, cancel} from '../../../../ApiCalls';  
-import Pagination from "react-js-pagination";
-import LoaderSquare from '../../../../components/LoaderSquare/LoaderSquare';
+import Pagination from "react-js-pagination"; 
 import { withStyles } from '@material-ui/core/styles';  
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -15,6 +14,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const styles = theme => ({
     button:{ 
@@ -244,7 +244,7 @@ class ContactList extends React.Component{
                     </TableHead>
                     <TableBody>
                     {
-                        this.state.loading ? <LoaderSquare/> :
+                        this.state.loading ? <LinearProgress/> :
                         this.state.contactList.map((d, i)=>{
                             return <TableRow key={i} className={classes.tableRow}>
                                 <TableCell className={classes.tableCell}>{d.email}</TableCell>

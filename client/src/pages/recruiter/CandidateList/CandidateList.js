@@ -2,12 +2,10 @@ import React from 'react';
 import './CandidateList.css';    
 import { NavLink } from 'react-router-dom';
 import {get,cancel} from '../../../ApiCalls';  
-import AuthFunctions from '../../../AuthFunctions'; 
-import LoaderSquare from '../../../components/LoaderSquare/LoaderSquare';
+import AuthFunctions from '../../../AuthFunctions';
 import ExpandableRow from './ExpandableRow/ExpandableRow'; 
 import debounce from 'lodash/debounce'; 
-
-import whale from '../../../files/images/logo.png'
+ 
 import AddCandidate from '../AddCandidate/AddCandidate';
 import Pagination from "react-js-pagination";
 import '../../../constants/AnimateMigalooOverlay';  
@@ -16,6 +14,7 @@ import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';  
 import Button from '@material-ui/core/Button';
 import Add from '@material-ui/icons/Add';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 
 const styles = theme => ({
@@ -186,7 +185,7 @@ class CandidateList extends React.Component{
                                     </div>
                                 </React.Fragment>
                             :
-                            <LoaderSquare />
+                            <LinearProgress />
                         }
                         </div>
  

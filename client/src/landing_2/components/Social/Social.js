@@ -2,7 +2,7 @@ import React from "react";
 import './Social.scss';
 
 import linkedInLogo from '../../../files/images/landingPage/linkedin.png' ;
-import slackLogo from '../../../files/images/landingPage/slack.png' ;
+//import slackLogo from '../../../files/images/landingPage/slack.png' ;
   
 const Social = () => 
     <div className="socialContainer">  

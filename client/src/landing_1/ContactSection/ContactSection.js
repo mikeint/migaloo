@@ -1,9 +1,9 @@
 import React, { Component } from "react";  
 import axios from 'axios'; 
-
-import LoaderSquare from '../../components/LoaderSquare/LoaderSquare';
-
 import './ContactSection.css'; 
+ 
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 
 class ContactSection extends Component {
 
@@ -103,7 +103,7 @@ class ContactSection extends Component {
                             </div> 
                             <div className="submitContainer">
                                 {this.state.sending ?
-                                <LoaderSquare />
+                                <LinearProgress />
                                 :
                                 buttonSpot
                                 }

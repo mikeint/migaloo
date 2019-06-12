@@ -1,14 +1,16 @@
 import React from 'react';
 import {get, cancel} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
-import { withStyles } from '@material-ui/core/styles';
-import LoaderSquare from '../../../components/LoaderSquare/LoaderSquare';
+import ContactList from './ContactList/ContactList';
+import AddCompany from './AddCompany/AddCompany';
+
+import { withStyles } from '@material-ui/core/styles'; 
 import Add from '@material-ui/icons/Add';
 import IconButton from '@material-ui/core/IconButton';
 import Drawer from '@material-ui/core/Drawer';
 import Button from '@material-ui/core/Button';
-import ContactList from './ContactList/ContactList';
-import AddCompany from './AddCompany/AddCompany';
+import LinearProgress from '@material-ui/core/LinearProgress';
+
 
 const styles = theme => ({
     createdTime:{
@@ -130,7 +132,7 @@ class Accounts extends React.Component{
                                 }
                             </div>
                         :
-                        <LoaderSquare />
+                        <LinearProgress />
                     } 
                 </div> 
                 <Drawer

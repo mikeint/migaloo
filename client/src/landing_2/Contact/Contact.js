@@ -3,7 +3,7 @@ import './Contact.scss'
 import axios from 'axios'
 import AOS from 'aos'
 import 'aos/dist/aos.css' 
-import LoaderSquare from '../../components/LoaderSquare/LoaderSquare' 
+import LinearProgress from '@material-ui/core/LinearProgress';
  
 class Contact extends Component {
     constructor() {
@@ -94,7 +94,7 @@ class Contact extends Component {
                         </div> 
                         <div className="submitContainer">
                             {this.state.sending ?
-                                <LoaderSquare />
+                                <LinearProgress />
                             :
                                 buttonSpot
                             }

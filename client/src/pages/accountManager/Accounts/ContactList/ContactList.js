@@ -1,7 +1,6 @@
 import React from 'react';
 import {get, post, cancel} from '../../../../ApiCalls';  
-import Pagination from "react-js-pagination";
-import LoaderSquare from '../../../../components/LoaderSquare/LoaderSquare';
+import Pagination from "react-js-pagination"; 
 import { withStyles } from '@material-ui/core/styles';  
 import Close from '@material-ui/icons/Close';
 import GetAccountManager from '../../../../components/GetAccountManager/GetAccountManager';
