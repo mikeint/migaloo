@@ -230,52 +230,54 @@ class ContactList extends React.Component{
                         disabled={!this.state.isModified}
                         onClick={this.saveRecruiter}>Save Changes</Button>
                 </div>
-                <Table className={classes.tableBody}>
-                    <TableHead className={classes.tableHeading}>
-                        <TableRow>
-                            <TableCell align="center" className={classes.tableCellHeader}>Email</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>First Name</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>Last Name</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>Phone Number</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>Account Active</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>Is Primary</TableCell>
-                            {this.state.iAmAdmin && <TableCell align="center" className={classes.tableCellHeader}>Remove</TableCell>}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                    {
-                        this.state.loading ? <LinearProgress/> :
-                        this.state.contactList.map((d, i)=>{
-                            return <TableRow key={i} className={classes.tableRow}>
-                                <TableCell className={classes.tableCell}>{d.email}</TableCell>
-                                <TableCell className={classes.tableCell}>{d.firstName}</TableCell>
-                                <TableCell className={classes.tableCell}>{d.lastName}</TableCell>
-                                <TableCell className={classes.tableCell}>{d.phoneNumber}</TableCell>
-                                <TableCell align="center" className={classes.tableCell}>{d.accountActive?"Yes":"Pending"}</TableCell>
-                                <TableCell align="center" className={classes.tableCell}>
-                                    <Checkbox
-                                        checked={d.isPrimary}
-                                        disabled={d.isMe} 
-                                        onChange={e=>this.setAdmin(e, d)}
-                                        value="checked"
-                                        color="primary"
-                                    />
-                                </TableCell>
-                                {
-                                    this.state.iAmAdmin && <TableCell align="center" className={classes.tableCell}>
-                                        <Button
-                                            className={classes.button}
-                                            color="primary"
-                                            variant="contained"
-                                            disabled={d.isMe}
-                                            onClick={()=>this.removeContact(d)}>Remove</Button>
-                                    </TableCell>
-                                }
+                {
+                this.state.loading ? <LinearProgress/> :
+                    <Table className={classes.tableBody}>
+                        <TableHead className={classes.tableHeading}>
+                            <TableRow>
+                                <TableCell align="center" className={classes.tableCellHeader}>Email</TableCell>
+                                <TableCell align="center" className={classes.tableCellHeader}>First Name</TableCell>
+                                <TableCell align="center" className={classes.tableCellHeader}>Last Name</TableCell>
+                                <TableCell align="center" className={classes.tableCellHeader}>Phone Number</TableCell>
+                                <TableCell align="center" className={classes.tableCellHeader}>Account Active</TableCell>
+                                <TableCell align="center" className={classes.tableCellHeader}>Is Primary</TableCell>
+                                {this.state.iAmAdmin && <TableCell align="center" className={classes.tableCellHeader}>Remove</TableCell>}
                             </TableRow>
-                        })
-                    }
-                    </TableBody>
-                </Table>
+                        </TableHead>
+                        
+                        <TableBody>
+                        
+                            {this.state.contactList.map((d, i)=>{
+                                return <TableRow key={i} className={classes.tableRow}>
+                                    <TableCell className={classes.tableCell}>{d.email}</TableCell>
+                                    <TableCell className={classes.tableCell}>{d.firstName}</TableCell>
+                                    <TableCell className={classes.tableCell}>{d.lastName}</TableCell>
+                                    <TableCell className={classes.tableCell}>{d.phoneNumber}</TableCell>
+                                    <TableCell align="center" className={classes.tableCell}>{d.accountActive?"Yes":"Pending"}</TableCell>
+                                    <TableCell align="center" className={classes.tableCell}>
+                                        <Checkbox
+                                            checked={d.isPrimary}
+                                            disabled={d.isMe} 
+                                            onChange={e=>this.setAdmin(e, d)}
+                                            value="checked"
+                                            color="primary"
+                                        />
+                                    </TableCell>
+                                    {
+                                        this.state.iAmAdmin && <TableCell align="center" className={classes.tableCell}>
+                                            <Button
+                                                className={classes.button}
+                                                color="primary"
+                                                variant="contained"
+                                                disabled={d.isMe}
+                                                onClick={()=>this.removeContact(d)}>Remove</Button>
+                                        </TableCell>
+                                    }
+                                </TableRow>
+                            })}
+                            </TableBody>
+                    </Table>
+                }
                 <div className="paginationContainer">
                     <Pagination
                         prevPageText={'Back'}
