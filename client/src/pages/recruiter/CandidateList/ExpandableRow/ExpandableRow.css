@@ -1,3 +1,16 @@
+.expandableRow { 
+    font-size: 1rem;
+    color: #263c54;
+    cursor: pointer;
+    position: relative;
+    border-bottom: 1px solid #1a2b6d14;
+    border-top: 1px solid #1a2b6d14;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.expandableRow .rowInfoContainer {
+    display: flex;
+}
 
 .expandableRow .nameContainer {   
     font-size: 23px;

@@ -13,6 +13,9 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Drawer from '@material-ui/core/Drawer';
 
 const styles = theme => ({
+    root: {
+        boxShadow: 'none !important'
+    },
     drawer:{ 
         minWidth: "300px",
         position: "relative"
@@ -62,16 +65,19 @@ class ExpandableRow extends React.Component{
     }
     render(){ 
         const { classes, candidateData, postData } = this.props;
+        console.log(candidateData)
         return (
             <div className="expandableRow">
                 {this.state.redirectCandidate && <Redirect to={`/recruiter/jobList/${this.props.candidateData.candidateId}`}/>}
                 
-                <ExpansionPanel>
+                <ExpansionPanel square={true} className={classes.root}>
                     <ExpansionPanelSummary>
-                        <div className="nameContainer">{candidateData.firstName}&nbsp;{candidateData.lastName}</div>
-                        {candidateData.newAcceptedCount > 0 ? <div className="acceptedCount" title={candidateData.newAcceptedCount+" New Postings Accepted"}>{/* candidateData.newAcceptedCount */}</div> : ""}
-                        {candidateData.newNotAcceptedCount > 0 ? <div className="notAcceptedCount" title={candidateData.newNotAcceptedCount+" New Postings Not Accepted"}>{/* candidateData.newNotAcceptedCount */}</div> : ""}
-                        {candidateData.score > 0?<span className="score" style={{width: parseInt(candidateData.score, 10)+"%"}}>{parseInt(candidateData.score, 10)+"%"}</span>:''}
+                        <div className="rowInfoContainer"> 
+                            <div className="nameContainer">{candidateData.firstName}&nbsp;{candidateData.lastName}</div>
+                            {candidateData.newAcceptedCount > 0 ? <div className="acceptedCount" title={candidateData.newAcceptedCount+" New Postings Accepted"}>{/* candidateData.newAcceptedCount */}</div> : ""}
+                            {candidateData.newNotAcceptedCount > 0 ? <div className="notAcceptedCount" title={candidateData.newNotAcceptedCount+" New Postings Not Accepted"}>{/* candidateData.newNotAcceptedCount */}</div> : ""}
+                            {candidateData.score > 0?<span className="score" style={{width: parseInt(candidateData.score, 10)+"%"}}>{parseInt(candidateData.score, 10)+"%"}</span>:''}
+                        </div>
                         <div></div>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails>
