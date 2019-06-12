@@ -163,7 +163,11 @@ function getJobsForCandidate(req, res){
             return t.any('\
                 SELECT j.post_id, title, requirements, experience, salary, company_name, image_id, j.company_id, \
                     jc.distance, a.*, tag_ids, tag_names, \
-                    coalesce(distance_score, 0.0)*coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score, \
+                    ( \
+                        coalesce(distance_score, 0.0)+ \
+                        coalesce(salary_score, 0.0)+ \
+                        coalesce(experience_score, 0.0) \
+                    )/3*coalesce(tag_score, 0.0)*100.0 as score, \
                     j.created_on as posted_on, (count(1) OVER())/10+1 as "pageCount" \
                 FROM job_posting j \
                 INNER JOIN company e ON j.company_id = e.company_id \
@@ -180,9 +184,9 @@ function getJobsForCandidate(req, res){
                         -least(greatest((max(j.salary)-max(c.salary))/50.0, 0), 1) as salary_score, \
                         least(greatest((max(j.experience)-max(c.experience))/15.0, -1)+1, 1) \
                         -least(greatest((max(j.experience)-max(c.experience))/10.0, 0), 1) as experience_score, \
-                        least(power(max(c.commute)/(max(ST_Distance(a.lat_lon, ac.lat_lon)) * 1000.0)*0.9, 2.0), 1) as distance_score, \
+                        least(power(max(c.commute)/(greatest(max(ST_Distance(a.lat_lon, ac.lat_lon)), 0.1) / 1000.0)*0.9, 2.0), 1) as distance_score, \
                         SUM(similarity) / count(distinct tg.tag_id) as tag_score, \
-                        max(ST_Distance(a.lat_lon, ac.lat_lon)) * 1000.0 as distance \
+                        max(ST_Distance(a.lat_lon, ac.lat_lon)) / 1000.0 as distance \
                     FROM ( \
                         SELECT ct.tag_id, pt.post_id, MAX(similarity) as similarity \
                         FROM candidate_tags ct \
