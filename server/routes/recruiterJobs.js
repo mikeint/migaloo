@@ -5,6 +5,7 @@ const moment = require('moment');
 const validateCandidatePosting = require('../validation/jobs');  
 const notifications = require('../utils/notifications');
 const logger = require('../utils/logging');
+const address = require('../utils/address');
 
 const db = require('../config/db')
 const postgresdb = db.postgresdb
@@ -143,7 +144,7 @@ function getJobsForCandidate(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.task(t => {
-        return t.one('SELECT c.candidate_id, first_name, last_name, c.salary, c.experience, tg.tag_names \
+        return t.one('SELECT c.candidate_id, first_name, last_name, c.salary, c.experience, tg.tag_names, c.address_id \
             FROM recruiter_candidate rc \
             INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
             LEFT JOIN ( \
@@ -161,27 +162,27 @@ function getJobsForCandidate(req, res){
                 sqlArgs['jobId'] = jobId
             return t.any('\
                 SELECT j.post_id, title, requirements, experience, salary, company_name, image_id, j.company_id, \
-                    address_line_1, address_line_2, city, state_province, country, tag_ids, tag_names, \
-                    coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score, j.created_on as posted_on, (count(1) OVER())/10+1 as "pageCount" \
+                    jc.distance, a.*, tag_ids, tag_names, \
+                    coalesce(distance_score, 0.0)*coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score, \
+                    j.created_on as posted_on, (count(1) OVER())/10+1 as "pageCount" \
                 FROM job_posting j \
                 INNER JOIN company e ON j.company_id = e.company_id \
-                LEFT JOIN address a ON a.address_id = e.address_id \
+                LEFT JOIN address a ON j.address_id = a.address_id \
                 LEFT JOIN ( \
                     SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
                     FROM posting_tags pt \
                     INNER JOIN tags t ON t.tag_id = pt.tag_id \
                     GROUP BY post_id \
                 ) tg ON tg.post_id = j.post_id \
-                \
                 LEFT JOIN ( \
                     SELECT j.post_id, \
                         least(greatest((max(j.salary)-max(c.salary))/10.0, -1)+1, 1) \
                         -least(greatest((max(j.salary)-max(c.salary))/50.0, 0), 1) as salary_score, \
                         least(greatest((max(j.experience)-max(c.experience))/15.0, -1)+1, 1) \
                         -least(greatest((max(j.experience)-max(c.experience))/10.0, 0), 1) as experience_score, \
-                        max(a.lat) as lat, \
-                        max(a.lon) as lon, \
-                        SUM(similarity) / count(distinct tg.tag_id) as tag_score \
+                        least(power(max(c.commute)/(max(ST_Distance(a.lat_lon, ac.lat_lon)) * 1000.0)*0.9, 2.0), 1) as distance_score, \
+                        SUM(similarity) / count(distinct tg.tag_id) as tag_score, \
+                        max(ST_Distance(a.lat_lon, ac.lat_lon)) * 1000.0 as distance \
                     FROM ( \
                         SELECT ct.tag_id, pt.post_id, MAX(similarity) as similarity \
                         FROM candidate_tags ct \
@@ -193,6 +194,7 @@ function getJobsForCandidate(req, res){
                     INNER JOIN job_posting j ON j.post_id = tg.post_id \
                     INNER JOIN address a ON j.address_id = a.address_id \
                     CROSS JOIN (SELECT * FROM candidate WHERE candidate_id = ${candidateId}) c \
+                    LEFT JOIN address ac ON c.address_id = ac.address_id \
                     WHERE j.is_visible AND j.recruiter_id = ${recruiterId} \
                     GROUP BY j.post_id \
                 ) jc ON jc.post_id = j.post_id \
@@ -212,6 +214,7 @@ function getJobsForCandidate(req, res){
             .then((data) => {
                 // Marshal data
                 data = data.map(db.camelizeFields).map(m=>{
+                    address.convertFieldsToMap(m)
                     var timestamp = moment(m.postedOn);
                     var ms = timestamp.diff(moment());
                     m.posted = moment.duration(ms).humanize() + " ago";

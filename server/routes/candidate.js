@@ -442,7 +442,7 @@ function listCandidatesForJob(req, res){
     
 
     postgresdb.task(t => {
-        return t.one('SELECT jp.post_id as "postId", jp.title, jp.salary, jp.experience, tg.tag_names as "tagNames" \
+        return t.one('SELECT jp.post_id as "postId", jp.title, jp.salary, jp.address_id as "addressId", jp.experience, tg.tag_names as "tagNames" \
             FROM job_posting jp \
             LEFT JOIN ( \
                 SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
@@ -457,11 +457,12 @@ function listCandidatesForJob(req, res){
                 sqlArgs['search'] = search.split(' ').map(d=>d+":*").join(" & ")
             return t.any(' \
                 SELECT c.*, a.*, rc.created_on as "createdOn", \
+                    jc.distance, \
                     coalesce(cpd.posted_count, 0) as "posted_count", coalesce(cpd.accepted_count, 0) as "acceptedCount", \
                     coalesce(cpd.not_accepted_count, 0) as "notAcceptedCount", \
                     coalesce(cpd.new_accepted_count, 0) as "newAcceptedCount", coalesce(cpd.new_not_accepted_count, 0) as "newNotAcceptedCount", \
                     (count(1) OVER())/10+1 as "pageCount", tag_names as "tagNames", tag_ids as "tagIds", \
-                    coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score  \
+                    coalesce(distance_score, 0.0)*coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 as score  \
                 FROM recruiter_candidate rc \
                 INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
                 LEFT JOIN address a ON a.address_id = c.address_id \
@@ -488,9 +489,9 @@ function listCandidatesForJob(req, res){
                         -least(greatest((max(j.salary)-max(c.salary))/50.0, 0), 1) as salary_score, \
                         least(greatest((max(j.experience)-max(c.experience))/15.0, -1)+1, 1) \
                         -least(greatest((max(j.experience)-max(c.experience))/10.0, 0), 1) as experience_score, \
-                        max(a.lat) as lat, \
-                        max(a.lon) as lon, \
-                        SUM(similarity) / count(distinct tg.tag_id) as tag_score \
+                        least(power(max(c.commute)/(max(ST_Distance(a.lat_lon, ac.lat_lon)) * 1000.0)*0.9, 2.0), 1) as distance_score, \
+                        SUM(similarity) / count(distinct tg.tag_id) as tag_score, \
+                        max(ST_Distance(a.lat_lon, ac.lat_lon)) * 1000.0 as distance \
                     FROM ( \
                         SELECT ct.tag_id, ct.candidate_id, pt.post_id, MAX(similarity) as similarity \
                         FROM candidate_tags ct \
@@ -503,6 +504,7 @@ function listCandidatesForJob(req, res){
                     INNER JOIN job_posting j ON j.post_id = tg.post_id \
                     INNER JOIN address a ON j.address_id = a.address_id \
                     FULL JOIN candidate c ON tg.candidate_id = c.candidate_id \
+                    LEFT JOIN address ac ON c.address_id = ac.address_id \
                     WHERE j.is_visible AND j.recruiter_id = ${recruiterId} AND j.post_id = ${postId} \
                     GROUP BY c.candidate_id \
                 ) jc ON jc.candidate_id = rc.candidate_id \
