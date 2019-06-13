@@ -36,23 +36,41 @@ const theme = createMuiTheme({
     },
     table:{
         tableBody:{
-            width: '80%',
-            margin: '20px auto 20px auto'
+            width: '100%', 
         },
         tableHeading:{
-            backgroundColor: 'rgb(197, 197, 197)',
-            fontWeight: 'bold'
+            color: "#000", 
+            backgroundColor: "#efefef", 
+            padding: "0px 5px 0px 20px",
+            textAlign: "left",
+            fontWeight: 'bold',
+            '@media (max-width: 1024px)': {
+                padding: "0px 5px 0px 5px",
+            }, 
         },
-        tableCellHeader:{
-            border: '1px solid #999999',
+        tableCellHeader:{ 
             textAlign: 'center',
             padding: '0px 5px'
-        },
-        tableCell:{
-            border: '1px solid #999999',
-            padding: '0px 5px'
-        }
+        }, 
+        tableCell: { 
+            borderBottom: "1px solid #1a2b6d14",
+            padding: "0px 5px 0px 20px",
+            textAlign: "left",
+            '@media (max-width: 1024px)': {
+                padding: "0px 5px 0px 5px",
+            }, 
+        }, 
+        tableRow: {
+            "&:nth-child(even)": {
+                background: "#f2f3f5",
+            },  
+        }, 
     },
+ 
+
+
+
+
     palette: {
         primary: {
           // light: will be calculated from palette.primary.main,

@@ -54,31 +54,15 @@ const styles = theme => ({
         '&:last-child': { 
             '&.active': {
                 backgroundColor: '#263c54bf',
-            },
-            '@media (max-width: 1024px)': {
-                flex: 'unset', 
-                position: "fixed",
-                bottom: "0px",  
-                background: "#263c54",
-                minWidth: "50%",
-                opacity:"1",
-            },
+            }, 
         },
         '&:nth-last-child(2)': {
             marginTop: 'auto',
             '&.active': {
                 backgroundColor: '#263c54bf',
             },
-            '@media (max-width: 1024px)': {
-                flex: 'unset',
-                marginTop: 'unset', 
-                position: "fixed",
-                bottom: "0px", 
-                marginLeft: "50%",
-                background: "#263c54",
-                minWidth: "50%",
-                opacity:"1",
-                borderLeft: "1px solid #fff",
+            '@media (max-width: 1024px)': { 
+                marginTop: 'unset',   
             }, 
         },
     }, 

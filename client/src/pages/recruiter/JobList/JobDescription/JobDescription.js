@@ -56,34 +56,7 @@ const styles = theme => ({
         margin: "20px",
         width: "200px"
     },
-    
-    tableBody: {
-        width: "100%", 
-    },
-    tableCellHeader: { 
-        color: "#000", 
-        backgroundColor: "#efefef", 
-        padding: "0px 5px 0px 20px",
-        textAlign: "left",
-        '@media (max-width: 1024px)': {
-            padding: "0px 5px 0px 5px",
-        }, 
-    },
-    tableRow: {
-        "&:nth-child(even)": {
-            background: "#f2f3f5",
-        },  
-    }, 
-    tableCell: {
-        borderTop: "1px solid #1a2b6d14",
-        borderBottom: "1px solid #1a2b6d14",
-        padding: "0px 5px 0px 20px",
-        textAlign: "left",
-        '@media (max-width: 1024px)': {
-            padding: "0px 5px 0px 5px",
-        }, 
-    },
-
+     
     openChatText: {
         '@media (max-width: 1024px)': {
             display:"none"
