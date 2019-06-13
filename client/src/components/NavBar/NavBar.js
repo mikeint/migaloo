@@ -42,9 +42,11 @@ const styles = theme => ({
     },
     tabsContainerSecondary: { 
         display: 'flex', 
+        flex: '0 0 50%'
     },
     secondaryNavItems:{ 
-        display: 'flex', 
+        display: 'flex',
+        flex: '1',
     },
     linkButton:{
         display: 'flex',
@@ -60,9 +62,9 @@ const styles = theme => ({
         },  
     }, 
     linkWrapper: {
-        flexDirection: 'row',
-        justifyContent: 'unset',
+        flexDirection: 'row', 
         padding: '10px',
+        justifyContent: 'left',
         textAlign: 'left',
 
         '@media (max-width: 1024px)': {
@@ -219,7 +221,6 @@ class NavBar extends React.Component{
 
 
                     <div className={classes.secondaryNav}>
-                        <Notifications/>
 
                         <div className={classes.secondaryNavItems}>
                             <div variant='fullWidth'
@@ -234,6 +235,7 @@ class NavBar extends React.Component{
                                 }
                             </div>
                         </div>
+                        <Notifications/>
                     </div>
 
 

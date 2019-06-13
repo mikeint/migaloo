@@ -14,8 +14,7 @@ import { Link } from 'react-router-dom'
 
 const styles = theme => ({
     root: { 
-        borderRadius: 0, 
-        justifyContent: 'start',
+        borderRadius: 0,  
         height: '60px',
         padding: '10px',
     }, 
