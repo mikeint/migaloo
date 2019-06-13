@@ -24,12 +24,10 @@ function getByPath(object, path) {
 
 const styles = theme => ({
     root: {
-        height:'100vh',
-        paddingBottom: '50px',
+        height:'100vh', 
         alignItems: 'unset',
         '@media (max-width: 1024px)': {
-            height: 'initial',
-            paddingBottom: '0px',
+            height: 'initial', 
         },
     },
     tabsContainer:{
