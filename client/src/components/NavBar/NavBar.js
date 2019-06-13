@@ -40,9 +40,16 @@ const styles = theme => ({
             flexDirection: 'row',
         },
     },
+    tabsContainerSecondary: { 
+        display: 'flex', 
+    },
+    secondaryNavItems:{ 
+        display: 'flex', 
+    },
     linkButton:{
         display: 'flex',
         minWidth: '100%',
+        maxWidth: 'unset',
         paddingTop: '0px',
         '@media (max-width: 1024px)': {
             flex: '1',
@@ -50,21 +57,7 @@ const styles = theme => ({
         },
         '&.active': {
             backgroundColor: '#6f90a14d',
-        },
-        '&:last-child': { 
-            '&.active': {
-                backgroundColor: '#263c54bf',
-            }, 
-        },
-        '&:nth-last-child(2)': {
-            marginTop: 'auto',
-            '&.active': {
-                backgroundColor: '#263c54bf',
-            },
-            '@media (max-width: 1024px)': { 
-                marginTop: 'unset',   
-            }, 
-        },
+        },  
     }, 
     linkWrapper: {
         flexDirection: 'row',
@@ -83,9 +76,13 @@ const styles = theme => ({
     tabsIndicator: { 
       height: "80px"
     }, 
+
+    secondaryNav: {
+        display: "flex"
+    },
     
 }) 
-const navMappings = {
+const navMappingsPrimary = {
     1:{'/recruiter':[ // Recruiter
             {
                 icon:<Search/>,
@@ -104,18 +101,7 @@ const navMappings = {
                 link:'/recruiter/chat',
                 name:'Chat',
                 className: 'linkButton'
-            },
-            {
-                icon:<AccountCircle />,
-                link:'/recruiter/profile',  
-                className: 'linkButton'
-            },
-            {
-                icon:<AccountBalance />,
-                link:'/recruiter/account',
-                className: 'linkButton', 
-                showOnState: ['user', 'isPrimary']
-            }
+            }, 
         ]
     },
     2:{
@@ -137,7 +123,27 @@ const navMappings = {
                 link:'/accountManager/chat',
                 name:'Chat',
                 className: 'linkButton'
+            }, 
+        ]
+    }
+}
+const navMappingsSecondary = {
+    1:{'/recruiter':[ // Recruiter 
+            {
+                icon:<AccountCircle />,
+                link:'/recruiter/profile',  
+                className: 'linkButton'
             },
+            {
+                icon:<AccountBalance />,
+                link:'/recruiter/account',
+                className: 'linkButton', 
+                showOnState: ['user', 'isPrimary']
+            }
+        ]
+    },
+    2:{
+        '/accountManager':[ // Employer 
             {
                 icon:<AccountBalance />,
                 link:'/accountManager/accounts',
@@ -151,6 +157,8 @@ const navMappings = {
         ]
     }
 }
+
+
 class NavBar extends React.Component{
     getBasePath(path){
         const i = path.indexOf('/', 1);
@@ -159,7 +167,7 @@ class NavBar extends React.Component{
         return path.slice(0, i);
     }
     getNewPage(path){
-        const page = this.getNavMappings().findIndex(d=>path.startsWith(d.link))
+        const page = this.getNavMappingsPrimary().findIndex(d=>path.startsWith(d.link))
         if(page === -1)
             return 0
         return page;
@@ -171,7 +179,7 @@ class NavBar extends React.Component{
         const userType = user.userType;
         const path = window.location.pathname;
         const basePath = this.getBasePath(path);
-        const page = navMappings[userType][basePath].findIndex(d=>path.startsWith(d.link));
+        const page = navMappingsPrimary[userType][basePath].findIndex(d=>path.startsWith(d.link));
         this.state={
             page: page,
             userType: userType,
@@ -195,15 +203,40 @@ class NavBar extends React.Component{
     componentDidMount = () => {
         this.setState({ user: this.Auth.getUser() });
     }
-    getNavMappings(){
-        return navMappings[this.state.user.userType][this.state.basePath]
+    getNavMappingsPrimary(){
+        return navMappingsPrimary[this.state.user.userType][this.state.basePath]
     }
+
+    getNavMappingsSecondary(){
+        return navMappingsSecondary[this.state.user.userType][this.state.basePath]
+    }
+    
     render(){
         const { classes } = this.props;
         return (
             <React.Fragment> 
                 <AppBar position='static'>
-                    <Notifications/>
+
+
+                    <div className={classes.secondaryNav}>
+                        <Notifications/>
+
+                        <div className={classes.secondaryNavItems}>
+                            <div variant='fullWidth'
+                                value={this.state.page}
+                                className={classes.tabsContainerSecondary}
+                                classes={{indicator:classes.tabsIndicator}}
+                                onChange={this.handleChange}>
+                                {
+                                    this.getNavMappingsSecondary().filter(d=>d.showOnState == null ||  getByPath(this.state, d.showOnState)).map((d, i)=>{
+                                        return <LinkTab classes={{wrapper:classes.linkWrapper}} className={classes[d.className]} label={d.name} icon={d.icon} key={i} to={d.link} />
+                                    })
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+
                     <Toolbar
                         disableGutters={true}
                         className={classes.root} 
@@ -214,7 +247,7 @@ class NavBar extends React.Component{
                             classes={{indicator:classes.tabsIndicator}}
                             onChange={this.handleChange}>
                             {
-                                this.getNavMappings().filter(d=>d.showOnState == null ||  getByPath(this.state, d.showOnState)).map((d, i)=>{
+                                this.getNavMappingsPrimary().filter(d=>d.showOnState == null ||  getByPath(this.state, d.showOnState)).map((d, i)=>{
                                     return <LinkTab classes={{wrapper:classes.linkWrapper}} className={classes[d.className]} label={d.name} icon={d.icon} key={i} to={d.link} />
                                 })
                             }
