@@ -2,17 +2,17 @@ import React from 'react';
 import './NavBar.css';  
 import { NavLink, withRouter } from 'react-router-dom';  
 import AuthFunctions from '../../AuthFunctions'; 
-import Toolbar from '@material-ui/core/Toolbar';
-import AppBar from '@material-ui/core/AppBar';
+import {Toolbar, AppBar, Tab, Menu, MenuItem, Typography, ListItemIcon, Button} 
+    from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import ListAlt from '@material-ui/icons/ListAlt';
+import MoreVert from '@material-ui/icons/MoreVert';
 import Search from '@material-ui/icons/Search';
 import Chat from '@material-ui/icons/Chat';
 import AccountBalance from '@material-ui/icons/AccountBalance';
 import Notifications from '../Notifications/Notifications';
 import { withStyles } from '@material-ui/core/styles';
 //import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 
 
 function LinkTab(props) {
@@ -43,17 +43,15 @@ const styles = theme => ({
         display: 'flex', 
         flex: '0 0 50%'
     },
-    secondaryNavItems:{ 
-        display: 'flex',
-        flex: '1',
-    },
     linkButton:{
-        display: 'flex',
+        flex: '0',
         minWidth: '100%',
         maxWidth: 'unset',
         paddingTop: '0px',
+        order: 2,
         '@media (max-width: 1024px)': {
             flex: '1',
+            order: 1,
             minWidth: 'unset',
             minHeight:'unset'
         },
@@ -74,14 +72,29 @@ const styles = theme => ({
             padding: "0px"
         }, 
     },
+    secondaryNav: {
+        flex: '0',
+        display: 'flex',
+        order: 1,
+        '@media (max-width: 1024px)': {
+            flex: '0',
+            order: 2,
+        },
+    },
+    secondaryButton:{
+        minWidth: 48,
+        padding: 15
+    },
+    menuItem:{
+
+    },
 
     tabsIndicator: { 
-      height: "80px"
+        height: "80px"
     }, 
-
-    secondaryNav: {
-        display: "flex"
-    },
+    menuButton:{
+        marginLeft: "auto"
+    }
     
 }) 
 const navMappingsPrimary = {
@@ -134,12 +147,14 @@ const navMappingsSecondary = {
             {
                 icon:<AccountCircle />,
                 link:'/recruiter/profile',  
-                className: 'linkButton'
+                name:'Profile',
+                className: 'menuItem'
             },
             {
                 icon:<AccountBalance />,
                 link:'/recruiter/account',
-                className: 'linkButton', 
+                className: 'menuItem', 
+                name:'Account',
                 showOnState: ['user', 'isPrimary']
             }
         ]
@@ -149,12 +164,14 @@ const navMappingsSecondary = {
             {
                 icon:<AccountBalance />,
                 link:'/accountManager/accounts',
-                className: 'linkButton'
+                name:'Account',
+                className: 'menuItem'
             },
             {
                 icon:<AccountCircle />,
                 link:'/accountManager/profile',
-                className: 'linkButton'
+                name:'Profile',
+                className: 'menuItem'
             }
         ]
     }
@@ -186,7 +203,8 @@ class NavBar extends React.Component{
             page: page,
             userType: userType,
             basePath: basePath,
-            user: user
+            user: user,
+            menuOpen: false
         }
         const { history } = this.props;
         history.listen((location, action) => {
@@ -218,27 +236,6 @@ class NavBar extends React.Component{
         return (
             <React.Fragment> 
                 <AppBar position='static'>
-
-
-                    <div className={classes.secondaryNav}>
-
-                        <div className={classes.secondaryNavItems}>
-                            <div variant='fullWidth'
-                                value={this.state.page}
-                                className={classes.tabsContainerSecondary}
-                                classes={{indicator:classes.tabsIndicator}}
-                                onChange={this.handleChange}>
-                                {
-                                    this.getNavMappingsSecondary().filter(d=>d.showOnState == null ||  getByPath(this.state, d.showOnState)).map((d, i)=>{
-                                        return <LinkTab classes={{wrapper:classes.linkWrapper}} className={classes[d.className]} label={d.name} icon={d.icon} key={i} to={d.link} />
-                                    })
-                                }
-                            </div>
-                        </div>
-                        <Notifications/>
-                    </div>
-
-
                     <Toolbar
                         disableGutters={true}
                         className={classes.root} 
@@ -253,6 +250,38 @@ class NavBar extends React.Component{
                                     return <LinkTab classes={{wrapper:classes.linkWrapper}} className={classes[d.className]} label={d.name} icon={d.icon} key={i} to={d.link} />
                                 })
                             }
+                            <div className={classes.secondaryNav}>
+                                <Notifications classes={{root: classes.secondaryButton}}/>
+                                
+                                <Button classes={{root: classes.secondaryButton}}
+                                    className={classes.menuButton}
+                                    color="inherit"
+                                    aria-controls="secondary-menu"
+                                    aria-haspopup="true"
+                                    onClick={(e)=>this.setState({menuOpen: true, menuRef: e.currentTarget})}
+                                    >
+                                    <MoreVert/>
+                                </Button>
+
+                                <Menu
+                                    id="secondary-menu"
+                                    keepMounted
+                                    anchorEl={this.state.menuRef}
+                                    open={this.state.menuOpen}
+                                    onClose={()=>this.setState({menuOpen: false})}
+                                >
+                                    {
+                                        this.getNavMappingsSecondary().filter(d=>d.showOnState == null ||  getByPath(this.state, d.showOnState)).map((d, i)=>{
+                                            return <MenuItem component={NavLink} className={classes[d.className]} key={i} to={d.link} >
+                                                    <ListItemIcon>
+                                                        {d.icon}
+                                                    </ListItemIcon>
+                                                    <Typography variant="inherit">{d.name}</Typography>
+                                                </MenuItem>
+                                        })
+                                    }
+                                </Menu>
+                            </div>
                         </div>
                     </Toolbar>
                 </AppBar>
