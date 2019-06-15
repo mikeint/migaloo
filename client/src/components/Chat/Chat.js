@@ -5,6 +5,7 @@ import {get,cancel} from '../../ApiCalls';
 import ConversationRow from "./ConversationRow/ConversationRow"; 
 import Pagination from "react-js-pagination"; 
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Conversation from '../Conversation/Conversation'; 
 
 class Chat extends Component {
 
@@ -14,7 +15,9 @@ class Chat extends Component {
             conversationList: null,
             page: 1,
             pageCount: 1,
-            enterSlide:"page-enter"
+            enterSlide:"page-enter",
+            conversation: props.conversation,
+            showChat:props.defaultOpenState?props.defaultOpenState:false
         };
         this.Auth = new AuthFunctions();
     }
@@ -40,6 +43,16 @@ class Chat extends Component {
             this.getConversationList();
         });
     };
+
+    openChat = (d) => {
+        this.setState({showChat:!this.state.showChat})
+        // document.getElementById("root").classList.add("fixedRoot");
+    }
+    closeChat = (d) => {
+        this.setState({showChat:!this.state.showChat})
+        // document.getElementById("root").classList.remove("fixedRoot");
+    }
+
     render() {
   
         return (
@@ -53,7 +66,7 @@ class Chat extends Component {
                                 this.state.conversationList.map((conv, i)=>{
                                     const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
                                         conv.postId === this.props.match.params.postId
-                                    return <ConversationRow key={i} conversation={conv} defaultOpenState={initialOpen} />
+                                    return <ConversationRow key={i} conversation={conv} defaultOpenState={initialOpen} onClick={this.openChat.bind(this)}/>
                                 })
                             : <LinearProgress/>
                         } 
@@ -72,6 +85,13 @@ class Chat extends Component {
                                 activeClass={'active'}
                                 />
                         </div>  
+
+                        <div className="conversationRight">
+                            {this.state.showChat && 
+                                <Conversation conversation={this.state.conversation} open={this.state.showChat} onClose={this.closeChat}/>
+                            }
+                        </div>
+                    
                     </div>
                     
                         
