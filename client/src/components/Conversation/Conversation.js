@@ -214,7 +214,7 @@ class Conversation extends Component {
         const { classes, onClose, ...other } = this.props;
         return (
             <React.Fragment>
-                <Dialog
+                <div
                         maxWidth="xl"
                         fullWidth={true}
                         onClose={this.handleChatDialogClose}
@@ -278,7 +278,7 @@ class Conversation extends Component {
                         <textarea className="chatInput" placeholder="Message" name='message' type='text' ref={this.message} />
                         <div className="sendButton" onClick={this.sendMessage.bind(this)}>Send</div> 
                     </div>
-                </Dialog>
+                </div>
             </React.Fragment>
         );
     }

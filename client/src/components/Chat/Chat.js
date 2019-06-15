@@ -1,5 +1,5 @@
 import React, { Component } from "react"; 
-import "./Chat.css"; 
+import "./Chat.scss"; 
 import AuthFunctions from '../../AuthFunctions'; 
 import {get,cancel} from '../../ApiCalls';  
 import ConversationRow from "./ConversationRow/ConversationRow"; 
@@ -46,30 +46,36 @@ class Chat extends Component {
             <React.Fragment>
                 <div className="pageHeading">Conversations</div>
                 <div className={"chatContainer "+this.state.enterSlide}>
-                    {
-                        this.state.conversationList != null ?
-                            this.state.conversationList.map((conv, i)=>{
-                                const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
-                                    conv.postId === this.props.match.params.postId
-                                return <ConversationRow key={i} conversation={conv} defaultOpenState={initialOpen} />
-                            })
-                        : <LinearProgress/>
-                    }
-                    <div className="paginationContainer">
-                        <Pagination
-                            prevPageText={'Back'}
-                            nextPageText={'Next'}
-                            firstPageText={'First'}
-                            lastPageText={'Last'}
-                            activePage={this.state.page}
-                            totalItemsCount={this.state.pageCount*10}
-                            marginPagesDisplayed={0}
-                            pageRangeDisplayed={10}
-                            onChange={this.handlePageClick}
-                            innerClass={'pagination'}
-                            activeClass={'active'}
-                            />
+                     
+                    <div className="conversationLeft">  
+                        {
+                            this.state.conversationList != null ?
+                                this.state.conversationList.map((conv, i)=>{
+                                    const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
+                                        conv.postId === this.props.match.params.postId
+                                    return <ConversationRow key={i} conversation={conv} defaultOpenState={initialOpen} />
+                                })
+                            : <LinearProgress/>
+                        } 
+                        <div className="paginationContainer">
+                            <Pagination
+                                prevPageText={'Back'}
+                                nextPageText={'Next'}
+                                firstPageText={'First'}
+                                lastPageText={'Last'}
+                                activePage={this.state.page}
+                                totalItemsCount={this.state.pageCount*10}
+                                marginPagesDisplayed={0}
+                                pageRangeDisplayed={10}
+                                onChange={this.handlePageClick}
+                                innerClass={'pagination'}
+                                activeClass={'active'}
+                                />
+                        </div>  
                     </div>
+                    
+                        
+                    
                 </div>
             </React.Fragment>
         );

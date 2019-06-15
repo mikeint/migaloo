@@ -1,0 +1,35 @@
+.chatContainer {
+    display: flex;
+    max-height: calc(100vh - 61px); 
+    overflow: auto;
+
+    .conversationLeft {
+        display: flex;
+        flex-direction: column;
+        max-width: 300px;
+        flex: 1;
+    }
+    
+    .conversationRight {
+        display: flex;
+        flex: 1;
+    }
+
+
+    .chatRow {
+        width: 100%;
+        padding: 10px 10px;
+        font-size: 15px; 
+        background: #fff;
+        color: #263c54;
+        display: flex;
+        cursor: pointer;
+    }
+    .flexColumn{
+        flex: 1 0;
+    }
+    .heading{
+        font-weight: bold;
+    } 
+    
+}

@@ -1,5 +1,5 @@
 import React, { Component } from "react"; 
-import "./ConversationRow.css"; 
+import "./ConversationRow.scss"; 
 import Conversation from '../../Conversation/Conversation'; 
 
 class ConversationRow extends Component {
@@ -12,16 +12,16 @@ class ConversationRow extends Component {
         };
     }
     openChat = (d) => {
-        this.setState({showChat:true})
+        this.setState({showChat:!this.state.showChat})
         // document.getElementById("root").classList.add("fixedRoot");
     }
     closeChat = (d) => {
-        this.setState({showChat:false})
+        this.setState({showChat:!this.state.showChat})
         // document.getElementById("root").classList.remove("fixedRoot");
     }
     render() {
   
-        return (
+        return (  
             <React.Fragment>
                 <div className="chatRow" onClick={this.openChat.bind(this)}>
                     <div className="flexColumn">
@@ -37,10 +37,13 @@ class ConversationRow extends Component {
                             ('Meeting has been requested for '+this.state.conversation.dateOfferStr) ) )}</div>
                         <div>{this.state.conversation.created}</div> 
                     </div>
+                </div> 
+                
+                <div className="conversationRight">
+                    {this.state.showChat && 
+                        <Conversation conversation={this.state.conversation} open={this.state.showChat} onClose={this.closeChat}/>
+                    }
                 </div>
-                {this.state.showChat && 
-                    <Conversation conversation={this.state.conversation} open={this.state.showChat} onClose={this.closeChat}/>
-                }
             </React.Fragment>
         );
     }

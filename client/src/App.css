@@ -258,12 +258,12 @@ input {
 .jobListContainer.page-exit {
   animation: slideOutLeft 0.4s forwards;
 }
-.candidateListContainer.page-enter {
+/* .candidateListContainer.page-enter {
   animation: slideInRight 0.4s forwards;
 }
 .candidateListContainer.page-exit {
   animation: slideOutRight 0.4s forwards;
-}
+} */
 /* .chatContainer.page-enter {
     animation: slideInLeft 0.4s forwards;
 }

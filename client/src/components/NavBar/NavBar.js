@@ -28,6 +28,8 @@ const styles = theme => ({
         alignItems: 'unset',
         '@media (max-width: 1024px)': {
             height: 'initial', 
+            minHeight:'unset',
+            height: '60px',
         },
     },
     tabsContainer:{
@@ -54,11 +56,12 @@ const styles = theme => ({
         '@media (max-width: 1024px)': {
             flex: '1',
             minWidth: 'unset',
+            minHeight:'unset'
         },
         '&.active': {
             backgroundColor: '#6f90a14d',
         },  
-    }, 
+    },   
     linkWrapper: {
         flexDirection: 'row', 
         padding: '10px',
