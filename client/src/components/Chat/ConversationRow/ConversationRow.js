@@ -7,7 +7,7 @@ class ConversationRow extends Component {
   
         return (  
             <React.Fragment>
-                <div className="chatRow">
+                <div className="chatRow" onClick={this.props.openChat}>
                     <div className="flexColumn">
                         <div><span className="heading">Contact: </span>{this.props.conversation.contactName}</div>
                         <div><span className="heading">Subject: </span>{this.props.conversation.subjectFirstName+" "+this.props.conversation.subjectLastName}</div>

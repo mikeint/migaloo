@@ -15,9 +15,9 @@ class Chat extends Component {
             conversationList: null,
             page: 1,
             pageCount: 1,
-            enterSlide:"page-enter",
-            conversation: props.conversation,
-            showChat:props.defaultOpenState?props.defaultOpenState:false
+            enterSlide: "page-enter",
+            conversation: '',
+            showChat: false
         };
         this.Auth = new AuthFunctions();
     }
@@ -46,7 +46,7 @@ class Chat extends Component {
 
     openChat = (d) => {
         this.setState({showChat:!this.state.showChat})
-        // document.getElementById("root").classList.add("fixedRoot");
+        // document.getElementById("root").classList.add("fixedRoot"); 
     }
     closeChat = (d) => {
         this.setState({showChat:!this.state.showChat})
@@ -66,7 +66,7 @@ class Chat extends Component {
                                 this.state.conversationList.map((conv, i)=>{
                                     const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
                                         conv.postId === this.props.match.params.postId
-                                    return <ConversationRow key={i} conversation={conv} defaultOpenState={initialOpen} onClick={this.openChat.bind(this)}/>
+                                    return <ConversationRow key={i} conversation={conv} defaultOpenState={initialOpen} openChat={this.openChat.bind(this)}/>
                                 })
                             : <LinearProgress/>
                         } 
@@ -85,16 +85,13 @@ class Chat extends Component {
                                 activeClass={'active'}
                                 />
                         </div>  
-
-                        <div className="conversationRight">
-                            {this.state.showChat && 
-                                <Conversation conversation={this.state.conversation} open={this.state.showChat} onClose={this.closeChat}/>
-                            }
-                        </div>
-                    
                     </div>
-                    
-                        
+
+                    <div className="conversationRight">
+                        {this.state.showChat && 
+                            <Conversation conversation={this.state.conversation} open={this.state.showChat} onClose={this.closeChat}/>
+                        }
+                    </div> 
                     
                 </div>
             </React.Fragment>

@@ -26,8 +26,7 @@ const styles = theme => ({
     root: {
         height:'100vh', 
         alignItems: 'unset',
-        '@media (max-width: 1024px)': {
-            height: 'initial', 
+        '@media (max-width: 1024px)': { 
             minHeight:'unset',
             height: '60px',
         },
