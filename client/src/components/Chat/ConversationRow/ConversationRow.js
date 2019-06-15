@@ -21,8 +21,7 @@ class ConversationRow extends Component {
                             ('Meeting has been requested for '+this.props.conversation.dateOfferStr) ) )}</div>
                         <div>{this.props.conversation.created}</div> 
                     </div>
-                </div> 
-                 
+                </div>
             </React.Fragment>
         );
     }

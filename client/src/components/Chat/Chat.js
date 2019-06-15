@@ -16,7 +16,7 @@ class Chat extends Component {
             page: 1,
             pageCount: 1,
             enterSlide: "page-enter",
-            conversation: props.conversation,
+            conversation: '',
             showChat:props.defaultOpenState?props.defaultOpenState:false
         };
         this.Auth = new AuthFunctions();
@@ -45,7 +45,7 @@ class Chat extends Component {
     };
 
     openChat = (d) => {
-        this.setState({showChat:!this.state.showChat})
+        this.setState({showChat:!this.state.showChat}) 
         // document.getElementById("root").classList.add("fixedRoot"); 
     }
     closeChat = (d) => {
@@ -65,8 +65,14 @@ class Chat extends Component {
                             this.state.conversationList != null ?
                                 this.state.conversationList.map((conv, i)=>{
                                     const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
-                                        conv.postId === this.props.match.params.postId
-                                    return <ConversationRow key={i} conversation={conv} defaultOpenState={initialOpen} openChat={this.openChat.bind(this)}/>
+                                        conv.postId === this.props.match.params.postId 
+                                        return <ConversationRow 
+                                                    key={i} 
+                                                    conversation={conv} 
+                                                    defaultOpenState={initialOpen} 
+                                                    openChat={(() => { 
+                                                        this.setState({ conversation: conv, showChat: !this.state.showChat })}).bind(this)
+                                                    } />
                                 })
                             : <LinearProgress/>
                         } 
