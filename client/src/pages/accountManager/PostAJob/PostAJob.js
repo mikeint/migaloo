@@ -141,7 +141,7 @@ class PostAJob extends React.Component{
             get('/api/employerPostings/get/'+this.state.postId)
             .then((res)=>{
                 if(res == null || !res.data.success || res.data.jobPosts.length === 0) return
-                this.setState({ oldPost: res.data.jobPosts[0] })
+                this.setState({ oldPost: res.data.jobPosts[0], jobType: this.state.oldPost.jobType })
             }).catch(errors => 
                 console.log(errors)
             )

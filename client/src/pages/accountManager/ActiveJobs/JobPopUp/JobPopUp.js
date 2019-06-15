@@ -179,7 +179,7 @@ class JobPopUp extends React.Component{
                         :
                         <p><span className={classes.itemLabel}>Opening Reason Comment:</span> {jobObj.openingReasonComment}</p> 
                     }
-                    {jobObj.tagNames?<p><span>Tags:</span> {jobObj.tagNames.join(", ")}</p>:''}
+                    {jobObj.tagNames != null?<p><span>Tags:</span> {jobObj.tagNames.join(", ")}</p>:''}
                     <p><span className={classes.itemLabel}>Created:</span> {jobObj.created}</p>
                     <NavLink to={`/accountManager/postAJob/${jobObj.postId}`}>
                         <Button
