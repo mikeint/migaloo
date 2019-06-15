@@ -235,7 +235,7 @@ function postListing(req, res){
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>filters[k]).join(" ")
 
     postgresdb.any('\
-        SELECT j.*, a.*, op.opening_reason_name \
+        SELECT j.*, a.*, op.opening_reason_name, \
             tag_names, tag_ids, new_posts_cnt, c.company_name, \
             posts_cnt, recruiter_count, (count(1) OVER())/10+1 as "pageCount" \
         FROM job_posting_all j \
