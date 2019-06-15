@@ -16,8 +16,8 @@ class Chat extends Component {
             page: 1,
             pageCount: 1,
             enterSlide: "page-enter",
-            conversation: '',
-            showChat: false
+            conversation: props.conversation,
+            showChat:props.defaultOpenState?props.defaultOpenState:false
         };
         this.Auth = new AuthFunctions();
     }
