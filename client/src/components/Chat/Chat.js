@@ -30,7 +30,8 @@ class Chat extends Component {
             pageCount: 1,
             enterSlide: "page-enter",
             conversation: null,
-            selectedIndex:0
+            selectedIndex:0,
+            isChatClosed: true,
         };
         this.Auth = new AuthFunctions();
     }
@@ -62,58 +63,68 @@ class Chat extends Component {
         this.setState({selectedIndex:index})  
     }
 
+    onClose = () => {
+        this.setState({conversation:null,isChatClosed:!this.state.isChatClosed})
+    }
+
     render() {
-        const { classes } = this.props;
+        const { classes } = this.props; 
 
         return (
             <React.Fragment>
                 <div className="pageHeading">Conversations</div>
                 <div className={"chatContainer "+this.state.enterSlide}>
 
-                    <div className="conversationLeft">
-                        {
-                            this.state.conversationList != null ?
-                                this.state.conversationList.map((conv, i)=>{
-                                    const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
-                                        conv.postId === this.props.match.params.postId
-                                        return <ListItem 
-                                                    key={i} 
-                                                    className={classes.root} 
-                                                    button selected={this.state.selectedIndex === i} 
-                                                    onClick={event => this.handleListItemClick(event, i)}
-                                                >
-                                                    <ConversationRow 
-                                                        conversation={conv}
-                                                        defaultOpenState={initialOpen} 
-                                                        openChat={(() => {
-                                                            this.setState({
-                                                                conversation: conv,
-                                                            })})} 
-                                                        />
-                                                </ListItem>
-                                })
-                            : <LinearProgress/>
-                        }
-                        <div className="paginationContainer">
-                            <Pagination
-                                prevPageText={'Back'}
-                                nextPageText={'Next'}
-                                firstPageText={'First'}
-                                lastPageText={'Last'}
-                                activePage={this.state.page}
-                                totalItemsCount={this.state.pageCount*10}
-                                marginPagesDisplayed={0}
-                                pageRangeDisplayed={10}
-                                onChange={this.handlePageClick}
-                                innerClass={'pagination'}
-                                activeClass={'active'}
-                                />
+                    {this.state.isChatClosed ?
+                        <div className="conversationLeft">
+                            {
+                                this.state.conversationList != null ?
+                                    this.state.conversationList.map((conv, i)=>{
+                                        const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
+                                            conv.postId === this.props.match.params.postId
+                                            return <ListItem 
+                                                        key={i} 
+                                                        className={classes.root} 
+                                                        button selected={this.state.selectedIndex === i} 
+                                                        onClick={event => this.handleListItemClick(event, i)}
+                                                    >
+                                                        <ConversationRow 
+                                                            conversation={conv}
+                                                            defaultOpenState={initialOpen} 
+                                                            openChat={(() => {
+                                                                this.setState({
+                                                                    conversation: conv,
+                                                                    isChatClosed:false
+                                                                })})} 
+                                                            />
+                                                    </ListItem>
+                                    })
+                                : <LinearProgress/>
+                            }
+                            <div className="paginationContainer">
+                                <Pagination
+                                    prevPageText={'Back'}
+                                    nextPageText={'Next'}
+                                    firstPageText={'First'}
+                                    lastPageText={'Last'}
+                                    activePage={this.state.page}
+                                    totalItemsCount={this.state.pageCount*10}
+                                    marginPagesDisplayed={0}
+                                    pageRangeDisplayed={10}
+                                    onChange={this.handlePageClick}
+                                    innerClass={'pagination'}
+                                    activeClass={'active'}
+                                    />
+                            </div>
                         </div>
-                    </div>
+                        :
+                        ""
+                    }
+
 
                     <div className="conversationRight">
                         {this.state.conversation != null && 
-                        <Conversation conversation={this.state.conversation}/>}
+                        <Conversation conversation={this.state.conversation} onClose={this.onClose} />}
                     </div>
 
                 </div>

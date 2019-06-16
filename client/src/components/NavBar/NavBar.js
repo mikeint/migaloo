@@ -48,7 +48,7 @@ const styles = theme => ({
         minWidth: '100%',
         maxWidth: 'unset',
         paddingTop: '0px',
-        order: 2,
+        order: 2, 
         '@media (max-width: 1024px)': {
             flex: '1',
             order: 1,
@@ -108,7 +108,7 @@ const navMappingsPrimary = {
             {
                 icon:<ListAlt/>,
                 link:'/recruiter/candidateList',
-                name:'Candidate List',
+                name:'Candidates',
                 className: 'linkButton'
             },
             {
