@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import "./Conversation.css";  
 import {get, post} from '../../ApiCalls';  
 import CalendarToday from '@material-ui/icons/CalendarToday';
-import Close from '@material-ui/icons/Close';
 import MeetingPicker from "../MeetingPicker/MeetingPicker";
 import IconButton from '@material-ui/core/IconButton';
 import DialogTitle from '@material-ui/core/DialogTitle'; 
@@ -214,16 +213,13 @@ class Conversation extends Component {
         return (
             <React.Fragment>
                 <div
-                        maxWidth="xl"
-                        fullWidth={true}
+                        maxwidth="xl"
+                        fullwidth={"true"}
                         onClose={this.handleChatDialogClose}
                         aria-labelledby="dialog-title"
                         open={other.open}> 
                     <DialogTitle id="dialog-title">
                         <span>Conversation {this.state.conversation.contactName ? ` - ${this.state.conversation.contactName}, for ${this.state.conversation.subjectFirstName} ${this.state.conversation.subjectLastName}` : ''}</span>
-                        <IconButton color="inherit" onClick={this.handleChatDialogClose} className={classes.rightBtn}>
-                            <Close color="primary"/>
-                        </IconButton>
                         <IconButton color="inherit" onClick={this.handleMeetingDialogOpen} className={classes.rightBtn}>
                             <CalendarToday color="primary"/>
                         </IconButton>

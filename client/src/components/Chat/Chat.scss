@@ -1,37 +1,25 @@
 .chatContainer {
     display: flex;
-    max-height: calc(100vh - 61px); 
-    overflow: auto;
 
     .conversationLeft {
+        height: calc(100vh - 61px);
+        overflow: auto;
         display: flex;
         flex-direction: column;
         max-width: 300px;
         flex: 1;
+        background: #546f8221;
     }
     
     .conversationRight {
+        height: calc(100vh - 61px); 
         display: flex;
         flex-direction: column;
         width: 100%;
         flex: 1;
+    }  
+    .paginationContainer {
+        bottom:0;
+        position: absolute;
     }
-
-
-    .chatRow {
-        width: 100%;
-        padding: 10px 10px;
-        font-size: 15px; 
-        background: #fff;
-        color: #263c54;
-        display: flex;
-        cursor: pointer;
-    }
-    .flexColumn{
-        flex: 1 0;
-    }
-    .heading{
-        font-weight: bold;
-    } 
-    
 }

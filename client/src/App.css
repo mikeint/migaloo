@@ -229,7 +229,7 @@ input {
     min-width: 48px;
     cursor: pointer;
     outline: 0;
-    color: black;
+    color: #f6f7f8;
 }
 .paginationContainer a:hover {
     background-color: #263c542e;

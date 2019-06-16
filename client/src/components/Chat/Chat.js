@@ -1,11 +1,23 @@
 import React, { Component } from "react"; 
 import "./Chat.scss"; 
+import { withRouter } from 'react-router-dom';  
 import AuthFunctions from '../../AuthFunctions'; 
 import {get,cancel} from '../../ApiCalls';  
 import ConversationRow from "./ConversationRow/ConversationRow"; 
 import Pagination from "react-js-pagination"; 
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Conversation from '../Conversation/Conversation'; 
+import {ListItem } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+
+
+const styles = theme => ({
+    root: {
+        height:'100px', 
+        backgroundColor: '#f6f7f8',
+        marginBottom:'5px',
+    },
+})
 
 class Chat extends Component {
 
@@ -17,7 +29,8 @@ class Chat extends Component {
             pageCount: 1,
             enterSlide: "page-enter",
             conversation: '',
-            showChat:props.defaultOpenState?props.defaultOpenState:false
+            showChat:props.defaultOpenState?props.defaultOpenState:false, 
+            selectedIndex:0
         };
         this.Auth = new AuthFunctions();
     }
@@ -47,35 +60,39 @@ class Chat extends Component {
     openChat = (d) => {
         this.setState({showChat:!this.state.showChat}) 
         // document.getElementById("root").classList.add("fixedRoot"); 
-    }
-    closeChat = (d) => {
-        this.setState({showChat:!this.state.showChat})
-        // document.getElementById("root").classList.remove("fixedRoot");
+    } 
+    handleListItemClick = (event, index) => { 
+        this.setState({selectedIndex:index})  
     }
 
     render() {
-  
+        const { classes } = this.props;
+
         return (
             <React.Fragment>
                 <div className="pageHeading">Conversations</div>
                 <div className={"chatContainer "+this.state.enterSlide}>
-                     
-                    <div className="conversationLeft">  
+
+                    <div className="conversationLeft">
                         {
                             this.state.conversationList != null ?
                                 this.state.conversationList.map((conv, i)=>{
                                     const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
-                                        conv.postId === this.props.match.params.postId 
-                                        return <ConversationRow 
-                                                    key={i} 
-                                                    conversation={conv} 
-                                                    defaultOpenState={initialOpen} 
-                                                    openChat={(() => { 
-                                                        this.setState({ conversation: conv, showChat: !this.state.showChat })}).bind(this)
+                                        conv.postId === this.props.match.params.postId
+                                        return <ListItem key={i} className={classes.root} button selected={this.state.selectedIndex === i} onClick={event => this.handleListItemClick(event, i)}> 
+                                                    <ConversationRow 
+                                                        conversation={conv}
+                                                        defaultOpenState={initialOpen} 
+                                                        openChat={(() => {
+                                                            this.setState({ 
+                                                                conversation: conv, 
+                                                                showChat: !this.state.showChat, 
+                                                            })})
                                                     } />
+                                                </ListItem>
                                 })
                             : <LinearProgress/>
-                        } 
+                        }
                         <div className="paginationContainer">
                             <Pagination
                                 prevPageText={'Back'}
@@ -90,19 +107,19 @@ class Chat extends Component {
                                 innerClass={'pagination'}
                                 activeClass={'active'}
                                 />
-                        </div>  
+                        </div>
                     </div>
 
                     <div className="conversationRight">
-                        {this.state.showChat && 
-                            <Conversation conversation={this.state.conversation} open={this.state.showChat} onClose={this.closeChat}/>
+                        {this.state.showChat &&
+                            <Conversation conversation={this.state.conversation} open={this.state.showChat} />
                         }
-                    </div> 
-                    
+                    </div>
+
                 </div>
             </React.Fragment>
         );
     }
 }
  
-export default Chat;
+export default withRouter(withStyles(styles)(Chat));
