@@ -269,9 +269,10 @@ class Conversation extends Component {
                                     </div>
                                 })
                             }
-                        </div>
-                        <textarea className="chatInput" placeholder="Message" name='message' type='text' ref={this.message} />
-                        <div className="sendButton" onClick={this.sendMessage.bind(this)}>Send</div> 
+                        </div> 
+                            <textarea className="chatInput" placeholder="Message" name='message' type='text' ref={this.message} />
+                            <div className="sendButton" onClick={this.sendMessage.bind(this)}>Send</div> 
+                        
                     </div>
                 </div>
             </React.Fragment>
