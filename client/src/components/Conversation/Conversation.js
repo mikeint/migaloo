@@ -17,6 +17,10 @@ class Conversation extends Component {
 
     constructor(props) {
         super(props);
+        this.state = this.generateState(props)
+        this.message = React.createRef();
+    }
+    generateState = (props) => {
         var extraState;
         if(props.loadByMessageSubjectId){
             extraState = {
@@ -31,7 +35,7 @@ class Conversation extends Component {
                 toId: toId
             }
         }
-		this.state = {
+		return {
             loadByMessageSubjectId: props.loadByMessageSubjectId,
             messageList: [],
             pageCount: -1,
@@ -41,13 +45,11 @@ class Conversation extends Component {
             meetingCreate: {},
             ...extraState
         };
-        this.message = React.createRef();
     }
-    
     shouldComponentUpdate(nextProps, nextState) {
         const change = this.state.conversation !== nextProps.conversation;
         if(change){
-            this.setState({ conversation: nextProps.conversation, messageList: [] }, this.loadData);
+            this.setState(this.generateState(nextProps), this.loadData);
         }
         if(this.state !== nextState)
            return true
