@@ -16,6 +16,7 @@ const styles = theme => ({
         height:'100px', 
         backgroundColor: '#f6f7f8',
         marginBottom:'5px',
+        padding:'0px'
     },
 })
 
@@ -29,7 +30,7 @@ class Chat extends Component {
             pageCount: 1,
             enterSlide: "page-enter",
             conversation: '',
-            showChat:props.defaultOpenState?props.defaultOpenState:false, 
+            showChat: false, 
             selectedIndex:0
         };
         this.Auth = new AuthFunctions();
@@ -57,10 +58,7 @@ class Chat extends Component {
         });
     };
 
-    openChat = (d) => {
-        this.setState({showChat:!this.state.showChat}) 
-        // document.getElementById("root").classList.add("fixedRoot"); 
-    } 
+
     handleListItemClick = (event, index) => { 
         this.setState({selectedIndex:index})  
     }
@@ -79,16 +77,21 @@ class Chat extends Component {
                                 this.state.conversationList.map((conv, i)=>{
                                     const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
                                         conv.postId === this.props.match.params.postId
-                                        return <ListItem key={i} className={classes.root} button selected={this.state.selectedIndex === i} onClick={event => this.handleListItemClick(event, i)}> 
+                                        return <ListItem 
+                                                    key={i} 
+                                                    className={classes.root} 
+                                                    button selected={this.state.selectedIndex === i} 
+                                                    onClick={event => this.handleListItemClick(event, i)}
+                                                >
                                                     <ConversationRow 
                                                         conversation={conv}
                                                         defaultOpenState={initialOpen} 
                                                         openChat={(() => {
-                                                            this.setState({ 
+                                                            this.setState({
                                                                 conversation: conv, 
                                                                 showChat: !this.state.showChat, 
-                                                            })})
-                                                    } />
+                                                            })})} 
+                                                        />
                                                 </ListItem>
                                 })
                             : <LinearProgress/>
