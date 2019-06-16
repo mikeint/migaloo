@@ -29,7 +29,7 @@ class Chat extends Component {
             page: 1,
             pageCount: 1,
             enterSlide: "page-enter",
-            conversation: '',
+            conversation: null,
             selectedIndex:0
         };
         this.Auth = new AuthFunctions();
@@ -40,16 +40,6 @@ class Chat extends Component {
     componentWillUnmount = () => {
         cancel()
         this.setState({enterSlide:"page-exit"})
-    }
-    
-    shouldComponentUpdate(nextProps, nextState) {
-        const change = this.state.conversation !== nextProps.conversation;
-        if(change){
-            this.setState({ conversation: nextProps.conversation });
-        }
-        if(this.state !== nextState)
-           return true
-        return change;
     }
 
     getConversationList = () => {
@@ -122,7 +112,8 @@ class Chat extends Component {
                     </div>
 
                     <div className="conversationRight">
-                        <Conversation conversation={this.state.conversation}/>
+                        {this.state.conversation != null && 
+                        <Conversation conversation={this.state.conversation}/>}
                     </div>
 
                 </div>

@@ -43,6 +43,16 @@ class Conversation extends Component {
         };
         this.message = React.createRef();
     }
+    
+    shouldComponentUpdate(nextProps, nextState) {
+        const change = this.state.conversation !== nextProps.conversation;
+        if(change){
+            this.setState({ conversation: nextProps.conversation, messageList: [] }, this.loadData);
+        }
+        if(this.state !== nextState)
+           return true
+        return change;
+    }
     getConversationList = () => {
         return new Promise((resolve, reject)=>{
             get(`/api/message/get/${this.state.messageSubjectId}`)
@@ -63,6 +73,9 @@ class Conversation extends Component {
         })
     }
     componentDidMount = () => {
+        this.loadData();
+    }
+    loadData = () => {
         if(this.state.loadByMessageSubjectId){
             this.getConversationList().then(()=>{
                 this.getMessageList();
