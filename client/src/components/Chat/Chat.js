@@ -24,13 +24,12 @@ class Chat extends Component {
 
     constructor(props) {
         super(props);
-		this.state = {
+		this.state = { 
             conversationList: null,
             page: 1,
             pageCount: 1,
             enterSlide: "page-enter",
             conversation: '',
-            showChat: false, 
             selectedIndex:0
         };
         this.Auth = new AuthFunctions();
@@ -42,6 +41,17 @@ class Chat extends Component {
         cancel()
         this.setState({enterSlide:"page-exit"})
     }
+    
+    shouldComponentUpdate(nextProps, nextState) {
+        const change = this.state.conversation !== nextProps.conversation;
+        if(change){
+            this.setState({ conversation: nextProps.conversation });
+        }
+        if(this.state !== nextState)
+           return true
+        return change;
+    }
+
     getConversationList = () => {
         get('/api/message/list/'+this.state.page)
         .then((res)=>{
@@ -57,7 +67,6 @@ class Chat extends Component {
             this.getConversationList();
         });
     };
-
 
     handleListItemClick = (event, index) => { 
         this.setState({selectedIndex:index})  
@@ -88,8 +97,7 @@ class Chat extends Component {
                                                         defaultOpenState={initialOpen} 
                                                         openChat={(() => {
                                                             this.setState({
-                                                                conversation: conv, 
-                                                                showChat: !this.state.showChat, 
+                                                                conversation: conv,
                                                             })})} 
                                                         />
                                                 </ListItem>
@@ -114,9 +122,7 @@ class Chat extends Component {
                     </div>
 
                     <div className="conversationRight">
-                        {this.state.showChat &&
-                            <Conversation conversation={this.state.conversation} open={this.state.showChat} />
-                        }
+                        <Conversation conversation={this.state.conversation}/>
                     </div>
 
                 </div>
