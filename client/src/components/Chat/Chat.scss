@@ -6,7 +6,7 @@
         overflow: auto;
         display: flex;
         flex-direction: column;
-        max-width: 300px;
+        max-width: 310px;
         flex: 1;
         background: #546f8221;
     }
@@ -20,7 +20,11 @@
     }  
     .paginationContainer {
         bottom:0;
-        position: absolute;
+        margin-bottom: 0;
+        position: sticky;
+    }
+    .pagination {
+        margin-bottom: 0;
     }
 
     
@@ -35,10 +39,6 @@
             height: calc(100vh - 121px); 
             display:unset; 
             width: 100%;
-        }
-        .paginationContainer {
-            width: 100%;
-            position: unset;
         }
     }
 }
