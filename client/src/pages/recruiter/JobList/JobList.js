@@ -5,7 +5,7 @@ import {getWithParams, cancel} from '../../../ApiCalls';
 import { NavLink, Redirect } from 'react-router-dom';
 import debounce from 'lodash/debounce';
 
-import Pagination from "react-js-pagination";
+import Pagination from "../../../components/Pagination/Pagination"; 
 import { withStyles } from '@material-ui/core/styles'; 
 import Button from '@material-ui/core/Button';
 import FilterList from '@material-ui/icons/FilterList';
@@ -211,17 +211,10 @@ class JobList extends React.Component{
                                     }
                                     <div className="paginationContainer"> 
                                         <Pagination
-                                            activeClass={'active'}
-                                            innerClass={'pagination'}
                                             onChange={this.handlePageClick}
                                             pageRangeDisplayed={10}
                                             totalItemsCount={this.state.pageCount*10}
-                                            marginPagesDisplayed={0}
                                             activePage={this.state.page}
-                                            lastPageText={'Last'}
-                                            firstPageText={'First'}
-                                            nextPageText={'Next'}
-                                            prevPageText={'Back'}
                                         />
                                     </div>
                                 </div>

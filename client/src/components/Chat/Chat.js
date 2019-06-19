@@ -5,7 +5,7 @@ import AuthFunctions from '../../AuthFunctions';
 import {get,cancel} from '../../ApiCalls';  
 import debounce from 'lodash/debounce'; 
 import ConversationRow from "./ConversationRow/ConversationRow"; 
-import Pagination from "react-js-pagination"; 
+import Pagination from "../Pagination/Pagination"; 
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Conversation from '../Conversation/Conversation'; 
 import {ListItem } from '@material-ui/core';
@@ -123,21 +123,12 @@ class Chat extends Component {
                                     })
                                 : <LinearProgress/>
                             }
-                            <div className="paginationContainer">
-                                <Pagination
-                                    prevPageText={'Back'}
-                                    nextPageText={'Next'}
-                                    firstPageText={'First'}
-                                    lastPageText={'Last'}
-                                    activePage={this.state.page}
-                                    totalItemsCount={this.state.pageCount*10}
-                                    marginPagesDisplayed={0}
-                                    pageRangeDisplayed={10}
-                                    onChange={this.handlePageClick}
-                                    innerClass={'pagination'}
-                                    activeClass={'active'}
-                                    />
-                            </div>
+                            <Pagination
+                                activePage={this.state.page}
+                                totalItemsCount={this.state.pageCount*10}
+                                pageRangeDisplayed={1}
+                                onChange={this.handlePageClick}
+                                />
                         </div>
                         :
                         ""

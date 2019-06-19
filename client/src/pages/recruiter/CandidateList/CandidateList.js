@@ -7,7 +7,7 @@ import ExpandableRow from './ExpandableRow/ExpandableRow';
 import debounce from 'lodash/debounce'; 
  
 import AddCandidate from '../AddCandidate/AddCandidate';
-import Pagination from "react-js-pagination";
+import Pagination from "../../../components/Pagination/Pagination"; 
 import '../../../constants/AnimateMigalooOverlay';  
 
 import Drawer from '@material-ui/core/Drawer';
@@ -170,17 +170,10 @@ class CandidateList extends React.Component{
                                     </div>  
                                     <div className="paginationContainer">
                                         <Pagination
-                                            activeClass={'active'}
-                                            innerClass={'pagination'}
                                             onChange={this.handlePageClick}
                                             pageRangeDisplayed={10}
-                                            marginPagesDisplayed={0}
                                             activePage={this.state.page}
                                             totalItemsCount={this.state.pageCount*10}
-                                            lastPageText={'Last'}
-                                            firstPageText={'First'}
-                                            nextPageText={'Next'}
-                                            prevPageText={'Back'}
                                             />
                                     </div>
                                 </React.Fragment>

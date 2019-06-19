@@ -233,6 +233,14 @@ input {
     background-color: #263c542e;
     color: #fff;
 }
+.disabled a {
+    cursor: default;
+    color: #d8d8d8;
+}
+.disabled a:hover {
+    background-color: unset;
+    color: #d8d8d8;
+}
 .paginationContainer .active { 
     font-weight: bold;
     background-color: #263c542e;

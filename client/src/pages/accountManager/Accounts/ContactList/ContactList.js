@@ -1,6 +1,6 @@
 import React from 'react';
 import {get, post, cancel} from '../../../../ApiCalls';  
-import Pagination from "react-js-pagination"; 
+import Pagination from "../../../../components/Pagination/Pagination"; 
 import { withStyles } from '@material-ui/core/styles';  
 import Close from '@material-ui/icons/Close';
 import GetAccountManager from '../../../../components/GetAccountManager/GetAccountManager';
@@ -325,17 +325,10 @@ class ContactList extends React.Component{
                 </Table>
                 <div className={"paginationContainer "+classes.pagination}>
                     <Pagination
-                        prevPageText={'Back'}
-                        nextPageText={'Next'}
-                        firstPageText={'First'}
-                        lastPageText={'Last'}
                         activePage={this.state.page}
                         totalItemsCount={this.state.pageCount*10}
-                        marginPagesDisplayed={0}
                         pageRangeDisplayed={10}
                         onChange={this.handleACPageClick}
-                        innerClass={'pagination'}
-                        activeClass={'active'}
                         />
                 </div>
                 <div className={classes.center}>
@@ -389,17 +382,10 @@ class ContactList extends React.Component{
                 </Table>
                 <div className={"paginationContainer "+classes.pagination}>
                     <Pagination
-                        prevPageText={'Back'}
-                        nextPageText={'Next'}
-                        firstPageText={'First'}
-                        lastPageText={'Last'}
                         activePage={this.state.companyPage}
                         totalItemsCount={this.state.companyPageCount*10}
-                        marginPagesDisplayed={0}
                         pageRangeDisplayed={10}
                         onChange={this.handlePageClick}
-                        innerClass={'pagination'}
-                        activeClass={'active'}
                         />
                 </div>
                 <div className={classes.center}>

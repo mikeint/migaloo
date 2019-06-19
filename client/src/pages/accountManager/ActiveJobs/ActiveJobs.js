@@ -10,7 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Filters from '../../../components/Filters/Filters';
 
 import JobPopUp from './JobPopUp/JobPopUp';
-import Pagination from "react-js-pagination";
+import Pagination from "../../../components/Pagination/Pagination"; 
 import '../../../constants/AnimateMigalooOverlay';
 import Button from '@material-ui/core/Button';
 import FilterList from '@material-ui/icons/FilterList';
@@ -158,17 +158,10 @@ class ActiveJobs extends React.Component{
                                 }
                                 <div className="paginationContainer">
                                     <Pagination
-                                        prevPageText={'Back'}
-                                        nextPageText={'Next'}
-                                        firstPageText={'First'}
-                                        lastPageText={'Last'}
                                         activePage={this.state.page}
                                         totalItemsCount={this.state.pageCount*10}
-                                        marginPagesDisplayed={0}
                                         pageRangeDisplayed={10}
                                         onChange={this.handlePageClick}
-                                        innerClass={'pagination'}
-                                        activeClass={'active'}
                                         />
                                 </div>
                                     

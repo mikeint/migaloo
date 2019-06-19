@@ -1,6 +1,6 @@
 import React from 'react';
 import {get, post, cancel} from '../../../../ApiCalls';  
-import Pagination from "react-js-pagination"; 
+import Pagination from "../../../../components/Pagination/Pagination"; 
 import { withStyles } from '@material-ui/core/styles';  
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -280,17 +280,10 @@ class ContactList extends React.Component{
                 }
                 <div className="paginationContainer">
                     <Pagination
-                        prevPageText={'Back'}
-                        nextPageText={'Next'}
-                        firstPageText={'First'}
-                        lastPageText={'Last'}
                         activePage={this.state.page}
                         totalItemsCount={this.state.pageCount*10}
-                        marginPagesDisplayed={0}
                         pageRangeDisplayed={10}
                         onChange={this.handlePageClick}
-                        innerClass={'pagination'}
-                        activeClass={'active'}
                         />
                 </div>
                 <div className={classes.center}>
