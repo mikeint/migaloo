@@ -63,13 +63,17 @@ const styles = theme => ({
         flexDirection: 'row', 
         padding: '10px',
         justifyContent: 'left',
-        textAlign: 'left',
+        textAlign: 'left', 
 
         '@media (max-width: 1024px)': {
             flexDirection: "column",
+            display: 'flex', 
             textAlign: "center",
-            fontSize: "10px",
-            padding: "0px"
+            fontSize: "10px", 
+            textAlign: 'center', 
+            '& span': {
+                padding: '0px',
+            } ,
         }, 
     },
     secondaryNav: {
@@ -84,11 +88,7 @@ const styles = theme => ({
     secondaryButton:{
         minWidth: 48,
         padding: 15
-    },
-    menuItem:{
-
-    },
-
+    }, 
     tabsIndicator: { 
         height: "80px"
     }, 

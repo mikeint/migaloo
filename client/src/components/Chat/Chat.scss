@@ -9,10 +9,19 @@
         max-width: 300px;
         flex: 1;
         background: #546f8221;
+        .searchChatList { 
+            width: 100%;
+            height: 45px;
+            font-size: 20px;
+            padding: 10px;
+            border: none; 
+            border-bottom: 1px solid #1a2b6d14;
+            border-radius: 0px;
+            outline:0;
+        }
     }
     
-    .conversationRight {
-        height: calc(100vh - 61px); 
+    .conversationRight { 
         display: flex;
         flex-direction: column;
         width: 100%;
@@ -20,7 +29,7 @@
     }  
     .paginationContainer {
         bottom:0;
-        position: absolute;
+        /* position: absolute; */
     }
 
     

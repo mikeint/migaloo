@@ -178,9 +178,7 @@ input {
     background: #263c54;
     z-index: 99999;   
 }
-.middleOverlay { 
-    width: 100%;
-    height: 100vh;
+.middleOverlay {  
     position: fixed;
     top: 0px;
     background-color: #263c54;
@@ -191,7 +189,7 @@ input {
     font-weight: bold; 
     background-image: url("./files/images/logoW.png");
     background-repeat: no-repeat;
-    background-size: 150px;
+    background-size: 100px;
     background-position: center;
 }
 /* end migaloo Overlay */

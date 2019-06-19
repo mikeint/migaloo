@@ -3,6 +3,7 @@ import "./Chat.scss";
 import { withRouter } from 'react-router-dom';  
 import AuthFunctions from '../../AuthFunctions'; 
 import {get,cancel} from '../../ApiCalls';  
+import debounce from 'lodash/debounce'; 
 import ConversationRow from "./ConversationRow/ConversationRow"; 
 import Pagination from "react-js-pagination"; 
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -14,9 +15,12 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = theme => ({
     root: {
         height:'100px', 
-        backgroundColor: '#f6f7f8',
+        backgroundColor: '#fff',
         marginBottom:'5px',
-        padding:'0px'
+        padding:'0px',
+        "&:nth-child(even)": {
+            background: "#f2f3f5",
+        },   
     },
 })
 
@@ -42,6 +46,18 @@ class Chat extends Component {
         cancel()
         this.setState({enterSlide:"page-exit"})
     }
+
+    onSearchChange = (event) => { 
+        this.queryForNames(event.target.value);
+    }
+    queryForNames = debounce((searchString) => {
+        searchString = searchString.trim()
+        if(searchString.length > 1){
+            this.getConversationList(searchString)
+        }else{
+            this.getConversationList()
+        }
+    }, 250)
 
     getConversationList = () => {
         get('/api/message/list/'+this.state.page)
@@ -73,10 +89,16 @@ class Chat extends Component {
         return (
             <React.Fragment>
                 <div className="pageHeading">Conversations</div>
-                <div className={"chatContainer "+this.state.enterSlide}>
+                <div className={"chatContainer "+this.state.enterSlide}> 
 
                     {this.state.isChatClosed ?
                         <div className="conversationLeft">
+                            <input
+                                        className="searchChatList"
+                                        name="searchTerm"
+                                        type="text"
+                                        placeholder="Search"
+                                        onChange={this.onSearchChange}/>
                             {
                                 this.state.conversationList != null ?
                                     this.state.conversationList.map((conv, i)=>{
