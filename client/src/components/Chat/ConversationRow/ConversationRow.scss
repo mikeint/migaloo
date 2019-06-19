@@ -1,19 +1,16 @@
 .chatRow {
-    width: 100%;   
+    width: 100%; 
     font-size: 15px;  
     color: #263c54;
-    display: flex; 
-    padding-left:10px;
-    padding-bottom: 20px;
-    padding-top:20px; 
+    display: flex;
+    flex-direction: column;
     cursor: pointer;
   
     &.active{
         border-left:5px solid #546f82;
     }
 
-    .flexColumn {
-        flex: 1 0;
+    .flexColumn { 
         .name {
             font-size: 18px;
             font-weight: bold;

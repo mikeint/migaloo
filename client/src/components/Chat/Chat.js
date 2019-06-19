@@ -13,11 +13,11 @@ import { withStyles } from '@material-ui/core/styles';
 
 
 const styles = theme => ({
-    root: {
-        height:'100px', 
+    root: { 
         backgroundColor: '#fff',
         marginBottom:'5px',
-        padding:'0px',
+        padding:'10px', 
+        display: 'flex',
         "&:nth-child(even)": {
             background: "#f2f3f5",
         },   
@@ -104,8 +104,9 @@ class Chat extends Component {
                                     this.state.conversationList.map((conv, i)=>{
                                         const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
                                             conv.postId === this.props.match.params.postId
+                                            //apparently this ListItem can only go to 48px on mobile.
                                             return <ListItem 
-                                                        key={i} 
+                                                        key={i}  
                                                         className={classes.root} 
                                                         button selected={this.state.selectedIndex === i} 
                                                         onClick={event => this.handleListItemClick(event, i)}

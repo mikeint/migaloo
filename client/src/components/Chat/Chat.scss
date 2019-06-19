@@ -46,8 +46,11 @@
         }
         .conversationRight {
             height: calc(100vh - 121px); 
-            display:unset; 
             width: 100%;
+            display:unset; 
+            .chatWindow {
+                width: 100%;
+            }
         }
     }
 }

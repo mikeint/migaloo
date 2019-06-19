@@ -11,7 +11,7 @@ class ConversationRow extends Component {
                     <div className="flexColumn">
                         <div className="name">{this.props.conversation.subjectFirstName+" "+this.props.conversation.subjectLastName}</div>
                         <div>{this.props.conversation.contactName}</div>
-                        <div><span className="posting">Job Posting: </span>{this.props.conversation.jobPostTitle}</div>
+                        {/* <div><span className="posting">Job Posting: </span>{this.props.conversation.jobPostTitle}</div> */}
                     </div>
                    {/*  <div className="flexColumn">
                         <div><span className="heading">Last Message: </span>{

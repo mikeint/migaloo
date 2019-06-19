@@ -10,6 +10,9 @@ import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 const styles = theme => ({
+    root: {
+        padding:'10px'
+    },
     rightBtn:{
         float: "right",
     }
@@ -234,7 +237,7 @@ class Conversation extends Component {
                         onClose={this.handleChatDialogClose}
                         aria-labelledby="dialog-title"
                         open={other.open}> 
-                    <DialogTitle id="dialog-title">
+                    <DialogTitle id="dialog-title" className={classes.root}>
                         <span>{this.state.conversation.contactName ? `${this.state.conversation.subjectFirstName} ${this.state.conversation.subjectLastName} - ${this.state.conversation.contactName} ` : ''}</span>
                         <IconButton color="inherit" onClick={this.handleChatDialogClose} className={classes.rightBtn}>
                             <Close color="primary"/>

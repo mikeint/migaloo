@@ -67,8 +67,7 @@ const styles = theme => ({
 
         '@media (max-width: 1024px)': {
             flexDirection: "column",
-            display: 'flex', 
-            textAlign: "center",
+            display: 'flex',  
             fontSize: "10px", 
             textAlign: 'center', 
             '& span': {
