@@ -271,7 +271,7 @@ class NavBar extends React.Component{
                                 >
                                     {
                                         this.getNavMappingsSecondary().filter(d=>d.showOnState == null ||  getByPath(this.state, d.showOnState)).map((d, i)=>{
-                                            return <MenuItem component={NavLink} className={classes[d.className]} key={i} to={d.link} >
+                                            return <MenuItem onClick={()=>this.setState({menuOpen: false})} component={NavLink} className={classes[d.className]} key={i} to={d.link} >
                                                     <ListItemIcon>
                                                         {d.icon}
                                                     </ListItemIcon>
