@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Prompt } from 'react-router-dom';
 
 import AuthFunctions from '../../../AuthFunctions'; 
 
@@ -129,7 +129,8 @@ class PostAJob extends React.Component{
             tagIds: [],
             errors: {},
             postId: props.match.params.postId,
-            oldPost:{}
+            oldPost:{},
+            formIsFilledOut: false
         }
         this.Auth = new AuthFunctions();
         this.handleChangeKV = this.handleChangeKV.bind(this)
@@ -152,13 +153,13 @@ class PostAJob extends React.Component{
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
+        this.setState({ [e.target.name]: e.target.value, formIsFilledOut: true }, this.formValidation.shouldRevalidate)
     }
     handleChangeKV = (map) => {
-        this.setState(map, this.formValidation.shouldRevalidate)
+        this.setState({...map, formIsFilledOut: true}, this.formValidation.shouldRevalidate)
     }
     handleAddressChange(address){
-        this.setState({address:address}, this.formValidation.shouldRevalidate)
+        this.setState({address:address, formIsFilledOut: true}, this.formValidation.shouldRevalidate)
     }
 
     handleSubmit = () => {
@@ -166,7 +167,7 @@ class PostAJob extends React.Component{
             post('/api/employerPostings/create', this.state)
             .then((res) => { 
                 if(res && res.data.success) {
-                    this.setState({ redirect: true })
+                    this.setState({ formIsFilledOut: false, redirect: true })
                 }
             })
             .catch(error => {
@@ -179,6 +180,10 @@ class PostAJob extends React.Component{
         return (
             <React.Fragment>
                 {this.state.redirect ? <Redirect to='/accountManager/activeJobs' /> : ''}
+                <Prompt
+                    when={this.state.formIsFilledOut}
+                    message="Are you sure you want to leave? Any unsaved changes will be lost."
+                    />
                 <div className="pageHeading">Post a job</div> 
                 <div className={classes.postAJobContainer}>
                     <div className={classes.formSection}>
