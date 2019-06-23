@@ -90,56 +90,55 @@ class Chat extends Component {
             <React.Fragment>
                 <div className="pageHeading">Conversations</div>
                 <div className={"chatContainer "+this.state.enterSlide}> 
-
-                    {this.state.isChatClosed ?
-                        <div className="conversationLeft">
-                            <input
-                                        className="searchChatList"
-                                        name="searchTerm"
-                                        type="text"
-                                        placeholder="Search"
-                                        onChange={this.onSearchChange}/>
-                            {
-                                this.state.conversationList != null ?
-                                    this.state.conversationList.map((conv, i)=>{
-                                        const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
-                                            conv.postId === this.props.match.params.postId
-                                            //apparently this ListItem can only go to 48px on mobile.
-                                            return <ListItem 
-                                                        key={i}  
-                                                        className={classes.root} 
-                                                        button selected={this.state.selectedIndex === i} 
-                                                        onClick={event => this.handleListItemClick(event, i)}
-                                                    >
-                                                        <ConversationRow 
-                                                            conversation={conv}
-                                                            defaultOpenState={initialOpen} 
-                                                            openChat={(() => {
-                                                                this.setState({
-                                                                    conversation: conv,
-                                                                    isChatClosed:false
-                                                                })})} 
-                                                            />
-                                                    </ListItem>
-                                    })
-                                : <LinearProgress/>
-                            }
-                            <Pagination
-                                activePage={this.state.page}
-                                totalItemsCount={this.state.pageCount*10}
-                                pageRangeDisplayed={1}
-                                onChange={this.handlePageClick}
-                                />
-                        </div>
-                        :
-                        ""
-                    }
-
-
-                    <div className="conversationRight">
-                        {this.state.conversation != null && 
-                        <Conversation conversation={this.state.conversation} onClose={this.onClose} />}
+                    <div className="conversationLeft">
+                        <input
+                            className="searchChatList"
+                            name="searchTerm"
+                            type="text"
+                            placeholder="Search"
+                            onChange={this.onSearchChange}/>
+                        {
+                            this.state.conversationList != null ?
+                                this.state.conversationList.map((conv, i)=>{
+                                    const initialOpen = conv.subjectUserId === this.props.match.params.candidateId &&
+                                        conv.postId === this.props.match.params.postId
+                                        //apparently this ListItem can only go to 48px on mobile.
+                                        return <ListItem 
+                                                    key={i}  
+                                                    className={classes.root} 
+                                                    button selected={this.state.selectedIndex === i} 
+                                                    onClick={event => this.handleListItemClick(event, i)}
+                                                >
+                                                    <ConversationRow 
+                                                        conversation={conv}
+                                                        defaultOpenState={initialOpen} 
+                                                        openChat={(() => {
+                                                            this.setState({
+                                                                conversation: conv,
+                                                                isChatClosed:false
+                                                            })})} 
+                                                        />
+                                                </ListItem>
+                                })
+                            : <LinearProgress/>
+                        }
+                        <Pagination
+                            activePage={this.state.page}
+                            totalItemsCount={this.state.pageCount*10}
+                            pageRangeDisplayed={1}
+                            onChange={this.handlePageClick}
+                        />
                     </div>
+
+
+                    {!this.state.isChatClosed &&
+                        <div className="conversationRightContainer">
+                            <div className="conversationRight">
+                                {this.state.conversation != null && 
+                                <Conversation conversation={this.state.conversation} onClose={this.onClose} />}
+                            </div>
+                        </div>
+                    }
 
                 </div>
             </React.Fragment>

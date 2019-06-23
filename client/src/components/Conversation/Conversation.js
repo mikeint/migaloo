@@ -5,16 +5,24 @@ import CalendarToday from '@material-ui/icons/CalendarToday';
 import Close from '@material-ui/icons/Close';
 import MeetingPicker from "../MeetingPicker/MeetingPicker";
 import IconButton from '@material-ui/core/IconButton';
-import DialogTitle from '@material-ui/core/DialogTitle'; 
 import { withStyles } from '@material-ui/core/styles';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
 const styles = theme => ({
     root: {
-        padding:'10px'
+        padding:'10px 20px',
+        fontSize: "30px",
+        fontWeight: "bold",
+        display: "flex"
     },
     rightBtn:{
-        float: "right",
+        flex: "0 1"
+    },
+    titleText:{
+        overflow: "auto",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+        flex: "1 1"
     }
 })
 class Conversation extends Component {
@@ -231,71 +239,64 @@ class Conversation extends Component {
         const { classes, onClose, ...other } = this.props;
         return (
             <React.Fragment>
-                <div
-                        maxwidth="xl"
-                        fullwidth={"true"}
-                        onClose={this.handleChatDialogClose}
-                        aria-labelledby="dialog-title"
-                        open={other.open}> 
-                    <DialogTitle id="dialog-title" className={classes.root}>
-                        <span>{this.state.conversation.contactName ? `${this.state.conversation.subjectFirstName} ${this.state.conversation.subjectLastName} - ${this.state.conversation.contactName} ` : ''}</span>
-                        <IconButton color="inherit" onClick={this.handleChatDialogClose} className={classes.rightBtn}>
-                            <Close color="primary"/>
-                        </IconButton>
-                        <IconButton color="inherit" onClick={this.handleMeetingDialogOpen} className={classes.rightBtn}>
-                            <CalendarToday color="primary"/>
-                        </IconButton>
-                    </DialogTitle>
-                    <div className='conversationModal'>
-                        <MeetingPicker
-                            open={this.state.meetingDialogOpen}
-                            onClose={this.handleMeetingDialogClose} />
-                        <div className='chatWindow'>
-                            {this.state.showLoader?<LinearProgress/>:''}
-                            {
-                                this.state.messageList.map((d, i)=>{
-                                    return <div className={d.mine?"messageRow mine":"messageRow theirs"} key={i}>
-                                        {d.type === 'load'?<div className="loadMore more" onClick={this.getMessageList.bind(this)}>
-                                            Load More
-                                        </div>:''}
-                                        {d.type === 'loadnomore'?<div className="loadMore">
-                                            No More Messages
-                                        </div>:''}
-                                        {d.type === 'calendar' &&
-                                        <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
-                                            <div>{d.subject}</div>
-                                            <div>{d.locationType}</div>
-                                            <div>{d.dateOffer}</div>
-                                            <div>{d.length}</div>
-                                            {d.response === 0 && !d.mine && <div className="responseContainer">
-                                                <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 1)}>Accept</div>
-                                                <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 2)}>Reject</div>
-                                            </div>}
-                                            <div className="date">{d.date}</div>
+                <div className={classes.root}>
+                    <span className={classes.titleText}>{this.state.conversation.contactName ? `${this.state.conversation.subjectFirstName} ${this.state.conversation.subjectLastName} - ${this.state.conversation.contactName} ` : ''}</span>
+                    <IconButton color="inherit" onClick={this.handleMeetingDialogOpen} className={classes.rightBtn}>
+                        <CalendarToday color="primary"/>
+                    </IconButton>
+                    <IconButton color="inherit" onClick={this.handleChatDialogClose} className={classes.rightBtn}>
+                        <Close color="primary"/>
+                    </IconButton>
+                </div>
+                <div className='conversationModal'>
+                    <MeetingPicker
+                        open={this.state.meetingDialogOpen}
+                        onClose={this.handleMeetingDialogClose} />
+                    <div className='chatWindow'>
+                        {this.state.showLoader?<LinearProgress/>:''}
+                        {
+                            this.state.messageList.map((d, i)=>{
+                                return <div className={d.mine?"messageRow mine":"messageRow theirs"} key={i}>
+                                    {d.type === 'load'?<div className="loadMore more" onClick={this.getMessageList.bind(this)}>
+                                        Load More
+                                    </div>:''}
+                                    {d.type === 'loadnomore'?<div className="loadMore">
+                                        No More Messages
+                                    </div>:''}
+                                    {d.type === 'calendar' &&
+                                    <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
+                                        <div>{d.subject}</div>
+                                        <div>{d.locationType}</div>
+                                        <div>{d.dateOffer}</div>
+                                        <div>{d.length}</div>
+                                        {d.response === 0 && !d.mine && <div className="responseContainer">
+                                            <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 1)}>Accept</div>
+                                            <div className="responseButton" onClick={()=>this.setCalendarResponse(d, 2)}>Reject</div>
                                         </div>}
-                                        {d.type === 'calendar_response' &&
-                                        <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
-                                            <div>{d.subject}</div>
-                                            <div>
-                                                {d.locationType} Meeting has been {d.response === 1?"Accepted":"Rejected"}
-                                            </div>
-                                            {d.response === 1 && <div>
-                                                At {d.dateOffer} for {d.length}
-                                            </div>}
+                                        <div className="date">{d.date}</div>
+                                    </div>}
+                                    {d.type === 'calendar_response' &&
+                                    <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
+                                        <div>{d.subject}</div>
+                                        <div>
+                                            {d.locationType} Meeting has been {d.response === 1?"Accepted":"Rejected"}
+                                        </div>
+                                        {d.response === 1 && <div>
+                                            At {d.dateOffer} for {d.length}
                                         </div>}
-                                        {d.type === 'message' &&
-                                        <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
-                                            <div className="message">{d.text}</div>
-                                            <div className="date">{d.date}</div>
-                                        </div>}
-                                    </div>
-                                })
-                            }
-                        </div> 
-                            <textarea className="chatInput" placeholder="Message" name='message' type='text' ref={this.message} />
-                            <div className="sendButton" onClick={this.sendMessage.bind(this)}>Send</div> 
-                        
-                    </div>
+                                    </div>}
+                                    {d.type === 'message' &&
+                                    <div className={d.mine?"messageContainer mine":"messageContainer theirs"}>
+                                        <div className="message">{d.text}</div>
+                                        <div className="date">{d.date}</div>
+                                    </div>}
+                                </div>
+                            })
+                        }
+                    </div> 
+                        <textarea className="chatInput" placeholder="Message" name='message' type='text' ref={this.message} />
+                        <div className="sendButton" onClick={this.sendMessage.bind(this)}>Send</div> 
+                    
                 </div>
             </React.Fragment>
         );
