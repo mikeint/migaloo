@@ -19,7 +19,10 @@ const styles = theme => ({
         padding:'10px', 
         display: 'flex',
         "&:nth-child(even)": {
-            background: "#f2f3f5",
+            backgroundColor: "#f2f3f5",
+        }, 
+        "&:hover": {
+            backgroundColor: "#d0d0d0",
         },   
     },
 })
@@ -106,7 +109,8 @@ class Chat extends Component {
                                         return <ListItem 
                                                     key={i}  
                                                     className={classes.root} 
-                                                    button selected={this.state.selectedIndex === i} 
+                                                    button
+                                                    // selected={this.state.selectedIndex === i} 
                                                     onClick={event => this.handleListItemClick(event, i)}
                                                 >
                                                     <ConversationRow 

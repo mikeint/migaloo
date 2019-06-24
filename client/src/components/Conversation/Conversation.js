@@ -105,9 +105,9 @@ class Conversation extends Component {
                 this.setState({showLoader:false})
                 if(res.data && res.data.success){
                     const messages = res.data.messages;
-                    var oldMessageList = this.state.messageList; // Get the previous page
-                    var messageList = [];
-                    var pageCount = (messages&&messages.length>0)?parseInt(messages[0].pageCount, 10):1
+                    const oldMessageList = this.state.messageList; // Get the previous page
+                    const messageList = [];
+                    const pageCount = (messages&&messages.length>0)?parseInt(messages[0].pageCount, 10):1
                     oldMessageList.pop() // Remove the load div from the previous page
                     messages.reverse().forEach((d, i)=>{
                         if(i === 0){ // Get contact name
