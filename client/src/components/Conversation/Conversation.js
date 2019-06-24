@@ -13,7 +13,8 @@ const styles = theme => ({
         padding:'10px 20px',
         fontSize: "30px",
         fontWeight: "bold",
-        display: "flex"
+        display: "flex",
+        backgroundColor: "#fff",
     },
     rightBtn:{
         flex: "0 1"

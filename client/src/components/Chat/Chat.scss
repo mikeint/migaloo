@@ -31,13 +31,12 @@
     }  
     .conversationRight { 
         display: flex;
-        flex-direction: column;
-        position: absolute;
-        left: 20px;
+        flex-direction: column; 
         top: 0;
         right: 0;
         bottom: 0;
-        background-color: white;
+        background-color: white;    
+        margin-left: 300px;
     }  
     .paginationContainer {
         bottom:0;
@@ -59,6 +58,7 @@
         .conversationRight {
             height: calc(100vh - 121px); 
             display:unset; 
+            margin-left: 0px;
             .chatWindow {
                 width: 100%;
             }
