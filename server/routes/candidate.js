@@ -11,6 +11,7 @@ const postgresdb = db.postgresdb
 const pgp = db.pgp
 const camelColumnConfig = db.camelColumnConfig
 const candidateTagsInsertHelper = new pgp.helpers.ColumnSet(['candidate_id', 'tag_id'], {table: 'candidate_tags'});
+const benefitsInsertHelper = new pgp.helpers.ColumnSet(['candidate_id', 'benefit_id'], {table: 'candidate_benefit'});
 
 const candidateFields = ['first_name', 'last_name', 'experience', 'salary', 'relocatable', 'commute', 'url', 'email', 'address_id'];
 const candidateInsert = new pgp.helpers.ColumnSet(candidateFields.map(camelColumnConfig), {table: 'candidate'});
@@ -63,10 +64,11 @@ router.post('/create', passport.authentication,  (req, res) => {
                 const q3 = t.none('INSERT INTO recruiter_candidate (candidate_id, recruiter_id) VALUES ($1, $2)',
                                     [candidateId, jwtPayload.id])
                 var queries = [q3];
+                if(body.benefitIds != null && body.benefitIds.length > 0){
+                    queries.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {candidateId: candidateId, benefit_id: d}}), benefitsInsertHelper)));
+                }
                 if(body.tagIds != null && body.tagIds.length > 0){
-                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidateId, tag_id: d}}), candidateTagsInsertHelper);
-                    const q4 = t.none(query);
-                    queries.push(q4)
+                    queries.push(t.none(pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidateId, tag_id: d}}), candidateTagsInsertHelper)));
                 }
                 logger.info('Recruiter added candidate', {tags:['candidate', 'recruiter'], url:req.originalUrl, userId:jwtPayload.id, body: {...req.body, candidateId:candidateId}});
                 return t.batch(queries)
@@ -132,17 +134,25 @@ router.post('/edit', passport.authentication,  (req, res) => {
             q1 = address.addAddress(body.address, t)
         return q1.then((address_ret)=>{
             const q2 = t.none('DELETE FROM candidate_tags WHERE candidate_id = $1', [body.candidateId])
-            const q3 = t.none(pgp.helpers.update({...body, addressId:address_ret.address_id}, candidateUpdate, null, {emptyUpdate:true}) + ' WHERE candidate_id = ${candidateId}', {candidateId: body.candidateId})
-            return t.batch([q2, q3]).then(()=>{
+            const q3 = t.none('DELETE FROM candidate_benefit WHERE candidate_id = $1', [body.candidateId])
+            const q4 = t.none(pgp.helpers.update({...body, addressId:address_ret.address_id}, candidateUpdate, null, {emptyUpdate:true}) + ' WHERE candidate_id = ${candidateId}', {candidateId: body.candidateId})
+            return t.batch([q2, q3, q4]).then(()=>{
+                var queries = [];
+                if(body.benefitIds != null && body.benefitIds.length > 0){
+                    queries.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {candidateId: candidateId, benefit_id: d}}), benefitsInsertHelper)));
+                }
                 if(body.tagIds != null && body.tagIds.length > 0){
-                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: body.candidateId, tag_id: d}}), candidateTagsInsertHelper);
-                    return t.none(query).then(()=>{
+                    queries.push(t.none(pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: body.candidateId, tag_id: d}}), candidateTagsInsertHelper)));
+                }
+                if(queries.length > 0){
+                    return t.batch(queries).then(()=>{
                         return res.json({success: true})
                     }).catch((err)=>{
                         logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
                         return res.status(500).json({success: false, error:err})
                     });
-                }else{
+                }
+                else{
                     res.json({success: true})
                     return []
                 }
@@ -442,7 +452,8 @@ function listCandidatesForJob(req, res){
     
 
     postgresdb.task(t => {
-        return t.one('SELECT jp.post_id as "postId", jp.title, jp.salary, jp.address_id as "addressId", jp.experience, tg.tag_names as "tagNames" \
+        return t.one('SELECT jp.post_id as "postId", jp.title, jp.salary, \
+                jp.address_id as "addressId", jp.experience, tg.tag_names as "tagNames", jb.job_benefit_names as "jobBenefitNames" \
             FROM job_posting jp \
             LEFT JOIN ( \
                 SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
@@ -450,6 +461,12 @@ function listCandidatesForJob(req, res){
                 INNER JOIN tags t ON t.tag_id = pt.tag_id \
                 GROUP BY post_id \
             ) tg ON tg.post_id = jp.post_id \
+            LEFT JOIN ( \
+                SELECT pt.post_id, array_agg(t.job_benefit_name) as job_benefit_names, array_agg(t.job_benefit_id) as job_benefit_ids \
+                FROM job_benefit jb \
+                INNER JOIN benefit t ON t.job_benefit_id = pt.job_benefit_id \
+                GROUP BY post_id \
+            ) jb ON jb.post_id = jp.post_id \
             WHERE jp.post_id = ${postId} AND jp.recruiter_id = ${recruiterId}', {postId:postId, recruiterId:recruiterId})
         .then(job_data=>{
             var sqlArgs = {recruiterId:jwtPayload.id, postId:postId, page:(page-1)*10}

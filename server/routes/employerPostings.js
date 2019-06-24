@@ -12,7 +12,7 @@ const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const postingTagsInsertHelper = new pgp.helpers.ColumnSet(['post_id', 'tag_id'], {table: 'posting_tags'});
-const benefitsInsertHelper = new pgp.helpers.ColumnSet(['post_id', 'benefit_id'], {table: 'job_benefits'});
+const benefitsInsertHelper = new pgp.helpers.ColumnSet(['post_id', 'benefit_id'], {table: 'job_benefit'});
 const camelColumnConfig = db.camelColumnConfig
 const jobPostFields = ['company_id', 'title', 'requirements', 'experience',
     'salary', 'preliminary', 'is_visible', 'address_id', 'interview_count',
@@ -162,7 +162,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
             return address.addAddress(body.address, t)
             .then((addr_ret)=>{
                 const q1 = t.none('DELETE FROM posting_tags WHERE post_id = $1', [body.postId])
-                const q2 = t.none('DELETE FROM job_benefits WHERE post_id = $1', [body.postId])
+                const q2 = t.none('DELETE FROM job_benefit WHERE post_id = $1', [body.postId])
                 const q3 = t.none(pgp.helpers.update({companyId:body.company, title:body.title, requirements:body.requirements,
                     preliminary:false, experience:body.experience, salary:body.salary,
                     addressId:addr_ret.address_id, interviewCount:body.interviewCount, openingReasonId:body.openReason,
@@ -173,10 +173,10 @@ router.post('/edit', passport.authentication,  (req, res) => {
                 logger.info('Edit job posting', {tags:['job', 'edit'], url:req.originalUrl, email:jwtPayload.email, ...body});
                 const batchArr = []
                 if(body.benefitIds != null && body.benefitIds.length > 0){
-                    batchArr.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {post_id: post_ret.post_id, benefit_id: d}}), benefitsInsertHelper)));
+                    batchArr.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {post_id: body.postId, benefit_id: d}}), benefitsInsertHelper)));
                 }
                 if(body.tagIds != null && body.tagIds.length > 0){
-                    batchArr.push(t.none(pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper)));
+                    batchArr.push(t.none(pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: body.postId, tag_id: d}}), postingTagsInsertHelper)));
                 }
                 if(batchArr.length > 0){
                     return t.batch(batchArr)
