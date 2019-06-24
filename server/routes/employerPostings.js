@@ -12,6 +12,7 @@ const db = require('../config/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const postingTagsInsertHelper = new pgp.helpers.ColumnSet(['post_id', 'tag_id'], {table: 'posting_tags'});
+const benefitsInsertHelper = new pgp.helpers.ColumnSet(['post_id', 'benefit_id'], {table: 'job_benefits'});
 const camelColumnConfig = db.camelColumnConfig
 const jobPostFields = ['company_id', 'title', 'requirements', 'experience',
     'salary', 'preliminary', 'is_visible', 'address_id', 'interview_count',
@@ -41,6 +42,7 @@ router.post('/create', passport.authentication,  (req, res) => {
      * autoAddRecruiters (Optional)
      * experience
      * tagIds (Optional)
+     * benefitIds (Optional)
      */
     var body = req.body
     const { errors, isValid } = validatePostingsInput(body);
@@ -77,19 +79,23 @@ router.post('/create', passport.authentication,  (req, res) => {
             })
             .then((post_ret)=>{
                 logger.info('Add new job posting', {tags:['job', 'new'], url:req.originalUrl, email:jwtPayload.email, ...body, preliminary: preliminary});
-                if(body.tagIds != null && body.tagIds.length > 0){
-                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper);
-                    const q2 = t.none(query);
-                    return q2
-                        .then(() => {
-                            return Promise.resolve(post_ret.post_id)
-                        })
-                        .catch(err => {
-                            return Promise.reject(err)
-                        });
-                }else{
-                    return Promise.resolve(post_ret.post_id)
+                const batchArr = []
+                if(body.benefitIds != null && body.benefitIds.length > 0){
+                    batchArr.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {post_id: post_ret.post_id, benefit_id: d}}), benefitsInsertHelper)));
                 }
+                if(body.tagIds != null && body.tagIds.length > 0){
+                    batchArr.push(t.none(pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper)));
+                }
+                if(batchArr.length > 0){
+                    return t.batch(batchArr)
+                    .then(() => {
+                        return Promise.resolve()
+                    })
+                    .catch(err => {
+                        return Promise.reject(err)
+                    });
+                }else
+                    return Promise.resolve()
             })
             .then((post_id) => {
                 res.status(200).json({success: true, postId: post_id})
@@ -128,6 +134,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
      * autoAddRecruiters (Optional)
      * experienceTypeId (Optional)
      * tagIds (Optional)
+     * benefitIds (Optional)
      */
     var body = req.body
     const { errors, isValid } = validatePostingsInput(body);
@@ -155,27 +162,32 @@ router.post('/edit', passport.authentication,  (req, res) => {
             return address.addAddress(body.address, t)
             .then((addr_ret)=>{
                 const q1 = t.none('DELETE FROM posting_tags WHERE post_id = $1', [body.postId])
-                const q2 = t.none(pgp.helpers.update({companyId:body.company, title:body.title, requirements:body.requirements,
+                const q2 = t.none('DELETE FROM job_benefits WHERE post_id = $1', [body.postId])
+                const q3 = t.none(pgp.helpers.update({companyId:body.company, title:body.title, requirements:body.requirements,
                     preliminary:false, experience:body.experience, salary:body.salary,
                     addressId:addr_ret.address_id, interviewCount:body.interviewCount, openingReasonId:body.openReason,
                     openingReasonComment:body.openReasonExplain, openPositions:body.numOpenings, jobTypeId:body.jobType}, jobPostUpdate, null, {emptyUpdate:true}) + ' WHERE post_id = ${postId}', {postId: body.postId})
-                return t.batch([q1, q2])
+                return t.batch([q1, q2, q3])
             })
             .then(()=>{
                 logger.info('Edit job posting', {tags:['job', 'edit'], url:req.originalUrl, email:jwtPayload.email, ...body});
-                if(body.tagIds != null && body.tagIds.length > 0){
-                    const query = pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: body.postId, tag_id: d}}), postingTagsInsertHelper);
-                    const q2 = t.none(query);
-                    return q2
-                        .then(() => {
-                            return Promise.resolve()
-                        })
-                        .catch(err => {
-                            return Promise.reject(err)
-                        });
-                }else{
-                    return Promise.resolve()
+                const batchArr = []
+                if(body.benefitIds != null && body.benefitIds.length > 0){
+                    batchArr.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {post_id: post_ret.post_id, benefit_id: d}}), benefitsInsertHelper)));
                 }
+                if(body.tagIds != null && body.tagIds.length > 0){
+                    batchArr.push(t.none(pgp.helpers.insert(body.tagIds.map(d=>{return {post_id: post_ret.post_id, tag_id: d}}), postingTagsInsertHelper)));
+                }
+                if(batchArr.length > 0){
+                    return t.batch(batchArr)
+                    .then(() => {
+                        return Promise.resolve()
+                    })
+                    .catch(err => {
+                        return Promise.reject(err)
+                    });
+                }else
+                    return Promise.resolve()
             })
             .then(() => {
                 res.status(200).json({success: true})

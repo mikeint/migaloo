@@ -52,7 +52,7 @@ router.get('/jobType', passport.authentication, (req, res) => {
 router.get('/benefits', passport.authentication, (req, res) => {
     postgresdb.any('SELECT * \
             FROM benefits \
-            ORDER BY group_num ASC, benefits_id ASC')
+            ORDER BY group_num ASC, benefit_id ASC')
     .then(data => {
         console.log(data)
         res.json({success:true, benefits: data.map(d=>db.camelizeFields(d))});
