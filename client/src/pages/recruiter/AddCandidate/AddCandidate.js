@@ -6,6 +6,7 @@ import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/Ex
 import JobTypeSelector from '../../../components/Inputs/JobTypeSelector/JobTypeSelector';
 import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
 import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector'; 
+import VacationSelector from '../../../components/Inputs/VacationSelector/VacationSelector'; 
 
 import { Close } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
@@ -217,7 +218,39 @@ class AddCandidate extends React.Component{
                                 onChange={this.handleAddressChange.bind(this)}
                                 {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
                             />
+                        </div> 
+
+                        <div>
+                            <TextField
+                                name="currentCompany"
+                                label="Current Compnay"
+                                className={classes.textField}
+                                onChange={this.handleChange}
+                                margin="normal"
+                                variant="outlined"
+                                {...this.formValidation.hasError("currentCompany")}
+                            />  
                         </div>
+
+                        <div>
+                            <TextField
+                                name="phone"
+                                label="Phone"
+                                className={classes.textField}
+                                onChange={this.handleChange}
+                                margin="normal"
+                                variant="outlined"
+                                {...this.formValidation.hasError("phone")}
+                            />  
+                        </div>
+
+                        <div>
+                            <VacationSelector 
+                                required
+                                onChange={this.handleChangeKV}
+                                {...this.formValidation.hasError("vacation")}/>
+                        </div>
+
                         <FormControlLabel
                             control={
                                 <Checkbox

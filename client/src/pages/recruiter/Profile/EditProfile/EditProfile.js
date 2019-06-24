@@ -176,13 +176,51 @@ class EditProfile extends React.Component{
                             {...this.formValidation.hasError("phoneNumber")}
                         />
                     </div>
+                    <div className={classes.center}>
+                        <TextField
+                            name="email"
+                            label="Email"
+                            className={classes.textField}
+                            defaultValue={this.state.email}
+                            required
+                            onChange={this.handleChange}
+                            margin="normal"
+                            variant="outlined"
+                            {...this.formValidation.hasError("email")}
+                        />
+                    </div>
+                    <div className={classes.center}>
+                        <TextField
+                            name="password"
+                            label="Password"
+                            className={classes.textField}
+                            defaultValue={this.state.password}
+                            required
+                            onChange={this.handleChange}
+                            margin="normal"
+                            variant="outlined"
+                            {...this.formValidation.hasError("password")}
+                        />
+                    </div>
                     <JobTypeSelector
                         required
                         multiple={true}
                         classes={{root:classes.center}}
                         onChange={this.handleChangeKV}
                         value={this.state.jobTypeId}
-                        {...this.formValidation.hasError("jobType")}/>
+                        {...this.formValidation.hasError("jobType")}/> 
+                     <div className={classes.center}>
+                        <TextField
+                            name="linkedInUrl"
+                            label="LinkedIn Url"
+                            className={classes.textField}
+                            defaultValue={this.state.linkedInUrl} 
+                            onChange={this.handleChange}
+                            margin="normal"
+                            variant="outlined"
+                            {...this.formValidation.hasError("linkedInUrl")}
+                        />
+                    </div>
                     <div className={classes.center}>
                         <AddressInput
                             value={this.state.address}
