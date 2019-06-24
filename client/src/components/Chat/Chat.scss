@@ -28,6 +28,7 @@
         right: 0;
         bottom: 0;
         position: absolute;
+        margin-left: 300px;
     }  
     .conversationRight { 
         display: flex;
@@ -36,7 +37,6 @@
         right: 0;
         bottom: 0;
         background-color: white;    
-        margin-left: 300px;
     }  
     .paginationContainer {
         bottom:0;
@@ -55,12 +55,15 @@
             max-width: 100%;
             flex: 100%;
         }
-        .conversationRight {
-            height: calc(100vh - 121px); 
-            display:unset; 
+        
+        .conversationRightContainer {
             margin-left: 0px;
-            .chatWindow {
-                width: 100%;
+            .conversationRight {
+                height: calc(100vh - 121px); 
+                display:unset; 
+                .chatWindow {
+                    width: 100%;
+                }
             }
         }
     }
