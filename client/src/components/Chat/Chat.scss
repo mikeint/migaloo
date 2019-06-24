@@ -22,13 +22,12 @@
     }
     
     .conversationRightContainer { 
-        background-color: #69696944;
-        left: 0px;
+        background-color: #69696944; 
+        left: 300px;
         top: 0px;
         right: 0;
         bottom: 0;
         position: absolute;
-        margin-left: 300px;
     }  
     .conversationRight { 
         display: flex;
@@ -57,7 +56,7 @@
         }
         
         .conversationRightContainer {
-            margin-left: 0px;
+            left: 0px;
             .conversationRight {
                 height: calc(100vh - 121px); 
                 display:unset; 
