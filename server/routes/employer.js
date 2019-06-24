@@ -136,6 +136,9 @@ function generateToken(req, res) {
         }
         return accessToken.generateAccessToken(args.user_id, jwtPayload)
     })
+    .then((token) => { 
+        res.json({success: true, token: token})
+    })
     .catch(err => {
         logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         res.status(500).json({success: false, error:err})

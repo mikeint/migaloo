@@ -89,13 +89,13 @@ router.post('/create', passport.authentication,  (req, res) => {
                 if(batchArr.length > 0){
                     return t.batch(batchArr)
                     .then(() => {
-                        return Promise.resolve()
+                        return Promise.resolve(post_ret.post_id)
                     })
                     .catch(err => {
                         return Promise.reject(err)
                     });
                 }else
-                    return Promise.resolve()
+                    return Promise.resolve(post_ret.post_id)
             })
             .then((post_id) => {
                 res.status(200).json({success: true, postId: post_id})

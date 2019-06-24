@@ -256,6 +256,12 @@ function listCandidates(req, res){
             GROUP BY candidate_id \
         ) tg ON tg.candidate_id = c.candidate_id \
         LEFT JOIN ( \
+            SELECT cb.candidate_id, array_agg(t.benefit_name) as benefit_names, array_agg(t.benefit_id) as benefit_ids \
+            FROM candidate_benefit cb \
+            INNER JOIN benefits t ON t.benefit_id = cb.benefit_id \
+            GROUP BY candidate_id \
+        ) cb ON cb.candidate_id = c.candidate_id \
+        LEFT JOIN ( \
             SELECT cp.candidate_id, \
                 SUM(1) as posted_count, \
                 SUM(cast(migaloo_accepted as int)) as accepted_count, \
@@ -453,7 +459,7 @@ function listCandidatesForJob(req, res){
 
     postgresdb.task(t => {
         return t.one('SELECT jp.post_id as "postId", jp.title, jp.salary, \
-                jp.address_id as "addressId", jp.experience, tg.tag_names as "tagNames", jb.job_benefit_names as "jobBenefitNames" \
+                jp.address_id as "addressId", jp.experience, tg.tag_names as "tagNames", jb.benefit_names as "benefitNames" \
             FROM job_posting jp \
             LEFT JOIN ( \
                 SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
@@ -462,9 +468,9 @@ function listCandidatesForJob(req, res){
                 GROUP BY post_id \
             ) tg ON tg.post_id = jp.post_id \
             LEFT JOIN ( \
-                SELECT pt.post_id, array_agg(t.job_benefit_name) as job_benefit_names, array_agg(t.job_benefit_id) as job_benefit_ids \
+                SELECT jb.post_id, array_agg(t.benefit_name) as benefit_names, array_agg(t.benefit_id) as benefit_ids \
                 FROM job_benefit jb \
-                INNER JOIN benefit t ON t.job_benefit_id = pt.job_benefit_id \
+                INNER JOIN benefits t ON t.benefit_id = jb.benefit_id \
                 GROUP BY post_id \
             ) jb ON jb.post_id = jp.post_id \
             WHERE jp.post_id = ${postId} AND jp.recruiter_id = ${recruiterId}', {postId:postId, recruiterId:recruiterId})
@@ -479,11 +485,12 @@ function listCandidatesForJob(req, res){
                     coalesce(cpd.not_accepted_count, 0) as "notAcceptedCount", \
                     coalesce(cpd.new_accepted_count, 0) as "newAcceptedCount", coalesce(cpd.new_not_accepted_count, 0) as "newNotAcceptedCount", \
                     (count(1) OVER())/10+1 as "pageCount", tag_names as "tagNames", tag_ids as "tagIds", \
+                    benefit_names as "tagNames", benefit_ids as "tagIds", \
                     ( \
                         coalesce(distance_score, 0.0)+ \
                         coalesce(salary_score, 0.0)+ \
                         coalesce(experience_score, 0.0) \
-                    )/3*coalesce(tag_score, 0.0)*100.0 as score, \
+                    )/3*coalesce(tag_score, 0.0)*100.0 as score \
                 FROM recruiter_candidate rc \
                 INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
                 LEFT JOIN address a ON a.address_id = c.address_id \
@@ -493,6 +500,12 @@ function listCandidatesForJob(req, res){
                     INNER JOIN tags t ON t.tag_id = ct.tag_id \
                     GROUP BY candidate_id \
                 ) tg ON tg.candidate_id = c.candidate_id \
+                LEFT JOIN ( \
+                    SELECT cb.candidate_id, array_agg(t.benefit_name) as benefit_names, array_agg(t.benefit_id) as benefit_ids \
+                    FROM candidate_benefit cb \
+                    INNER JOIN benefits t ON t.benefit_id = cb.benefit_id \
+                    GROUP BY candidate_id \
+                ) cb ON cb.candidate_id = c.candidate_id \
                 LEFT JOIN ( \
                     SELECT cp.candidate_id, \
                         SUM(1) as posted_count, \
