@@ -10,10 +10,10 @@ import { FormHelperText } from '@material-ui/core';
 
 const styles = theme => ({
     root: {
-      width: 400,
+      width: 200,
     },
     textField: {
-        width: 400
+        width: 200
     },
     selectFormControl:{
         marginBottom: 10

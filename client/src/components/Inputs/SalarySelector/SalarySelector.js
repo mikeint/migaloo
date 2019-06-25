@@ -4,7 +4,7 @@ import Slider from '@material-ui/lab/Slider';
 
 const styles = theme => ({
     root: {
-      width: 400,
+      width: 200,
     },
     slider: {
       padding: '22px 0px',

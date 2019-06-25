@@ -10,7 +10,7 @@ const styles = theme => ({
         marginRight: "5px"
     },
     textField: {
-        width: 400,
+        width: 200,
     },
     userTagWrp: {
         overflow: "hidden",

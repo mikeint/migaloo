@@ -7,11 +7,20 @@ import JobTypeSelector from '../../../components/Inputs/JobTypeSelector/JobTypeS
 import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
 import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector'; 
 import VacationSelector from '../../../components/Inputs/VacationSelector/VacationSelector'; 
+import CommuteSelector from '../../../components/Inputs/CommuteSelector/CommuteSelector'; 
+import ResponsibilitiesSelector from '../../../components/Inputs/ResponsibilitiesSelector/ResponsibilitiesSelector';  
+import HighlightsSelector from '../../../components/Inputs/HighlightsSelector/HighlightsSelector';  
 
 import { Close } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
 import { TextField, FormControlLabel, Checkbox, IconButton, Button } from '@material-ui/core';
 import FormValidation from '../../../FormValidation';
+
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+import SwipeableViews from 'react-swipeable-views';
 
 const styles = theme => ({
     alertClose: {
@@ -44,11 +53,7 @@ const styles = theme => ({
         width: "100%",
         margin: "10px"
     },
-    addCandidateContainer: {
-        padding: "20px",
-        color: theme.palette.primary.main,
-        display: "flex"
-    },
+ 
     formSection: {
         margin: "auto auto 25px auto",
         width: "100%",
@@ -87,6 +92,15 @@ const errorText = [
 ]
   
 
+function TabContainer({ children, dir }) {
+    return (
+      <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
+        {children}
+      </Typography>
+    );
+  }
+   
+
 class AddCandidate extends React.Component{
     constructor(props) {
         super(props);
@@ -102,7 +116,8 @@ class AddCandidate extends React.Component{
             relocatable: false,
             redirect: false,
             onClose: props.onClose,
-            errors:{}
+            errors:{},
+            tab: 0
         }
         this.Auth = new AuthFunctions();
         this.formValidation = new FormValidation(this, errorText);
@@ -135,6 +150,14 @@ class AddCandidate extends React.Component{
         }
     }
 
+    handleChangeIndex = (index) => { 
+        this.setState({tab: index})
+    }
+    handleTabChange = (event, newValue) => { 
+        this.setState({tab: newValue})
+    }
+    
+
     render(){
         const { classes } = this.props;
         return (
@@ -146,128 +169,199 @@ class AddCandidate extends React.Component{
                         <Close color="primary" />
                     </IconButton>
                 </div>
-                <div className={classes.addCandidateContainer}>
-                    <div className={classes.formSection}>
-                        <div className={classes.input2}>
-                            <TextField
-                                name="firstName"
-                                label="First Name"
-                                className={classes.textField}
-                                onChange={this.handleChange}
-                                margin="normal"
-                                variant="outlined"
-                                {...this.formValidation.hasError("firstName")}
-                            />
-                            <TextField
-                                name="lastName"
-                                label="Last Name"
-                                className={classes.textField}
-                                onChange={this.handleChange}
-                                margin="normal"
-                                variant="outlined"
-                                {...this.formValidation.hasError("lastName")}
-                            />
-                        </div>
-                        <div className={classes.input2}>
-                            <TextField
-                                name="email"
-                                label="Email"
-                                className={classes.textField}
-                                onChange={this.handleChange}
-                                margin="normal"
-                                variant="outlined"
-                                {...this.formValidation.hasError("email")}
-                            />
-                            <TextField
-                                name="url"
-                                label="Linkdin/Profile Url"
-                                className={classes.textField}
-                                onChange={this.handleChange}
-                                margin="normal"
-                                variant="outlined"
-                                {...this.formValidation.hasError("url")}
-                            />
-                        </div>
-                        <div className={classes.input2}>
-                            <SalarySelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("salary")}/>
-                                &nbsp;&nbsp;&nbsp;
-                            <ExperienceSelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("experience")}/>
-                        </div>
-                        <div className={classes.input2}>
-                            <JobTypeSelector
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("jobType")}/>
-                        </div>
-                        {this.state.jobType !== -1 &&
-                            <div className={classes.SkillSearch}>
-                                <SkillSearch
-                                    onChange={this.handleChangeKV}
-                                    jobType={this.state.jobType}
-                                    {...this.formValidation.hasError("tagIds")}/>
-                            </div>
-                        }
-                        <div className={classes.input2}>
-                            <AddressInput
-                                onChange={this.handleAddressChange.bind(this)}
-                                {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
-                            />
-                        </div> 
 
-                        <div>
-                            <TextField
-                                name="currentCompany"
-                                label="Current Compnay"
-                                className={classes.textField}
-                                onChange={this.handleChange}
-                                margin="normal"
-                                variant="outlined"
-                                {...this.formValidation.hasError("currentCompany")}
-                            />  
-                        </div>
 
-                        <div>
-                            <TextField
-                                name="phone"
-                                label="Phone"
-                                className={classes.textField}
-                                onChange={this.handleChange}
-                                margin="normal"
-                                variant="outlined"
-                                {...this.formValidation.hasError("phone")}
-                            />  
-                        </div>
+                <div className={classes.root}>
+                    <AppBar position="static" color="default">
+                        <Tabs
+                            value={this.state.tab}
+                            onChange={this.handleTabChange}
+                            indicatorColor="primary"
+                            textColor="primary"
+                            variant="fullWidth"
+                        >
+                            <Tab label="Information" />
+                            <Tab label="Expectations" /> 
+                        </Tabs>
+                    </AppBar>
+                    <SwipeableViews
+                        axis={'x'}
+                        index={this.state.tab}
+                        onChangeIndex={this.handleChangeIndex}
+                        disabled={true}
+                    >
+                        <TabContainer> 
+                            <div className={classes.formSection}>
+                                <div className={classes.input2}>
+                                    <TextField
+                                        name="firstName"
+                                        label="First Name"
+                                        className={classes.textField}
+                                        onChange={this.handleChange}
+                                        margin="normal"
+                                        variant="outlined"
+                                        {...this.formValidation.hasError("firstName")}
+                                    />
+                                    <TextField
+                                        name="lastName"
+                                        label="Last Name"
+                                        className={classes.textField}
+                                        onChange={this.handleChange}
+                                        margin="normal"
+                                        variant="outlined"
+                                        {...this.formValidation.hasError("lastName")}
+                                    />
+                                </div>
+                                <div className={classes.input2}>
+                                    <TextField
+                                        name="email"
+                                        label="Email"
+                                        className={classes.textField}
+                                        onChange={this.handleChange}
+                                        margin="normal"
+                                        variant="outlined"
+                                        {...this.formValidation.hasError("email")}
+                                    />
+                                    <TextField
+                                        name="url"
+                                        label="Linkdin/Profile Url"
+                                        className={classes.textField}
+                                        onChange={this.handleChange}
+                                        margin="normal"
+                                        variant="outlined"
+                                        {...this.formValidation.hasError("url")}
+                                    />
+                                </div>
+                                <div className={classes.input2}>
+                                    <SalarySelector 
+                                        required
+                                        onChange={this.handleChangeKV}
+                                        {...this.formValidation.hasError("salary")}/>
+                                        &nbsp;&nbsp;&nbsp;
+                                    <ExperienceSelector 
+                                        required
+                                        onChange={this.handleChangeKV}
+                                        {...this.formValidation.hasError("experience")}/>
+                                </div>
+                                <div className={classes.input2}>
+                                    <JobTypeSelector
+                                        required
+                                        onChange={this.handleChangeKV}
+                                        {...this.formValidation.hasError("jobType")}/>
+                                </div>
+                                {this.state.jobType !== -1 &&
+                                    <div className={classes.SkillSearch}>
+                                        <SkillSearch
+                                            onChange={this.handleChangeKV}
+                                            jobType={this.state.jobType}
+                                            {...this.formValidation.hasError("tagIds")}/>
+                                    </div>
+                                }
+                                <div className={classes.input2}>
+                                    <AddressInput
+                                        onChange={this.handleAddressChange.bind(this)}
+                                        {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
+                                    />
+                                </div> 
 
-                        <div>
-                            <VacationSelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("vacation")}/>
-                        </div>
+                                <div>
+                                    <TextField
+                                        name="currentCompany"
+                                        label="Current Compnay"
+                                        className={classes.textField}
+                                        onChange={this.handleChange}
+                                        margin="normal"
+                                        variant="outlined"
+                                        {...this.formValidation.hasError("currentCompany")}
+                                    />  
+                                </div>
 
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    defaultChecked={false}
-                                    onChange={(e)=>this.setState({relocatable: e.target.checked})}
-                                    color="primary"
+                                <div>
+                                    <TextField
+                                        name="phone"
+                                        label="Phone"
+                                        className={classes.textField}
+                                        onChange={this.handleChange}
+                                        margin="normal"
+                                        variant="outlined"
+                                        {...this.formValidation.hasError("phone")}
+                                    />  
+                                </div>
+
+                                <div>
+                                    <VacationSelector 
+                                        required
+                                        onChange={this.handleChangeKV}
+                                        {...this.formValidation.hasError("vacation")}/>
+                                </div>
+
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            defaultChecked={false}
+                                            onChange={(e)=>this.setState({relocatable: e.target.checked})}
+                                            color="primary"
+                                        />
+                                    }
+                                    label="Willing to Relocate"
                                 />
-                            }
-                            label="Willing to Relocate"
-                        />
-                        <Button
-                            color="primary"
-                            variant="contained"
-                            className={classes.submitCandidateBtn}
-                            onClick={this.handleSubmit}>Add Candidate</Button>
-                    </div>
-                </div> 
+                                <Button
+                                    color="primary"
+                                    variant="contained"
+                                    className={classes.submitCandidateBtn}
+                                    onClick={this.handleSubmit}>Add Candidate</Button>
+                            </div> 
+                        </TabContainer>
+                        <TabContainer>
+                            <div>
+                                <TextField
+                                    name="e_jobtitle"
+                                    label="Job Title"
+                                    className={classes.textField}
+                                    onChange={this.handleChange}
+                                    margin="normal"
+                                    variant="outlined"
+                                    {...this.formValidation.hasError("e_jobtitle")}
+                                />  
+                            </div> 
+                            <div>
+                                <SalarySelector 
+                                    required
+                                    onChange={this.handleChangeKV}
+                                    {...this.formValidation.hasError("e_salary")}/>
+                            </div>
+                            <div>
+                                <VacationSelector 
+                                    required
+                                    onChange={this.handleChangeKV}
+                                    {...this.formValidation.hasError("e_vacation")}/>
+                            </div>
+                            <div>
+                                <CommuteSelector 
+                                    required
+                                    onChange={this.handleChangeKV}
+                                    {...this.formValidation.hasError("e_commute")}/>
+                            </div>
+                            <div>
+                                <ResponsibilitiesSelector
+                                    required
+                                    onChange={this.handleChangeKV}
+                                    {...this.formValidation.hasError("e_responsibilities")}/>
+                            </div>
+                            <div>
+                                <HighlightsSelector
+                                    required
+                                    onChange={this.handleChangeKV}
+                                    {...this.formValidation.hasError("e_highlights")}/>
+                            </div>
+
+
+                        </TabContainer> 
+                    </SwipeableViews>
+                </div>
+
+                    
+                
             </React.Fragment>
         );
     }

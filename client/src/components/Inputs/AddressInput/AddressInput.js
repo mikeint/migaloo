@@ -18,11 +18,11 @@ const styles = theme => ({
     },
     textField1:{
         display: "flex",
-        minWidth: 300,
+        minWidth: 200,
         flex: "1 1"
     },
     textField2:{
-        width: 400,
+        width: 200,
     },
     info:{
         marginTop: "16px"
