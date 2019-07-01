@@ -3,6 +3,11 @@ import "./ConversationRow.scss";
 
 class ConversationRow extends Component {
 
+    constructor(props) {
+        super(props);
+        if(this.props.openChat && this.props.defaultOpenState)
+            this.props.openChat();
+    }
     render() { 
         
         return (  

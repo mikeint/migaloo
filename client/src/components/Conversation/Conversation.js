@@ -127,7 +127,7 @@ class Conversation extends Component {
                             messageList.unshift({type:'calendar',
                                 mine:!d.toMe, // From me
                                 dateOffer:d.dateOfferStr,
-                                length:d.minute_length >= 60?((d.minute_length/60).toString()+" hour"+(d.minute_length === 60?'':'s')):(d.minute_length+" minutes"),
+                                length:d.minuteLength >= 60?((d.minuteLength/60).toString()+" hour"+(d.minuteLength === 60?'':'s')):(d.minuteLength+" minutes"),
                                 responded: d.responded,
                                 response:d.response,
                                 messageId: d.messageId,
@@ -137,22 +137,24 @@ class Conversation extends Component {
                                 messageList.unshift({type:'calendar_response',
                                     mine:d.toMe, // Reponses are duplicates of the invite
                                     dateOffer:d.dateOfferStr,
-                                    length:d.minute_length >= 60?((d.minute_length/60).toString()+" hour"+(d.minute_length === 60?'':'s')):(d.minute_length+" minutes"),
+                                    length:d.minuteLength >= 60?((d.minuteLength/60).toString()+" hour"+(d.minuteLength === 60?'':'s')):(d.minuteLength+" minutes"),
                                     response:d.response,
                                     subject: d.meetingSubject,
                                     date:d.created, locationType: d.locationTypeName})
                             }
                         }
                     })
+                    const tMessageList = oldMessageList.concat(messageList)
                     this.setState({ 
-                        messageList: oldMessageList.concat(messageList),
+                        messageList: tMessageList.length === 0 ? [{type:'loadnomore'}] : tMessageList,
                         pageNumber: this.state.pageNumber + 1,
                         pageCount: pageCount
                     }) 
-                }else
+                }else{
                     this.setState({ 
                         messageList: [{type:'loadnomore'}]
                     })
+                }
             }).catch(errors => {
                 this.setState({showLoader:false})
                 console.log(errors)
