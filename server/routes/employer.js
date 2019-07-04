@@ -105,6 +105,44 @@ function getAccountManagers(req, res) {
     });
 }
 /**
+ * Get information of the plan
+ * @route GET api/employer/getPlanInformation
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - The plan information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/getPlanInformation', passport.authentication,  getPlanInformation)
+function getPlanInformation(req, res) {
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 3){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    postgresdb.one('\
+        SELECT p.*, pt.plan_type_name \
+        FROM login l \
+        INNER JOIN company_contact cc ON cc.company_contact_id = l.user_id \
+        INNER JOIN company c ON cc.company_id = c.company_id \
+        INNER JOIN plan p ON p.company_id = c.company_id \
+        INNER JOIN plan_type pt ON pt.plan_type_id = p.plan_type_id \
+        WHERE l.active AND l.user_id = ${userId}', {userId:jwtPayload.id})
+    .then((data) => {
+        data = db.camelizeFields(data)
+        var timestamp = moment(data.subscriptionExpiry);
+        var ms = timestamp.diff(moment());
+        data.subscriptionExpiry = moment.duration(ms).humanize() + " ago";
+        data.subscriptionExpiryOn = timestamp.format("x");
+        res.json({success: true, plan:data})
+    })
+    .catch(err => {
+        logger.error('Plan Information SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success: false, error:err})
+    });
+}
+/**
  * Get employer jwt token
  * @route GET api/employer/generateToken
  * @group employer - Employer
@@ -122,7 +160,7 @@ function generateToken(req, res) {
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.one('\
-        SELECT l.user_id, l.email, c.company_name, l.user_type_id \
+        SELECT l.user_id, l.email, c.company_name, l.user_type_id, c.company_id \
         FROM login l \
         INNER JOIN company_contact cc ON cc.company_contact_id = l.user_id \
         INNER JOIN company c ON cc.company_id = c.company_id \
@@ -132,6 +170,7 @@ function generateToken(req, res) {
             id: args.user_id,
             companyName: args.company_name,
             userType: args.user_type_id,
+            companyId: args.company_id,
             email: args.email
         }
         return accessToken.generateAccessToken(args.user_id, jwtPayload)
@@ -147,7 +186,7 @@ function generateToken(req, res) {
 function test(id){
     
     postgresdb.one('\
-        SELECT l.user_id, l.email, c.company_name, l.user_type_id \
+        SELECT l.user_id, l.email, c.company_name, l.user_type_id, c.company_id \
         FROM login l \
         INNER JOIN company_contact cc ON cc.company_contact_id = l.user_id \
         INNER JOIN company c ON cc.company_id = c.company_id \
@@ -157,6 +196,7 @@ function test(id){
             id: args.user_id,
             userType: args.user_type_id,
             companyName: args.company_name,
+            companyId: args.company_id,
             email: args.email
         }
         return accessToken.generateAccessToken(args.user_id, jwtPayload)
