@@ -49,7 +49,13 @@ function list(req, res) {
         WHERE ec.company_contact_id = ${userId} '+(companyId!=null?'AND c.company_id = ${companyId}':'')+' \
         ORDER BY ec.is_primary DESC, company_name', {userId:jwtPayload.id, companyId:companyId})
     .then((data) => {
-        res.json({success:true, companies:data.map(db.camelizeFields).map(address.convertFieldsToMap)})
+        res.json({success:true, companies:data.map(db.camelizeFields).map(address.convertFieldsToMap).map(d=>{
+            var subscriptionExpiry = moment(data.subscriptionExpiry);
+            var subscriptionIntitial = moment(data.subscriptionIntitial);
+            d.subscriptionExpiry = subscriptionExpiry.format("YYYY-MM-DD");
+            d.subscriptionIntitial = subscriptionIntitial.format("YYYY-MM-DD");
+            return d;
+        })})
     })
     .catch(err => {
         logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

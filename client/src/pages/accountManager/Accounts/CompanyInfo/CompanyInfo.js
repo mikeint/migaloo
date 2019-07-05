@@ -4,6 +4,7 @@ import Close from '@material-ui/icons/Close';
 import {IconButton, Tab, Tabs}
     from '@material-ui/core';
 import Profile from './Tabs/Profile';
+import Plan from './Tabs/Plan';
 import AccountManagers from './Tabs/AccountManagers';
 import EmployerContacts from './Tabs/EmployerContacts';
 
@@ -24,7 +25,7 @@ const styles = theme => ({
         position: "relative"
     },
 });
-class ContactList extends React.Component{
+class CompanyInfo extends React.Component{
 
     constructor(props) {
         super(props);
@@ -52,16 +53,18 @@ class ContactList extends React.Component{
                 </div>
                 <Tabs variant="fullWidth" value={this.state.tabIndex} onChange={this.tabChange}>
                     <Tab label="Profile" />
-                    <Tab label="Employer Contacts" />
+                    <Tab label="Plan" />
+                    <Tab label="Contacts" />
                     <Tab label="Account Managers" />
                 </Tabs>
                 {this.state.tabIndex===0 && <Profile company={this.state.company}/>}
-                {this.state.tabIndex===1 && <AccountManagers company={this.state.company}/>}
+                {this.state.tabIndex===1 && <Plan company={this.state.company}/>}
                 {this.state.tabIndex===2 && <EmployerContacts company={this.state.company}/>}
+                {this.state.tabIndex===3 && <AccountManagers company={this.state.company}/>}
             </div> 
         )
     }
 }
  
 
-export default withStyles(styles)(ContactList);
+export default withStyles(styles)(CompanyInfo);

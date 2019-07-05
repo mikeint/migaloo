@@ -1,7 +1,7 @@
 import React from 'react';
 import {get, cancel} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
-import ContactList from './ContactList/ContactList';
+import CompanyInfo from './CompanyInfo/CompanyInfo';
 import AddCompany from './AddCompany/AddCompany';
 
 import { withStyles } from '@material-ui/core/styles'; 
@@ -140,7 +140,7 @@ class Accounts extends React.Component{
                     open={this.state.openContact}
                     onClose={this.handleContactsClose.bind(this)}
                     >
-                    <ContactList
+                    <CompanyInfo
                         company={this.state.clickedCompany}
                         onClose={this.handleContactsClose.bind(this)} />
                 </Drawer>

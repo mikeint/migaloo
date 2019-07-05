@@ -61,7 +61,6 @@ class Profile extends React.Component{
             .then((res)=>{
                 if(res && res.data.success){
                     this.setState({didSave: true, isModified:false})
-                    this.getContactList();
                 }
             })
             .catch(errors => 
