@@ -263,6 +263,8 @@ class EmployerJobPost extends React.Component{
                 return <BenefitsPage/>
             case 2: // Review Page
                 return <SubscriptionReview numberOfOpenings={this.state.numOpenings} salary={this.state.salary}/>
+            default:
+                    return <div>Page does not exist</div>
         }
     }
     render(){   
