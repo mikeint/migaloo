@@ -39,10 +39,12 @@ function list(req, res) {
     
     postgresdb.any('\
         SELECT \
-            c.company_id, c.company_name, c.department, c.image_id, a.*, ec.is_primary \
+            c.company_id, c.company_name, c.department, c.image_id, a.*, ec.is_primary, p.*, pt.plan_type_name \
         FROM login l \
         INNER JOIN company_contact ec ON ec.company_contact_id = l.user_id \
         INNER JOIN company c ON c.company_id = ec.company_id \
+        LEFT JOIN plan p ON p.company_id = c.company_id \
+        LEFT JOIN plan_type pt ON pt.plan_type_id = p.plan_type_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
         WHERE ec.company_contact_id = ${userId} '+(companyId!=null?'AND c.company_id = ${companyId}':'')+' \
         ORDER BY ec.is_primary DESC, company_name', {userId:jwtPayload.id, companyId:companyId})
@@ -68,9 +70,11 @@ function listUnassigned(req, res) {
     
     postgresdb.any('\
         SELECT \
-            c.company_id, c.company_name, c.department, c.image_id, a.* \
+            c.company_id, c.company_name, c.department, c.image_id, a.*, p.*, pt.plan_type_name \
         FROM login l \
         INNER JOIN company c ON c.company_id = l.user_id \
+        LEFT JOIN plan p ON p.company_id = c.company_id \
+        LEFT JOIN plan_type pt ON pt.plan_type_id = p.plan_type_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
         WHERE \
             NOT EXISTS ( \

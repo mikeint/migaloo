@@ -2,7 +2,6 @@ import React from 'react';
 import {get, post, setAuthToken} from '../../../ApiCalls';  
 import SkillSearch from '../../../components/Inputs/SkillSearch/SkillSearch';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import FormValidation from '../../../FormValidation';
 import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
 import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector';
@@ -14,6 +13,9 @@ import OpenReasonSelector from '../../../components/Inputs/OpenReasonSelector/Op
 import TitleSelector from '../../../components/Inputs/TitleSelector/TitleSelector';
 import RequirementsSelector from '../../../components/Inputs/RequirementsSelector/RequirementsSelector';
 import classNames from 'classnames';
+import { Stepper, Step, StepLabel, Button } from '@material-ui/core';
+import BenefitsPage from '../../../components/BenefitsPage/BenefitsPage';
+import SubscriptionReview from '../../../components/SubscriptionReview/SubscriptionReview';
 
 const styles = theme => ({
     textField: {
@@ -24,17 +26,19 @@ const styles = theme => ({
     },
     SkillSearch:{
     },
-    postButton:{
-        width:"100%",
-        marginTop: "20px"
+    buttonContainer:{
+        display: "flex"
+    },
+    button:{
+        flex: "1 1",
+        margin: "20px 10px 0 10px",
     },
     textArea:{
         width: "100%",
     },
     postAJobContainer: {
         padding: "20px",
-        color: theme.palette.primary.main,
-        display: "flex"
+        color: theme.palette.primary.main
     },
     formSection: {
         margin: "auto auto 25px auto",
@@ -113,6 +117,7 @@ const errorText = [
         errorText: "Please select an address for the company"
     }
 ]
+const steps = ['Job Information', 'Benefits', 'Review']
 class EmployerJobPost extends React.Component{
     constructor(props) {
         super(props);
@@ -133,7 +138,8 @@ class EmployerJobPost extends React.Component{
             tagIds: [],
             errors: {},
             companyName: '',
-            email: ''
+            email: '',
+            activeStep: 0
         }
         setAuthToken(token)
         this.handleChangeKV = this.handleChangeKV.bind(this)
@@ -178,6 +184,87 @@ class EmployerJobPost extends React.Component{
             });
         }
     }
+    next = () => {
+        if(this.formValidation.isValid()){
+            this.setState({activeStep:this.state.activeStep+1})
+        }
+    }
+    back = () => {
+        if(this.state.activeStep > 0)
+            this.setState({activeStep:this.state.activeStep-1})
+    }
+    getPageContents = (classes) => {
+        switch (this.state.activeStep) {
+            case 0: // Job Page
+              return <div className={classes.formSection}>
+                    <div className={classes.input2}>  
+                        <TitleSelector
+                            required
+                            onChange={this.handleChangeKV}
+                            {...this.formValidation.hasError("title")}/>
+                    </div>  
+                    <div className={classes.input2}>
+                        <RequirementsSelector
+                            required
+                            onChange={this.handleChangeKV}
+                            {...this.formValidation.hasError("requirements")}/>
+                    </div>  
+                    <div className={classes.input2}>
+                        <JobTypeSelector
+                            required
+                            onChange={this.handleChangeKV}
+                            {...this.formValidation.hasError("jobType")}/>
+                    </div>
+                    {this.state.jobType !== -1 &&
+                        <div className={classes.SkillSearch}>
+                            <SkillSearch
+                                onChange={this.handleChangeKV}
+                                jobType={this.state.jobType}
+                                {...this.formValidation.hasError("tagIds")}/>
+                        </div>
+                    }
+                    <div className={classes.input2}>
+                        <SalarySelector 
+                            required
+                            onChange={this.handleChangeKV}
+                            {...this.formValidation.hasError("salary")}/>
+                            &nbsp;&nbsp;&nbsp;
+                        <ExperienceSelector 
+                            required
+                            onChange={this.handleChangeKV}
+                            {...this.formValidation.hasError("experience")}/>
+                    </div>
+                    <div className={classes.input2}>
+                        <InterviewCountSelector 
+                            required
+                            onChange={this.handleChangeKV}
+                            {...this.formValidation.hasError("interviewCount")}/>
+                            &nbsp;&nbsp;&nbsp;
+                        <NumberOpeningsSelector 
+                            required
+                            onChange={this.handleChangeKV}
+                            {...this.formValidation.hasError("numOpenings")}/>
+                    </div>
+                    <div className={classes.input2}>
+                        <OpenReasonSelector 
+                            required
+                            onChange={this.handleChangeKV}
+                            {...this.formValidation.hasError("openReason")}/>
+                    </div>
+                    <div className={classes.input2}>
+                        <AddressInput
+                            value={this.state.address}
+                            onChange={this.handleAddressChange.bind(this)}
+                            {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
+                        />
+                    </div>
+                </div>
+            case 1: // Benefits Page
+                return <BenefitsPage/>
+            case 2: // Review Page
+                return <SubscriptionReview numberOfOpenings={this.state.numOpenings} salary={this.state.salary}/>
+        }
+    }
     render(){   
         const { classes } = this.props;
         return (
@@ -187,74 +274,40 @@ class EmployerJobPost extends React.Component{
                     <div className={classNames(classes.headerItems, classes.headerItemCenter)}>{this.state.companyName}</div>
                     <div className={classNames(classes.headerItems, classes.headerItemRight)}>{this.state.email}</div>
                 </div> 
+                <Stepper nonLinear activeStep={this.state.activeStep}>
+                    {steps.map((label, index) => (
+                    <Step key={label}>
+                        <StepLabel completed={index<this.state.activeStep}>
+                        {label}
+                        </StepLabel>
+                    </Step>
+                    ))}
+                </Stepper>
                 <div className={classes.postAJobContainer}>
-                    <div className={classes.formSection}>
-                        <div className={classes.input2}>  
-                            <TitleSelector
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("title")}/>
-                        </div>  
-                        <div className={classes.input2}>
-                            <RequirementsSelector
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("requirements")}/>
-                        </div>  
-                        <div className={classes.input2}>
-                            <JobTypeSelector
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("jobType")}/>
-                        </div>
-                        {this.state.jobType !== -1 &&
-                            <div className={classes.SkillSearch}>
-                                <SkillSearch
-                                    onChange={this.handleChangeKV}
-                                    jobType={this.state.jobType}
-                                    {...this.formValidation.hasError("tagIds")}/>
-                            </div>
-                        }
-                        <div className={classes.input2}>
-                            <SalarySelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("salary")}/>
-                                &nbsp;&nbsp;&nbsp;
-                            <ExperienceSelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("experience")}/>
-                        </div>
-                        <div className={classes.input2}>
-                            <InterviewCountSelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("interviewCount")}/>
-                                &nbsp;&nbsp;&nbsp;
-                            <NumberOpeningsSelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("numOpenings")}/>
-                        </div>
-                        <div className={classes.input2}>
-                            <OpenReasonSelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                {...this.formValidation.hasError("openReason")}/>
-                        </div>
-                        <div className={classes.input2}>
-                            <AddressInput
-                                value={this.state.address}
-                                onChange={this.handleAddressChange.bind(this)}
-                                {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
-                            />
-                        </div>
+                    {
+                        this.getPageContents(classes)
+                    }
+                    <div className={classes.buttonContainer}>
                         <Button 
+                        color="primary"
+                        variant="contained"
+                        className={classes.button}
+                        disabled={this.state.activeStep === 0}
+                        onClick={this.back}>Back</Button>
+                        {
+                            this.state.activeStep===2?
+                            <Button 
                             color="primary"
                             variant="contained"
-                            className={classes.postButton}
+                            className={classes.button}
                             onClick={this.handleSubmit}>Post</Button>
+                            :
+                            <Button 
+                            color="primary"
+                            variant="contained"
+                            className={classes.button}
+                            onClick={this.next}>Next</Button>
+                        }
                     </div>
                 </div> 
             </React.Fragment>

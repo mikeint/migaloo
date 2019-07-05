@@ -8,9 +8,7 @@ import SkillSearch from '../../../components/Inputs/SkillSearch/SkillSearch';
 import CompanySelector from '../../../components/Inputs/CompanySelector/CompanySelector';
 import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
 import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector';
-import VacationSelector from '../../../components/Inputs/VacationSelector/VacationSelector';
 import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/ExperienceSelector';
-import BenefitsSelector from '../../../components/Inputs/BenefitsSelector/BenefitsSelector';
 import JobTypeSelector from '../../../components/Inputs/JobTypeSelector/JobTypeSelector';
 import InterviewCountSelector from '../../../components/Inputs/InterviewCountSelector/InterviewCountSelector';
 import NumberOpeningsSelector from '../../../components/Inputs/NumberOpeningsSelector/NumberOpeningsSelector';
@@ -18,9 +16,10 @@ import OpenReasonSelector from '../../../components/Inputs/OpenReasonSelector/Op
 import TitleSelector from '../../../components/Inputs/TitleSelector/TitleSelector';
 import RequirementsSelector from '../../../components/Inputs/RequirementsSelector/RequirementsSelector';
 import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
 import FormValidation from '../../../FormValidation';
-import { Checkbox, FormControlLabel } from '@material-ui/core';
+import { Checkbox, FormControlLabel, Stepper, Step, StepLabel, Button } from '@material-ui/core';
+import BenefitsPage from '../../../components/BenefitsPage/BenefitsPage';
+import SubscriptionReview from '../../../components/SubscriptionReview/SubscriptionReview';
 
 const styles = theme => ({
     textField: {
@@ -34,9 +33,12 @@ const styles = theme => ({
     SkillSearch:{
         margin: "10px"
     },
-    postButton:{
-        width:"100%",
-        marginTop: "20px"
+    buttonContainer:{
+        display: "flex"
+    },
+    button:{
+        flex: "1 1",
+        margin: "20px 10px 0 10px",
     },
     textAreaMaxHeight:{
         width: "100%",
@@ -44,8 +46,7 @@ const styles = theme => ({
     },
     postAJobContainer: {
         padding: "20px",
-        color: theme.palette.primary.main,
-        display: "flex"
+        color: theme.palette.primary.main
     },
     formSection: {
         margin: "auto auto 25px auto",
@@ -113,6 +114,7 @@ const errorText = [
         errorText: "Please select an address for the company"
     }
 ]
+const steps = ['Job Information', 'Benefits', 'Review']
 class PostAJob extends React.Component{
     constructor(props) {
         super(props);
@@ -132,7 +134,8 @@ class PostAJob extends React.Component{
             errors: {},
             postId: props.match.params.postId,
             oldPost:{},
-            formIsFilledOut: false
+            formIsFilledOut: false,
+            activeStep: 0
         }
         this.Auth = new AuthFunctions();
         this.handleChangeKV = this.handleChangeKV.bind(this)
@@ -177,6 +180,115 @@ class PostAJob extends React.Component{
             });
         }
     }
+    next = () => {
+        if(this.formValidation.isValid()){
+            this.setState({activeStep:this.state.activeStep+1})
+        }
+    }
+    back = () => {
+        if(this.state.activeStep > 0)
+            this.setState({activeStep:this.state.activeStep-1})
+    }
+    getPageContents = (classes) => {
+        switch (this.state.activeStep) {
+            case 0: // Job Page
+              return <div className={classes.formSection}>
+                        <div className={classes.input2}>
+                            <CompanySelector
+                                required
+                                onChange={(company)=>this.setState(company, this.formValidation.shouldRevalidate)}
+                                value={this.state.oldPost.companyId}
+                                {...this.formValidation.hasError("company")}/>
+                        </div>
+                        <div className={classes.input2}>  
+                            <TitleSelector
+                            required
+                            onChange={this.handleChangeKV}
+                                value={this.state.oldPost.title}
+                            {...this.formValidation.hasError("title")}/>
+                    </div>  
+                    <div className={classes.input2}>
+                        <RequirementsSelector
+                            required
+                            onChange={this.handleChangeKV}
+                                value={this.state.oldPost.requirements}
+                            {...this.formValidation.hasError("requirements")}/>
+                    </div>  
+                    <div className={classes.input2}>
+                        <JobTypeSelector
+                            required
+                            onChange={this.handleChangeKV}
+                                value={this.state.oldPost.jobTypeId}
+                            {...this.formValidation.hasError("jobType")}/>
+                    </div>
+                    {this.state.jobType !== -1 &&
+                        <div className={classes.SkillSearch}>
+                            <SkillSearch
+                                onChange={this.handleChangeKV}
+                                jobType={this.state.jobType}
+                                    value={this.state.oldPost.tagIds}
+                                {...this.formValidation.hasError("tagIds")}/>
+                        </div>
+                    }
+                    <div className={classes.input2}>
+                        <SalarySelector 
+                            required
+                            onChange={this.handleChangeKV}
+                                value={this.state.oldPost.salary}
+                            {...this.formValidation.hasError("salary")}/>
+                            &nbsp;&nbsp;&nbsp;
+                        <ExperienceSelector 
+                            required
+                            onChange={this.handleChangeKV}
+                                value={this.state.oldPost.experience}
+                            {...this.formValidation.hasError("experience")}/>
+                    </div>
+                    <div className={classes.input2}>
+                        <InterviewCountSelector 
+                            required
+                            onChange={this.handleChangeKV}
+                                value={this.state.oldPost.interviewCount}
+                            {...this.formValidation.hasError("interviewCount")}/>
+                            &nbsp;&nbsp;&nbsp;
+                        <NumberOpeningsSelector 
+                            required
+                            onChange={this.handleChangeKV}
+                                value={this.state.oldPost.openPositions}
+                            {...this.formValidation.hasError("numOpenings")}/>
+                    </div>
+                    <div className={classes.input2}>
+                        <OpenReasonSelector 
+                            required
+                            onChange={this.handleChangeKV}
+                                value={this.state.oldPost.openingReasonId || this.state.oldPost.openingReasonComment}
+                            {...this.formValidation.hasError("openReason")}/>
+                    </div>
+                    <div className={classes.input2}>
+                        <AddressInput
+                            onChange={this.handleAddressChange.bind(this)}
+                                value={this.state.oldPost.address}
+                            {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
+                        />
+                    </div>
+                    {(this.state.oldPost.postId == null || this.state.oldPost.preliminary) &&  
+                            <FormControlLabel 
+                                control={ 
+                                    <Checkbox 
+                                        defaultChecked={true} 
+                                        onChange={(e)=>this.setState({autoAddRecruiters: e.target.checked})} 
+                                        color="primary" 
+                                    /> 
+                                } 
+                                label="Auto Add Recruiters" 
+                            /> 
+                    }
+                </div>
+            case 1: // Benefits Page
+                return <BenefitsPage/>
+            case 2: // Review Page
+                return <SubscriptionReview numberOfOpenings={this.state.numOpenings} salary={this.state.salary}/>
+        }
+    }
     render(){   
         const { classes } = this.props;
         return (
@@ -187,121 +299,40 @@ class PostAJob extends React.Component{
                     message="Are you sure you want to leave? Any unsaved changes will be lost."
                     />
                 <div className="pageHeading">Post a job</div> 
+                <Stepper nonLinear activeStep={this.state.activeStep}>
+                    {steps.map((label, index) => (
+                    <Step key={label}>
+                        <StepLabel completed={index<this.state.activeStep}>
+                        {label}
+                        </StepLabel>
+                    </Step>
+                    ))}
+                </Stepper>
                 <div className={classes.postAJobContainer}>
-                    <div className={classes.formSection}>
-                        <div className={classes.input2}>
-                            <CompanySelector
-                                required
-                                onChange={(company)=>this.setState(company, this.formValidation.shouldRevalidate)}
-                                value={this.state.oldPost.companyId}
-                                {...this.formValidation.hasError("company")}/>
-                        </div>
-                        <div className={classes.input2}>  
-                            <TitleSelector
-                                required
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.title}
-                                {...this.formValidation.hasError("title")}/>
-                        </div>  
-                        <div className={classes.input2}>
-                            <RequirementsSelector
-                                required
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.requirements}
-                                {...this.formValidation.hasError("requirements")}/>
-                        </div>  
-                        <div className={classes.input2}>
-                            <JobTypeSelector
-                                required
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.jobTypeId}
-                                {...this.formValidation.hasError("jobType")}/>
-                        </div>
-                        {this.state.jobType !== -1 &&
-                            <div className={classes.SkillSearch}>
-                                <SkillSearch
-                                    onChange={this.handleChangeKV}
-                                    jobType={this.state.jobType}
-                                    value={this.state.oldPost.tagIds}
-                                    {...this.formValidation.hasError("tagIds")}/>
-                            </div>
-                        }
-                        <div className={classes.input2}>
-                            <SalarySelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.salary}
-                                {...this.formValidation.hasError("salary")}/>
-                                &nbsp;&nbsp;&nbsp;
-                            <ExperienceSelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.experience}
-                                {...this.formValidation.hasError("experience")}/>
-                        </div>
-                        <div className={classes.input2}>
-                            <InterviewCountSelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.interviewCount}
-                                {...this.formValidation.hasError("interviewCount")}/>
-                                &nbsp;&nbsp;&nbsp;
-                            <NumberOpeningsSelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.openPositions}
-                                {...this.formValidation.hasError("numOpenings")}/>
-                        </div>
-                        
-                        <div>
-                        <VacationSelector  
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.vacation}
-                                {...this.formValidation.hasError("vacation")}/>
-                        </div>
-
-                        <div className={classes.input2}>
-                            <OpenReasonSelector 
-                                required
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.openingReasonId || this.state.oldPost.openingReasonComment}
-                                {...this.formValidation.hasError("openReason")}/>
-                        </div>
-                        <div className={classes.input2}>
-                            <AddressInput
-                                onChange={this.handleAddressChange.bind(this)}
-                                value={this.state.oldPost.address}
-                                {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
-                            />
-                        </div>
-
-                        <div>
-                            <BenefitsSelector
-                                required
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.benefits}
-                                {...this.formValidation.hasError("benefits")}/>
-                        </div>
-                        {(this.state.oldPost.postId == null || this.state.oldPost.preliminary) && 
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        defaultChecked={true}
-                                        onChange={(e)=>this.setState({autoAddRecruiters: e.target.checked})}
-                                        color="primary"
-                                    />
-                                }
-                                label="Auto Add Recruiters"
-                            />
-                        }
+                    {
+                        this.getPageContents(classes)
+                    }
+                    <div className={classes.buttonContainer}>
                         <Button 
+                        color="primary"
+                        variant="contained"
+                        className={classes.button}
+                        disabled={this.state.activeStep === 0}
+                        onClick={this.back}>Back</Button>
+                        {
+                            this.state.activeStep===2?
+                            <Button 
                             color="primary"
                             variant="contained"
-                            className={classes.postButton}
-                            onClick={this.handleSubmit}>
-                            {this.state.oldPost.postId == null ? 'Post' :
-                                (this.state.oldPost.preliminary ? 'Save & Post' : 'Save')}
-                        </Button>
+                            className={classes.button}
+                            onClick={this.handleSubmit}>Post</Button>
+                            :
+                            <Button 
+                            color="primary"
+                            variant="contained"
+                            className={classes.button}
+                            onClick={this.next}>Next</Button>
+                        }
                     </div>
                 </div> 
             </React.Fragment>

@@ -54,7 +54,6 @@ router.get('/benefits', passport.authentication, (req, res) => {
             FROM benefits \
             ORDER BY group_num ASC, benefit_id ASC')
     .then(data => {
-        console.log(data)
         res.json({success:true, benefits: data.map(d=>db.camelizeFields(d))});
     })
     .catch(err => {
