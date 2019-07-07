@@ -6,6 +6,7 @@ const moment = require('moment');
 const postingAssign = require('../utils/postingAssign')
 const logger = require('../utils/logging'); 
 const address = require('../utils/address'); 
+const plan = require('../utils/plan');
 const notifications = require('../utils/notifications');
 
 const db = require('../config/db')
@@ -496,12 +497,22 @@ router.post('/setAccepted/:type/:postId/:candidateId/:recruiterId', passport.aut
                     denial_comment=${denialComment}, employer_responded_on=NOW() \
                 WHERE candidate_id = ${candidateId} AND post_id = ${postId} AND recruiter_id = ${recruiterId}',
                 {accepted:accepted, denialReasonId:denialReasonId, candidateId:candidateId, postId:postId, recruiterId:recruiterId, denialComment:denialComment})
-        else if(type === 'job')
-            return postgresdb.none('\
+        else if(type === 'job'){
+            return new Promise((resolve, reject)=>{
+                if(accepted){
+                    plan.updatePlan(companyData.company_id, req.body.salary).then(resolve, reject)
+                }else
+                    resolve()
+            }).then(()=>{
+                return postgresdb.none('\
                 UPDATE candidate_posting SET job_accepted=${accepted}, denial_reason_id=${denialReasonId}, \
                     denial_comment=${denialComment}, job_responded_on=NOW() \
                 WHERE candidate_id = ${candidateId} AND post_id = ${postId} AND recruiter_id = ${recruiterId}',
                 {accepted:accepted, denialReasonId:denialReasonId, candidateId:candidateId, postId:postId, recruiterId:recruiterId, denialComment:denialComment})
+            }).catch(()=>{
+                throw new Error("Update Plan Call Failed")
+            })
+        }
         else
             throw new Error("Type does not line up with validation")
         
