@@ -72,6 +72,7 @@ class SubscriptionReview extends React.Component{
                             )
                             )
                         }
+                        <br/>
                         <div><span className={classes.label}>Note: </span>The salary and number of positions will be adjusted based on the actual amount of candidates placed and the agreed upon salary.</div>
                     </React.Fragment>
                 }

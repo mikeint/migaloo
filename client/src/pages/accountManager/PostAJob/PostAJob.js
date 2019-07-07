@@ -95,13 +95,18 @@ const errorText = [
         gt: -1
     },
     { 
+        stateName: "openReasonExplain", 
+        errorText: "Please select the reason for the job opening",
+        or: "openReason"
+    },
+    { 
         stateName: "interviewCount", 
         errorText: "Please select the number of candidates to interview",
         type: "number",
         gt: -1
     },
     { 
-        stateName: "numOpenings", 
+        stateName: "openPositions", 
         errorText: "Please select the number of openings",
         type: "number",
         gt: 0
@@ -127,7 +132,7 @@ class PostAJob extends React.Component{
             jobType:-1,
             experience:0,
             interviewCount:0,
-            numOpenings: 1,
+            openPositions: 1,
             openReason: -1,
             address:{},
             redirect: false,
@@ -255,7 +260,7 @@ class PostAJob extends React.Component{
                             required
                             onChange={this.handleChangeKV}
                                 value={this.state.oldPost.openPositions}
-                            {...this.formValidation.hasError("numOpenings")}/>
+                            {...this.formValidation.hasError("openPositions")}/>
                     </div>
                     <div className={classes.input2}>
                         <OpenReasonSelector 
@@ -287,7 +292,7 @@ class PostAJob extends React.Component{
             case 1: // Benefits Page
                 return <BenefitsPage/>
             case 2: // Review Page
-                return <SubscriptionReview numberOfOpenings={this.state.numOpenings} salary={this.state.salary}/>
+                return <SubscriptionReview numberOfOpenings={this.state.openPositions} salary={this.state.salary}/>
             default:
                 return <div>Page does not exist</div>
         }
