@@ -17,6 +17,7 @@ const notifications = require('./routes/notifications');
 const profileImage = require('./routes/profileImage');  
 const message = require('./routes/message');  
 const resume = require('./routes/resume');  
+const plan = require('./routes/plan');  
 const autocomplete = require('./routes/autocomplete');  
 //const testAPI = require('./routes/testAPI'); 
 const passport = require('./config/passport'); 
@@ -50,6 +51,7 @@ app.use('/api/candidate', candidate);
 app.use('/api/profileImage', profileImage);
 app.use('/api/autocomplete', autocomplete);
 app.use('/api/resume', resume);
+app.use('/api/plan', plan);
 app.use('/api/message', message);
 
 // Server the frontend from node

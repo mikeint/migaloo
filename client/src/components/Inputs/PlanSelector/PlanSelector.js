@@ -2,7 +2,7 @@ import React from 'react';
 import {get, cancel} from '../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
-import { FormLabel, FormControlLabel, RadioGroup, Radio, TextField } from '@material-ui/core';
+import { FormControlLabel, RadioGroup, Radio, TextField } from '@material-ui/core';
 
 const styles = theme => ({
     root: {
@@ -23,13 +23,10 @@ class PlanSelector extends React.Component{
         super(props);
         this.state = {
             label: props.label || 'Plan Type',
-            plans: [],
+            plans: null,
             onChange: props.onChange,
-            planTypeId: props.plan.planTypeId == null ? 0 : props.plan.planTypeId - 1,
-            subscriptionPercentage: props.plan.subscriptionPercentage,
-            required: props.required || false,
-            error: false,
-            helperText: ''
+            planTypeId: props.plan.planTypeId == null ? 1 : props.plan.planTypeId,
+            subscriptionValue: props.plan.subscriptionValue || 0
         }
     }
     loadData(){
@@ -44,15 +41,13 @@ class PlanSelector extends React.Component{
         )
     }
     shouldComponentUpdate(nextProps, nextState) {
-        const change = this.state.error !== nextProps.error || this.state.helperText !== nextProps.helperText;
-        if(change){
-            this.setState({ error: nextProps.error, helperText: nextProps.helperText });
-        }
-        if(nextProps.value != null && this.state.company !== nextProps.value){
-            this.setState({ company: nextProps.value });
-        }
         if(this.state !== nextState)
             return true
+        const change = (this.state.planTypeId !== nextProps.plan.planTypeId && nextProps.plan.planTypeId != null) ||
+            (this.state.subscriptionValue !== nextProps.plan.subscriptionValue && nextProps.plan.subscriptionValue != null);
+        if(change){
+            this.setState({ planTypeId: nextProps.plan.planTypeId, subscriptionValue: nextProps.plan.subscriptionValue });
+        }
         return change;
     }
  
@@ -64,45 +59,50 @@ class PlanSelector extends React.Component{
     }
 
     handlePlanChange = (e) => {
+        const planTypeId = parseInt(e.target.value, 10);
+        const subscriptionValue = this.state.plans[planTypeId-1].valueDefault;
         if(this.state.onChange){
-            this.state.onChange({ planTypeId: e.target.value, subscriptionPercentage: this.state.subscriptionPercentage })
+            this.state.onChange({ planTypeId: planTypeId, subscriptionValue: subscriptionValue });
         }
-        this.setState({ planTypeId: e.target.value })
+        this.setState({ planTypeId: planTypeId, subscriptionValue: subscriptionValue });
     }
-    handlePercentageChange = (e) => {
+    handleValueChange = (e) => {
         if(this.state.onChange){
-            this.state.onChange({ planTypeId: this.state.planTypeId, subscriptionPercentage: e.target.value })
+            this.state.onChange({ planTypeId: this.state.planTypeId, subscriptionValue: e.target.value });
         }
-        this.setState({ subscriptionPercentage: e.target.value })
+        this.setState({ subscriptionValue: e.target.value });
     }
     render(){   
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-                <FormControl component="fieldset" className={classes.formControl}>
-                    <RadioGroup
-                        aria-label="Plan Type"
-                        name="plantype"
-                        className={classes.group}
-                        value={this.state.planTypeId.toString()}
-                        onChange={this.handlePlanChange}
-                    >
-                        {
-                            this.state.plans.map((d, i)=>
-                                <FormControlLabel
-                                    key={i}
-                                    value={d.planTypeId.toString()}
-                                    control={<Radio classes={{root:classes.radioButton}}/>}
-                                    label={d.planTypeName} />
-                            )
-                        }
-                    </RadioGroup>
-                </FormControl>
-                <TextField
-                    type="number"
-                    label="Percentage"
-                    inputProps={{ min:"0", step:"any" }}
-                    onChange={this.handlePercentageChange}/>
+                {this.state.plans && <React.Fragment>
+                    <FormControl component="fieldset" className={classes.formControl}>
+                        <RadioGroup
+                            aria-label="Plan Type"
+                            name="plantype"
+                            className={classes.group}
+                            value={this.state.planTypeId.toString()}
+                            onChange={this.handlePlanChange}
+                        >
+                            {
+                                this.state.plans.map((d, i)=>
+                                    <FormControlLabel
+                                        key={i}
+                                        value={d.planTypeId.toString()}
+                                        control={<Radio classes={{root:classes.radioButton}}/>}
+                                        label={d.planTypeName} />
+                                )
+                            }
+                        </RadioGroup>
+                    </FormControl>
+                    <TextField
+                        type="number"
+                        label={this.state.plans[this.state.planTypeId-1].valueName}
+                        value={this.state.subscriptionValue}
+                        inputProps={{ min:"0", step:"any" }}
+                        onChange={this.handleValueChange}/>
+                </React.Fragment>}
             </div>
         );
     }

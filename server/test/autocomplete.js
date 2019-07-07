@@ -195,5 +195,20 @@ describe('AutoComplete', function() {
             })
         });
     });
+    describe('Plan', () => {
+        it('check list', () => {
+            return get(`/api/autocomplete/plans`, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    assert.notEqual(res.plans, null)
+                    assert.notStrictEqual(res.plans.length, 0)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
     
 });

@@ -16,7 +16,7 @@ const benefitsInsertHelper = new pgp.helpers.ColumnSet(['post_id', 'benefit_id']
 const camelColumnConfig = db.camelColumnConfig
 const jobPostFields = ['company_id', 'title', 'requirements', 'experience',
     'salary', 'preliminary', 'is_visible', 'address_id', 'interview_count',
-    'opening_reason_id', 'opening_reason_comment', 'open_positions', 'job_type_id'];
+    'opening_reason_id', 'opening_reason_comment', 'open_positions', 'job_type_id', 'plan_id'];
 const jobPostInsert = new pgp.helpers.ColumnSet([...jobPostFields].map(camelColumnConfig), {table: 'job_posting_all'});
 const jobPostUpdate = new pgp.helpers.ColumnSet(['?post_id', ...jobPostFields.map(camelColumnConfig)], {table: 'job_posting_all'});
 
@@ -64,18 +64,19 @@ router.post('/create', passport.authentication,  (req, res) => {
     var preliminary = false
     if(jwtPayload.userType == 3)
         preliminary = true
-    postgresdb.one('SELECT company_id \
+    postgresdb.one('SELECT ec.company_id, p.plan_id \
             FROM company_contact ec \
             INNER JOIN login l ON l.user_id = ec.company_contact_id \
+            INNER JOIN plan p ON p.company_id = ec.company_id \
             WHERE ec.company_contact_id = ${userId} AND ec.company_id = ${companyId}', 
-            {userId:jwtPayload.id, companyId:body.company}).then(()=>{
+            {userId:jwtPayload.id, companyId:body.company}).then((company_ret)=>{
         return postgresdb.tx(t => {
             // creating a sequence of transaction queries:
             return address.addAddress(body.address, t).then((addr_ret)=>{
                 return t.one(pgp.helpers.insert({companyId:body.company, title:body.title, requirements:body.requirements,
                         preliminary:preliminary, isVisible:!preliminary, experience:body.experience, salary:body.salary,
                         addressId:addr_ret.address_id, interviewCount:body.interviewCount, openingReasonId:body.openReason,
-                        openingReasonComment:body.openReasonExplain, openPositions:body.numOpenings, jobTypeId:body.jobType}, jobPostInsert) + 'RETURNING post_id, address_id')
+                        openingReasonComment:body.openReasonExplain, openPositions:body.numOpenings, jobTypeId:body.jobType, planId:company_ret.plan_id}, jobPostInsert) + 'RETURNING post_id, address_id')
             })
             .then((post_ret)=>{
                 logger.info('Add new job posting', {tags:['job', 'new'], url:req.originalUrl, email:jwtPayload.email, ...body, preliminary: preliminary});

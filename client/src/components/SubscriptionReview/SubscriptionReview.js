@@ -48,18 +48,18 @@ class SubscriptionReview extends React.Component{
                     {
                         (this.state.planInfo.planTypeId===1? // On Demand
                         <React.Fragment>
-                            <div><span className={classes.label}>Subscription Percentage: </span>{Math.round(this.state.planInfo.subscriptionPercentage*10000)/100}%</div>
-                            {/* <div>{this.state.numberOfOpenings} &times; {this.state.salary}k &times; {this.state.planInfo.subscriptionPercentage}% = {this.state.numberOfOpenings * this.state.salary * this.state.planInfo.subscriptionPercentage}k</div> */}
-                            <div><span className={classes.label}>You will owe: </span>{this.state.numberOfOpenings * this.state.salary * this.state.planInfo.subscriptionPercentage}k</div>
+                            <div><span className={classes.label}>Subscription Percentage: </span>{Math.round(this.state.planInfo.subscriptionValue*100)/100}%</div>
+                            {/* <div>{this.state.numberOfOpenings} &times; {this.state.salary}k &times; {this.state.planInfo.subscriptionValue/100}% = {this.state.numberOfOpenings * this.state.salary * this.state.planInfo.subscriptionValue/100}k</div> */}
+                            <div><span className={classes.label}>You will owe: </span>{Math.round(this.state.numberOfOpenings * this.state.salary * this.state.planInfo.subscriptionValue)/100}k</div>
                         </React.Fragment>
                         : // Salary based plan
                         (this.state.planInfo.planTypeId===2?
                         <React.Fragment>
-                            <div><span className={classes.label}>Remaining Salary Pool: </span>{this.state.numberOfOpenings * this.state.salary * this.state.planInfo.subscriptionPercentage}k</div>
+                            <div><span className={classes.label}>Remaining Salary Pool: </span>{this.state.numberOfOpenings * this.state.salary * this.state.planInfo.subscriptionRemaining}k</div>
                         </React.Fragment>
                         : // Position based plan
                         <React.Fragment>
-                            <div><span className={classes.label}>Remaining Positions in subscription: </span>{this.state.numberOfOpenings * this.state.salary * this.state.planInfo.subscriptionPercentage}k</div>
+                            <div><span className={classes.label}>Remaining Positions in subscription: </span>{this.state.numberOfOpenings * this.state.planInfo.subscriptionRemaining}</div>
                         </React.Fragment>
                         )
                         )

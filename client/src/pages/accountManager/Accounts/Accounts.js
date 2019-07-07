@@ -138,7 +138,7 @@ class Accounts extends React.Component{
                 <Drawer
                     anchor="bottom"
                     open={this.state.openContact}
-                    onClose={this.handleContactsClose.bind(this)}
+                    // onClose={this.handleContactsClose.bind(this)}
                     >
                     <CompanyInfo
                         company={this.state.clickedCompany}
@@ -147,7 +147,7 @@ class Accounts extends React.Component{
                 <Drawer
                     anchor="bottom"
                     open={this.state.openAddCompany}
-                    onClose={this.handleAddCompanyClose.bind(this)}
+                    // onClose={this.handleAddCompanyClose.bind(this)}
                     >
                     <AddCompany
                         onClose={this.handleAddCompanyClose.bind(this)} />
