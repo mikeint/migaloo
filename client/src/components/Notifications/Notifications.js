@@ -262,7 +262,7 @@ class Notifications extends React.Component{
                             this.state.notificationList.map((item, i) => {
                                 return <div key={i} className={classes.notificationItem}>
                                     <div className={classes.notificationColumn1}>
-                                        <div className={classes.notificationRowTitle}>{item.notificationId+" - "+item.title}</div>
+                                        <div className={classes.notificationRowTitle}>{item.title}</div>
                                         <div className={classes.notificationRow}>{
                                                 item.message.split("\r\n").reduce((acc, curr, i) => 
                                                     (acc.length ? [...acc, <br key={i}/>, curr] : [curr]
