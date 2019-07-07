@@ -16,7 +16,7 @@ class SalarySelector extends React.Component{
         this.state = {
             label: props.label || 'Salary',
             onChange: props.onChange,
-            salary: (props.required || false)?0:-1,
+            salary: props.value || ((props.required || false)?0:-1),
             required: props.required || false,
             error: false,
             helperText: ''

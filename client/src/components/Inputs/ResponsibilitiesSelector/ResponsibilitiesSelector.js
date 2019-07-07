@@ -13,7 +13,7 @@ class ResponsibilitiesSelector extends React.Component{
         this.state = {
             label: props.label || 'Responsibilities',
             onChange: props.onChange,
-            responsibilities: '',
+            responsibilities: props.value || '',
             required: props.required || false,
             error: false,
             helperText: ''

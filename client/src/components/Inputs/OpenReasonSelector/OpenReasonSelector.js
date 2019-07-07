@@ -37,8 +37,8 @@ class OpenReasonSelector extends React.Component{
             label: props.label || 'Reason for the Opening(s)',
             openReasonList: [{}],
             onChange: props.onChange,
-            openReason: -1,
-            openReasonExplain: '',
+            openReason: (isNaN(props.value)?otherNumber:props.value) || -1,
+            openReasonExplain: (isNaN(props.value)?props.value:'') || '',
             required: props.required || false,
             error: false,
             helperText: ''

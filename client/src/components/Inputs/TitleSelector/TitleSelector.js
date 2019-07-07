@@ -13,7 +13,7 @@ class TitleSelector extends React.Component{
         this.state = {
             label: props.label || 'Title',
             onChange: props.onChange,
-            title: '',
+            title: props.value || '',
             required: props.required || false,
             error: false,
             helperText: ''

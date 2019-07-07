@@ -197,23 +197,26 @@ class EmployerJobPost extends React.Component{
     getPageContents = (classes) => {
         switch (this.state.activeStep) {
             case 0: // Job Page
-              return <div className={classes.formSection}>
+                return <div className={classes.formSection}>
                     <div className={classes.input2}>  
                         <TitleSelector
                             required
                             onChange={this.handleChangeKV}
+                            value={this.state.title}
                             {...this.formValidation.hasError("title")}/>
                     </div>  
                     <div className={classes.input2}>
                         <RequirementsSelector
                             required
                             onChange={this.handleChangeKV}
+                            value={this.state.requirements}
                             {...this.formValidation.hasError("requirements")}/>
                     </div>  
                     <div className={classes.input2}>
                         <JobTypeSelector
                             required
                             onChange={this.handleChangeKV}
+                            value={this.state.jobTypeId}
                             {...this.formValidation.hasError("jobType")}/>
                     </div>
                     {this.state.jobType !== -1 &&
@@ -221,6 +224,7 @@ class EmployerJobPost extends React.Component{
                             <SkillSearch
                                 onChange={this.handleChangeKV}
                                 jobType={this.state.jobType}
+                                value={this.state.tagIds}
                                 {...this.formValidation.hasError("tagIds")}/>
                         </div>
                     }
@@ -228,34 +232,39 @@ class EmployerJobPost extends React.Component{
                         <SalarySelector 
                             required
                             onChange={this.handleChangeKV}
+                            value={this.state.salary}
                             {...this.formValidation.hasError("salary")}/>
                             &nbsp;&nbsp;&nbsp;
                         <ExperienceSelector 
                             required
                             onChange={this.handleChangeKV}
+                            value={this.state.experience}
                             {...this.formValidation.hasError("experience")}/>
                     </div>
                     <div className={classes.input2}>
                         <InterviewCountSelector 
                             required
                             onChange={this.handleChangeKV}
+                            value={this.state.interviewCount}
                             {...this.formValidation.hasError("interviewCount")}/>
                             &nbsp;&nbsp;&nbsp;
                         <NumberOpeningsSelector 
                             required
                             onChange={this.handleChangeKV}
+                            value={this.state.openPositions}
                             {...this.formValidation.hasError("numOpenings")}/>
                     </div>
                     <div className={classes.input2}>
                         <OpenReasonSelector 
                             required
                             onChange={this.handleChangeKV}
+                            value={this.state.openingReasonId || this.state.openingReasonComment}
                             {...this.formValidation.hasError("openReason")}/>
                     </div>
                     <div className={classes.input2}>
                         <AddressInput
-                            value={this.state.address}
                             onChange={this.handleAddressChange.bind(this)}
+                            value={this.state.address}
                             {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
                         />
                     </div>

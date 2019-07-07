@@ -32,7 +32,7 @@ class CompanySelector extends React.Component{
             label: props.label || 'Employer',
             companies: [{}],
             onChange: props.onChange,
-            company: -1,
+            company: props.value || -1,
             required: props.required || false,
             error: false,
             helperText: ''

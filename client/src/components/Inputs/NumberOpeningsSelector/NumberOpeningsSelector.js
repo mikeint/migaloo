@@ -17,7 +17,7 @@ class NumberOpeningsSelector extends React.Component{
         this.state = {
             label: props.label || 'Number of Openings',
             onChange: props.onChange,
-            numberOpenings: (props.required || false)?1:0,
+            openPositions: props.value || ((props.required || false)?1:0),
             required: props.required || false,
             error: false,
             helperText: ''
@@ -30,26 +30,26 @@ class NumberOpeningsSelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
-        if(nextProps.value != null && this.state.numberOpenings !== nextProps.value){
-            this.setState({ numberOpenings: nextProps.value });
+        if(nextProps.value != null && this.state.openPositions !== nextProps.value){
+            this.setState({ openPositions: nextProps.value });
         }
         return change;
     }
 
     handleChange = (event, value) => {
         if(this.state.onChange){
-            this.state.onChange({ numberOpenings: value })
+            this.state.onChange({ openPositions: value })
         }
-        this.setState({ numberOpenings: value })
+        this.setState({ openPositions: value })
     }
     render(){   
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-                {this.state.label}:  {this.state.numberOpenings===-1?'Unspecified':`${this.state.numberOpenings}${maxValue===this.state.numberOpenings?'+':''}`}
+                {this.state.label}:  {this.state.openPositions===-1?'Unspecified':`${this.state.openPositions}${maxValue===this.state.openPositions?'+':''}`}
                 <Slider
                     classes={{ container: classes.slider }}
-                    value={this.state.numberOpenings}
+                    value={this.state.openPositions}
                     min={this.state.required?1:0}
                     max={maxValue}
                     step={1}

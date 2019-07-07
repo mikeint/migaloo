@@ -17,7 +17,7 @@ class InterviewCountSelector extends React.Component{
         this.state = {
             label: props.label || 'Number of Candidates to Interview',
             onChange: props.onChange,
-            numberOfInterviews: (props.required || false)?0:-1,
+            interviewCount: props.value || ((props.required || false)?0:-1),
             required: props.required || false,
             error: false,
             helperText: ''
@@ -30,26 +30,26 @@ class InterviewCountSelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
-        if(nextProps.value != null && this.state.numberOfInterviews !== nextProps.value){
-            this.setState({ numberOfInterviews: nextProps.value });
+        if(nextProps.value != null && this.state.interviewCount !== nextProps.value){
+            this.setState({ interviewCount: nextProps.value });
         }
         return change;
     }
 
     handleChange = (event, value) => {
         if(this.state.onChange){
-            this.state.onChange({ numberOfInterviews: value })
+            this.state.onChange({ interviewCount: value })
         }
-        this.setState({ numberOfInterviews: value })
+        this.setState({ interviewCount: value })
     }
     render(){   
         const { classes } = this.props;
         return (
             <div className={classes.root}>
-                {this.state.label}:  {this.state.numberOfInterviews===-1?'Unspecified':`${this.state.numberOfInterviews}${maxValue===this.state.numberOfInterviews?'+':''}`}
+                {this.state.label}:  {this.state.interviewCount===-1?'Unspecified':`${this.state.interviewCount}${maxValue===this.state.interviewCount?'+':''}`}
                 <Slider
                     classes={{ container: classes.slider }}
-                    value={this.state.numberOfInterviews}
+                    value={this.state.interviewCount}
                     min={this.state.required?0:-1}
                     max={maxValue}
                     step={1}

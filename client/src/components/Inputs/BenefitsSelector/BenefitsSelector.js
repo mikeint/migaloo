@@ -13,7 +13,7 @@ class BenefitsSelector extends React.Component{
         this.state = {
             label: props.label || 'benefits',
             onChange: props.onChange,
-            benefits: '',
+            benefits: props.value || '',
             required: props.required || false,
             error: false,
             helperText: ''

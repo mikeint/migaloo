@@ -34,7 +34,7 @@ class JobTypeSelector extends React.Component{
             multiple: multiple,
             jobTypeList: [],
             onChange: props.onChange,
-            jobType: multiple?[]:-1,
+            jobType: props.value || (multiple?[]:-1),
             required: props.required || false,
             error: false,
             helperText: ''

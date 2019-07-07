@@ -17,7 +17,7 @@ class ExperienceSelector extends React.Component{
         this.state = {
             label: props.label || 'Experience',
             onChange: props.onChange,
-            experience: (props.required || false)?0:-1,
+            experience: props.value || ((props.required || false)?0:-1),
             required: props.required || false,
             error: false,
             helperText: ''

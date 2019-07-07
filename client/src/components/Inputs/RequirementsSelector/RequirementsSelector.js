@@ -13,7 +13,7 @@ class RequirementsSelector extends React.Component{
         this.state = {
             label: props.label || 'Requirements',
             onChange: props.onChange,
-            requirements: '',
+            requirements: props.value || '',
             required: props.required || false,
             error: false,
             helperText: ''

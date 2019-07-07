@@ -13,7 +13,7 @@ class HighlightsSelector extends React.Component{
         this.state = {
             label: props.label || 'Highlights',
             onChange: props.onChange,
-            highlights: '',
+            highlights: props.value || '',
             required: props.required || false,
             error: false,
             helperText: ''

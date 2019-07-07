@@ -16,7 +16,7 @@ class CommuteSelector extends React.Component{
         this.state = {
             label: props.label || 'Commute Distance',
             onChange: props.onChange,
-            commute: (props.required || false)?0:-1,
+            commute: props.value || ((props.required || false)?0:-1),
             required: props.required || false,
             error: false,
             helperText: ''
