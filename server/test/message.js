@@ -117,6 +117,17 @@ describe('Messages', function() {
                 }
             })
         });
+        it('check that can list', () => {
+            return get(`/api/message/list/1/test`, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
         it('check that can list specific', () => {
             return get(`/api/message/get/${messageSubjectId}`, process.env.accountManagerToken).then((res)=>{
                 try{

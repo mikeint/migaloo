@@ -172,11 +172,15 @@ router.post('/setResponse', passport.authentication,  (req, res) => {
 router.get('/get/:messageSubjectId', passport.authentication, listMessages);
 router.get('/list', passport.authentication, listMessages);
 router.get('/list/:page', passport.authentication, listMessages);
+router.get('/list/:page/:search', passport.authentication, listMessages);
 function listMessages(req, res){
+    var search = req.params.search;
     var page = req.params.page;
     if(page == null || page < 1)
         page = 1;
     var jwtPayload = req.body.jwtPayload;
+    if(search != null)
+        search = search.split(' ').map(d=>d+":*").join(" & ")
     
     const messageSubjectId = req.params.messageSubjectId;
     var userId = jwtPayload.id;
@@ -220,10 +224,14 @@ function listMessages(req, res){
         INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
         WHERE (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active \
         '+(messageSubjectId?' AND ms.message_subject_id = ${messageSubjectId}':'')+'\
+        '+
+        (search ? 
+            'AND ((umsub.name_search || r.name_search || c.company_name_search) @@ to_tsquery(\'simple\', ${search}))'
+        :'')+' \
         ORDER BY coalesce(m.created_on, ms.created_on) DESC \
         OFFSET ${page} \
         LIMIT 10 \
-        ', {userId:userId, page:(page-1)*10, messageSubjectId:messageSubjectId})
+        ', {userId:userId, page:(page-1)*10, messageSubjectId:messageSubjectId, search:search})
     .then((data) => {
         // Marshal data
         data = data.map(db.camelizeFields).map(m=>{

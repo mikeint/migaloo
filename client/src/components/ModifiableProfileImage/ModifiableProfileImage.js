@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import {get} from '../../ApiCalls';  
+import {get, cancel} from '../../ApiCalls';  
 import UploadImage from '../UploadImage/UploadImage'; 
 import defaultProfileImage from '../../files/images/profile.png'
 
@@ -30,6 +30,9 @@ class ModifiableProfileImage extends React.Component{
     }
     componentDidMount = () => {
         this.getImage();
+    }
+    componentWillUnmount = () => {
+        cancel();
     }
     handleClose = (err, d) => {
         this.setState({showUpload:false});

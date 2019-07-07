@@ -13,7 +13,7 @@ const postgresdb = db.postgresdb
 const pgp = db.pgp
 const camelColumnConfig = db.camelColumnConfig
 const companyFields = ['company_name', 'department', 'image_id', 'address_id', 'company_type'];
-const companyInsert = new pgp.helpers.ColumnSet(['company_id', ...companyFields].map(camelColumnConfig), {table: 'company'});
+const companyInsert = new pgp.helpers.ColumnSet(['company_id', 'company_name', 'department', 'address_id', 'company_type'].map(camelColumnConfig), {table: 'company'});
 const companyUpdate = new pgp.helpers.ColumnSet(['?company_id', ...companyFields.map(camelColumnConfig)], {table: 'company'});
 
 /**
@@ -39,15 +39,25 @@ function list(req, res) {
     
     postgresdb.any('\
         SELECT \
-            c.company_id, c.company_name, c.department, c.image_id, a.*, ec.is_primary \
+            c.company_name, c.department, c.image_id, a.*, ec.is_primary, p.*, pt.plan_type_name, \
+            ec.company_id as company_id \
         FROM login l \
         INNER JOIN company_contact ec ON ec.company_contact_id = l.user_id \
         INNER JOIN company c ON c.company_id = ec.company_id \
+        LEFT JOIN plan p ON p.company_id = ec.company_id \
+        LEFT JOIN plan_type pt ON pt.plan_type_id = p.plan_type_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
         WHERE ec.company_contact_id = ${userId} '+(companyId!=null?'AND c.company_id = ${companyId}':'')+' \
         ORDER BY ec.is_primary DESC, company_name', {userId:jwtPayload.id, companyId:companyId})
     .then((data) => {
-        res.json({success:true, companies:data.map(db.camelizeFields).map(address.convertFieldsToMap)})
+        console.log(data)
+        res.json({success:true, companies:data.map(db.camelizeFields).map(address.convertFieldsToMap).map(d=>{
+            var subscriptionExpiry = moment(data.subscriptionExpiry);
+            var subscriptionIntitial = moment(data.subscriptionIntitial);
+            d.subscriptionExpiry = subscriptionExpiry.format("YYYY-MM-DD");
+            d.subscriptionIntitial = subscriptionIntitial.format("YYYY-MM-DD");
+            return d;
+        })})
     })
     .catch(err => {
         logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
@@ -68,19 +78,21 @@ function listUnassigned(req, res) {
     
     postgresdb.any('\
         SELECT \
-            c.company_id, c.company_name, c.department, c.image_id, a.* \
+            c.company_id, c.company_name, c.department, c.image_id, a.*, p.*, pt.plan_type_name \
         FROM login l \
         INNER JOIN company c ON c.company_id = l.user_id \
+        LEFT JOIN plan p ON p.company_id = c.company_id \
+        LEFT JOIN plan_type pt ON pt.plan_type_id = p.plan_type_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
         WHERE \
             NOT EXISTS ( \
                 SELECT 1 \
                 FROM login l \
                 INNER JOIN company_contact ec ON ec.company_contact_id = l.user_id \
-                WHERE l.user_type_id = 3 AND ec.company_id = c.company_id \
+                WHERE l.user_type_id = ${userType} AND ec.company_id = c.company_id \
             ) AND c.company_type = 1 \
         '+(companyId!=null?'AND c.company_id = ${companyId}':'')+' \
-        ORDER BY company_name', {userId:jwtPayload.id, companyId:companyId})
+        ORDER BY company_name', {userId:jwtPayload.id, companyId:companyId, userType:jwtPayload.userType})
     .then((data) => {
         res.json({success:true, companies:data.map(db.camelizeFields).map(address.convertFieldsToMap)})
     })
@@ -412,7 +424,7 @@ function getCompanyAccountManagerList(req, res) {
     postgresdb.tx(t => {
         return t.one('SELECT ec.company_id \
                         FROM company_contact ec \
-                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
+                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id}',
                         {company_contact_id:jwtPayload.id, company_id:companyId})
             .then(()=>{
                 return t.any('\
@@ -470,7 +482,7 @@ function getCompanyContactList(req, res) {
     postgresdb.tx(t => {
         return t.one('SELECT ec.company_id \
                         FROM company_contact ec \
-                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
+                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id}',
                         {company_contact_id:jwtPayload.id, company_id:companyId})
             .then(()=>{
                 return t.any('\

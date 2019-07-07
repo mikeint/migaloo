@@ -17,7 +17,10 @@ const styles = theme => ({
         padding: 0
     },
     row:{
-        height: 0
+        height: 0,
+        "&:nth-child(even)": {
+            background: "#f2f3f5",
+        },
     }
 });
 class BenefitsPage extends React.Component{

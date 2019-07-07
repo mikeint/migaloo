@@ -17,6 +17,7 @@ import NoWork from '@material-ui/icons/WorkOff';
 import { withStyles } from '@material-ui/core/styles';  
 import DenialReason from '../../../../../components/DenialReason/DenialReason';
 import Conversation from '../../../../../components/Conversation/Conversation';
+import { TextField } from '@material-ui/core';
   
 
 const styles = theme => ({
@@ -65,7 +66,9 @@ class CandidateView extends React.Component{
             jobObj: props.job,
             candidate: props.obj,
             getReason: false,
-            showChat: false
+            showChat: false,
+            missingSalary: false,
+            salary: null
         };
         this.Auth = new AuthFunctions();
     }
@@ -107,8 +110,12 @@ class CandidateView extends React.Component{
         }
     }
     postResponse = (type, accepted, denialReasonId) => {
+        if(type === 'job' && accepted === true && this.state.salary == null){
+            this.setState({missingSalary: true})
+            return
+        }
         post(`/api/employerPostings/setAccepted/${type}/${this.state.jobObj.postId}/${this.state.candidate.candidateId}/${this.state.candidate.recruiterId}`,
-            {accepted:accepted, denialReasonId: denialReasonId})
+            {accepted:accepted, denialReasonId: denialReasonId, salary:this.state.salary})
         .then((res)=>{
             if(res == null) return
             var newRowObj = {};
@@ -118,6 +125,9 @@ class CandidateView extends React.Component{
         }).catch(errors => 
             console.log(errors)
         )
+    }
+    handleSalaryChange = (e) => {
+        this.setState({salary:e.target.value, missingSalary:false})
     }
     trueFalseNull(value, classTrue, classFalse, classNull){
         if(value === true)
@@ -204,22 +214,32 @@ class CandidateView extends React.Component{
                                     </Button>
                                 </div>
                                 {this.state.candidate.employerAccepted === true && 
-                                    <div className={classes.flexColumn}>
-                                        <Button
-                                            variant="contained" 
-                                            color="primary"
-                                            onClick={()=>this.handleResponse('job', true)}
-                                            className={classes.marginRight}>
-                                            <Work className={this.trueFalseNull(this.state.candidate.jobAccepted, classes.selected, classes.notselected, '')}/>&nbsp;Got the Job
-                                        </Button>
-                                        <Button
-                                            variant="contained" 
-                                            color="primary"
-                                            onClick={()=>this.handleResponse('job', false)}
-                                            className={classes.marginRight}>
-                                            <NoWork className={this.trueFalseNull(this.state.candidate.jobAccepted, classes.notselected, classes.selected, '')}/>&nbsp;Rejected
-                                        </Button>
-                                    </div>
+                                    <React.Fragment>
+                                        <div className={classes.flexColumn}>
+                                            <TextField
+                                                type="number"
+                                                label="Agreed Salary"
+                                                inputProps={{ min:"0", step:"any" }}
+                                                onChange={this.handleSalaryChange}
+                                                {...(this.state.missingSalary ? {error: true, helperText: "Please enter a salary before showing the job as accepted"} : {})}/>
+                                        </div>
+                                        <div className={classes.flexColumn}>
+                                            <Button
+                                                variant="contained" 
+                                                color="primary"
+                                                onClick={()=>this.handleResponse('job', true)}
+                                                className={classes.marginRight}>
+                                                <Work className={this.trueFalseNull(this.state.candidate.jobAccepted, classes.selected, classes.notselected, '')}/>&nbsp;Got the Job
+                                            </Button>
+                                            <Button
+                                                variant="contained" 
+                                                color="primary"
+                                                onClick={()=>this.handleResponse('job', false)}
+                                                className={classes.marginRight}>
+                                                <NoWork className={this.trueFalseNull(this.state.candidate.jobAccepted, classes.notselected, classes.selected, '')}/>&nbsp;Rejected
+                                            </Button>
+                                        </div>
+                                    </React.Fragment>
                                 }
                             </React.Fragment>
                         }

@@ -1,7 +1,7 @@
 import React from 'react';
 import {get, cancel} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions'; 
-import ContactList from './ContactList/ContactList';
+import CompanyInfo from './CompanyInfo/CompanyInfo';
 import AddCompany from './AddCompany/AddCompany';
 
 import { withStyles } from '@material-ui/core/styles'; 
@@ -138,16 +138,16 @@ class Accounts extends React.Component{
                 <Drawer
                     anchor="bottom"
                     open={this.state.openContact}
-                    onClose={this.handleContactsClose.bind(this)}
+                    // onClose={this.handleContactsClose.bind(this)}
                     >
-                    <ContactList
+                    <CompanyInfo
                         company={this.state.clickedCompany}
                         onClose={this.handleContactsClose.bind(this)} />
                 </Drawer>
                 <Drawer
                     anchor="bottom"
                     open={this.state.openAddCompany}
-                    onClose={this.handleAddCompanyClose.bind(this)}
+                    // onClose={this.handleAddCompanyClose.bind(this)}
                     >
                     <AddCompany
                         onClose={this.handleAddCompanyClose.bind(this)} />

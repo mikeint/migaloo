@@ -163,7 +163,7 @@ const navMappingsSecondary = {
             {
                 icon:<AccountBalance />,
                 link:'/accountManager/accounts',
-                name:'Account',
+                name:'Accounts',
                 className: 'menuItem'
             },
             {

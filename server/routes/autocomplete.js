@@ -54,8 +54,27 @@ router.get('/benefits', passport.authentication, (req, res) => {
             FROM benefits \
             ORDER BY group_num ASC, benefit_id ASC')
     .then(data => {
-        console.log(data)
         res.json({success:true, benefits: data.map(d=>db.camelizeFields(d))});
+    })
+    .catch(err => {
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:req.body.jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+});
+/**
+ * Get plan listing
+ * @route GET api/autocomplete/plans
+ * @group autocomplete - Autocomplete
+ * @returns {object} 200 - A list of maps containing autocompletes
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/plans', passport.authentication, (req, res) => {
+    postgresdb.any('SELECT * \
+            FROM plan_type \
+            ORDER BY plan_type_id')
+    .then(data => {
+        res.json({success:true, plans: data.map(d=>db.camelizeFields(d))});
     })
     .catch(err => {
         logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:req.body.jwtPayload.id, error:err.message || err, body:req.body});
