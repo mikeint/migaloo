@@ -239,7 +239,7 @@ class Conversation extends Component {
     };
 
     render(){  
-        const { classes, onClose, ...other } = this.props;
+        const { classes } = this.props;
         return (
             <React.Fragment>
                 <div className={classes.root}>

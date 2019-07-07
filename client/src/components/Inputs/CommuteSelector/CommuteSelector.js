@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import Slider, {defaultValueReducer} from '@material-ui/lab/Slider';
+import Slider from '@material-ui/lab/Slider';
 
 const styles = theme => ({
     root: {

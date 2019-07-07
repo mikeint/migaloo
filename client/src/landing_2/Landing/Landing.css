@@ -65,8 +65,7 @@
 /* LANDING STRUCTURE */
 .lp2_container {
     display: flex;
-    width: 100%; 
-    position: relative;
+    width: 100%;  
     margin: 0 auto; 
     overflow: hidden;
 } 
@@ -83,6 +82,7 @@
     background-repeat: no-repeat;
     background-size: auto;
     overflow-y: auto;  
+    z-index: 2;
 }
 
 .fywText {

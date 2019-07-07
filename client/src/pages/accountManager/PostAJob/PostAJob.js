@@ -19,8 +19,7 @@ import RequirementsSelector from '../../../components/Inputs/RequirementsSelecto
 import BenefitsPage from '../../../components/BenefitsPage/BenefitsPage';
 import { withStyles } from '@material-ui/core/styles';
 import FormValidation from '../../../FormValidation';
-import { Checkbox, FormControlLabel, Stepper, Step, StepLabel, Button } from '@material-ui/core';
-import BenefitsPage from '../../../components/BenefitsPage/BenefitsPage';
+import { Checkbox, FormControlLabel, Stepper, Step, StepLabel, Button } from '@material-ui/core'; 
 import SubscriptionReview from '../../../components/SubscriptionReview/SubscriptionReview';
 
 const styles = theme => ({

@@ -16,8 +16,6 @@ import AuthRouter from './pages/auth/AuthRouter'
 //Landing page 2 routes
 import Landing from './landing_2/Landing/Landing'
 import LandingRouter from './landing_2/LandingRouter'
-import SignUpFormEmployer from './landing_2/components/SignUpFormEmployer/SignUpFormEmployer'
-import SignUpFormRecruiter from './landing_2/components/SignUpFormRecruiter/SignUpFormRecruiter'
 
 import './App.css';
 
@@ -132,8 +130,6 @@ class App extends Component {
                         <Route strict path='/employerPage' component={LandingRouter} />
                         <Route strict path='/landing' component={LandingRouter} />
                         <Route strict path='/auth' component={AuthRouter} />
-                        <Route exact path='/signUpFormEmployer' component={SignUpFormEmployer} /> 
-                        <Route exact path='/signUpFormRecruiter' component={SignUpFormRecruiter} /> 
                     </React.Fragment>
                 </BrowserRouter> 
                 <BrowserTracer />

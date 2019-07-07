@@ -13,6 +13,9 @@ import Contact from './Contact/Contact';
 import About from './About/About';
 import Team from './Team/Team';
 
+import SignUpFormEmployer from './components/SignUpFormEmployer/SignUpFormEmployer'
+import SignUpFormRecruiter from './components/SignUpFormRecruiter/SignUpFormRecruiter'
+
 
 function LandingRouter({ match }) {
     return ( 
@@ -32,6 +35,9 @@ function LandingRouter({ match }) {
                         <Route exact path="/landing/contact" component={Contact} />
                         <Route exact path="/landing/about" component={About} />
                         <Route exact path="/landing/team" component={Team} />
+
+                        <Route exact path='/landing/signUpFormEmployer' component={SignUpFormEmployer} /> 
+                        <Route exact path='/landing/signUpFormRecruiter' component={SignUpFormRecruiter} /> 
                     </Switch>
                 </div> 
             </div>
