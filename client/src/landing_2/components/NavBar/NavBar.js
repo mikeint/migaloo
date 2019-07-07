@@ -36,6 +36,14 @@ const navMappings =
     { 
         link:"/landing/team",
         title: "The Whales"
+    },
+    { 
+        link:"/landing/signUpFormEmployer",
+        title: "Employer Sign up"
+    },
+    { 
+        link:"/landing/signUpFormRecruiter",
+        title: "Recruiter Sign up"
     }
 ]
 
@@ -58,7 +66,7 @@ class NavBar extends Component {
             const path = location.pathname;
             const newPage = this.getNewPage(path)  
              if(newPage !== page){
-                this.setState({title: navMappings[[newPage]].title, page:newPage})  
+                this.setState({title: navMappings[newPage].title, page:newPage})  
             }
         }); 
     }

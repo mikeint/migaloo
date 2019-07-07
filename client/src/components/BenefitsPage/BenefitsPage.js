@@ -1,6 +1,6 @@
 import React from 'react';
 import {get} from '../../ApiCalls';  
-import {Table, Checkbox, Button, TableBody, TableCell, TableRow} from '@material-ui/core';
+import {Table, Checkbox, TableBody, TableCell, TableRow} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';  
 
 const styles = theme => ({
@@ -71,11 +71,6 @@ class BenefitsPage extends React.Component{
                         }
                     </TableBody>
                 </Table>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    className={classes.button}
-                    onClick={()=>1}>Save</Button>
             </React.Fragment>
         )
     }

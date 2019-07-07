@@ -37,7 +37,7 @@ class Employer extends Component {
                     <div data-aos="fade-down">You're cordially invited to enter into the managed marketplace for top&nbsp;talent.</div>
                     <div data-aos="fade-up">Join the whales of recruitment.</div>
                 </div> 
-                <Link to='signUpFormEmployer'><div data-aos="fade-up" className="signUpBtnHome">Employer RSVP</div></Link>
+                <Link to='/landing/signUpFormEmployer'><div data-aos="fade-up" className="signUpBtnHome">Employer RSVP</div></Link>
 
             </div> 
         );

@@ -91,11 +91,11 @@ const errorText = [
         type: "number",
         gt: -1
     },
-    { 
-        stateName: "openReasonExplain", 
-        errorText: "Please select the reason for the job opening",
-        or: "openReason"
-    },
+    // { 
+    //     stateName: "openReasonExplain", 
+    //     errorText: "Please select the reason for the job opening",
+    //     or: "openReason"
+    // },
     { 
         stateName: "interviewCount", 
         errorText: "Please select the number of candidates to interview",
