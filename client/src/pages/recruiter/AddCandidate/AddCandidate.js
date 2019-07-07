@@ -5,8 +5,7 @@ import SkillSearch from '../../../components/Inputs/SkillSearch/SkillSearch';
 import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/ExperienceSelector';
 import JobTypeSelector from '../../../components/Inputs/JobTypeSelector/JobTypeSelector';
 import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
-import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector'; 
-import VacationSelector from '../../../components/Inputs/VacationSelector/VacationSelector'; 
+import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector';  
 import CommuteSelector from '../../../components/Inputs/CommuteSelector/CommuteSelector'; 
 import ResponsibilitiesSelector from '../../../components/Inputs/ResponsibilitiesSelector/ResponsibilitiesSelector';  
 import HighlightsSelector from '../../../components/Inputs/HighlightsSelector/HighlightsSelector';  
@@ -287,14 +286,7 @@ class AddCandidate extends React.Component{
                                         {...this.formValidation.hasError("phone")}
                                     />  
                                 </div>
-
-                                <div>
-                                    <VacationSelector 
-                                        required
-                                        onChange={this.handleChangeKV}
-                                        {...this.formValidation.hasError("vacation")}/>
-                                </div>
-
+ 
                                 <FormControlLabel
                                     control={
                                         <Checkbox
@@ -313,46 +305,42 @@ class AddCandidate extends React.Component{
                             </div> 
                         </TabContainer>
                         <TabContainer>
-                            <div>
-                                <TextField
-                                    name="e_jobtitle"
-                                    label="Job Title"
-                                    className={classes.textField}
-                                    onChange={this.handleChange}
-                                    margin="normal"
-                                    variant="outlined"
-                                    {...this.formValidation.hasError("e_jobtitle")}
-                                />  
-                            </div> 
-                            <div>
-                                <SalarySelector 
-                                    required
-                                    onChange={this.handleChangeKV}
-                                    {...this.formValidation.hasError("e_salary")}/>
-                            </div>
-                            <div>
-                                <VacationSelector 
-                                    required
-                                    onChange={this.handleChangeKV}
-                                    {...this.formValidation.hasError("e_vacation")}/>
-                            </div>
-                            <div>
-                                <CommuteSelector 
-                                    required
-                                    onChange={this.handleChangeKV}
-                                    {...this.formValidation.hasError("e_commute")}/>
-                            </div>
-                            <div>
-                                <ResponsibilitiesSelector
-                                    required
-                                    onChange={this.handleChangeKV}
-                                    {...this.formValidation.hasError("e_responsibilities")}/>
-                            </div>
-                            <div>
-                                <HighlightsSelector
-                                    required
-                                    onChange={this.handleChangeKV}
-                                    {...this.formValidation.hasError("e_highlights")}/>
+                            <div className={classes.formSection}>
+                                <div>
+                                    <TextField
+                                        name="e_jobtitle"
+                                        label="Job Title"
+                                        className={classes.textField}
+                                        onChange={this.handleChange}
+                                        margin="normal"
+                                        variant="outlined"
+                                        {...this.formValidation.hasError("e_jobtitle")}
+                                    />  
+                                </div> 
+                                <div>
+                                    <SalarySelector 
+                                        required
+                                        onChange={this.handleChangeKV}
+                                        {...this.formValidation.hasError("e_salary")}/>
+                                </div> 
+                                <div>
+                                    <CommuteSelector 
+                                        required
+                                        onChange={this.handleChangeKV}
+                                        {...this.formValidation.hasError("e_commute")}/>
+                                </div>
+                                <div>
+                                    <ResponsibilitiesSelector
+                                        required
+                                        onChange={this.handleChangeKV}
+                                        {...this.formValidation.hasError("e_responsibilities")}/>
+                                </div>
+                                <div>
+                                    <HighlightsSelector
+                                        required
+                                        onChange={this.handleChangeKV}
+                                        {...this.formValidation.hasError("e_highlights")}/>
+                                </div>
                             </div>
 
 

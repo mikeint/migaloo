@@ -10,7 +10,7 @@ import { FormHelperText } from '@material-ui/core';
 
 const styles = theme => ({
     root: {
-      width: 200,
+      width: 250,
     },
     textField: {
         width: 200

@@ -14,7 +14,7 @@ const styles = theme => ({
       width: "100%",
     },
     textField: {
-        width: 400
+        width: 200
     },
     textArea:{
         width: "100%",

@@ -39,7 +39,7 @@ class BenefitsPage extends React.Component{
     handleCheckboxChange = (id, group, c) => {
         const benefits = this.state.benefits;
         benefits.forEach(d=>{
-            if(id === d.benefitsId){
+            if(id === d.benefitId){
                 d.checked = c;
             }else if(d.groupNum != null && d.groupNum === group && c){
                 d.checked = false;
@@ -56,11 +56,11 @@ class BenefitsPage extends React.Component{
                         {
                             this.state.benefits.map((d, i)=>{
                                 return <TableRow key={i} className={classes.tableRow} classes={{root:classes.row}}>
-                                    <TableCell className={classes.tableCell}>{d.benefitsName}</TableCell>
+                                    <TableCell className={classes.tableCell}>{d.benefitName}</TableCell>
                                     <TableCell className={classes.tableCell}>
                                         <Checkbox
                                             classes={{root:classes.checkBox}}
-                                            onChange={(e,c)=>this.handleCheckboxChange(d.benefitsId, d.groupNum, c)}
+                                            onChange={(e,c)=>this.handleCheckboxChange(d.benefitId, d.groupNum, c)}
                                             checked={d.checked}/>
                                     </TableCell>
                                 </TableRow>

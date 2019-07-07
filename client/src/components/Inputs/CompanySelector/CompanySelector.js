@@ -13,7 +13,7 @@ const styles = theme => ({
       width: 300,
     },
     textField: {
-        width: 400
+        width: 200
     },
     selectFormControl:{
         marginBottom: 20

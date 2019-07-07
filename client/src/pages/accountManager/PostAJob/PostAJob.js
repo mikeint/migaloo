@@ -7,16 +7,15 @@ import {get, post} from '../../../ApiCalls';
 import SkillSearch from '../../../components/Inputs/SkillSearch/SkillSearch';
 import CompanySelector from '../../../components/Inputs/CompanySelector/CompanySelector';
 import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
-import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector';
-import VacationSelector from '../../../components/Inputs/VacationSelector/VacationSelector';
-import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/ExperienceSelector';
-import BenefitsSelector from '../../../components/Inputs/BenefitsSelector/BenefitsSelector';
+import SalarySelector from '../../../components/Inputs/SalarySelector/SalarySelector'; 
+import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/ExperienceSelector'; 
 import JobTypeSelector from '../../../components/Inputs/JobTypeSelector/JobTypeSelector';
 import InterviewCountSelector from '../../../components/Inputs/InterviewCountSelector/InterviewCountSelector';
 import NumberOpeningsSelector from '../../../components/Inputs/NumberOpeningsSelector/NumberOpeningsSelector';
 import OpenReasonSelector from '../../../components/Inputs/OpenReasonSelector/OpenReasonSelector';
 import TitleSelector from '../../../components/Inputs/TitleSelector/TitleSelector';
 import RequirementsSelector from '../../../components/Inputs/RequirementsSelector/RequirementsSelector';
+import BenefitsPage from '../../../components/BenefitsPage/BenefitsPage';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import FormValidation from '../../../FormValidation';
@@ -252,14 +251,7 @@ class PostAJob extends React.Component{
                                 value={this.state.oldPost.openPositions}
                                 {...this.formValidation.hasError("numOpenings")}/>
                         </div>
-                        
-                        <div>
-                        <VacationSelector  
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.vacation}
-                                {...this.formValidation.hasError("vacation")}/>
-                        </div>
-
+                         
                         <div className={classes.input2}>
                             <OpenReasonSelector 
                                 required
@@ -274,14 +266,7 @@ class PostAJob extends React.Component{
                                 {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
                             />
                         </div>
-
-                        <div>
-                            <BenefitsSelector
-                                required
-                                onChange={this.handleChangeKV}
-                                value={this.state.oldPost.benefits}
-                                {...this.formValidation.hasError("benefits")}/>
-                        </div>
+ 
                         {(this.state.oldPost.postId == null || this.state.oldPost.preliminary) && 
                             <FormControlLabel
                                 control={
@@ -303,7 +288,8 @@ class PostAJob extends React.Component{
                                 (this.state.oldPost.preliminary ? 'Save & Post' : 'Save')}
                         </Button>
                     </div>
-                </div> 
+                </div>  
+
             </React.Fragment>
         );
     }
