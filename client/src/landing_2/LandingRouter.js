@@ -12,8 +12,6 @@ import Pricing_employer from './Employer/Pricing/Pricing';
 import Contact from './Contact/Contact';
 import About from './About/About';
 import Team from './Team/Team';
-import SignUpFormEmployer from './components/SignUpFormEmployer/SignUpFormEmployer'
-import SignUpFormRecruiter from './components/SignUpFormRecruiter/SignUpFormRecruiter'
 
 import SignUpFormEmployer from './components/SignUpFormEmployer/SignUpFormEmployer'
 import SignUpFormRecruiter from './components/SignUpFormRecruiter/SignUpFormRecruiter'
