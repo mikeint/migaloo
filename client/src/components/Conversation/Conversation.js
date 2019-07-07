@@ -60,12 +60,12 @@ class Conversation extends Component {
         };
     }
     shouldComponentUpdate(nextProps, nextState) {
+        if(this.state !== nextState)
+            return true
         const change = this.state.conversation !== nextProps.conversation;
         if(change){
             this.setState(this.generateState(nextProps), this.loadData);
         }
-        if(this.state !== nextState)
-           return true
         return change;
     }
     getConversationList = () => {

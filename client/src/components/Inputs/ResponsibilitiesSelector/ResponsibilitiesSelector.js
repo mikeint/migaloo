@@ -20,6 +20,8 @@ class ResponsibilitiesSelector extends React.Component{
         }
     }
     shouldComponentUpdate(nextProps, nextState) {
+        if(this.state !== nextState)
+            return true;
         const change = this.state.error !== nextProps.error ||
                 this.state.helperText !== nextProps.helperText;
         if(change){
@@ -28,8 +30,6 @@ class ResponsibilitiesSelector extends React.Component{
         if(nextProps.value != null && this.state.responsibilities !== nextProps.value){
             this.setState({ responsibilities: nextProps.value });
         }
-        if(this.state !== nextState)
-            return true
         return change;
     }
 

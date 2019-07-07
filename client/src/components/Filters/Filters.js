@@ -133,12 +133,12 @@ class Filters extends React.Component{
     }
 
     shouldComponentUpdate(nextProps, nextState) {
+        if(this.state !== nextState)
+            return true
         const change = this.state.filterOpen !== nextProps.open;
         if(change){
             this.setState({ filterOpen: nextProps.open });
         }
-        if(this.state !== nextState)
-            return true
         return change;
     }
     onChange = debounce(()=>{

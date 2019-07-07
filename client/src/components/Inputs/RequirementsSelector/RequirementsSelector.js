@@ -20,6 +20,8 @@ class RequirementsSelector extends React.Component{
         }
     }
     shouldComponentUpdate(nextProps, nextState) {
+        if(this.state !== nextState)
+            return true;
         const change = this.state.error !== nextProps.error ||
                 this.state.helperText !== nextProps.helperText;
         if(change){
@@ -28,8 +30,6 @@ class RequirementsSelector extends React.Component{
         if(nextProps.value != null && this.state.requirements !== nextProps.value){
             this.setState({ requirements: nextProps.value });
         }
-        if(this.state !== nextState)
-            return true
         return change;
     }
 

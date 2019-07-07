@@ -41,13 +41,13 @@ class PlanSelector extends React.Component{
         )
     }
     shouldComponentUpdate(nextProps, nextState) {
-        if(this.state !== nextState)
-            return true
         const change = (this.state.planTypeId !== nextProps.plan.planTypeId && nextProps.plan.planTypeId != null) ||
             (this.state.subscriptionValue !== nextProps.plan.subscriptionValue && nextProps.plan.subscriptionValue != null);
         if(change){
             this.setState({ planTypeId: nextProps.plan.planTypeId, subscriptionValue: nextProps.plan.subscriptionValue });
         }
+        if(this.state !== nextState)
+            return true;
         return change;
     }
  

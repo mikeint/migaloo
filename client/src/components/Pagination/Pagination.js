@@ -21,6 +21,8 @@ class Pagination extends Component {
         }
     };
     shouldComponentUpdate(nextProps, nextState) {
+        if(this.state !== nextState)
+            return true;
         const change = this.state.activePage !== nextProps.activePage ||
                 this.state.totalItemsCount !== nextProps.totalItemsCount ||
                 this.state.pageRangeDisplayed !== nextProps.pageRangeDisplayed ||
@@ -28,8 +30,6 @@ class Pagination extends Component {
         if(change){
             this.setState(this.generateState(nextProps));
         }
-        if(this.state !== nextState)
-           return true
         return change;
     }
 

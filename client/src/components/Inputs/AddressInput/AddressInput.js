@@ -142,6 +142,8 @@ class AddressInput extends Component {
             this.setState({hasBlur: true})
     }
     shouldComponentUpdate(nextProps, nextState) {
+        if(this.state !== nextState)
+            return true
         const change = this.state.error !== nextProps.error
         if(change){
             this.setState({ error: nextProps.error });
@@ -152,8 +154,6 @@ class AddressInput extends Component {
             addr.address = addr.formattedAddress;
             this.setState(addr);
         }
-        if(this.state !== nextState)
-            return true
         return change;
     }
     isValid(){

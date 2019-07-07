@@ -23,6 +23,8 @@ class CommuteSelector extends React.Component{
         }
     }
     shouldComponentUpdate(nextProps, nextState) {
+        if(this.state !== nextState)
+            return true
         const change = this.state.error !== nextProps.error || this.state.helperText !== nextProps.helperText;
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
@@ -30,8 +32,6 @@ class CommuteSelector extends React.Component{
         if(nextProps.value != null && this.state.commute !== nextProps.value){
             this.setState({ commute: nextProps.value });
         }
-        if(this.state !== nextState)
-            return true
         return change;
     }
 
