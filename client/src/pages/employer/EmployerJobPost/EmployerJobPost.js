@@ -117,7 +117,7 @@ const errorText = [
         errorText: "Please select an address for the company"
     }
 ]
-const steps = ['Job Information', 'Benefits', 'Review']
+const steps = ['Job Information', 'Benefits', 'Payment', 'Done']
 class EmployerJobPost extends React.Component{
     constructor(props) {
         super(props);
@@ -163,7 +163,8 @@ class EmployerJobPost extends React.Component{
         get('/api/auth/current')
         .then((res) => { 
             if(res && res.data.success) {
-                this.setState(res.data.data)
+                console.log(res.data.data)
+                this.setState({...res.data.data})
             }
         })
         .catch(error => {
@@ -176,7 +177,7 @@ class EmployerJobPost extends React.Component{
             post('/api/employerPostings/create', this.state)
             .then((res) => { 
                 if(res && res.data.success) {
-                    this.setState({ redirect: true })
+                    this.setState({ redirect: true, activeStep: this.state.activeStep+1 })
                 }
             })
             .catch(error => {
@@ -263,8 +264,14 @@ class EmployerJobPost extends React.Component{
                 return <BenefitsPage/>
             case 2: // Review Page
                 return <SubscriptionReview numberOfOpenings={this.state.numOpenings} salary={this.state.salary}/>
+            case 3: // Done Page
+                return <div className={classes.formSection}>
+                    Your post has been recieved.
+                    <br/>
+                    Your designated account manager will be in contact with any questions and a final list.
+                </div>
             default:
-                    return <div>Page does not exist</div>
+                return <div>Page does not exist</div>
         }
     }
     render(){   
@@ -289,28 +296,31 @@ class EmployerJobPost extends React.Component{
                     {
                         this.getPageContents(classes)
                     }
-                    <div className={classes.buttonContainer}>
-                        <Button 
-                        color="primary"
-                        variant="contained"
-                        className={classes.button}
-                        disabled={this.state.activeStep === 0}
-                        onClick={this.back}>Back</Button>
-                        {
-                            this.state.activeStep===2?
+                    {
+                        this.state.activeStep!==3 &&
+                        <div className={classes.buttonContainer}>
                             <Button 
                             color="primary"
                             variant="contained"
                             className={classes.button}
-                            onClick={this.handleSubmit}>Post</Button>
-                            :
-                            <Button 
-                            color="primary"
-                            variant="contained"
-                            className={classes.button}
-                            onClick={this.next}>Next</Button>
-                        }
-                    </div>
+                            disabled={this.state.activeStep === 0}
+                            onClick={this.back}>Back</Button>
+                            {
+                                this.state.activeStep===2?
+                                <Button 
+                                color="primary"
+                                variant="contained"
+                                className={classes.button}
+                                onClick={this.handleSubmit}>Post</Button>
+                                :
+                                <Button 
+                                color="primary"
+                                variant="contained"
+                                className={classes.button}
+                                onClick={this.next}>Next</Button>
+                            }
+                        </div>
+                    }
                 </div> 
             </React.Fragment>
         );

@@ -34,7 +34,7 @@ router.post('/create', passport.authentication,  (req, res) => {
      * address
      * url (Optional)
      * relocatable
-     * salary
+     * salary (Thousands) (Optional)
      * experience
      * tagIds (Optional)
      */
@@ -53,6 +53,8 @@ router.post('/create', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(body.address == null) body.address = {}
+    if(body.salary != null)
+        body.salary = body.salary * 1000
     var candidateId
     postgresdb.tx(t => {
         // creating a sequence of transaction queries:
@@ -101,7 +103,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
      * address
      * url (Optional)
      * relocatable
-     * salary
+     * salary (Thousands) (Optional)
      * experience
      * tagIds (Optional)
      */
@@ -125,6 +127,8 @@ router.post('/edit', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(body.address == null) body.address = {}
+    if(body.salary != null)
+        body.salary = body.salary * 1000
     
     postgresdb.tx(t => {
         var q1

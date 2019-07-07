@@ -39,7 +39,7 @@ router.post('/create', passport.authentication,  (req, res) => {
      * title
      * requirements
      * company
-     * salary (Optional)
+     * salary (Thousands) (Optional)
      * autoAddRecruiters (Optional)
      * experience
      * tagIds (Optional)
@@ -62,6 +62,8 @@ router.post('/create', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(body.address == null) body.address = {}
+    if(body.salary != null)
+        body.salary = body.salary * 1000
     var preliminary = false
     if(jwtPayload.userType == 3)
         preliminary = true
@@ -132,7 +134,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
      * title
      * requirements
      * employer
-     * salary (Optional)
+     * salary (Thousands) (Optional)
      * autoAddRecruiters (Optional)
      * experienceTypeId (Optional)
      * tagIds (Optional)
@@ -154,6 +156,8 @@ router.post('/edit', passport.authentication,  (req, res) => {
         return res.status(400).json({success:false, error:errorMessage})
     }
     if(body.address == null) body.address = {}
+    if(body.salary != null)
+        body.salary = body.salary * 1000
     postgresdb.one('SELECT company_id \
             FROM company_contact ec \
             INNER JOIN login l ON l.user_id = ec.company_contact_id \

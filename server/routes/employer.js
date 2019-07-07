@@ -143,6 +143,39 @@ function getPlanInformation(req, res) {
     });
 }
 /**
+ * Get information of open postings
+ * @route GET api/employer/getOpenPostings
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - The plan information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/getOpenPostings', passport.authentication,  getOpenPostings)
+function getOpenPostings(req, res) {
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 3){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    postgresdb.one('\
+        SELECT SUM(j.open_positions) as open_positions, SUM(j.salary*j.open_positions) as salary_used \
+        FROM login l \
+        INNER JOIN company_contact cc ON cc.company_contact_id = l.user_id \
+        INNER JOIN company c ON cc.company_id = c.company_id \
+        INNER JOIN job_posting_all j ON j.company_id = c.company_id \
+        WHERE l.active AND l.user_id = ${userId}', {userId:jwtPayload.id})
+    .then((data) => {
+        data = db.camelizeFields(data)
+        res.json({success: true, openPostings:data})
+    })
+    .catch(err => {
+        logger.error('Open Postings SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success: false, error:err})
+    });
+}
+/**
  * Get employer jwt token
  * @route GET api/employer/generateToken
  * @group employer - Employer

@@ -409,6 +409,7 @@ router.get('/current', passport.authentication, (req, res) => {
         WHERE ec.company_contact_id = ${userId} \
         LIMIT 1', {userId:req.body.jwtPayload.id})
     .then((data) => {
+        data = db.camelizeFields(data)
         address.convertFieldsToMap(data)
         res.json({success: true, data: {...req.body.jwtPayload, ...data}})
     }).catch((err)=>{
