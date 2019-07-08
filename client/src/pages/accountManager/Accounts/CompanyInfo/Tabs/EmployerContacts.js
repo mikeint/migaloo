@@ -99,6 +99,19 @@ class EmployerContacts extends React.Component{
             this.addContact(ret.filter(d=>!this.state.companyContactList.some(c=>d.id === c.companyContactId)))
         }
     };
+    regenerateEmployerLink = () => {
+        if(window.confirm("This will invalidate any existing link for the employer.\n\nDo you want to coninue?")){
+            post(`/api/company/generateLink`, {companyId:this.state.company.companyId})
+            .then((res)=>{
+                if(res && res.data.success){
+                    this.getContactList();
+                }
+            })
+            .catch(errors => 
+                console.log(errors)
+            )
+        }
+    }
     render(){
         const { classes } = this.props; 
         return ( 
@@ -107,11 +120,12 @@ class EmployerContacts extends React.Component{
                 <Table className={classNames(classes.tableBody, classes.tableBodyMargins)}>
                     <TableHead className={classes.tableHeading}>
                         <TableRow>
-                            <TableCell align="center" className={classes.tableCellHeader}>Email</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>First Name</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>Last Name</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>Phone Number</TableCell>
-                            {this.state.iAmAdmin && <TableCell align="center" className={classes.tableCellHeader}>Remove</TableCell>}
+                            <TableCell className={classes.tableCellHeader}>Email</TableCell>
+                            <TableCell className={classes.tableCellHeader}>First Name</TableCell>
+                            <TableCell className={classes.tableCellHeader}>Last Name</TableCell>
+                            <TableCell className={classes.tableCellHeader}>Phone Number</TableCell>
+                            <TableCell align="center" className={classes.tableCellHeader}>Remove</TableCell>
+                            <TableCell align="center" className={classes.tableCellHeader}>Send Link</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -122,14 +136,20 @@ class EmployerContacts extends React.Component{
                                 <TableCell className={classes.tableCell}>{d.firstName}</TableCell>
                                 <TableCell className={classes.tableCell}>{d.lastName}</TableCell>
                                 <TableCell className={classes.tableCell}><a href={`tel:${d.phoneNumber}`}>{d.phoneNumber}</a></TableCell>
+                                <TableCell align="center" className={classes.tableCell}>
+                                    <Button
+                                        className={classes.button}
+                                        color="primary"
+                                        variant="contained"
+                                        onClick={()=>this.removeContact(d)}>Remove</Button>
+                                </TableCell>
                                 {
-                                    this.state.iAmAdmin && <TableCell align="center" className={classes.tableCell}>
+                                    <TableCell align="center" className={classes.tableCell}>
                                         <Button
-                                            className={classes.button}
-                                            color="primary"
-                                            variant="contained"
-                                            disabled={d.isMe}
-                                            onClick={()=>this.removeContact(d)}>Remove</Button>
+                                        className={classes.button}
+                                        color="primary"
+                                        variant="contained"
+                                        onClick={this.regenerateEmployerLink}>Regenerate Link</Button>
                                     </TableCell>
                                 }
                             </TableRow>

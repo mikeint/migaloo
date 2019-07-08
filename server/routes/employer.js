@@ -128,7 +128,7 @@ function getPlanInformation(req, res) {
         INNER JOIN company c ON cc.company_id = c.company_id \
         INNER JOIN plan p ON p.company_id = c.company_id \
         INNER JOIN plan_type pt ON pt.plan_type_id = p.plan_type_id \
-        WHERE l.active AND l.user_id = ${userId}', {userId:jwtPayload.id})
+        WHERE c.active AND l.active AND l.user_id = ${userId}', {userId:jwtPayload.id})
     .then((data) => {
         data = db.camelizeFields(data)
         var timestamp = moment(data.subscriptionExpiry);
@@ -165,7 +165,7 @@ function getOpenPostings(req, res) {
         INNER JOIN company_contact cc ON cc.company_contact_id = l.user_id \
         INNER JOIN company c ON cc.company_id = c.company_id \
         INNER JOIN job_posting_all j ON j.company_id = c.company_id \
-        WHERE l.active AND l.user_id = ${userId}', {userId:jwtPayload.id})
+        WHERE c.active AND l.active AND l.user_id = ${userId}', {userId:jwtPayload.id})
     .then((data) => {
         data = db.camelizeFields(data)
         res.json({success: true, openPostings:data})

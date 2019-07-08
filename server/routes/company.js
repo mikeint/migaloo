@@ -47,7 +47,7 @@ function list(req, res) {
         LEFT JOIN plan p ON p.company_id = ec.company_id \
         LEFT JOIN plan_type pt ON pt.plan_type_id = p.plan_type_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
-        WHERE ec.company_contact_id = ${userId} '+(companyId!=null?'AND c.company_id = ${companyId}':'')+' \
+        WHERE c.active AND ec.company_contact_id = ${userId} '+(companyId!=null?'AND c.company_id = ${companyId}':'')+' \
         ORDER BY ec.is_primary DESC, company_name', {userId:jwtPayload.id, companyId:companyId})
     .then((data) => {
         console.log(data)
@@ -84,7 +84,7 @@ function listUnassigned(req, res) {
         LEFT JOIN plan p ON p.company_id = c.company_id \
         LEFT JOIN plan_type pt ON pt.plan_type_id = p.plan_type_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
-        WHERE \
+        WHERE c.active AND \
             NOT EXISTS ( \
                 SELECT 1 \
                 FROM login l \
@@ -145,6 +145,61 @@ router.post('/addCompany', passport.authentication,  (req, res) => {
         })
     }).catch((err)=>{
         logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:{...req.body, companyId:companyId}});
+        return res.status(500).json({success: false, error:err})
+    });
+});
+/**
+ * Delete company account
+ * @route POST api/company/deleteCompany
+ * @group company - Company
+ * @param {Object} body.optional
+ * @returns {object} 200 - An array of user info
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/deleteCompany', passport.authentication,  (req, res) => {
+    /**
+     * Inputs:
+     * companyId
+     */
+    var body = req.body;
+    var jwtPayload = body.jwtPayload;
+    if(jwtPayload.userType != 2){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(body.companyId == null){
+        const errorMessage = "Missing parameter companyId"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    
+    postgresdb.tx(t => {
+        return t.one('SELECT ec.company_id, c.company_name \
+                        FROM company_contact ec \
+                        INNER JOIN company c ON ec.company_id = c.company_id \
+                        WHERE c.active AND ec.company_contact_id = ${companyContactId} AND ec.company_id = ${companyId} AND ec.is_primary',
+                        {companyContactId:jwtPayload.id, companyId:body.companyId})
+        .then(()=>{
+            return t.none('UPDATE company SET active=false WHERE company_id = ${companyId}', {companyId:body.companyId})
+        }).then(()=>{
+            return t.any('SELECT l.user_id \
+                FROM login l \
+                INNER JOIN company_contact ec ON l.user_id = ec.company_contact_id \
+                WHERE ec.company_id = ${companyId}',
+                {companyId:body.companyId})
+        }).then((userIds) => {
+            userIds = userIds.map(d=>d.user_id)
+            console.log(userIds)
+            return t.none('DELETE FROM access_token WHERE user_id in (${userIds:csv})',
+                {userIds:userIds})
+        }).then(() => {
+            return res.status(200).json({success: true})
+        })
+    })
+    .catch((err)=>{
+        logger.error('Company SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         return res.status(500).json({success: false, error:err})
     });
 });
@@ -231,7 +286,7 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
         return t.one('SELECT ec.company_id, c.company_name \
                         FROM company_contact ec \
                         INNER JOIN company c ON ec.company_id = c.company_id \
-                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
+                        WHERE c.active AND ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
                         {company_contact_id:jwtPayload.id, company_id:body.companyId})
             .then(()=>{
                 return new Promise((resolve, reject)=>{

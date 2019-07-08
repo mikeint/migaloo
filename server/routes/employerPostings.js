@@ -278,7 +278,7 @@ function postListing(req, res){
             GROUP BY post_id \
         ) cd ON cd.post_id = j.post_id \
         LEFT JOIN address a ON a.address_id = j.address_id \
-        WHERE ec.company_contact_id = ${contactId} AND j.active '+filtersToAdd+(postId != null?' AND j.post_id = ${postId}':'')+'\
+        WHERE c.active AND ec.company_contact_id = ${contactId} AND j.active '+filtersToAdd+(postId != null?' AND j.post_id = ${postId}':'')+'\
         ORDER BY j.created_on DESC \
         OFFSET ${page} \
         LIMIT 10', {contactId:jwtPayload.id, page:(page-1)*10, ...paramsToAdd, postId:postId})

@@ -43,12 +43,13 @@ class Profile extends React.Component{
     constructor(props) {
         super(props);
 		this.state = {
+            onDelete: props.onDelete,
+            onChange: props.onChange,
             company: props.company,
             companyName: props.company.companyName,
             department: props.company.department,
             address: props.company.address,
             isModified: false,
-            didSave: false,
             errors:{}
         };
         this.formValidation = new FormValidation(this, errorText);
@@ -60,13 +61,27 @@ class Profile extends React.Component{
             post(`/api/company/setCompanyProfile`, this.state)
             .then((res)=>{
                 if(res && res.data.success){
-                    this.setState({didSave: true, isModified:false})
+                    this.setState({isModified:false})
+                    if(this.state.onChange)
+                        this.state.onChange()
                 }
             })
             .catch(errors => 
                 console.log(errors)
             )
         }
+    }
+    deleteCompany = (user) => {
+        post(`/api/company/deleteCompany`, {companyId: this.state.company.companyId})
+        .then((res)=>{
+            if(res && res.data.success){
+                if(this.state.onDelete)
+                    this.state.onDelete()
+            }
+        })
+        .catch(errors => 
+            console.log(errors)
+        )
     }
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value, isModified:this.state.isModified||this.state[e.target.name]!==e.target.value }, this.formValidation.shouldRevalidate)
@@ -121,6 +136,11 @@ class Profile extends React.Component{
                     variant="contained"
                     disabled={!this.state.isModified}
                     onClick={this.saveCompany}>Save Changes</Button>
+                <Button
+                    className={classes.button}
+                    color="error"
+                    variant="contained"
+                    onClick={this.deleteCompany}>Delete Company</Button>
             </div>
         )
     }

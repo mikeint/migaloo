@@ -39,7 +39,7 @@ router.post('/addToPlan', passport.authentication,  (req, res) => {
         return t.one('SELECT 1 \
                         FROM company_contact ec \
                         INNER JOIN company c ON ec.company_id = c.company_id \
-                        WHERE ec.company_contact_id = ${companyContactId} AND ec.company_id = ${companyId}',
+                        WHERE c.active AND ec.company_contact_id = ${companyContactId} AND ec.company_id = ${companyId}',
                         {companyContactId:jwtPayload.id, companyId:body.companyId})
             .then(()=>{
                 return t.one('SELECT 1 \
@@ -91,7 +91,7 @@ router.post('/setPlan', passport.authentication,  (req, res) => {
                         FROM company_contact ec \
                         INNER JOIN company c ON ec.company_id = c.company_id \
                         LEFT JOIN plan p ON p.company_id = c.company_id \
-                        WHERE ec.company_contact_id = ${companyContactId} AND ec.company_id = ${companyId}',
+                        WHERE c.active AND ec.company_contact_id = ${companyContactId} AND ec.company_id = ${companyId}',
                         {companyContactId:jwtPayload.id, companyId:body.companyId})
             .then((plan_ret)=>{
                 if(plan_ret.plan_id == null)

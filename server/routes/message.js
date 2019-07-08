@@ -79,7 +79,7 @@ router.post('/create', passport.authentication,  (req, res) => {
             INNER JOIN candidate umsub ON umsub.candidate_id = ms.subject_user_id \
             INNER JOIN company c ON c.company_id = ms.company_id \
             INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
-            WHERE (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active \
+            WHERE c.active AND (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active \
             ', {userId:userId, messageSubjectId:body.messageSubjectId})
         .then((data) => {
             data['fromName'] = jwtPayload.userType === 1?data.recruiterName:data.companyName
@@ -222,7 +222,7 @@ function listMessages(req, res){
         INNER JOIN candidate umsub ON umsub.candidate_id = ms.subject_user_id \
         INNER JOIN company c ON c.company_id = ms.company_id \
         INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
-        WHERE (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active \
+        WHERE c.active AND (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active \
         '+(messageSubjectId?' AND ms.message_subject_id = ${messageSubjectId}':'')+'\
         '+
         (search ? 
@@ -320,7 +320,7 @@ function listConversationMessages(req, res){
         INNER JOIN job_posting_all jpa ON jpa.post_id = ms.post_id \
         INNER JOIN company c ON c.company_id = ms.company_id \
         INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
-        WHERE (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active AND ms.message_subject_id = ${messageSubjectId} \
+        WHERE c.active AND (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active AND ms.message_subject_id = ${messageSubjectId} \
         ORDER BY m.created_on DESC \
         OFFSET ${page} \
         LIMIT 10 \

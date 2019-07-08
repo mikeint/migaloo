@@ -406,7 +406,7 @@ router.get('/current', passport.authentication, (req, res) => {
         FROM company_contact ec \
         INNER JOIN company c ON c.company_id = ec.company_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
-        WHERE ec.company_contact_id = ${userId} \
+        WHERE c.active AND ec.company_contact_id = ${userId} \
         LIMIT 1', {userId:req.body.jwtPayload.id})
     .then((data) => {
         data = db.camelizeFields(data)
