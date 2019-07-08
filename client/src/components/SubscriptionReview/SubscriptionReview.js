@@ -22,6 +22,7 @@ class SubscriptionReview extends React.Component{
         this.state = { 
             salary: props.salary,
             numberOfOpenings: props.numberOfOpenings,
+            accountManagers: props.accountManagers,
             planInfo: {},
             openPostings: {}
         };
@@ -62,18 +63,37 @@ class SubscriptionReview extends React.Component{
                             (this.state.planInfo.planTypeId===2?
                             <React.Fragment>
                                 <div><span className={classes.label}>Current Open Postings Salary Used: </span>{this.state.openPostings.salaryUsed}k</div>
-                                <div><span className={classes.label}>Remaining Salary Pool: </span>{this.state.planInfo.subscriptionRemaining} - {this.state.numberOfOpenings * this.state.salary}k = {this.state.planInfo.subscriptionRemaining - this.state.numberOfOpenings * this.state.salary*1000}</div>
+                                <div><span className={classes.label}>Remaining Salary Pool: </span>{this.state.planInfo.subscriptionRemaining} - {this.state.numberOfOpenings * this.state.salary}k - {this.state.openPostings.salaryUsed}k = {this.state.planInfo.subscriptionRemaining - -this.state.openPostings.salaryUsed * 1000 - this.state.numberOfOpenings * this.state.salary*1000}</div>
                             </React.Fragment>
                             : // Position based plan
                             <React.Fragment>
                                 <div><span className={classes.label}>Current Open Postings Positions Used: </span>{this.state.openPostings.openPositions}</div>
-                                <div><span className={classes.label}>Remaining Positions in subscription: </span>{this.state.planInfo.subscriptionRemaining} - {this.state.numberOfOpenings} = {this.state.planInfo.subscriptionRemaining - this.state.numberOfOpenings}</div>
+                                <div><span className={classes.label}>Remaining Positions in subscription: </span>{this.state.planInfo.subscriptionRemaining} - {this.state.numberOfOpenings} - {this.state.openPostings.openPositions} = {this.state.planInfo.subscriptionRemaining - this.state.openPostings.openPositions - this.state.numberOfOpenings}</div>
                             </React.Fragment>
                             )
                             )
                         }
                         <br/>
                         <div><span className={classes.label}>Note: </span>The salary and number of positions will be adjusted based on the actual amount of candidates placed and the agreed upon salary.</div>
+                        <br/>
+                        <br/>
+                        {
+                            (this.state.planInfo.planTypeId===1? // On Demand
+                            <div>If you would like to upgrade your plan please contact your account manager</div>
+                            : // Salary based plan
+                            <div>If you need to add funds to your subscription please contact your account manager</div>
+                            )
+                        }
+                        {this.state.accountManagers &&
+                            this.state.accountManagers.filter(d=>d.isPrimary).map((d, i)=>{
+                                return <div key={i}>
+                                    <div><span>{d.firstName}</span> <span>{d.lastName}</span></div>
+                                    <div><a href={`mailto:${d.email}`}>{d.email}</a></div>
+                                    <div><a href={`tel:${d.phoneNumber}`}>{d.phoneNumber}</a></div> 
+                                    <br/>
+                                </div>
+                            })
+                        }
                     </React.Fragment>
                 }
             </React.Fragment>

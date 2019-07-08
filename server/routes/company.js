@@ -413,7 +413,7 @@ router.get('/getCompanyAccountManagerList/:companyId/:page', passport.authentica
 function getCompanyAccountManagerList(req, res) {
     const jwtPayload = req.body.jwtPayload;
     var companyId = req.params.companyId
-    if(jwtPayload.userType !== 2){
+    if(jwtPayload.userType !== 2 && jwtPayload.userType !== 3){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
@@ -435,7 +435,7 @@ function getCompanyAccountManagerList(req, res) {
                     FROM company_contact ec \
                     INNER JOIN user_master um ON ec.company_contact_id = um.user_id \
                     WHERE ec.company_id = ${company_id} AND um.active AND um.user_type_id = 2 \
-                    ORDER BY um.last_name ASC, um.first_name ASC \
+                    ORDER BY NOT ec.is_primary, um.last_name ASC, um.first_name ASC \
                     OFFSET ${page} \
                     LIMIT 10', {company_id:companyId, page:(page-1)*10})
                 .then((data) => {

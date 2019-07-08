@@ -139,6 +139,7 @@ class EmployerJobPost extends React.Component{
             tagIds: [],
             errors: {},
             companyName: '',
+            accountManagers: [],
             email: '',
             benefitIds: [],
             activeStep: 0
@@ -161,17 +162,28 @@ class EmployerJobPost extends React.Component{
     handleAddressChange(address){
         this.setState({address:address}, this.formValidation.shouldRevalidate)
     }
-    loadTokenData = () => {
-        get('/api/auth/current')
+    loadAccountManagers = () => {
+        get(`/api/company/getCompanyAccountManagerList/${this.state.companyId}`)
         .then((res) => { 
             if(res && res.data.success) {
-                console.log(res.data.data)
-                this.setState({...res.data.data})
+                this.setState({accountManagers: res.data.contactList})
             }
         })
         .catch(error => {
             console.log(error);
         });
+    }
+    loadTokenData = () => {
+        get('/api/auth/current')
+        .then((res) => { 
+            if(res && res.data.success) {
+                this.setState({...res.data.data}, this.loadAccountManagers)
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        });
+        
     }
 
     handleSubmit = () => {
@@ -276,12 +288,28 @@ class EmployerJobPost extends React.Component{
                     value={this.state.benefitIds}
                     onChange={this.handleChangeKV}/>
             case 2: // Review Page
-                return <SubscriptionReview numberOfOpenings={this.state.openPositions} salary={this.state.salary}/>
+                return <SubscriptionReview 
+                    accountManagers={this.state.accountManagers}
+                    numberOfOpenings={this.state.openPositions}
+                    salary={this.state.salary}/>
             case 3: // Done Page
                 return <div className={classes.formSection}>
                     Your post has been recieved.
                     <br/>
                     Your designated account manager will be in contact with any questions and a final list.
+                    <br/>
+                    <br/>
+                    Your Account Manager(s):
+                    {
+                        this.state.accountManagers.filter(d=>d.isPrimary).map((d, i)=>{
+                            return <div key={i}>
+                                <div><span>{d.firstName}</span> <span>{d.lastName}</span></div>
+                                <div><a href={`mailto:${d.email}`}>{d.email}</a></div>
+                                <div><a href={`tel:${d.phoneNumber}`}>{d.phoneNumber}</a></div> 
+                                <br/>
+                            </div>
+                        })
+                    }
                 </div>
             default:
                 return <div>Page does not exist</div>
