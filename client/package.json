@@ -7,7 +7,7 @@
     "@material-ui/icons": "^3.0.2",
     "@material-ui/lab": "^3.0.0-alpha.30",
     "aos": "^2.3.4",
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "filepond": "^4.2.0",
     "filepond-plugin-file-validate-type": "^1.2.2",
     "filepond-plugin-image-crop": "^2.0.1",
