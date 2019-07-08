@@ -37,7 +37,6 @@ class BenefitsPage extends React.Component{
         get('/api/autocomplete/benefits')
         .then((res)=>{
             if(res && res.data.success){
-                console.log("state", this.state.benefitIds)
                 this.setState({benefits: res.data.benefits.map(d=>{
                     d.checked = this.state.benefitIds.some(benefitId=>d.benefitId===benefitId);
                     return d;
@@ -49,7 +48,6 @@ class BenefitsPage extends React.Component{
         if(this.state !== nextState)
             return true
         if(nextProps.value != null && this.state.benefitIds !== nextProps.value){
-            console.log("shouldComponentUpdate", this.state.benefitIds)
             this.setState({benefitIds: nextProps.benefitIds, benefits: this.state.benefits.map(d=>{
                 d.checked = nextProps.benefitIds.some(benefitId=>d.benefitId===benefitId);
                 return d;
