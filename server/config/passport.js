@@ -4,6 +4,8 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const keys = require('./keys');
 const passport = require('passport'); 
 const jwt = require('jsonwebtoken');
+const db = require('../config/db')
+const postgresdb = db.postgresdb
 
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
@@ -53,17 +55,7 @@ function decodeToken(token){
     return new Promise((resolve, reject)=>{
         jwt.verify(token, keys.secretOrKey, (err, decoded) => {
             if(err) return reject(err)
-            if(decoded['accessToken'] != null){
-                validateAccessToken(decoded['userId'], decoded['accessToken'])
-                .then(() => { 
-                    resolve(decoded)
-                })
-                .catch(err => {
-                    logger.error('Access Token Invalid or SQL Call Failed', {tags:['sql', 'invalid', 'token'], error:err.message || err, body:decoded});
-                    reject(err)
-                });
-            }else
-                resolve(decoded)
+            resolve(decoded)
         });
     })
 }
@@ -73,11 +65,21 @@ module.exports = {
     passportObject: passport,
     decodeToken: decodeToken,
     authentication: function(req, res, next) {
-        passport.authenticate('jwt',  { session: false }, function(err, jwtPayload) {
+        passport.authenticate('jwt',  { session: false }, function(err, decoded) {
             if (err) { return next(err); }
-            if (!jwtPayload) { return res.redirect('/login'); }
-            req.body.jwtPayload = jwtPayload;
-            next()
+            if (!decoded) { return res.redirect('/login'); }
+            req.body.jwtPayload = decoded;
+            if(decoded['accessToken'] != null){
+                validateAccessToken(decoded['userId'], decoded['accessToken'])
+                .then(() => { 
+                    next()
+                })
+                .catch(err => {
+                    res.status(401).json({success:false, error:'Invalid Token'})
+                });
+            }else{
+                next()
+            }
         })(req, res, next);
     }
 }

@@ -186,28 +186,18 @@ function getOpenPostings(req, res) {
  */
 router.post('/generateToken', passport.authentication,  generateToken)
 function generateToken(req, res) {
-    var jwtPayload = req.body.jwtPayload;
+    const jwtPayload = req.body.jwtPayload;
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-    postgresdb.one('\
-        SELECT l.user_id, l.email, c.company_name, l.user_type_id, c.company_id \
-        FROM login l \
-        INNER JOIN company_contact cc ON cc.company_contact_id = l.user_id \
-        INNER JOIN company c ON cc.company_id = c.company_id \
-        WHERE l.active AND l.user_id = ${user_id}', {user_id:req.body.userId})
-    .then((args) => { 
-        const jwtPayload = {
-            id: args.user_id,
-            companyName: args.company_name,
-            userType: args.user_type_id,
-            companyId: args.company_id,
-            email: args.email
-        }
-        return accessToken.generateAccessToken(args.user_id, jwtPayload)
-    })
+    if(req.body.userId == null){
+        const errorMessage = "Missing Parameter userId"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    return accessToken.generateAccessToken(req.body.userId)
     .then((token) => { 
         res.json({success: true, token: token})
     })
@@ -217,25 +207,8 @@ function generateToken(req, res) {
     });
 }
 function test(id){
-    
-    postgresdb.one('\
-        SELECT l.user_id, l.email, c.company_name, l.user_type_id, c.company_id \
-        FROM login l \
-        INNER JOIN company_contact cc ON cc.company_contact_id = l.user_id \
-        INNER JOIN company c ON cc.company_id = c.company_id \
-        WHERE l.active AND l.user_id = ${user_id}', {user_id:id})
-    .then((args) => { 
-        const jwtPayload = {
-            id: args.user_id,
-            userType: args.user_type_id,
-            companyName: args.company_name,
-            companyId: args.company_id,
-            email: args.email
-        }
-        return accessToken.generateAccessToken(args.user_id, jwtPayload)
-    })
+    accessToken.generateAccessToken(id)
     .then(token=>{
-        
         console.log('/postJob/'+token)
     })
     .catch(err => {

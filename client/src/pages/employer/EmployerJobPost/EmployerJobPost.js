@@ -142,7 +142,8 @@ class EmployerJobPost extends React.Component{
             companyName: '',
             accountManagers: [],
             email: '',
-            activeStep: 0
+            activeStep: 0,
+            unauthorized: false
         }
         setAuthToken(token)
         this.handleChangeKV = this.handleChangeKV.bind(this)
@@ -162,6 +163,9 @@ class EmployerJobPost extends React.Component{
     handleAddressChange(address){
         this.setState({address:address}, this.formValidation.shouldRevalidate)
     }
+    unauthorized = () => {
+        this.setState({unauthorized:true})
+    }
     loadAccountManagers = () => {
         get(`/api/company/getCompanyAccountManagerList/${this.state.companyId}`)
         .then((res) => { 
@@ -170,6 +174,8 @@ class EmployerJobPost extends React.Component{
             }
         })
         .catch(error => {
+            if(error.response.status === 401)
+                this.unauthorized()
             console.log(error);
         });
     }
@@ -181,6 +187,8 @@ class EmployerJobPost extends React.Component{
             }
         })
         .catch(error => {
+            if(error.response.status === 401)
+                this.unauthorized()
             console.log(error);
         });
         
@@ -195,6 +203,8 @@ class EmployerJobPost extends React.Component{
                 }
             })
             .catch(error => {
+                if(error.response.status === 401)
+                    this.unauthorized()
                 console.log(error);
             });
         }
@@ -324,45 +334,58 @@ class EmployerJobPost extends React.Component{
                     <div className={classNames(classes.headerItems, classes.headerItemCenter)}>{this.state.companyName}</div>
                     <div className={classNames(classes.headerItems, classes.headerItemRight)}>{this.state.email}</div>
                 </div> 
-                <Stepper nonLinear activeStep={this.state.activeStep}>
-                    {steps.map((label, index) => (
-                    <Step key={label}>
-                        <StepLabel completed={index<this.state.activeStep}>
-                        {label}
-                        </StepLabel>
-                    </Step>
-                    ))}
-                </Stepper>
-                <div className={classes.postAJobContainer}>
-                    {
-                        this.getPageContents(classes)
-                    }
-                    {
-                        this.state.activeStep!==3 &&
-                        <div className={classes.buttonContainer}>
-                            <Button 
-                            color="primary"
-                            variant="contained"
-                            className={classes.button}
-                            disabled={this.state.activeStep === 0}
-                            onClick={this.back}>Back</Button>
-                            {
-                                this.state.activeStep===2?
+                {this.state.unauthorized?
+                <React.Fragment>
+                    <div className={classes.postAJobContainer}>
+                        <h3>Unauthorized Access</h3>
+                        <div>You no longer have access to this page via the link used.</div>
+                        <div>Check your email for a more recent link.</div>
+                        <div>If you cannot find one please contact your migaloo account manager</div>
+                    </div>
+                </React.Fragment>
+                :
+                <React.Fragment>
+                    <Stepper nonLinear activeStep={this.state.activeStep}>
+                        {steps.map((label, index) => (
+                        <Step key={label}>
+                            <StepLabel completed={index<this.state.activeStep}>
+                            {label}
+                            </StepLabel>
+                        </Step>
+                        ))}
+                    </Stepper>
+                    <div className={classes.postAJobContainer}>
+                        {
+                            this.getPageContents(classes)
+                        }
+                        {
+                            this.state.activeStep!==3 &&
+                            <div className={classes.buttonContainer}>
                                 <Button 
                                 color="primary"
                                 variant="contained"
                                 className={classes.button}
-                                onClick={this.handleSubmit}>Post</Button>
-                                :
-                                <Button 
-                                color="primary"
-                                variant="contained"
-                                className={classes.button}
-                                onClick={this.next}>Next</Button>
-                            }
-                        </div>
-                    }
-                </div> 
+                                disabled={this.state.activeStep === 0}
+                                onClick={this.back}>Back</Button>
+                                {
+                                    this.state.activeStep===2?
+                                    <Button 
+                                    color="primary"
+                                    variant="contained"
+                                    className={classes.button}
+                                    onClick={this.handleSubmit}>Post</Button>
+                                    :
+                                    <Button 
+                                    color="primary"
+                                    variant="contained"
+                                    className={classes.button}
+                                    onClick={this.next}>Next</Button>
+                                }
+                            </div>
+                        }
+                    </div> 
+                </React.Fragment>
+                }
             </React.Fragment>
         );
     }
