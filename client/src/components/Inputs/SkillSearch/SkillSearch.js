@@ -27,7 +27,7 @@ class SkillSearch extends React.Component{
         super(props);
         this.state = { 
             label: props.label || 'Skills',
-            tags: [],
+            tags: props.value || [],
             potentialTagList:[],
             searching: false,
             jobType: props.jobType,
@@ -48,14 +48,19 @@ class SkillSearch extends React.Component{
     shouldComponentUpdate(nextProps, nextState) {
         if(this.state !== nextState)
             return true;
-        const change = this.state.error !== nextProps.error || this.state.helperText !== nextProps.helperText;
-        if(change){
+        if(this.state.error !== nextProps.error || this.state.helperText !== nextProps.helperText){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
+            return true;
         }
         if(nextProps.value != null && this.state.tags !== nextProps.value){
             this.setState({ tags: nextProps.value });
+            return true;
         }
-        return change;
+        if(nextProps.jobType != null && this.state.jobType !== nextProps.jobType){
+            this.setState({ jobType: nextProps.jobType });
+            return true;
+        }
+        return false;
     }
 
     queryForTags = debounce((searchString) => {

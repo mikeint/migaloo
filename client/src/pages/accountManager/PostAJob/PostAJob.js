@@ -89,15 +89,16 @@ const errorText = [
         gt: -1
     },
     { 
-        stateName: "openReason", 
+        stateName: "openingReasonId", 
         errorText: "Please select the reason for the job opening",
         type: "number",
-        gt: -1
+        gt: -1,
+        xor: "openingReasonComment"
     },
     { 
-        stateName: "openReasonExplain", 
+        stateName: "openingReasonComment", 
         errorText: "Please select the reason for the job opening",
-        or: "openReason"
+        xor: "openingReasonId"
     },
     { 
         stateName: "interviewCount", 
@@ -133,7 +134,7 @@ class PostAJob extends React.Component{
             experience:0,
             interviewCount:0,
             openPositions: 1,
-            openReason: -1,
+            openingReasonId: -1,
             address:{},
             redirect: false,
             tagIds: [],
@@ -141,6 +142,7 @@ class PostAJob extends React.Component{
             postId: props.match.params.postId,
             oldPost:{},
             formIsFilledOut: false,
+            benefitIds: [],
             activeStep: 0
         }
         this.Auth = new AuthFunctions();
@@ -208,23 +210,23 @@ class PostAJob extends React.Component{
                         </div>
                         <div className={classes.input2}>  
                             <TitleSelector
-                            required
-                            onChange={this.handleChangeKV}
+                                required
+                                onChange={this.handleChangeKV}
                                 value={this.state.oldPost.title}
-                            {...this.formValidation.hasError("title")}/>
+                                {...this.formValidation.hasError("title")}/>
                     </div>  
                     <div className={classes.input2}>
                         <RequirementsSelector
                             required
                             onChange={this.handleChangeKV}
-                                value={this.state.oldPost.requirements}
+                            value={this.state.oldPost.requirements}
                             {...this.formValidation.hasError("requirements")}/>
                     </div>  
                     <div className={classes.input2}>
                         <JobTypeSelector
                             required
                             onChange={this.handleChangeKV}
-                                value={this.state.oldPost.jobTypeId}
+                            value={this.state.oldPost.jobType}
                             {...this.formValidation.hasError("jobType")}/>
                     </div>
                     {this.state.jobType !== -1 &&
@@ -232,7 +234,7 @@ class PostAJob extends React.Component{
                             <SkillSearch
                                 onChange={this.handleChangeKV}
                                 jobType={this.state.jobType}
-                                    value={this.state.oldPost.tagIds}
+                                value={this.state.oldPost.tagIds}
                                 {...this.formValidation.hasError("tagIds")}/>
                         </div>
                     }
@@ -240,39 +242,39 @@ class PostAJob extends React.Component{
                         <SalarySelector 
                             required
                             onChange={this.handleChangeKV}
-                                value={this.state.oldPost.salary}
+                            value={this.state.oldPost.salary}
                             {...this.formValidation.hasError("salary")}/>
                             &nbsp;&nbsp;&nbsp;
                         <ExperienceSelector 
                             required
                             onChange={this.handleChangeKV}
-                                value={this.state.oldPost.experience}
+                            value={this.state.oldPost.experience}
                             {...this.formValidation.hasError("experience")}/>
                     </div>
                     <div className={classes.input2}>
                         <InterviewCountSelector 
                             required
                             onChange={this.handleChangeKV}
-                                value={this.state.oldPost.interviewCount}
+                            value={this.state.oldPost.interviewCount}
                             {...this.formValidation.hasError("interviewCount")}/>
                             &nbsp;&nbsp;&nbsp;
                         <NumberOpeningsSelector 
                             required
                             onChange={this.handleChangeKV}
-                                value={this.state.oldPost.openPositions}
+                            value={this.state.oldPost.openPositions}
                             {...this.formValidation.hasError("openPositions")}/>
                     </div>
                     <div className={classes.input2}>
                         <OpenReasonSelector 
                             required
                             onChange={this.handleChangeKV}
-                                value={this.state.oldPost.openingReasonId || this.state.oldPost.openingReasonComment}
-                            {...this.formValidation.hasError("openReason")}/>
+                            value={this.state.oldPost.openingReasonId || this.state.oldPost.openingReasonComment}
+                            {...this.formValidation.hasError("openingReasonId")}/>
                     </div>
                     <div className={classes.input2}>
                         <AddressInput
                             onChange={this.handleAddressChange.bind(this)}
-                                value={this.state.oldPost.address}
+                            value={this.state.oldPost.address}
                             {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
                         />
                     </div>
@@ -290,7 +292,9 @@ class PostAJob extends React.Component{
                     }
                 </div>
             case 1: // Benefits Page
-                return <BenefitsPage/>
+                return <BenefitsPage
+                    value={this.state.benefitIds}
+                    onChange={this.handleChangeKV}/>
             case 2: // Review Page
                 return <SubscriptionReview numberOfOpenings={this.state.openPositions} salary={this.state.salary}/>
             default:

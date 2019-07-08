@@ -59,8 +59,14 @@ export default class FormValidation {
                         errors[d.stateName] = d.errorText;
                 }
             }
-            if(errors[d.stateName] == null && d.or){ // Check if this should be or'd with another error check
-                delete errors[d.or]
+        })
+        this.errorText.forEach(d=>{
+            // Check if this should be xor'd with another error check, i.e. if one is valid they both are
+            if(d.xor){
+                if(errors[d.stateName] == null || errors[d.xor] == null){
+                    delete errors[d.stateName]
+                    delete errors[d.xor]
+                }
             }
         })
         this.parent.setState({errors:errors});

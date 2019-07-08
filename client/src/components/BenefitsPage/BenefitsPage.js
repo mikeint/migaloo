@@ -28,16 +28,35 @@ class BenefitsPage extends React.Component{
         super(props);
         // Initial state
         this.state = { 
-            benefits: []
+            benefitIds: props.value || [],
+            benefits: [],
+            onChange: props.onChange
         };
     }
     componentDidMount = () => {
         get('/api/autocomplete/benefits')
         .then((res)=>{
             if(res && res.data.success){
-                this.setState({benefits: res.data.benefits.map(d=>{d.checked = false; return d;})})
+                console.log("state", this.state.benefitIds)
+                this.setState({benefits: res.data.benefits.map(d=>{
+                    d.checked = this.state.benefitIds.some(benefitId=>d.benefitId===benefitId);
+                    return d;
+                })})
             }
         }).catch((e)=>{})
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+        if(this.state !== nextState)
+            return true
+        if(nextProps.value != null && this.state.benefitIds !== nextProps.value){
+            console.log("shouldComponentUpdate", this.state.benefitIds)
+            this.setState({benefitIds: nextProps.benefitIds, benefits: this.state.benefits.map(d=>{
+                d.checked = nextProps.benefitIds.some(benefitId=>d.benefitId===benefitId);
+                return d;
+            })})
+            return true
+        }
+        return false;
     }
     handleCheckboxChange = (id, group, c) => {
         const benefits = this.state.benefits;
@@ -48,7 +67,11 @@ class BenefitsPage extends React.Component{
                 d.checked = false;
             }
         })
-        this.setState({benefits:benefits});
+        const benefitIds = benefits.filter(d=>d.checked).map(d=>d.benefitId)
+        if(this.state.onChange){
+            this.state.onChange({ benefitIds: benefitIds })
+        }
+        this.setState({benefits:benefits, benefitIds:benefitIds});
     }
     render(){
         const { classes } = this.props;

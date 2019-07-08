@@ -37,8 +37,8 @@ class OpenReasonSelector extends React.Component{
             label: props.label || 'Reason for the Opening(s)',
             openReasonList: [{}],
             onChange: props.onChange,
-            openReason: (isNaN(props.value)?otherNumber:props.value) || -1,
-            openReasonExplain: (isNaN(props.value)?props.value:'') || '',
+            openingReasonId: props.value==null?-1:(isNaN(props.value)?otherNumber:props.value),
+            openingReasonComment: props.value==null?'':(isNaN(props.value)?props.value:''),
             required: props.required || false,
             error: false,
             helperText: ''
@@ -62,11 +62,11 @@ class OpenReasonSelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
-        if(nextProps.value != null && (this.state.openReason !== nextProps.value && this.state.openReasonExplain !== nextProps.value)){
+        if(nextProps.value != null && (this.state.openingReasonId !== nextProps.value && this.state.openingReasonComment !== nextProps.value)){
             if(isNaN(nextProps.value))
-                this.setState({ openReason: otherNumber, openReasonExplain: nextProps.value });
+                this.setState({ openingReasonId: otherNumber, openingReasonComment: nextProps.value });
             else
-                this.setState({ openReason: nextProps.value });
+                this.setState({ openingReasonId: nextProps.value });
         }
         return change;
     }
@@ -80,16 +80,16 @@ class OpenReasonSelector extends React.Component{
 
     handleChange = (e) => {
         if(this.state.onChange){
-            this.state.onChange({ openReason: e.target.value===otherNumber?null:e.target.value });
+            this.state.onChange({ openingReasonId: e.target.value===otherNumber?null:e.target.value });
         }
-        this.setState({ openReason: e.target.value });
+        this.setState({ openingReasonId: e.target.value });
     }
     handleChangeExplain = (e) => {
         const text = e.target.value.substring(0, 512);
         if(this.state.onChange){
-            this.state.onChange({ openReasonExplain: text });
+            this.state.onChange({ openingReasonComment: text });
         }
-        this.setState({ openReasonExplain: text });
+        this.setState({ openingReasonComment: text });
     }
     render(){   
         const { classes } = this.props;
@@ -100,12 +100,12 @@ class OpenReasonSelector extends React.Component{
                         {...(this.state.error?{error:true}:{})}>
                     <InputLabel htmlFor="open-reason-helper">{this.state.label}</InputLabel>
                     <Select
-                        value={this.state.openReason}
+                        value={this.state.openingReasonId}
                         className={classes.textField}
                         onChange={this.handleChange}
-                        input={<Input name="openReason" id="open-reason-helper" />}
+                        input={<Input name="openingReasonId" id="open-reason-helper" />}
                         inputProps={{
-                            id: 'openReason',
+                            id: 'openingReasonId',
                             ...(this.state.error?{className:classes.error}:{})
                         }}
                     >
@@ -121,12 +121,12 @@ class OpenReasonSelector extends React.Component{
                     </Select>
                     <FormHelperText className={classes.helperText}>{this.state.helperText}</FormHelperText>
                 </FormControl>
-                {this.state.openReason === otherNumber &&
+                {this.state.openingReasonId === otherNumber &&
                     <TextField
                         name="textReason"
-                        label={`Reason Explanation (${512-this.state.openReasonExplain.length} Left)`}
+                        label={`Reason Explanation (${512-this.state.openingReasonComment.length} Left)`}
                         className={classes.textArea}
-                        value={this.state.openReasonExplain}
+                        value={this.state.openingReasonComment}
                         multiline={true}
                         placeholder="A reason for the opening"
                         rowsMax={10}

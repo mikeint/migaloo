@@ -86,15 +86,16 @@ const errorText = [
         gt: -1
     },
     { 
-        stateName: "openReason", 
+        stateName: "openingReasonId", 
         errorText: "Please select the reason for the job opening",
         type: "number",
-        gt: -1
+        gt: -1,
+        xor: "openingReasonComment"
     },
     { 
-        stateName: "openReasonExplain", 
+        stateName: "openingReasonComment", 
         errorText: "Please select the reason for the job opening",
-        or: "openReason"
+        xor: "openingReasonId"
     },
     { 
         stateName: "interviewCount", 
@@ -131,14 +132,15 @@ class EmployerJobPost extends React.Component{
             experience:0,
             interviewCount:0,
             openPositions: 1,
-            openReason: -1,
-            openReasonExplain: '',
+            openingReasonId: -1,
+            openingReasonComment: '',
             address:{},
             companies: [],
             tagIds: [],
             errors: {},
             companyName: '',
             email: '',
+            benefitIds: [],
             activeStep: 0
         }
         setAuthToken(token)
@@ -216,7 +218,7 @@ class EmployerJobPost extends React.Component{
                         <JobTypeSelector
                             required
                             onChange={this.handleChangeKV}
-                            value={this.state.jobTypeId}
+                            value={this.state.jobType}
                             {...this.formValidation.hasError("jobType")}/>
                     </div>
                     {this.state.jobType !== -1 &&
@@ -259,7 +261,7 @@ class EmployerJobPost extends React.Component{
                             required
                             onChange={this.handleChangeKV}
                             value={this.state.openingReasonId || this.state.openingReasonComment}
-                            {...this.formValidation.hasError("openReason")}/>
+                            {...this.formValidation.hasError("openingReasonId")}/>
                     </div>
                     <div className={classes.input2}>
                         <AddressInput
@@ -270,7 +272,9 @@ class EmployerJobPost extends React.Component{
                     </div>
                 </div>
             case 1: // Benefits Page
-                return <BenefitsPage/>
+                return <BenefitsPage
+                    value={this.state.benefitIds}
+                    onChange={this.handleChangeKV}/>
             case 2: // Review Page
                 return <SubscriptionReview numberOfOpenings={this.state.openPositions} salary={this.state.salary}/>
             case 3: // Done Page
