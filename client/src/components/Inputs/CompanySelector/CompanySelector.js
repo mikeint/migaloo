@@ -32,7 +32,7 @@ class CompanySelector extends React.Component{
             label: props.label || 'Employer',
             companies: [{}],
             onChange: props.onChange,
-            company: props.value || -1,
+            companyId: props.value || -1,
             required: props.required || false,
             error: false,
             helperText: ''
@@ -56,8 +56,8 @@ class CompanySelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
-        if(nextProps.value != null && this.state.company !== nextProps.value){
-            this.setState({ company: nextProps.value });
+        if(nextProps.value != null && this.state.companyId !== nextProps.value){
+            this.setState({ companyId: nextProps.value });
         }
         return change;
     }
@@ -71,9 +71,9 @@ class CompanySelector extends React.Component{
 
     handleChange = (e) => {
         if(this.state.onChange){
-            this.state.onChange({ company: e.target.value })
+            this.state.onChange({ companyId: e.target.value })
         }
-        this.setState({ company: e.target.value })
+        this.setState({ companyId: e.target.value })
     }
     render(){   
         const { classes } = this.props;
@@ -84,7 +84,7 @@ class CompanySelector extends React.Component{
                         {...(this.state.error?{error:true}:{})}>
                     <InputLabel htmlFor="employer-helper">{this.state.label}</InputLabel>
                     <Select
-                        value={this.state.company}
+                        value={this.state.companyId}
                         onChange={this.handleChange}
                         input={<Input name="employer" id="employer-helper" />}
                         inputProps={{

@@ -66,7 +66,7 @@ const errorText = [
         errorText: "Please select a valid phone number"
     },
     { 
-        stateName: "jobType", 
+        stateName: "jobTypeId", 
         errorText: "Please select the job type",
         type: "number",
         gt: -1
@@ -208,7 +208,7 @@ class EditProfile extends React.Component{
                         classes={{root:classes.center}}
                         onChange={this.handleChangeKV}
                         value={this.state.jobTypeId}
-                        {...this.formValidation.hasError("jobType")}/> 
+                        {...this.formValidation.hasError("jobTypeId")}/> 
                      <div className={classes.center}>
                         <TextField
                             name="linkedInUrl"

@@ -26,7 +26,7 @@ describe('Candidate', function() {
                 "lastName": "Test",
                 "email": "tes1t@test.com",
                 "salary": 15,
-                "jobType": 2,
+                "jobTypeId": 2,
                 "experience": 3,
                 "commute": 10,
                 "address": {
@@ -83,7 +83,7 @@ describe('Candidate', function() {
                 "lastName": "TestEdit",
                 "email": "tes2t@test.com",
                 "salary": 14,
-                "jobType": 3,
+                "jobTypeId": 3,
                 "commute": 10,
                 "experience": 4,
                 "address": {
@@ -272,7 +272,7 @@ describe('Candidate Recruiter 2', function() {
                 "lastName": "Test2",
                 "email": "tes2t@test.com",
                 "salary": 15,
-                "jobType": 2,
+                "jobTypeId": 2,
                 "experience": 3,
                 "commute": 10,
                 "address": {

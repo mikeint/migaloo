@@ -34,7 +34,7 @@ class JobTypeSelector extends React.Component{
             multiple: multiple,
             jobTypeList: [],
             onChange: props.onChange,
-            jobType: props.value || (multiple?[]:-1),
+            jobTypeId: props.value || (multiple?[]:-1),
             required: props.required || false,
             error: false,
             helperText: ''
@@ -58,10 +58,10 @@ class JobTypeSelector extends React.Component{
         if(change){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
         }
-        if(nextProps.value != null && JSON.stringify(this.state.jobType) !== JSON.stringify(nextProps.value)){
+        if(nextProps.value != null && JSON.stringify(this.state.jobTypeId) !== JSON.stringify(nextProps.value)){
             if(this.state.multiple && !Array.isArray(nextProps.value))
                 throw new Error('Value property must be a list if the prop multiple is specified.')
-            this.setState({ jobType: nextProps.value });
+            this.setState({ jobTypeId: nextProps.value });
         }
         return change;
     }
@@ -75,9 +75,9 @@ class JobTypeSelector extends React.Component{
 
     handleChange = (e) => {
         if(this.state.onChange){
-            this.state.onChange({ jobType: e.target.value })
+            this.state.onChange({ jobTypeId: e.target.value })
         }
-        this.setState({ jobType: e.target.value })
+        this.setState({ jobTypeId: e.target.value })
     }
     render(){   
         const { classes } = this.props;
@@ -88,7 +88,7 @@ class JobTypeSelector extends React.Component{
                         {...(this.state.error?{error:true}:{})}>
                     <InputLabel htmlFor="job-type-helper">{this.state.label}</InputLabel>
                     <Select
-                        value={this.state.jobType}
+                        value={this.state.jobTypeId}
                         className={classes.textField}
                         onChange={this.handleChange}
                         multiple={this.state.multiple}

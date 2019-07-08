@@ -79,7 +79,7 @@ router.post('/create', passport.authentication,  (req, res) => {
                 return t.one(pgp.helpers.insert({companyId:body.company, title:body.title, requirements:body.requirements,
                         preliminary:preliminary, isVisible:!preliminary, experience:body.experience, salary:body.salary,
                         addressId:addr_ret.address_id, interviewCount:body.interviewCount, openingReasonId:body.openingReasonId,
-                        openingReasonComment:body.openingReasonComment, openPositions:body.openPositions, jobTypeId:body.jobType, planId:company_ret.plan_id}, jobPostInsert) + 'RETURNING post_id, address_id')
+                        openingReasonComment:body.openingReasonComment, openPositions:body.openPositions, jobTypeId:body.jobTypeId, planId:company_ret.plan_id}, jobPostInsert) + 'RETURNING post_id, address_id')
             })
             .then((post_ret)=>{
                 logger.info('Add new job posting', {tags:['job', 'new'], url:req.originalUrl, email:jwtPayload.email, ...body, preliminary: preliminary});
@@ -172,7 +172,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
                 const q3 = t.none(pgp.helpers.update({companyId:body.company, title:body.title, requirements:body.requirements,
                     preliminary:false, experience:body.experience, salary:body.salary,
                     addressId:addr_ret.address_id, interviewCount:body.interviewCount, openingReasonId:body.openingReasonId,
-                    openingReasonComment:body.openingReasonComment, openPositions:body.openPositions, jobTypeId:body.jobType}, jobPostUpdate, null, {emptyUpdate:true}) + ' WHERE post_id = ${postId}', {postId: body.postId})
+                    openingReasonComment:body.openingReasonComment, openPositions:body.openPositions, jobTypeId:body.jobTypeId}, jobPostUpdate, null, {emptyUpdate:true}) + ' WHERE post_id = ${postId}', {postId: body.postId})
                 return t.batch([q1, q2, q3])
             })
             .then(()=>{

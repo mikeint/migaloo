@@ -108,7 +108,7 @@ class AddCandidate extends React.Component{
             lastName:'',
             email:'',
             salary:0,
-            jobType:-1,
+            jobTypeId:-1,
             experience:0,
             address:{},
             tagIds:[],
@@ -246,13 +246,13 @@ class AddCandidate extends React.Component{
                                     <JobTypeSelector
                                         required
                                         onChange={this.handleChangeKV}
-                                        {...this.formValidation.hasError("jobType")}/>
+                                        {...this.formValidation.hasError("jobTypeId")}/>
                                 </div>
-                                {this.state.jobType !== -1 &&
+                                {this.state.jobTypeId !== -1 &&
                                     <div className={classes.SkillSearch}>
                                         <SkillSearch
                                             onChange={this.handleChangeKV}
-                                            jobType={this.state.jobType}
+                                            jobTypeId={this.state.jobTypeId}
                                             {...this.formValidation.hasError("tagIds")}/>
                                     </div>
                                 }

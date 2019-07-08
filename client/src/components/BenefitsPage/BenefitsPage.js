@@ -1,6 +1,6 @@
 import React from 'react';
 import {get} from '../../ApiCalls';  
-import {Table, Checkbox, TableBody, TableCell, TableRow} from '@material-ui/core';
+import {Table, Checkbox, TableBody, TableCell, TableRow, LinearProgress} from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';  
 
 const styles = theme => ({
@@ -75,6 +75,7 @@ class BenefitsPage extends React.Component{
         const { classes } = this.props;
         return (
             <React.Fragment>
+                {this.state.benefits.length === 0 ? <LinearProgress/>:
                 <Table className={classes.tableBody}>
                     <TableBody>
                         {
@@ -92,6 +93,7 @@ class BenefitsPage extends React.Component{
                         }
                     </TableBody>
                 </Table>
+                }
             </React.Fragment>
         )
     }

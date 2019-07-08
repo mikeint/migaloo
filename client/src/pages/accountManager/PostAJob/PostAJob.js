@@ -61,7 +61,7 @@ const styles = theme => ({
 })
 const errorText = [
     {
-        stateName: "company",
+        stateName: "companyId",
         errorText: "Please select a company for the job posting",
         type: "number",
         gt: -1
@@ -83,7 +83,7 @@ const errorText = [
         errorText: "Please select the experience required"
     },
     { 
-        stateName: "jobType", 
+        stateName: "jobTypeId", 
         errorText: "Please select the job type",
         type: "number",
         gt: -1
@@ -121,28 +121,27 @@ const errorText = [
         errorText: "Please select an address for the company"
     }
 ]
-const steps = ['Job Information', 'Benefits', 'Review']
+const steps = ['Job Information', 'Benefits']
 class PostAJob extends React.Component{
     constructor(props) {
         super(props);
         this.state = {
-            title:'',
-            requirements:'',
-            company:-1,
+            title:null,
+            requirements:null,
             salary:0,
-            jobType:-1,
+            jobTypeId:null,
             experience:0,
             interviewCount:0,
             openPositions: 1,
-            openingReasonId: -1,
-            address:{},
+            openingReasonId: null,
+            openingReasonComment: null,
+            address:null,
+            tagIds: null,
+            benefitIds: null,
             redirect: false,
-            tagIds: [],
             errors: {},
             postId: props.match.params.postId,
-            oldPost:{},
             formIsFilledOut: false,
-            benefitIds: [],
             activeStep: 0
         }
         this.Auth = new AuthFunctions();
@@ -155,7 +154,7 @@ class PostAJob extends React.Component{
             get('/api/employerPostings/get/'+this.state.postId)
             .then((res)=>{
                 if(res == null || !res.data.success || res.data.jobPosts.length === 0) return
-                this.setState({ oldPost: res.data.jobPosts[0], jobType: this.state.oldPost.jobType })
+                this.setState({ ...res.data.jobPosts[0] })
             }).catch(errors => 
                 console.log(errors)
             )
@@ -204,37 +203,37 @@ class PostAJob extends React.Component{
                         <div className={classes.input2}>
                             <CompanySelector
                                 required
-                                onChange={(company)=>this.setState(company, this.formValidation.shouldRevalidate)}
-                                value={this.state.oldPost.companyId}
-                                {...this.formValidation.hasError("company")}/>
+                                onChange={(companyId)=>this.setState(companyId, this.formValidation.shouldRevalidate)}
+                                value={this.state.companyId}
+                                {...this.formValidation.hasError("companyId")}/>
                         </div>
                         <div className={classes.input2}>  
                             <TitleSelector
                                 required
                                 onChange={this.handleChangeKV}
-                                value={this.state.oldPost.title}
+                                value={this.state.title}
                                 {...this.formValidation.hasError("title")}/>
                     </div>  
                     <div className={classes.input2}>
                         <RequirementsSelector
                             required
                             onChange={this.handleChangeKV}
-                            value={this.state.oldPost.requirements}
+                            value={this.state.requirements}
                             {...this.formValidation.hasError("requirements")}/>
                     </div>  
                     <div className={classes.input2}>
                         <JobTypeSelector
                             required
                             onChange={this.handleChangeKV}
-                            value={this.state.oldPost.jobType}
-                            {...this.formValidation.hasError("jobType")}/>
+                            value={this.state.jobTypeId}
+                            {...this.formValidation.hasError("jobTypeId")}/>
                     </div>
-                    {this.state.jobType !== -1 &&
+                    {this.state.jobTypeId !== -1 && this.state.jobTypeId != null &&
                         <div className={classes.SkillSearch}>
                             <SkillSearch
                                 onChange={this.handleChangeKV}
-                                jobType={this.state.jobType}
-                                value={this.state.oldPost.tagIds}
+                                jobTypeId={this.state.jobTypeId}
+                                value={this.state.tagIds}
                                 {...this.formValidation.hasError("tagIds")}/>
                         </div>
                     }
@@ -242,43 +241,43 @@ class PostAJob extends React.Component{
                         <SalarySelector 
                             required
                             onChange={this.handleChangeKV}
-                            value={this.state.oldPost.salary}
+                            value={this.state.salary}
                             {...this.formValidation.hasError("salary")}/>
                             &nbsp;&nbsp;&nbsp;
                         <ExperienceSelector 
                             required
                             onChange={this.handleChangeKV}
-                            value={this.state.oldPost.experience}
+                            value={this.state.experience}
                             {...this.formValidation.hasError("experience")}/>
                     </div>
                     <div className={classes.input2}>
                         <InterviewCountSelector 
                             required
                             onChange={this.handleChangeKV}
-                            value={this.state.oldPost.interviewCount}
+                            value={this.state.interviewCount}
                             {...this.formValidation.hasError("interviewCount")}/>
                             &nbsp;&nbsp;&nbsp;
                         <NumberOpeningsSelector 
                             required
                             onChange={this.handleChangeKV}
-                            value={this.state.oldPost.openPositions}
+                            value={this.state.openPositions}
                             {...this.formValidation.hasError("openPositions")}/>
                     </div>
                     <div className={classes.input2}>
                         <OpenReasonSelector 
                             required
                             onChange={this.handleChangeKV}
-                            value={this.state.oldPost.openingReasonId || this.state.oldPost.openingReasonComment}
+                            value={this.state.openingReasonId || this.state.openingReasonComment}
                             {...this.formValidation.hasError("openingReasonId")}/>
                     </div>
                     <div className={classes.input2}>
                         <AddressInput
                             onChange={this.handleAddressChange.bind(this)}
-                            value={this.state.oldPost.address}
+                            value={this.state.address}
                             {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
                         />
                     </div>
-                    {(this.state.oldPost.postId == null || this.state.oldPost.preliminary) &&  
+                    {(this.state.postId == null || this.state.preliminary) &&  
                             <FormControlLabel 
                                 control={ 
                                     <Checkbox 
@@ -295,8 +294,6 @@ class PostAJob extends React.Component{
                 return <BenefitsPage
                     value={this.state.benefitIds}
                     onChange={this.handleChangeKV}/>
-            case 2: // Review Page
-                return <SubscriptionReview numberOfOpenings={this.state.openPositions} salary={this.state.salary}/>
             default:
                 return <div>Page does not exist</div>
         }
@@ -332,7 +329,7 @@ class PostAJob extends React.Component{
                         disabled={this.state.activeStep === 0}
                         onClick={this.back}>Back</Button>
                         {
-                            this.state.activeStep===2?
+                            this.state.activeStep===1?
                             <Button 
                             color="primary"
                             variant="contained"

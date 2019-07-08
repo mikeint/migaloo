@@ -80,7 +80,7 @@ const errorText = [
         errorText: "Please select the experience required" 
     },
     { 
-        stateName: "jobType", 
+        stateName: "jobTypeId", 
         errorText: "Please select the job type",
         type: "number",
         gt: -1
@@ -125,23 +125,23 @@ class EmployerJobPost extends React.Component{
         const token = props.match.params.token
         this.state = {
             token: token,
-            title:'',
-            requirements:'',
+            title:null,
+            requirements:null,
             salary:0,
-            jobType:-1,
-            experience:0,
+            jobTypeId:null,
+            experience:0, 
             interviewCount:0,
             openPositions: 1,
-            openingReasonId: -1,
-            openingReasonComment: '',
-            address:{},
+            openingReasonId: null,
+            openingReasonComment: null,
+            address:null,
+            tagIds: null,
+            benefitIds: null,
             companies: [],
-            tagIds: [],
             errors: {},
             companyName: '',
             accountManagers: [],
             email: '',
-            benefitIds: [],
             activeStep: 0
         }
         setAuthToken(token)
@@ -230,14 +230,14 @@ class EmployerJobPost extends React.Component{
                         <JobTypeSelector
                             required
                             onChange={this.handleChangeKV}
-                            value={this.state.jobType}
-                            {...this.formValidation.hasError("jobType")}/>
+                            value={this.state.jobTypeId}
+                            {...this.formValidation.hasError("jobTypeId")}/>
                     </div>
-                    {this.state.jobType !== -1 &&
+                    {this.state.jobTypeId !== -1 && this.state.jobTypeId != null &&
                         <div className={classes.SkillSearch}>
                             <SkillSearch
                                 onChange={this.handleChangeKV}
-                                jobType={this.state.jobType}
+                                jobTypeId={this.state.jobTypeId}
                                 value={this.state.tagIds}
                                 {...this.formValidation.hasError("tagIds")}/>
                         </div>

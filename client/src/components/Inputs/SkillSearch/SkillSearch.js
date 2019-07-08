@@ -1,9 +1,9 @@
 import React from 'react';
 import AuthFunctions from '../../../AuthFunctions'; 
 import debounce from 'lodash/debounce';
-import {get} from '../../../ApiCalls';  
+import {get, cancel} from '../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';
-import { MenuItem, Input, FormControl, FormHelperText, Chip } from '@material-ui/core';
+import { MenuItem, TextField, FormControl, Chip } from '@material-ui/core';
   
 const styles = theme => ({
     chip: {
@@ -30,52 +30,69 @@ class SkillSearch extends React.Component{
             tags: props.value || [],
             potentialTagList:[],
             searching: false,
-            jobType: props.jobType,
+            jobTypeId: props.jobTypeId,
             textValue: '',
             onChange: props.onChange,
             error: false,
             helperText: ''
         }
         this.Auth = new AuthFunctions();
-        
     }
     componentDidMount() {
+        if(this.state.tags.length > 0)
+            this.tagByIds()
+    }
+    componentWillUnmount() {
+        cancel()
     }
     changed = () => {
         if(this.state.onChange)
-            this.state.onChange(this.state.tags.map(t=>t.tagId));
+            this.state.onChange({tagIds:this.state.tags.map(t=>t.tagId)});
     }
     shouldComponentUpdate(nextProps, nextState) {
+        var change = false
         if(this.state !== nextState)
-            return true;
+            change = true;
         if(this.state.error !== nextProps.error || this.state.helperText !== nextProps.helperText){
             this.setState({ error: nextProps.error, helperText: nextProps.helperText });
-            return true;
+            change = true;
         }
-        if(nextProps.value != null && this.state.tags !== nextProps.value){
-            this.setState({ tags: nextProps.value });
-            return true;
+        if(nextProps.value != null && this.state.tags.length === 0 && this.state.tags !== nextProps.value){
+            this.setState({ tags: nextProps.value, jobTypeId: nextProps.jobTypeId }, this.tagByIds);
+            change = true;
         }
-        if(nextProps.jobType != null && this.state.jobType !== nextProps.jobType){
-            this.setState({ jobType: nextProps.jobType });
-            return true;
+        if(nextProps.jobTypeId != null && this.state.jobTypeId !== nextProps.jobTypeId){
+            this.setState({ jobTypeId: nextProps.jobTypeId });
+            change = true;
         }
-        return false;
+        return change;
     }
-
+    
+    tagByIds = () => {
+        const ids = this.state.tags.filter(d=>!isNaN(d)).join(',')
+        get(`/api/autocomplete/tagById/${ids}`)
+        .then((res) => { 
+            if(res && res.data.success) {
+                this.setState({tags: this.state.tags.map(d=>res.data.tagList.find(d2=>d2.tagId === d))})
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        })
+    }
     queryForTags = debounce((searchString) => {
         if(searchString.trim().length > 0){
             const lowerSearchString = searchString.toLowerCase()
-            get(`/api/autocomplete/tagByType/${this.state.jobType}/${lowerSearchString}`)
+            get(`/api/autocomplete/tagByType/${this.state.jobTypeId}/${lowerSearchString}`)
             .then((res) => { 
                 if(res && res.data.success) {
-                    if(!res.data.tagList.find(tag=>
-                        tag.tagName.toLowerCase() === lowerSearchString
-                    )){
-                        res.data.tagList.unshift({tagName:searchString,
-                            tagCount: 0,
-                            tagId:-1 })
-                    }
+                    // if(!res.data.tagList.find(tag=>
+                    //     tag.tagName.toLowerCase() === lowerSearchString
+                    // )){
+                    //     res.data.tagList.unshift({tagName:searchString,
+                    //         tagCount: 0,
+                    //         tagId:-1 })
+                    // }
                     this.setState({potentialTagList: res.data.tagList, searching: false})
                 }else
                     this.setState({searching: false})
@@ -125,15 +142,13 @@ class SkillSearch extends React.Component{
                                 />
                             )}
                         </div>
-                        <Input
-                            id="skills-search-helper"
+                        <TextField
                             className={classes.textField}
                             placeholder="Ex. Leadership, Agile, Project Management"
                             value={this.state.textValue}
                             onChange={this.textChange}
                             {...(this.state.error?{error:true, helperText:this.state.helperText}:{})}
                         />
-                        <FormHelperText>{this.state.helperText}</FormHelperText>
                         {this.state.potentialTagList.length > 0 &&
                             <div className={classes.autoCompleteBox}>
                                 {!this.state.searching && this.state.potentialTagList.map((tag, i)=>

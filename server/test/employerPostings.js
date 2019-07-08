@@ -35,7 +35,7 @@ describe('Employer Postings', function() {
                 openingReasonId:1,
                 openingReasonComment:null, 
                 openPositions:1, 
-                jobType:1,
+                jobTypeId:1,
                 autoAddRecruiters: false,
                 tagIds: [1,2,3,4],
                 address: {
@@ -94,7 +94,7 @@ describe('Employer Postings', function() {
                 openingReasonId:1,
                 openingReasonComment:null, 
                 openPositions:1, 
-                jobType:1,
+                jobTypeId:1,
                 autoAddRecruiters: false,
                 tagIds: [1,2,3,4],
                 address: {

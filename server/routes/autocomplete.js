@@ -218,6 +218,23 @@ router.get('/tag', passport.authentication, (req, res) => {
         res.status(500).json({success:false, error:err})
     });
 });
+router.get('/tagById/:ids', passport.authentication, (req, res) => {
+    if(req.params.ids == null){
+        res.json({success:true, tagList: []});
+    }
+    const ids = req.params.ids.split(",")
+    postgresdb.any('SELECT t.tag_name as "tagName", t.tag_id as "tagId", tt.tag_type_name as "tagTypeName", 0 as "tagCount" \
+            FROM tags t \
+            INNER JOIN tag_type tt ON tt.tag_type_id = t.tag_type_id \
+            WHERE tag_id in (${ids:csv})', {ids:ids})
+    .then(data => {
+        res.json({success:true, tagList: data});
+    })
+    .catch(err => {
+        logger.error('Autocomplete Call Failed', {tags:['sql'], url:req.originalUrl, userId:req.body.jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+});
 
 /**
  * Get tag by autocomplete
