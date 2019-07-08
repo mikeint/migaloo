@@ -4,7 +4,6 @@ process.env.NODE_ENV = 'mocha'
 
 describe('Plan', function() {
     let server 
-    let eventMessageId
     this.timeout(15000);
     before( done => {
         delete require.cache[require.resolve('../server')];

@@ -258,5 +258,20 @@ describe('Company', function() {
             })
         });
     });
+    describe('Remove Company', () => {
+        it('check if returns ok', () => {
+            return post(`/api/company/deleteCompany`, {
+                companyId:companyId
+            }, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
     
 });

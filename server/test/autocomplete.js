@@ -101,6 +101,32 @@ describe('AutoComplete', function() {
                 }
             })
         });
+        it('check list by id', () => {
+            return get(`/api/autocomplete/tagById/1`, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    assert.notEqual(res.tagList, null)
+                    assert.strictEqual(res.tagList.length, 1)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('check list by id multiple', () => {
+            return get(`/api/autocomplete/tagById/1,2,3`, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    assert.notEqual(res.tagList, null)
+                    assert.strictEqual(res.tagList.length, 3)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
         it('check list by type', () => {
             return get(`/api/autocomplete/tagByType/1`, process.env.recruiterToken).then((res)=>{
                 try{

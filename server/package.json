@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "server": "nodemon server.js",
-    "test": "mocha"
+    "test": "nyc mocha"
   },
   "author": "Michael Sansone",
   "license": "ISC",
@@ -36,6 +36,7 @@
   "devDependencies": {
     "cors": "^2.8.5",
     "mocha": "^6.1.4",
-    "nodemon": "^1.18.7"
+    "nodemon": "^1.18.7",
+    "nyc": "^14.1.1"
   }
 }

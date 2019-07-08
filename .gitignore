@@ -29,3 +29,4 @@ yarn-error.log*
 
 server/public/profile_image/
 server/public/resumes/
+server/\.nyc_output/

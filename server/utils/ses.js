@@ -1,5 +1,6 @@
 const aws = require('aws-sdk');
 const key = require('../config/keys');
+const NODE_ENV = process.env.NODE_ENV || 'dev';
 aws.config.update(
   {
       accessKeyId:key.awsAccessKey,
@@ -25,7 +26,7 @@ function sendEmailVerification(args){
                 "Template":"VerifyEmail",
                 "Destination":{
                     "ToAddresses":[
-                        args.email
+                        NODE_ENV==='production'?args.email:'development@migaloo.io'
                     ]
                 },
                 "TemplateData":JSON.stringify({ 
@@ -135,7 +136,7 @@ function resetPasswordEmail(args){
                 "Template":"ResetPasswordEmail",
                 "Destination":{
                     "ToAddresses":[
-                        args.email
+                        NODE_ENV==='production'?args.email:'development@migaloo.io'
                     ]
                 },
                 "TemplateData":JSON.stringify({ 
