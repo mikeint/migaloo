@@ -8,7 +8,15 @@ aws.config.update(
       region:"us-east-1"
   }
 );
-const ses = new aws.SES();
+var ses
+if(NODE_ENV === 'mocha'){
+    ses = {
+        sendTemplatedEmail: (p, func) =>{
+            func(null, {success:true})
+        }
+    }
+}else
+    ses = new aws.SES();
 const passport = require('../config/passport');
 
 function sendEmailVerification(args){
