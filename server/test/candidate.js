@@ -155,6 +155,30 @@ describe('Candidate', function() {
             })
         });
     });
+    describe('Upload pdf', () => {
+        it('should return status 200', () => {
+            return imageUpload(`/api/resume/upload/${candidateId}`, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.strictEqual(res.statusCode, 200)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('should return success', () => {
+            return get(`/api/resume/view/${candidateId}`, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
     
     describe('List', () => {
         it('check can list', () => {
