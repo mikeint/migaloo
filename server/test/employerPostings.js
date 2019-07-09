@@ -5,6 +5,8 @@ process.env.NODE_ENV = 'mocha'
 describe('Employer Postings', function() {
     let server 
     let postId
+    let candidateId
+    let recruiterId
     this.timeout(15000);
     before( done => {
         delete require.cache[require.resolve('../server')];
@@ -150,6 +152,43 @@ describe('Employer Postings', function() {
                 }
             })
         });
+        it('check that can get', () => {
+            return get(`/api/employerPostings/get/${postId}`, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    assert.notEqual(res.jobPosts, null)
+                    assert.notEqual(res.jobPosts.length, 0)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
+    describe('Delist Posts', () => {
+        it('check that returns sucess', () => {
+            return post(`/api/employerPostings/hide`, {postId:postId}, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('check that returns sucess', () => {
+            return post(`/api/employerPostings/remove`, {postId:postId}, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
     });
     describe('List Recruiters', () => {
         it('check that can list', () => {
@@ -168,11 +207,98 @@ describe('Employer Postings', function() {
     });
     describe('List New Recruiters', () => {
         it('check that can list', () => {
-            return get(`/api/employerPostings/listNewRecruiters/${postId}`, process.env.accountManagerToken).then((res)=>{
+            return get(`/api/employerPostings/listNewRecruiters/${1}`, process.env.accountManagerToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     assert.notEqual(res.recruiters, null)
                     assert.notEqual(res.recruiters.length, 0)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
+    describe('List Candidates', () => {
+        it('check that can list', () => {
+            return get(`/api/employerPostings/listCandidates/1`, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    assert.notEqual(res.candidateList, null)
+                    assert.notEqual(res.candidateList.length, 0)
+                    candidateId = res.candidateList[0].candidateId
+                    recruiterId = res.candidateList[0].recruiterId
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
+    describe('Set Read', () => {
+        it('check returns success', () => {
+            return post(`/api/employerPostings/setRead/1/${candidateId}/${recruiterId}`, {}, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
+    describe('Set Accepted', () => {
+        it('check returns success', () => {
+            return post(`/api/employerPostings/setAccepted/migaloo/1/${candidateId}/${recruiterId}`, {
+                accepted: true
+            }, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('check returns success', () => {
+            return post(`/api/employerPostings/setAccepted/employer/1/${candidateId}/${recruiterId}`, {
+                accepted: true
+            }, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('check returns success', () => {
+            return post(`/api/employerPostings/setAccepted/job/1/${candidateId}/${recruiterId}`, {
+                accepted: true,
+                salary: 50000
+            }, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('check returns success', () => {
+            return post(`/api/employerPostings/setAccepted/migaloo/1/${candidateId}/${recruiterId}`, {
+                accepted: false,
+                denialReasonId: 1,
+                denialComment: 'test',
+            }, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)

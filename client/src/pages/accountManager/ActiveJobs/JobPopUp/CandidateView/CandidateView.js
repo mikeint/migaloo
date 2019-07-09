@@ -79,7 +79,7 @@ class CandidateView extends React.Component{
             Object.assign(newRowObj, this.state.candidate);
             newRowObj.hasSeenPost = true;
             this.setState({candidate:newRowObj});
-            post(`/api/employerPostings/setRead/${this.props.job.postId}/${this.props.obj.candidateId}`, {})
+            post(`/api/employerPostings/setRead/${this.props.job.postId}/${this.props.obj.candidateId}/${this.props.obj.recruiterId}`, {})
             .then((res)=>{
 
             }).catch(errors => 

@@ -301,7 +301,7 @@ function postListing(req, res){
 }
 /**
  * List all recruiters assigned to job postings
- * @route POST api/employerPostings/listRecruiters
+ * @route GET api/employerPostings/listRecruiters
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -323,7 +323,7 @@ function listRecruiters(req, res){
         return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.any('\
-        SELECT j.post_id, r.first_name, r.last_name, coalesce(rc.candidate_count, 0) as candidate_count, \
+        SELECT r.*, j.post_id, coalesce(rc.candidate_count, 0) as candidate_count, \
             j.response, j.recruiter_created_on \
         FROM job_posting j \
         LEFT JOIN ( \
@@ -386,17 +386,18 @@ function listNewRecruiters(req, res){
 
 /**
  * Set posting to be considered read
- * @route POST api/employerPostings/setRead/:postId/:candidateId
+ * @route POST api/employerPostings/setRead/:postId/:candidateId/:recruiterId
  * @group postings - Job postings for employers
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res) => {
+router.post('/setRead/:postId/:candidateId/:recruiterId', passport.authentication,  (req, res) => {
     var jwtPayload = req.body.jwtPayload;
     var postId = req.params.postId
     var candidateId = req.params.candidateId
+    var recruiterId = req.params.recruiterId
     if(jwtPayload.userType != 2){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
@@ -412,6 +413,11 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
+    if(recruiterId == null){
+        const errorMessage = "Missing Recruiter Id"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
     postgresdb.any('\
         SELECT 1 \
         FROM job_posting jp \
@@ -419,7 +425,9 @@ router.post('/setRead/:postId/:candidateId', passport.authentication,  (req, res
         WHERE ec.company_contact_id = ${userId} AND jp.active AND jp.post_id = ${postId} \
         LIMIT 1', {postId:postId, userId:jwtPayload.id})
     .then(()=>{
-        return postgresdb.none('UPDATE candidate_posting SET has_seen_post=true  WHERE candidate_id = $1 AND post_id = $2', [candidateId, postId])
+        return postgresdb.none('UPDATE candidate_posting SET has_seen_post=true \
+        WHERE candidate_id = ${candidateId} AND post_id = ${postId} AND recruiter_id = ${recruiterId}',
+        {candidateId:candidateId, postId:postId, recruiterId:recruiterId})
         .then((data) => {
             res.json({success:true})
         })
@@ -605,13 +613,13 @@ router.post('/hide', passport.authentication,  (req, res) => {
     }
     postgresdb.one('\
         SELECT jp.company_id \
-        FROM job_posting jp \
+        FROM job_posting_all jp \
         INNER JOIN company_contact ec ON jp.company_id = ec.company_id \
         WHERE ec.company_contact_id = ${userId} AND jp.active AND jp.post_id = ${postId} \
         LIMIT 1', {postId:postId, userId:jwtPayload.id})
     .then(()=>{
         // TODO: Return all coins that have not been accepted or rejected
-        return postgresdb.none('UPDATE job_posting SET is_valid=false WHERE post_id = $1', [postId])
+        return postgresdb.none('UPDATE job_posting_all SET is_visible=false WHERE post_id = $1', [postId])
         .then((data) => {
             res.json({success:true})
         })
@@ -645,13 +653,13 @@ router.post('/remove', passport.authentication,  (req, res) => {
     }
     postgresdb.one('\
         SELECT jp.company_id \
-        FROM job_posting jp \
+        FROM job_posting_all jp \
         INNER JOIN company_contact ec ON jp.company_id = ec.company_id \
         WHERE ec.company_contact_id = ${userId} AND jp.active AND jp.post_id = ${postId} \
         LIMIT 1', {postId:postId, userId:jwtPayload.id})
     .then(()=>{
         // TODO: Return all coins that have not been accepted or rejected
-        return postgresdb.none('UPDATE job_posting SET active=false WHERE post_id = $1', [postId])
+        return postgresdb.none('UPDATE job_posting_all SET active=false WHERE post_id = $1', [postId])
         .then((data) => {
             res.json({success:true})
         })
@@ -709,53 +717,6 @@ router.get('/listCandidates/:postId', passport.authentication,  (req, res) => {
             return m
         })
         res.json({success:true, candidateList:data})
-    })
-    .catch(err => {
-        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
-        res.status(500).json({success:false, error:err})
-    });
-});
-/**
- * List recruiters assigned to a job posting
- * @route POST api/employerPostings/listRecruiters/:postId
- * @group postings - Job postings for employers
- * @param {Object} body.optional
- * @returns {object} 200 - Success Message
- * @returns {Error}  default - Unexpected error
- * @access Private
- */
-router.get('/listRecruiters/:postId', passport.authentication,  (req, res) => {
-    var jwtPayload = req.body.jwtPayload;
-    var postId = req.params.postId
-    if(jwtPayload.userType != 2){
-        const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    if(postId == null){
-        const errorMessage = "Missing postId"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-
-    postgresdb.any(' \
-        SELECT r.recruiter_id, r.first_name, r.last_name, r.phone_number, rl.email, j.recruiter_created_on \
-        FROM job_posting j \
-        INNER JOIN company_contact ec ON j.company_id = ec.company_id \
-        INNER JOIN recruiter r ON r.recruiter_id = j.recruiter_id \
-        INNER JOIN login rl ON r.recruiter_id = rl.user_id \
-        WHERE j.post_id = ${postId} AND ec.company_contact_id = ${userId} AND j.active \
-        ORDER BY cp.created_on DESC', {postId:postId, userId:jwtPayload.id})
-    .then((data) => {
-        // Marshal data
-        data = data.map(db.camelizeFields).map(m=>{
-            var timestamp = moment(m.recruiterCreatedOn);
-            var ms = timestamp.diff(moment());
-            m.recruiterCreated = moment.duration(ms).humanize() + " ago";
-            m.recruiterCreatedOn = timestamp.format("x");
-            return m
-        })
-        res.json({success:true, recruiterList:data})
     })
     .catch(err => {
         logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

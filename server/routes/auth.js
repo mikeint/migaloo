@@ -256,8 +256,18 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
  * @returns {Error}  default - Unexpected error
  * @access Public
  */
-router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt token for employer to join
     var body = req.body;
+    if (body.token == null) {
+        const errorMessage = "Missing Parameter token"
+        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage, errors:errors});
+        return res.status(400).json({success:false, error:errorMessage});
+    }
+    if (body.password == null) {
+        const errorMessage = "Missing Parameter password"
+        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage, errors:errors});
+        return res.status(400).json({success:false, error:errorMessage});
+    }
     passport.decodeToken(body.token).then(payload=>{
         bcrypt.hash(body.password, 10).then((hash)=>{
             postgresdb.none('UPDATE login SET passwordhash=${password} WHERE lower(email) = ${email}',
@@ -279,6 +289,11 @@ router.post('/resetPassword', (req, res) => { // Todo recieve encrypted jwt toek
  * @access Public
  */
 router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt toekn for employer to join
+    if (req.body.email == null) {
+        const errorMessage = "Missing Parameter email"
+        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage, errors:errors});
+        return res.status(400).json({success:false, error:errorMessage});
+    }
     const email = req.body.email.trim();
     const ip = req.connection.remoteAddress;
     return postgresdb.one('\
@@ -310,6 +325,11 @@ router.post('/sendPasswordReset', (req, res) => { // Todo recieve encrypted jwt 
  */
 router.post('/verifyEmail', /*passport.authentication,*/ (req, res) => {
     var body = req.body;
+    if (body.token == null) {
+        const errorMessage = "Missing Parameter token"
+        logger.error('Route Params Mismatch', {tags:['register', 'validation'], url:req.originalUrl, body: req.body, params: req.params, error:errorMessage, errors:errors});
+        return res.status(400).json({success:false, error:errorMessage});
+    }
     const ip = req.connection.remoteAddress;
     passport.decodeToken(body.token).then(payload=>{
         const userId = payload.userId;
