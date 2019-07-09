@@ -1,5 +1,5 @@
 const assert = require('assert');
-const {get, post} = require('./http');
+const {get, post, imageUpload} = require('./http');
 process.env.NODE_ENV = 'mocha'
 
 describe('Account Manager', function() {
@@ -38,6 +38,30 @@ describe('Account Manager', function() {
         });
         it('should return ok', () => {
             return post(`/api/accountManager/setProfile`, profile, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
+    describe('Upload image', () => {
+        it('should return status 200', () => {
+            return imageUpload(`/api/accountManager/uploadImage`, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.strictEqual(res.statusCode, 200)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('should return success', () => {
+            return get(`/api/profileImage/view/small`, process.env.accountManagerToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     return Promise.resolve()

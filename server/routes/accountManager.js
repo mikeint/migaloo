@@ -38,7 +38,7 @@ const generateImageFileNameAndValidation = (req, res, next) => {
  */
 router.post('/uploadImage', passport.authentication, generateImageFileNameAndValidation, upload.any('filepond'), (req, res) => {
     var jwtPayload = req.params.jwtPayload;
-    postgresdb.none('UPDATE employer SET image_id=$1 WHERE company_id = $2', [req.params.finalFileName, jwtPayload.id])
+    postgresdb.none('UPDATE account_manager SET image_id=$1 WHERE account_manager_id = $2', [req.params.finalFileName, jwtPayload.id])
     .then((data) => {
         logger.info('Upload Image', {tags:['image', 's3'], userId:jwtPayload.id});
         res.json({success:true, image_id:req.params.finalFileName})

@@ -1,4 +1,7 @@
 const http = require('http');
+const FormData = require('form-data');
+const fs = require('fs');
+
 process.env.NODE_ENV = 'mocha'
 const get = (path, token) =>{
     return new Promise((resolve, reject)=>{
@@ -60,4 +63,35 @@ const post = (path, body, token) =>{
         req.end();
     })
 }
-module.exports = {get, post}
+const imageUpload = (path, token) =>{
+    return new Promise((resolve, reject)=>{
+        const readStream = fs.createReadStream('./test/image.png');
+         
+        const form = new FormData();
+        form.append('photo', readStream);
+
+        let rawData = '';
+        const req = http.request({
+            hostname: 'localhost',
+            port: 5000,
+            method: 'POST',
+            path: path,
+            headers: {
+                ...{'Authorization': token != null ? token : null},
+                ...form.getHeaders()
+            }
+        }, (res)=>{
+            res.on('data', (chunk) => { rawData += chunk; });
+        })
+        form.pipe(req);
+        req.on('response', function(res) {
+            resolve({statusCode:res.statusCode })
+        });
+        
+        req.on('error', (e) => {
+            console.error(`Got error: ${e.message}`);
+            reject(e.message)
+        });
+    })
+}
+module.exports = {get, post, imageUpload}

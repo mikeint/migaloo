@@ -1,5 +1,5 @@
 const assert = require('assert');
-const {get, post} = require('./http');
+const {get, post, imageUpload} = require('./http');
 process.env.NODE_ENV = 'mocha'
 
 describe('Company', function() {
@@ -62,6 +62,30 @@ describe('Company', function() {
                     assert.notEqual(res.companies, null)
                     assert.strictEqual(res.companies[0].companyName, 'Test Company')
                     assert.strictEqual(res.companies[0].address.addressLine1, 'Tremont St')
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
+    describe('Upload image', () => {
+        it('should return status 200', () => {
+            return imageUpload(`/api/company/uploadImage/${companyId}`, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.strictEqual(res.statusCode, 200)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('should return success', () => {
+            return get(`/api/profileImage/view/4/${companyId}/small`, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)

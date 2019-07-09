@@ -1,5 +1,5 @@
 const assert = require('assert');
-const {get, post} = require('./http');
+const {get, post, imageUpload} = require('./http');
 process.env.NODE_ENV = 'mocha'
 
 describe('Candidate', function() {
@@ -123,6 +123,30 @@ describe('Candidate', function() {
                     assert.strictEqual(res.candidateList[0].email, 'tes2t@test.com')
                     assert.strictEqual(res.candidateList[0].url, 'test-edit.com')
                     assert.deepEqual(res.candidateList[0].tagIds, [3, 4, 5])
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
+    describe('Upload image', () => {
+        it('should return status 200', () => {
+            return imageUpload(`/api/candidate/uploadImage/${candidateId}`, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.strictEqual(res.statusCode, 200)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('should return success', () => {
+            return get(`/api/profileImage/view/5/${candidateId}/small`, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)

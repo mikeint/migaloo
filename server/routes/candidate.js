@@ -16,6 +16,43 @@ const benefitsInsertHelper = new pgp.helpers.ColumnSet(['candidate_id', 'benefit
 const candidateFields = ['first_name', 'last_name', 'experience', 'salary', 'relocatable', 'commute', 'url', 'email', 'address_id'];
 const candidateInsert = new pgp.helpers.ColumnSet(candidateFields.map(camelColumnConfig), {table: 'candidate'});
 const candidateUpdate = new pgp.helpers.ColumnSet(['?candidate_id', ...candidateFields.map(camelColumnConfig)], {table: 'candidate'});
+const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
+const upload = generateUploadMiddleware('profile_image/')
+
+const generateImageFileNameAndValidation = (req, res, next) => {
+    // Validate this candidate is with this recruiter
+    var jwtPayload = req.body.jwtPayload;
+    if(jwtPayload.userType != 1){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    var now = Date.now()
+    req.params.fileName = jwtPayload.id+"_image_"+now.toString()
+    req.params.jwtPayload = jwtPayload
+    next()
+}
+
+/**
+ * Upload recruiter profile image
+ * @route GET api/employer/uploadImage
+ * @group employer - Employer
+ * @param {Object} body.optional
+ * @returns {object} 200 - A map of profile information
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/uploadImage/:candidateId', passport.authentication, generateImageFileNameAndValidation, upload.any('filepond'), (req, res) => {
+    var jwtPayload = req.params.jwtPayload;
+    postgresdb.none('UPDATE candidate SET image_id=$1 WHERE candidate_id = $2', [req.params.finalFileName, req.params.candidateId])
+    .then((data) => {
+        res.json({success:true, imageId:req.params.finalFileName})
+    })
+    .catch(err => {
+        logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+});
 /**
  * Create a new candidate for the recruiter
  * @route POST api/candidate/create

@@ -47,25 +47,20 @@ var generateUploadMiddleware = (path) => {
         multer({
             storage: multer.diskStorage({
                 destination: (req, file, callback) => {
-                    console.log(file)
                     callback(null, 'public/'+path)
                 },
                 filename: (req, file, callback) => {
-                    console.log(file)
                     const ext = MIME_TYPE_MAP[file.mimetype]
                     var sizeName = file.originalname.substring(0, file.originalname.indexOf("_"));
                     req.params.finalFileName = `${req.params.fileName}.${ext}`
                     var newName = `${req.params.fileName}.${ext}`
-                    console.log(sizeName)
                     if(sizeName === "small" || sizeName === "medium"){
                         newName = sizeName+"_"+newName
-                        console.log(newName)
                     }
                     if(req.params.fileNames){
                         req.params.fileNames.push(newName)
                     }else
                         req.params.fileNames = [newName]
-                    console.log(newName)
                     callback(null, newName)
                 }
             })

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const {get, post} = require('./http');
+const {get, post, imageUpload} = require('./http');
 process.env.NODE_ENV = 'mocha'
 
 describe('Recruiter', function() {
@@ -73,6 +73,30 @@ describe('Recruiter', function() {
             return post(`/api/recruiter/setProfile`, {
                 ...currentProfile
             }, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
+    describe('Upload image', () => {
+        it('should return status 200', () => {
+            return imageUpload(`/api/recruiter/uploadImage`, process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.strictEqual(res.statusCode, 200)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('should return success', () => {
+            return get(`/api/profileImage/view/small`, process.env.recruiterToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     return Promise.resolve()

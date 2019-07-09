@@ -17,7 +17,7 @@ const upload = generateUploadMiddleware('profile_image/')
 const generateImageFileNameAndValidation = (req, res, next) => {
     // Validate this candidate is with this recruiter
     var jwtPayload = req.body.jwtPayload;
-    if(jwtPayload.userType != 2){
+    if(jwtPayload.userType != 3){
         const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
@@ -39,7 +39,7 @@ const generateImageFileNameAndValidation = (req, res, next) => {
  */
 router.post('/uploadImage', passport.authentication, generateImageFileNameAndValidation, upload.any('filepond'), (req, res) => {
     var jwtPayload = req.params.jwtPayload;
-    postgresdb.none('UPDATE employer SET image_id=$1 WHERE company_id = $2', [req.params.finalFileName, jwtPayload.id])
+    postgresdb.none('UPDATE employer SET image_id=$1 WHERE employer_id = $2', [req.params.finalFileName, jwtPayload.id])
     .then((data) => {
         res.json({success:true, imageId:req.params.finalFileName})
     })
