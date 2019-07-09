@@ -92,7 +92,7 @@
             .infoRow{
                 display: flex;
                 padding: 5px 0px;
-                line-height: 40px;
+                line-height: 25px;
                 .icon {
                     display: flex; 
                     img {
@@ -101,7 +101,8 @@
                     }
                 }
                 .title {
-                    display: flex; 
+                    display: flex;
+                    margin-left: 10px;
                 }
                 .item {
                     display: flex; 
@@ -143,182 +144,3 @@
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* .expandableRow .coinContainer {
-    width: 65px; 
-    background-color: #263c54; 
-    color: #fff;
-    background-image:url("../../../../files/images/spentCoins.png");
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position-x: 5px;
-    border-radius: 5px;
-    text-align: center;
-    padding: 5px; 
-    float: right;
-    margin-right: 25px;
-}
-.expandableRow .coinAmount {
-    margin-left: 25px;
-    font-weight: bold;
-    font-size: 15px;
-}
-
-.expandableRow .flex{ 
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    font-size: 14px;
-}
-.expandableRow .resumeButtons{
-    display: flex;
-    flex-direction: row;
-}
-.expandableRow .heading{
-    font-weight: bold;
-}
-
-.expandableRow .flexColumn{
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-direction: row;
-    flex-direction: row;
-    -webkit-align-items: center;
-    align-items: center; 
-    flex-wrap: wrap; 
-}
-.expandableRow .flex-item {
-    width: 100%;   
-} 
-.expandableRow .info-container{
-    display: inline-block;
-    vertical-align: top;  
-}
-  
-.expandableRow .info-container div { 
-    height: 50px;
-    display: flex;
-    vertical-align: middle;
-    align-items: center; 
-}
-
-.expandableRow .candidate-info-item .heading {
-
-}
-.expandableRow .candidate-info-item .headingInfo {
-    
-}
-
-.expandableRow .info-container .email_icon {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-    background-image: url('../../../../files/images/candidateIcons/email_icon.png');
-    background-repeat: no-repeat;
-    background-size: contain;  
-}
-.expandableRow .info-container .experience_icon {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-    background-image: url('../../../../files/images/candidateIcons/experience_icon.png');
-    background-repeat: no-repeat;
-    background-size: contain; 
-}
-.expandableRow .info-container .tags_icon {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-    background-image: url('../../../../files/images/candidateIcons/tags_icon.png');
-    background-repeat: no-repeat;
-    background-size: contain; 
-}
-.expandableRow .info-container .posted_icon {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-    background-image: url('../../../../files/images/candidateIcons/posted_icon.png');
-    background-repeat: no-repeat;
-    background-size: contain; 
-}
-
-.expandableRow .created-info-item {
-    position: absolute;
-    margin: auto;
-    color: #263c54;
-    font-size: 10px;
-    padding: 5px;
-    right: 0px;
-    top: 0px;
-    border-bottom-left-radius: 5px;
-}
-
-.expandableRow .accepted_icon {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    margin-right: 5px;
-    background-image: url('../../../../files/images/candidateIcons/accept.png');
-    background-repeat: no-repeat;
-    background-size: cover; 
-}
-.expandableRow .not_accepted_icon {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    margin-right: 5px;
-    background-image: url('../../../../files/images/candidateIcons/reject.png');
-    background-repeat: no-repeat;
-    background-size: cover; 
-}
- 
-.expandableRow .candidate_image { 
-    float:right;
-}
-
- 
-@media only screen and (max-width: 600px) {
-} 
-.expandableRow .score{ 
-    height: 100%;
-    vertical-align: middle;
-    text-align: right;
-    top: 0px;
-    left: 0px;
-    font-size: 10px;
-    font-weight: bold;
-    background-color: #4caf5054;
-    position: absolute;
-    color: #263c54;
-}
-
- */ 
