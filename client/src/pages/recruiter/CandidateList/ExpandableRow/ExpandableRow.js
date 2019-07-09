@@ -1,5 +1,5 @@
 import React from 'react';
-import './ExpandableRow.css'; 
+import './ExpandableRow.scss'; 
 import UploadResume from '../UploadResume/UploadResume';
 import {get} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
@@ -12,6 +12,16 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Drawer from '@material-ui/core/Drawer';
 
+import whaleImage from '../../../../files/images/landingPage/tail.png' 
+import resumeImage from '../../../../files/images/candidateIcons/resumeIcn.png'
+
+import emailImage from '../../../../files/images/candidateIcons/email_icon.png'
+import tagsImage from '../../../../files/images/candidateIcons/tags.png' 
+import experienceImage from '../../../../files/images/candidateIcons/experienceImage.png' 
+
+import postImage from '../../../../files/images/candidateIcons/postImage.png' 
+
+
 const styles = theme => ({
     root: {
         boxShadow: 'none !important'
@@ -19,6 +29,11 @@ const styles = theme => ({
     drawer:{ 
         minWidth: "300px",
         position: "relative"
+    },
+    button: {
+        margin:'10px',
+        width: '120px',
+        padding: '10px 10px',
     }
 });
 class ExpandableRow extends React.Component{
@@ -70,18 +85,121 @@ class ExpandableRow extends React.Component{
             <div className="expandableRow">
                 {this.state.redirectCandidate && <Redirect to={`/recruiter/jobList/${this.props.candidateData.candidateId}`}/>}
                 
+                {/* CANDIDATE ACCORDION */}
                 <ExpansionPanel square={true} className={classes.root}>
+                    
+                    {/* HEADER CONTAINER */}
                     <ExpansionPanelSummary>
                         <div className="rowInfoContainer"> 
-                            <div className="nameContainer">{candidateData.firstName}&nbsp;{candidateData.lastName}</div>
-                            {candidateData.newAcceptedCount > 0 ? <div className="acceptedCount" title={candidateData.newAcceptedCount+" New Postings Accepted"}>{/* candidateData.newAcceptedCount */}</div> : ""}
-                            {candidateData.newNotAcceptedCount > 0 ? <div className="notAcceptedCount" title={candidateData.newNotAcceptedCount+" New Postings Not Accepted"}>{/* candidateData.newNotAcceptedCount */}</div> : ""}
-                            {candidateData.score > 0?<span className="score" style={{width: parseInt(candidateData.score, 10)+"%"}}>{parseInt(candidateData.score, 10)+"%"}</span>:''}
-                        </div>
-                        <div></div>
+                            <div className="nameContainer">{candidateData.firstName}&nbsp;{candidateData.lastName}
+                                {candidateData.newAcceptedCount > 0 ? <div className="acceptedCount" title={candidateData.newAcceptedCount+" New Postings Accepted"}>{/* candidateData.newAcceptedCount */}</div> : ""}
+                                {candidateData.newNotAcceptedCount > 0 ? <div className="notAcceptedCount" title={candidateData.newNotAcceptedCount+" New Postings Not Accepted"}>{/* candidateData.newNotAcceptedCount */}</div> : ""}
+                            </div> 
+                            {candidateData.postedCount > 0 ?
+                                <div className="posted">
+                                    <span><b>Posted</b></span> 
+                                    <span>{candidateData.postedCount} time{candidateData.postedCount > 1 ? 's' : ''}</span>
+                                </div>
+                            :''}
+                        </div> 
                     </ExpansionPanelSummary>
+
+                    {/* DROPDOWN CONTAINER */}
                     <ExpansionPanelDetails>
-                        <div className="flex">
+                        <div className="dropDownContainer">
+                            <div className="a_container">
+                                <div className="acceptedContainer">
+                                    <div className="icon"></div>
+                                    <div className="heading"><b>Accepted</b> {candidateData.acceptedCount} time{candidateData.acceptedCount > 1 ? 's' : ''}</div>
+                                </div>
+                                <div className="declinedContainer">
+                                    <div className="icon"></div>
+                                    <div className="heading"><b>Not Accepted</b> {candidateData.notAcceptedCount} time{candidateData.notAcceptedCount > 1 ? 's' : ''}</div>
+                                </div>
+                            </div>
+
+                            <div className="splitter"></div> 
+
+                            <div className="infoRowContainer">
+                                <div className="infoRow">
+                                    <div className="icon"><img src={tagsImage} alt="tagsImage" /></div>
+                                    <div className="title"><b>Tags: </b></div>
+                                    <div className="item">{candidateData.tagNames.join(", ")}</div>
+                                </div>
+                                <div className="infoRow">
+                                    <div className="icon"><img src={experienceImage} alt="experienceImage" /></div>
+                                    <div className="title"><b>Experience: </b></div>
+                                    <div className="item">{candidateData.experience}</div>
+                                </div>
+                                <div className="infoRow">
+                                    <div className="icon"><img src={emailImage} alt="emailImage" /></div>
+                                    <div className="title"><b>Email: </b></div>
+                                    <div className="item">{candidateData.email}</div>
+                                </div>
+                            </div>
+
+                            <div className="splitter"></div> 
+
+                            <div className="candidateButtonsContainer">
+                                <Button className={classes.button} variant="contained" color="primary" onClick={this.searchJobsForCandidates}>
+                                    <div className="buttonsContainer">
+                                        <div className="image"><img className="img1" src={whaleImage} alt="whaleTail" /></div>
+                                        <div className="text">SEARCH JOBS</div>
+                                    </div>
+                                </Button> 
+
+                                <Button className={classes.button} variant="contained" color="primary" onClick={this.showUpload}>
+                                    <div className="buttonsContainer">
+                                        <div className="image"><img className="img2" src={resumeImage} alt="resumeImage" /></div> 
+                                        <div className="text">Upload Resume</div>
+                                    </div> 
+                                </Button>  
+
+                                {candidateData.resumeId != null &&
+                                    <Button className={classes.button} variant="contained" color="primary" onClick={this.getResumeURL}>
+                                        <div className="buttonsContainer">
+                                            <div className="image"><img className="img2" src={resumeImage} alt="resumeImage" /></div> 
+                                            <div className="text">View Resume</div>
+                                        </div>
+                                    </Button>
+                                }
+ 
+                                {postData &&
+                                    <Button className={classes.button} variant="contained" color="primary" onClick={this.postToJob}> 
+                                        <div className="buttonsContainer">
+                                            <div className="image"><img className="img3" src={postImage} alt="postImage" /></div> 
+                                            <div className="text">Post to Job</div>
+                                        </div>
+                                    </Button>
+                                }
+
+                            </div> 
+ 
+                            <Drawer
+                                anchor="bottom"
+                                className={classes.drawer}
+                                open={this.state.showPostJob}
+                                onClose={()=>this.setState({"showPostJob":false})}
+                                // onOpen={()=>this.setState({"showPostJob":true})}
+                            > 
+                                <PostCandidateToJob candidate={candidateData}
+                                                            job={postData}
+                                                            handleClose={()=>this.setState({showPostJob:false})} />
+                            </Drawer>
+                            {this.state.showUpload && <UploadResume id={candidateData.candidateId} handleClose={this.handleClose} />}
+                       
+
+
+                        </div>
+
+
+
+
+
+
+
+
+{/*                         <div className="flex">
                             <div className="flexColumn">
                                 <div className="flex-item">
                                     <div>
@@ -155,7 +273,7 @@ class ExpandableRow extends React.Component{
                                     {this.state.showUpload && <UploadResume id={candidateData.candidateId} handleClose={this.handleClose} />}
                                 </div> 
                             </div>
-                        </div>
+                        </div> */}
                     </ExpansionPanelDetails>
                 </ExpansionPanel>
             </div> 
