@@ -12,12 +12,12 @@ class Pagination extends Component {
             activePage: props.activePage || 0,
             totalItemsCount: props.totalItemsCount || 0,
             pageRangeDisplayed: props.pageRangeDisplayed || 0,
-            handlePageClick: props.handlePageClick,
+            onChange: props.onChange,
         };
     }
-    handlePageClick = e => {
-        if(this.state.handlePageClick){
-            this.state.handlePageClick(e)
+    onChange = e => {
+        if(this.state.onChange){
+            this.state.onChange(e)
         }
     };
     shouldComponentUpdate(nextProps, nextState) {
@@ -26,7 +26,7 @@ class Pagination extends Component {
         const change = this.state.activePage !== nextProps.activePage ||
                 this.state.totalItemsCount !== nextProps.totalItemsCount ||
                 this.state.pageRangeDisplayed !== nextProps.pageRangeDisplayed ||
-                this.state.handlePageClick !== nextProps.handlePageClick;
+                this.state.onChange !== nextProps.onChange;
         if(change){
             this.setState(this.generateState(nextProps));
         }
@@ -45,7 +45,7 @@ class Pagination extends Component {
                     totalItemsCount={this.state.totalItemsCount}
                     marginPagesDisplayed={0}
                     pageRangeDisplayed={this.state.pageRangeDisplayed}
-                    onChange={this.handlePageClick}
+                    onChange={this.onChange.bind(this)}
                     innerClass={'pagination'}
                     activeClass={'active'}
                     />
