@@ -38,7 +38,7 @@ class Conversation extends Component {
         if(props.loadByMessageSubjectId){
             extraState = {
                 messageSubjectId: props.messageSubjectId,
-                conversation: [],
+                conversation: {},
                 toId: null,
             }
         }else{
@@ -72,7 +72,7 @@ class Conversation extends Component {
         return new Promise((resolve, reject)=>{
             get(`/api/message/get/${this.state.messageSubjectId}`)
             .then((res)=>{
-                if(res && res.success){
+                if(res.data && res.data.success){
                     const conversation = res.data.conversations[0]
                     const toId = (conversation.myId===conversation.userId1?conversation.userId2:conversation.userId1);
                     this.setState({ 
@@ -92,9 +92,7 @@ class Conversation extends Component {
     }
     loadData = () => {
         if(this.state.loadByMessageSubjectId){
-            this.getConversationList().then(()=>{
-                this.getMessageList();
-            });
+            this.getConversationList().then(this.getMessageList);
         }else
             this.getMessageList();
     }

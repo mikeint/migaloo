@@ -175,6 +175,20 @@ class CandidateView extends React.Component{
                             <Button
                                 variant="contained" 
                                 color="primary"
+                                onClick={()=>this.setState({showChat:true})}>
+                            <Chat/>&nbsp;Open Chat
+                            </Button>
+                        </div>
+                        {this.state.showChat && 
+                            <Conversation
+                                messageSubjectId={this.state.candidate.messageSubjectId}
+                                loadByMessageSubjectId={true}
+                                open={this.state.showChat} onClose={()=>this.setState({showChat:false})}/>
+                        }
+                        <div className={classes.flexColumn}>
+                            <Button
+                                variant="contained" 
+                                color="primary"
                                 onClick={()=>this.handleResponse('migaloo', true)}
                                 className={classes.marginRight}>
                                 <ThumbUp className={this.trueFalseNull(this.state.candidate.migalooAccepted, classes.selected, classes.notselected, '')}/>&nbsp;Migaloo Accepts
@@ -185,14 +199,6 @@ class CandidateView extends React.Component{
                                 onClick={()=>this.handleResponse('migaloo', false)}
                                 className={classes.marginRight}>
                                 <ThumbDown className={this.trueFalseNull(this.state.candidate.migalooAccepted, classes.notselected, classes.selected, '')}/>&nbsp;Reject
-                            </Button>
-                        </div>
-                        <div className={classes.flexColumn}>
-                            <Button
-                                variant="contained" 
-                                color="primary"
-                                onClick={()=>this.setState({showChat:true})}>
-                            <Chat/>&nbsp;Open Chat
                             </Button>
                         </div>
                         {this.state.candidate.migalooAccepted === true && 
@@ -242,12 +248,6 @@ class CandidateView extends React.Component{
                                     </React.Fragment>
                                 }
                             </React.Fragment>
-                        }
-                        {this.state.showChat && 
-                            <Conversation
-                                messageSubjectId={this.state.candidate.messageSubjectId}
-                                loadByMessageSubjectId={true}
-                                open={this.state.showChat} onClose={()=>this.setState({showChat:false})}/>
                         }
                     </div>
                 </ExpansionPanelDetails>
