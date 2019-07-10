@@ -19,6 +19,8 @@ import EmailImage from '@material-ui/icons/MailOutline';
 import TagsImage from '@material-ui/icons/Label'; 
 import ExperienceImage from '@material-ui/icons/Computer'; 
 import PostImage from '@material-ui/icons/OpenInNew';
+import ThumbDown from '@material-ui/icons/ThumbDown';
+import ThumbUp from '@material-ui/icons/ThumbUp';
 import whaleImage from '../../../../files/images/landingPage/tail.png' 
   
 
@@ -30,19 +32,21 @@ const styles = theme => ({
     dropDown: {
         background: '#263c540d',
         boxShadow:' inset 2px 0px 2px 0px #546f82',
-
-        '@media (max-width: 1024px)': { 
-            padding: '8px 8px 8px',
-        },
+        padding: '0px',
     },
+    
     drawer:{ 
         minWidth: "300px",
         position: "relative",
     },
     button: {
         margin:'10px',
-        width: '120px',
-        padding: '10px 10px',
+        minWidth: '130px',
+        maxHeight:'70px',
+        padding: '10px 10px', 
+        '@media (max-width: 1024px)': {
+            padding: '10px 2px;'
+        },
     }
 });
 class ExpandableRow extends React.Component{
@@ -118,12 +122,12 @@ class ExpandableRow extends React.Component{
                         <div className="dropDownContainer">
                             <div className="a_container">
                                 <div className="acceptedContainer">
-                                    <div className="icon"></div>
+                                    <div className="icon"><ThumbUp/></div>
                                     <div className="heading"><b>Accepted</b> {candidateData.acceptedCount} time{candidateData.acceptedCount > 1 ? 's' : ''}</div>
                                 </div>
                                 <div className="declinedContainer">
-                                    <div className="icon"></div>
                                     <div className="heading"><b>Not Accepted</b> {candidateData.notAcceptedCount} time{candidateData.notAcceptedCount > 1 ? 's' : ''}</div>
+                                    <div className="icon"><ThumbDown/></div>
                                 </div>
                             </div>
 

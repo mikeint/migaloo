@@ -21,6 +21,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Conversation from '../../../../components/Conversation/Conversation';
 
+import whaleHead from '../../../../files/images/landingPage/whaleHead.png';
+
 const styles = theme => ({
     drawer:{ 
         minWidth: "300px",
@@ -37,6 +39,7 @@ const styles = theme => ({
         display: "flex",
         flexWrap: "wrap",
         padding: "20px",
+        background: '#546f8226',
     },
     feedbackBtn:{
         flex: "1 1", 
@@ -273,12 +276,7 @@ class JobDescription extends React.Component{
                             <h3>Description</h3>
                             {this.state.jobObj.requirements}
                         </div>
-                        <Button
-                                className={classes.searchBtn} 
-                                color="primary"
-                                variant="contained"
-                                onClick={this.searchJobsForCandidates}>Search For Candidates</Button>
-
+                         
                         <div className={classes.summaryContainer}>
                             <div className={classes.summaryItem}><b>Company </b>{this.state.jobObj.companyName}</div>
                             <div className={classes.summaryItem}><b>Address </b> {[this.state.jobObj.addressLine1, this.state.jobObj.addressLine2, this.state.jobObj.city, this.state.jobObj.stateProvince, this.state.jobObj.country].filter(d=>d!=null).join(", ")}</div>
@@ -326,6 +324,12 @@ class JobDescription extends React.Component{
                             }
                             </TableBody>
                         </Table>
+
+                        <Button
+                                className={classes.searchBtn} 
+                                color="primary"
+                                variant="contained"
+                                onClick={this.searchJobsForCandidates}>Search For Candidates<img src={whaleHead} alt="" /></Button>
                     </div>
                 </div>
 

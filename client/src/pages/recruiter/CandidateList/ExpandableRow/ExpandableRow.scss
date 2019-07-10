@@ -41,8 +41,7 @@
             color: #fff;
         }
         .posted {
-            display: flex;
-            flex:1;
+            display: flex; 
             justify-content: flex-end;
             flex-direction: column;
             font-size: 13px;
@@ -66,13 +65,34 @@
                 justify-content: center;
                 padding: 4px;
                 background-color: #4caf5021;
+                .icon {
+                    display: flex; 
+                    padding-left: 24px;
+                }
+                .heading {
+                    display: flex;
+                    flex: 1;
+                    text-align: center;
+                    justify-content: center;
+                }
             } 
             .declinedContainer { 
                 display: flex;
                 flex: 1;
                 padding: 4px;
                 justify-content: center;
-                background-color: #de31411f;  
+                background-color: #de31411f; 
+                .icon {
+                    justify-content: flex-end;
+                    display: flex; 
+                    padding-right: 24px;
+                }
+                .heading {
+                    display: flex;
+                    flex: 1;
+                    text-align: center;
+                    justify-content: center;
+                }
             } 
         }
 
@@ -89,6 +109,7 @@
             display: flex;
             width: 100%;
             flex-direction: column;
+            padding-left: 24px;
             .infoRow{
                 display: flex;
                 padding: 5px 0px;
@@ -114,6 +135,9 @@
         .candidateButtonsContainer {
             display: flex;
             width: 100%; 
+            background: #546f8226;
+            padding-left: 14px;
+            overflow-x: auto;
             .buttonsContainer {
                 display: flex;    
                 font-size: 11px;  
@@ -122,12 +146,13 @@
                 cursor: pointer; 
                 display: flex;
                 justify-content: center;
-                .image{
+                .image{ 
                     display: flex;
                     justify-content: center;
                 }
                 .img1 {
                     width: 25px;
+                    height: 22px;
                 }  
                 .text {
                     padding-top:5px; 
