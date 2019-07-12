@@ -17,10 +17,6 @@ const styles = theme => ({
         width: "50%",
         margin: "10px"
     },
-    tableBody:theme.table.tableBody,
-    tableHeading:theme.table.tableHeading,
-    tableCellHeader:theme.table.tableCellHeader,
-    tableCell:theme.table.tableCell,
     center:{
         textAlign:"center",
         marginBottom: "20px"
