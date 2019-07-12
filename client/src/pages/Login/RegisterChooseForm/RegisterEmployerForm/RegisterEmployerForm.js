@@ -1,6 +1,6 @@
 import React, { Component } from 'react';  
 import axios from 'axios';
-import AddressInput from './AddressInput/AddressInput';
+import AddressInput from '../AddressInput/AddressInput';
 import { TextField, Button } from '@material-ui/core';
 import FormValidation from '../../../../FormValidation';
 import { withStyles } from '@material-ui/core/styles';
