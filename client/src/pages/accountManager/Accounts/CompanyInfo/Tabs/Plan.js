@@ -10,7 +10,8 @@ const styles = theme => ({
     button:{ 
         width: "80%",
         display: "inline-block",
-        margin: 5
+        marginBottom: 5,
+        marginTop: 5
     },
     textField: {
         width: "50%",
@@ -70,9 +71,10 @@ class Plan extends React.Component{
                 this.getPlanData();
             }
         })
-        .catch(errors => 
-            console.log(errors)
-        )
+        .catch(errors => {
+            window.alert("You do not have permissions to modify the plan. Ask the an account manager for this company to perform this action.");
+            console.log(errors);
+        })
     }
     addToPlan = () => {
         post(`/api/plan/addToPlan`, this.state)
@@ -81,9 +83,10 @@ class Plan extends React.Component{
                 this.getPlanData();
             }
         })
-        .catch(errors => 
-            console.log(errors)
-        )
+        .catch(errors => {
+            window.alert("You do not have permissions to modify the plan. Ask the an account manager for this company to perform this action.");
+            console.log(errors);
+        })
     }
     handleChange = (e) => {
         this.setState(e)

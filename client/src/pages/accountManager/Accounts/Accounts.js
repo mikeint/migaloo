@@ -104,6 +104,17 @@ class Accounts extends React.Component{
             this.getCompanys();
         }
     }
+    displayCompanyRow = (item, i) => {
+        const { classes } = this.props; 
+        return <Button key={i} className={classes.row} onClick={()=>this.openContactList(item)}>
+            {item.companyName}
+            <span className={classes.createdTime}>{item.created}</span>
+            <span className={classes.isPrimary}>
+                {item.isPrimary && <div className={classes.isPrimaryBox}>Primary</div>}
+                {item.unassigned && <div className={classes.isPrimaryBox}>Unassigned</div>}
+            </span>
+        </Button>
+    }
 
     render(){ 
 
@@ -119,16 +130,16 @@ class Accounts extends React.Component{
                         this.state.companyList ?
                             <div>
                                 {
-                                    this.state.companyList.concat(this.state.newCompanyList).map((item, i) => {
-                                        return <Button key={i} className={classes.row} onClick={()=>this.openContactList(item)}>
-                                            {item.companyName}
-                                            <span className={classes.createdTime}>{item.created}</span>
-                                            <span className={classes.isPrimary}>
-                                                {item.isPrimary && <div className={classes.isPrimaryBox}>Primary</div>}
-                                                {item.unassigned && <div className={classes.isPrimaryBox}>Unassigned</div>}
-                                            </span>
-                                        </Button>
-                                    })
+                                    this.state.newCompanyList.length > 0 &&
+                                    <React.Fragment>
+                                        {
+                                            this.state.newCompanyList.map(this.displayCompanyRow)
+                                        }
+                                        <hr/>
+                                    </React.Fragment>
+                                }
+                                {
+                                    this.state.companyList.map(this.displayCompanyRow)
                                 }
                             </div>
                         :

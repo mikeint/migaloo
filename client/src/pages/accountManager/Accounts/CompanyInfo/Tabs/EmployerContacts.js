@@ -10,6 +10,11 @@ import classNames from 'classnames';
 const styles = theme => ({
     button:{ 
         width: "80%",
+        display: "inline-block",
+        marginBottom: 5,
+        marginTop: 5
+    },
+    tableButton:{ 
         display: "inline-block"
     },
     tableBody:theme.table.tableBody,
@@ -37,7 +42,8 @@ class EmployerContacts extends React.Component{
             page: 1,
             pageCount: 1,
             loading: true,
-            showAddUser: false
+            showAddUser: false,
+            onChange: props.onChange
         };
     }
     componentWillUnmount = () => {
@@ -69,6 +75,8 @@ class EmployerContacts extends React.Component{
             .then((res)=>{
                 if(res && res.data.success){
                     this.getContactList();
+                    if(this.state.onChange)
+                        this.state.onChange()
                 }
             })
             .catch(errors => 
@@ -82,11 +90,14 @@ class EmployerContacts extends React.Component{
         .then((res)=>{
             if(res && res.data.success){
                 this.getContactList();
+                if(this.state.onChange)
+                    this.state.onChange()
             }
         })
-        .catch(errors => 
-            console.log(errors)
-        )
+        .catch(errors => {
+            window.alert("You do not have permissions to remove this contact. Ask the an account manager for this company to perform this action.");
+            console.log(errors);
+        })
     }
     handlePageClick = selected => {
         this.setState({ page: selected }, () => {
@@ -99,17 +110,20 @@ class EmployerContacts extends React.Component{
             this.addContact(ret.filter(d=>!this.state.companyContactList.some(c=>d.id === c.companyContactId)))
         }
     };
+    generateEmployerLink = () => {
+        post(`/api/company/generateLink`, {companyId:this.state.company.companyId})
+        .then((res)=>{
+            if(res && res.data.success){
+                this.getContactList();
+            }
+        })
+        .catch(errors => 
+            console.log(errors)
+        )
+    }
     regenerateEmployerLink = () => {
         if(window.confirm("This will invalidate any existing link for the employer.\n\nDo you want to coninue?")){
-            post(`/api/company/generateLink`, {companyId:this.state.company.companyId})
-            .then((res)=>{
-                if(res && res.data.success){
-                    this.getContactList();
-                }
-            })
-            .catch(errors => 
-                console.log(errors)
-            )
+            this.generateEmployerLink();
         }
     }
     render(){
@@ -138,7 +152,7 @@ class EmployerContacts extends React.Component{
                                 <TableCell className={classes.tableCell}><a href={`tel:${d.phoneNumber}`}>{d.phoneNumber}</a></TableCell>
                                 <TableCell align="center" className={classes.tableCell}>
                                     <Button
-                                        className={classes.button}
+                                        className={classes.tableButton}
                                         color="primary"
                                         variant="contained"
                                         onClick={()=>this.removeContact(d)}>Remove</Button>
@@ -146,10 +160,10 @@ class EmployerContacts extends React.Component{
                                 {
                                     <TableCell align="center" className={classes.tableCell}>
                                         <Button
-                                        className={classes.button}
+                                        className={classes.tableButton}
                                         color="primary"
                                         variant="contained"
-                                        onClick={this.regenerateEmployerLink}>Regenerate Link</Button>
+                                        onClick={d.has_access_token ? this.regenerateEmployerLink : this.generateEmployerLink}>{d.has_access_token ? 'Regenerate Link' : 'Generate Link'}</Button>
                                     </TableCell>
                                 }
                             </TableRow>

@@ -115,7 +115,8 @@ function listUnassigned(req, res) {
     
     postgresdb.any('\
         SELECT \
-            c.company_id, c.company_name, c.department, c.image_id, a.*, p.*, pt.plan_type_name \
+            c.company_name, c.department, c.image_id, a.*, p.*, pt.plan_type_name, \
+            c.company_id as company_id \
         FROM login l \
         INNER JOIN company c ON c.company_id = l.user_id \
         LEFT JOIN plan p ON p.company_id = c.company_id \
@@ -126,7 +127,7 @@ function listUnassigned(req, res) {
                 SELECT 1 \
                 FROM login l \
                 INNER JOIN company_contact ec ON ec.company_contact_id = l.user_id \
-                WHERE l.user_type_id = ${userType} AND ec.company_id = c.company_id \
+                WHERE l.user_type_id = ${userType} AND ec.company_id = c.company_id AND ec.is_primary \
             ) AND c.company_type = 1 \
         '+(companyId!=null?'AND c.company_id = ${companyId}':'')+' \
         ORDER BY company_name', {userId:jwtPayload.id, companyId:companyId, userType:jwtPayload.userType})
@@ -287,7 +288,7 @@ router.post('/setCompanyProfile', passport.authentication,  (req, res) => {
     });
 });
 
-const companyContactHelper = new pgp.helpers.ColumnSet(['company_contact_id', 'company_id'], {table: 'company_contact'});
+const companyContactHelper = new pgp.helpers.ColumnSet(['company_contact_id', 'company_id', 'is_primary'], {table: 'company_contact'});
 /**
  * Add a new contact to an company, must be an admin for the company to do so
  * @route POST api/company/addContactToCompany
@@ -305,7 +306,7 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
     // }
     /**
      * Input: Must be admin, either use emails field or userIds field, cannot use both
-     * userIds <list>
+     * userIds <list> (-1 is your own id)
      * emails <list>
      * companyId
      */
@@ -317,20 +318,50 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
+    if(body.userIds)
+        body.userIds = body.userIds.map(id=>id===-1?jwtPayload.id:id)
 
     postgresdb.tx(t => {
-        return t.one('SELECT ec.company_id, c.company_name \
-                        FROM company_contact ec \
-                        INNER JOIN company c ON ec.company_id = c.company_id \
-                        WHERE c.active AND ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
-                        {company_contact_id:jwtPayload.id, company_id:body.companyId})
-            .then(()=>{
+        return t.one('SELECT c.company_id, c.company_name, \
+                        COUNT(DISTINCT ec.company_contact_id) as contacts, \
+                        MAX(CASE WHEN ec.company_contact_id = ${company_contact_id} AND ec.is_primary THEN 1 ELSE 0 END) as i_am_primary, \
+                        MAX(CASE WHEN ec.company_contact_id = ${company_contact_id} THEN 1 ELSE 0 END) as i_am_a_contact, \
+                        SUM(CASE WHEN l.user_type_id = 2 THEN 1 ELSE 0 END) as account_manager_count, \
+                        BOOL_AND(CASE WHEN l.user_type_id = 2 AND ec.is_primary THEN true ELSE false END) as has_primary_account \
+                    FROM company c \
+                    INNER JOIN company_contact ec ON ec.company_id = c.company_id \
+                    INNER JOIN login l ON ec.company_contact_id = l.user_id \
+                    WHERE c.active AND l.active AND ec.company_id = ${company_id} \
+                    GROUP BY c.company_id, c.company_name',
+                    {company_contact_id:jwtPayload.id, company_id:body.companyId})
+            .then((user_ret)=>{
+                if(user_ret.i_am_primary != 1){
+                    if(userType === 1){
+                        throw new Error("User is not contact for this company")
+                    }
+                    else if(userType === 2 && !user_ret.has_primary_account){
+                        if(user_ret.i_am_a_contact){
+                            // I am a contact but not an admin, and there is no admins
+                            return t.none('UPDATE company_contact SET is_primary=true WHERE company_contact_id = ${companyContactId}',
+                                {companyContactId:jwtPayload.id})
+                            .then(()=>{
+                                // TODO: send request email to contact to make a password
+                                res.status(200).json({success: true, addedCount: 1})
+                                return []
+                            })
+                        }
+                        // Pass, no user has been assigned to the company or there is no primary, so allow people to add anyone
+                    }else{
+                        throw new Error("User is not contact for this company")
+                    }
+                }
                 return new Promise((resolve, reject)=>{
                     if(body.userIds){
                         const data = body.userIds.map(id=>{
                             return {
                                 company_contact_id: id,
-                                company_id: body.companyId
+                                company_id: body.companyId,
+                                is_primary: id == jwtPayload.id
                             }
                         })
                         return resolve(data)
@@ -352,7 +383,8 @@ router.post('/addContactToCompany', passport.authentication,  (req, res) => {
                             const data = availableToJoin.map(id=>{
                                 return {
                                     company_contact_id: id,
-                                    company_id: body.companyId
+                                    company_id: body.companyId,
+                                    is_primary: id == jwtPayload.id
                                 }
                             })
                             return resolve(data)
@@ -458,12 +490,12 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-    if(companyContactId == jwtPayload.id){
+    var isPrimary = req.body.isPrimary
+    if(companyContactId == jwtPayload.id && !isPrimary){
         const errorMessage = "Can't change your own administrator setting"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-    var isPrimary = req.body.isPrimary
     if(isPrimary == null){
         const errorMessage = "Missing isPrimary field"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
@@ -471,11 +503,28 @@ router.post('/setContactAdmin', passport.authentication,  (req, res) => {
     }
 
     postgresdb.tx(t => {
-        return t.one('SELECT ec.company_id \
-                        FROM company_contact ec \
-                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id} AND ec.is_primary',
-                        {company_contact_id:jwtPayload.id, company_id:body.companyId})
-            .then(()=>{
+        return t.one('SELECT c.company_id, c.company_name, \
+                        COUNT(DISTINCT ec.company_contact_id) as contacts, \
+                        MAX(CASE WHEN ec.company_contact_id = ${company_contact_id} AND ec.is_primary THEN 1 ELSE 0 END) as i_am_primary, \
+                        MAX(CASE WHEN ec.company_contact_id = ${company_contact_id} THEN 1 ELSE 0 END) as i_am_a_contact, \
+                        SUM(CASE WHEN l.user_type_id = 2 THEN 1 ELSE 0 END) as account_manager_count \
+                    FROM company c \
+                    INNER JOIN company_contact ec ON ec.company_id = c.company_id \
+                    INNER JOIN login l ON ec.company_contact_id = l.user_id \
+                    WHERE c.active AND l.active AND ec.company_id = ${company_id} \
+                    GROUP BY c.company_id, c.company_name',
+                    {company_contact_id:jwtPayload.id, company_id:body.companyId})
+            .then((user_ret)=>{
+                if(user_ret.i_am_primary != 1){
+                    if(userType === 1){
+                        throw new Error("User is not contact for this company")
+                    }
+                    else if(userType === 2 && user_ret.account_manager_count == 0){
+                        // Pass, no user has been assigned to the company or there is no primary, so open it up to anyone to manage
+                    }else{
+                        throw new Error("User is not contact for this company")
+                    }
+                }
                 return t.none('UPDATE company_contact SET is_primary=${is_primary} WHERE company_contact_id = ${companyContactId}',
                     {is_primary:isPrimary, companyContactId:companyContactId})
                 .then(()=>{
@@ -513,11 +562,16 @@ function getCompanyAccountManagerList(req, res) {
     if(page == null || page < 1)
         page = 1;
     postgresdb.tx(t => {
-        return t.one('SELECT ec.company_id \
-                        FROM company_contact ec \
-                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id}',
-                        {company_contact_id:jwtPayload.id, company_id:companyId})
-            .then(()=>{
+        var promise
+        if(jwtPayload.userType === 2){ // If account manager
+            promise = Promise.resolve()
+        }else{
+            promise = t.one('SELECT ec.company_id \
+                            FROM company_contact ec \
+                            WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id}',
+                            {company_contact_id:jwtPayload.id, company_id:companyId})
+        }
+        return promise.then(()=>{
                 return t.any('\
                     SELECT ec.company_contact_id, um.email, um.first_name, um.last_name, \
                         um.phone_number, um.image_id, um.created_on, ec.is_primary, \
@@ -571,19 +625,25 @@ function getCompanyContactList(req, res) {
     if(page == null || page < 1)
         page = 1;
     postgresdb.tx(t => {
-        return t.one('SELECT ec.company_id \
-                        FROM company_contact ec \
-                        WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id}',
-                        {company_contact_id:jwtPayload.id, company_id:companyId})
-            .then(()=>{
+        var promise
+        if(jwtPayload.userType === 2){ // If account manager
+            promise = Promise.resolve()
+        }else{
+            promise = t.one('SELECT ec.company_id \
+                            FROM company_contact ec \
+                            WHERE ec.company_contact_id = ${company_contact_id} AND ec.company_id = ${company_id}',
+                            {company_contact_id:jwtPayload.id, company_id:companyId})
+        }
+        return promise.then(()=>{
                 return t.any('\
                     SELECT ec.company_contact_id, um.email, um.first_name, um.last_name, um.user_type_id, \
                         um.phone_number, um.image_id, um.created_on, ec.is_primary, \
-                        um.account_active, \
+                        um.account_active, CASE WHEN access_token IS NOT NULL THEN TRUE ELSE FALSE END as has_access_token, \
                         (count(1) OVER())/10+1 as "pageCount" \
                     FROM company_contact ec \
                     INNER JOIN user_master um ON ec.company_contact_id = um.user_id \
-                    WHERE ec.company_id = ${company_id} AND um.active AND um.user_type_id = 3 \
+                    LEFT JOIN access_token at ON um.user_id = at.user_id \
+                    WHERE ec.company_id = ${company_id} AND um.active AND (um.user_type_id = 3 OR um.user_type_id = 1) \
                     ORDER BY um.last_name ASC, um.first_name ASC \
                     OFFSET ${page} \
                     LIMIT 10', {company_id:companyId, page:(page-1)*10})

@@ -63,8 +63,8 @@ class CompanyInfo extends React.Component{
                 </Tabs>
                 {this.state.tabIndex===0 && <Profile company={this.state.company} onChange={()=>this.setState({didSave:true})} onDelete={this.closeSelfAndReload.bind(this)}/>}
                 {this.state.tabIndex===1 && <Plan company={this.state.company}/>}
-                {this.state.tabIndex===2 && <EmployerContacts company={this.state.company}/>}
-                {this.state.tabIndex===3 && <AccountManagers company={this.state.company}/>}
+                {this.state.tabIndex===2 && <EmployerContacts company={this.state.company} onChange={()=>this.setState({didSave:true})}/>}
+                {this.state.tabIndex===3 && <AccountManagers company={this.state.company} onChange={()=>this.setState({didSave:true})}/>}
             </div> 
         )
     }

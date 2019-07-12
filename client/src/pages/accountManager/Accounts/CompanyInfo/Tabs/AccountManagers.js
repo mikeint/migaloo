@@ -10,6 +10,11 @@ import classNames from 'classnames';
 const styles = theme => ({
     button:{ 
         width: "80%",
+        display: "inline-block",
+        marginBottom: 5,
+        marginTop: 5
+    },
+    tableButton:{ 
         display: "inline-block"
     },
     tableBody:theme.table.tableBody,
@@ -21,6 +26,12 @@ const styles = theme => ({
     },
     center:{
         textAlign:"center"
+    },
+    noAssign:{
+        textAlign:"center",
+        fontWeight: "bold",
+        fontSize: "1.5em",
+        margin: 20
     },
     pagination:{
         width: '80%',
@@ -37,7 +48,8 @@ class AccountManagers extends React.Component{
             page: 1,
             pageCount: 1,
             loading: true,
-            showGetAccountManager: false
+            showGetAccountManager: false,
+            onChange: props.onChange
         };
     }
     componentWillUnmount = () => {
@@ -76,38 +88,49 @@ class AccountManagers extends React.Component{
                         d.isPrimary = !d.isPrimary
                     return d;
                 }) })
+                if(this.state.onChange)
+                    this.state.onChange()
             }
         })
-        .catch(errors => 
-            console.log(errors)
-        )
+        .catch(errors => {
+            window.alert("You do not have permissions change this user's permissions. Ask the an account manager for this company to perform this action.");
+            console.log(errors);
+        })
     }
-    addContact = (users) => {
+    addContact = (users=[{id:-1}]) => {
         const userIds = users.map(d=>d.id)
         if(userIds.length > 0){
             post(`/api/company/addContactToCompany`,
                 {userIds:userIds, companyId:this.state.company.companyId})
             .then((res)=>{
                 if(res && res.data.success){
-                    this.getContactList();
+                    this.getAccountManagerContactList();
+                    if(this.state.onChange)
+                        this.state.onChange()
                 }
             })
-            .catch(errors => 
+            .catch(errors => {
+                window.alert("You do not have permissions to add users. Ask the an account manager for this company to perform this action.");
                 console.log(errors)
-            )
+            })
         }
     }
     removeContact = (user) => {
-        post(`/api/company/removeContactFromCompany`,
-            {userId:user.companyContactId, companyId:this.state.company.companyId})
-        .then((res)=>{
-            if(res && res.data.success){
-                this.getContactList();
-            }
-        })
-        .catch(errors => 
-            console.log(errors)
-        )
+        if(window.confirm("Are you sure you want to remove this contact from the company?")){
+            post(`/api/company/removeContactFromCompany`,
+                {userId:user.companyContactId, companyId:this.state.company.companyId})
+            .then((res)=>{
+                if(res && res.data.success){
+                    this.getAccountManagerContactList();
+                    if(this.state.onChange)
+                        this.state.onChange()
+                }
+            })
+            .catch(errors => {
+                window.alert("You do not have permissions to remove this contact. Ask the an account manager for this company to perform this action.");
+                console.log(errors);
+            })
+        }
     }
     handleACPageClick = selected => {
         this.setState({ page: selected }, () => {
@@ -124,71 +147,86 @@ class AccountManagers extends React.Component{
         const { classes } = this.props; 
         return ( 
             <div>
-                {this.state.loading && <LinearProgress />}
-                <Table className={classNames(classes.tableBody, classes.tableBodyMargins)}>
-                    <TableHead className={classes.tableHeading}>
-                        <TableRow>
-                            <TableCell align="center" className={classes.tableCellHeader}>Email</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>First Name</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>Last Name</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>Phone Number</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>Account Active</TableCell>
-                            <TableCell align="center" className={classes.tableCellHeader}>Is Primary</TableCell>
-                            {this.state.iAmAdmin && <TableCell align="center" className={classes.tableCellHeader}>Remove</TableCell>}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                    {
-                        this.state.contactList.map((d, i)=>{
-                            return <TableRow key={i} className={classes.tableRow}>
-                                <TableCell className={classes.tableCell}><a href={`mailto:${d.email}`}>{d.email}</a></TableCell>
-                                <TableCell className={classes.tableCell}>{d.firstName}</TableCell>
-                                <TableCell className={classes.tableCell}>{d.lastName}</TableCell>
-                                <TableCell className={classes.tableCell}><a href={`tel:${d.phoneNumber}`}>{d.phoneNumber}</a></TableCell>
-                                <TableCell align="center" className={classes.tableCell}>{d.accountActive?"Yes":"Pending"}</TableCell>
-                                <TableCell align="center" className={classes.tableCell}>
-                                    <Checkbox
-                                        checked={d.isPrimary}
-                                        disabled={d.isMe} 
-                                        onChange={e=>this.setAdmin(e, d)}
-                                        value="checked"
-                                        color="primary"
-                                    />
-                                </TableCell>
-                                {
-                                    this.state.iAmAdmin && <TableCell align="center" className={classes.tableCell}>
-                                        <Button
-                                            className={classes.button}
-                                            color="primary"
-                                            variant="contained"
-                                            disabled={d.isMe}
-                                            onClick={()=>this.removeContact(d)}>Remove</Button>
-                                    </TableCell>
-                                }
+                    {this.state.loading && <LinearProgress />}
+                    <Table className={classNames(classes.tableBody, classes.tableBodyMargins)}>
+                        <TableHead className={classes.tableHeading}>
+                            <TableRow>
+                                <TableCell align="center" className={classes.tableCellHeader}>Email</TableCell>
+                                <TableCell align="center" className={classes.tableCellHeader}>First Name</TableCell>
+                                <TableCell align="center" className={classes.tableCellHeader}>Last Name</TableCell>
+                                <TableCell align="center" className={classes.tableCellHeader}>Phone Number</TableCell>
+                                <TableCell align="center" className={classes.tableCellHeader}>Account Active</TableCell>
+                                <TableCell align="center" className={classes.tableCellHeader}>Is Primary</TableCell>
+                                {this.state.iAmAdmin && <TableCell align="center" className={classes.tableCellHeader}>Remove</TableCell>}
                             </TableRow>
-                        })
-                    }
-                    </TableBody>
-                </Table>
-                <div className={"paginationContainer "+classes.pagination}>
-                    <Pagination
-                        activePage={this.state.page}
-                        totalItemsCount={this.state.pageCount*10}
-                        pageRangeDisplayed={10}
-                        onChange={this.handleACPageClick}
-                        />
-                </div>
-                <div className={classes.center}>
-                    <Button
-                    className={classes.button}
-                    color="primary"
-                    variant="contained"
-                    onClick={()=>this.setState({showGetAccountManager:true})}>Add Account Manager</Button>
-                </div>
-                <GetAccountManager
-                    subject={this.state.company.companyName}
-                    open={this.state.showGetAccountManager}
-                    onClose={this.handleCloseGetAccountManager}/>
+                        </TableHead>
+                        <TableBody>
+                        {
+                            this.state.contactList.map((d, i)=>{
+                                return <TableRow key={i} className={classes.tableRow}>
+                                    <TableCell className={classes.tableCell}><a href={`mailto:${d.email}`}>{d.email}</a></TableCell>
+                                    <TableCell className={classes.tableCell}>{d.firstName}</TableCell>
+                                    <TableCell className={classes.tableCell}>{d.lastName}</TableCell>
+                                    <TableCell className={classes.tableCell}><a href={`tel:${d.phoneNumber}`}>{d.phoneNumber}</a></TableCell>
+                                    <TableCell align="center" className={classes.tableCell}>{d.accountActive?"Yes":"Pending"}</TableCell>
+                                    <TableCell align="center" className={classes.tableCell}>
+                                        <Checkbox
+                                            checked={d.isPrimary}
+                                            disabled={!(this.state.company.unassigned && !d.isPrimary) && d.isMe} 
+                                            onChange={e=>this.setAdmin(e, d)}
+                                            value="checked"
+                                            color="primary"
+                                        />
+                                    </TableCell>
+                                    {
+                                        this.state.iAmAdmin && <TableCell align="center" className={classes.tableCell}>
+                                            <Button
+                                                className={classes.tableButton}
+                                                color="primary"
+                                                variant="contained"
+                                                disabled={d.isMe}
+                                                onClick={()=>this.removeContact(d)}>Remove</Button>
+                                        </TableCell>
+                                    }
+                                </TableRow>
+                            })
+                        }
+                        </TableBody>
+                    </Table>
+                    <div className={"paginationContainer "+classes.pagination}>
+                        <Pagination
+                            activePage={this.state.page}
+                            totalItemsCount={this.state.pageCount*10}
+                            pageRangeDisplayed={10}
+                            onChange={this.handleACPageClick}
+                            />
+                    </div>
+                {this.state.company.unassigned ?
+                    <React.Fragment>
+                        <div className={classes.noAssign}>No one has been assigned this company yet!</div>
+                        <div className={classes.center}>
+                            <Button
+                                className={classes.button}
+                                color="primary"
+                                variant="contained"
+                                onClick={()=>this.addContact()}>Add Myself</Button>
+                        </div>
+                    </React.Fragment>
+                :
+                    <React.Fragment>
+                        <div className={classes.center}>
+                            <Button
+                            className={classes.button}
+                            color="primary"
+                            variant="contained"
+                            onClick={()=>this.setState({showGetAccountManager:true})}>Add Account Manager</Button>
+                        </div>
+                        <GetAccountManager
+                            subject={this.state.company.companyName}
+                            open={this.state.showGetAccountManager}
+                            onClose={this.handleCloseGetAccountManager}/>
+                    </React.Fragment>
+                }
             </div>
         )
     }

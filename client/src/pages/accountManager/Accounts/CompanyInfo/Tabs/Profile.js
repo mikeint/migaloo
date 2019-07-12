@@ -6,11 +6,15 @@ import AddressInput from '../../../../../components/Inputs/AddressInput/AddressI
 import FormValidation from '../../../../../FormValidation';
 import {Button, TextField}
     from '@material-ui/core';
+    import red from '@material-ui/core/colors/red';
+    import classNames from 'classnames';
 
 const styles = theme => ({
     button:{ 
         width: "80%",
-        display: "inline-block"
+        display: "inline-block",
+        marginBottom: 5,
+        marginTop: 5
     },
     textField: {
         width: "50%",
@@ -22,6 +26,13 @@ const styles = theme => ({
     addressField:{
         width: "80%",
         display: "inline-block"
+    },
+    redButton: {
+      color: theme.palette.getContrastText(red[500]),
+      backgroundColor: red[500],
+      '&:hover': {
+        backgroundColor: red[700],
+      },
     },
 });
 const errorText = [
@@ -137,8 +148,8 @@ class Profile extends React.Component{
                     disabled={!this.state.isModified}
                     onClick={this.saveCompany}>Save Changes</Button>
                 <Button
-                    className={classes.button}
-                    color="error"
+                    className={classNames(classes.button, classes.redButton)}
+                    color="primary"
                     variant="contained"
                     onClick={this.deleteCompany}>Delete Company</Button>
             </div>
