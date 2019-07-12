@@ -638,7 +638,7 @@ function getCompanyContactList(req, res) {
                 return t.any('\
                     SELECT ec.company_contact_id, um.email, um.first_name, um.last_name, um.user_type_id, \
                         um.phone_number, um.image_id, um.created_on, ec.is_primary, \
-                        um.account_active, CASE WHEN access_token IS NOT NULL THEN TRUE ELSE FALSE END as has_access_token, \
+                        um.account_active, CASE WHEN at.token IS NOT NULL THEN TRUE ELSE FALSE END as has_access_token, \
                         (count(1) OVER())/10+1 as "pageCount" \
                     FROM company_contact ec \
                     INNER JOIN user_master um ON ec.company_contact_id = um.user_id \

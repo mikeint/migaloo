@@ -39,8 +39,8 @@ const theme = createMuiTheme({
         tableHeading:{
             color: "#000", 
             backgroundColor: "#efefef", 
-            padding: "0px 5px 0px 20px",
-            textAlign: "left",
+            padding: '0px 10px',
+            textAlign: "center",
             fontWeight: 'bold',
             '@media (max-width: 1024px)': {
                 padding: "0px 5px 0px 5px",
@@ -48,12 +48,12 @@ const theme = createMuiTheme({
         },
         tableCellHeader:{ 
             textAlign: 'center',
-            padding: '0px 5px'
+            padding: '0px 10px'
         }, 
         tableCell: { 
             borderBottom: "1px solid #1a2b6d14",
-            padding: "0px 5px 0px 20px",
-            textAlign: "left",
+            padding: '0px 10px',
+            textAlign: "center",
             '@media (max-width: 1024px)': {
                 padding: "0px 5px 0px 5px",
             }, 

@@ -20,10 +20,6 @@ const styles = theme => ({
         width: 400,
         margin: "10px"
     },
-    tableBody:theme.table.tableBody,
-    tableHeading:theme.table.tableHeading,
-    tableCellHeader:theme.table.tableCellHeader,
-    tableCell:theme.table.tableCell,
     center:{
         marginLeft:"auto",
         marginRight:"auto",

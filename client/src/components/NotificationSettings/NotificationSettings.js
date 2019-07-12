@@ -6,9 +6,18 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
     tableBody:theme.table.tableBody,
-    tableHeading:theme.table.tableHeading,
-    tableCellHeader:theme.table.tableCellHeader,
-    tableCell:theme.table.tableCell,
+    tableHeading:{
+        ...theme.table.tableHeading,
+        textAlign:"left"
+    },
+    tableCellHeader:{
+        ...theme.table.tableCellHeader,
+        textAlign:"left"
+    },
+    tableCell:{
+        ...theme.table.tableCell,
+        textAlign:"left"
+    },
     center:{
         textAlign:"center"
     },
