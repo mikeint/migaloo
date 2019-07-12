@@ -179,7 +179,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                             const q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
                                     [login_ret.user_id, company_login_ret.user_id])
                             return t.batch([lh, q2, q3, q4]).then(() => {
-                                sendEmailVerification(payload.id, payload.email) // Async to send email verification
+                                sendEmailVerification(payload.id, payload.email).catch(()=>{}) // Async to send email verification
 
                                 return createJWT(payload).then((token)=>{
                                     res.status(200).json(token)
@@ -224,7 +224,7 @@ router.post('/register', (req, res) => { // Todo recieve encrypted jwt toekn for
                         const q4 = t.none('INSERT INTO company_contact (company_contact_id, company_id, is_primary) VALUES ($1, $2, true)',
                                 [login_ret.user_id, company_login_ret.user_id])
                         return t.batch([lh, q2, q3, q4]).then(() => {
-                            sendEmailVerification(payload.id, payload.email) // Async to send email verification
+                            sendEmailVerification(payload.id, payload.email).catch(()=>{}) // Async to send email verification
 
                             return createJWT(payload).then((token)=>{
                                 res.status(200).json(token)
@@ -374,7 +374,7 @@ function sendEmailVerification(id, email, ip){
             resolve()
         })
         .catch((err)=>{
-            logger.error('Error sending email verification', {tags:['register', 'sql'], url:req.originalUrl, email:email, ip:ip, error:err.message || err});
+            logger.error('Error sending email verification', {tags:['register', 'sql'], email:email, ip:ip, error:err.message || err});
             reject(err)
         });
     })

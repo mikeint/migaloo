@@ -12,6 +12,9 @@ export default class FormValidation {
         this.getParentState = this.getParentState.bind(this);
         this.getStateValue = this.getStateValue.bind(this);
         this.hasError = this.hasError.bind(this);
+        if(this.getParentState().errors == null){
+            throw new Error("Missing the field errors:{} in state of parent.")
+        }
     }
     shouldRevalidate(){
         if(Object.keys(this.getParentState().errors).length > 0){
@@ -73,7 +76,7 @@ export default class FormValidation {
         return Object.keys(errors).length === 0;
     }
     hasError(id){
-        const errorMessage = this.parent.state.errors[id];
+        const errorMessage = this.getParentState().errors[id];
         if(errorMessage == null)
             return {};
         else

@@ -1,5 +1,4 @@
 import React from 'react';
-import AuthFunctions from '../../../AuthFunctions'; 
 import {post} from '../../../ApiCalls';  
 import SkillSearch from '../../../components/Inputs/SkillSearch/SkillSearch'; 
 import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/ExperienceSelector';
@@ -86,7 +85,7 @@ const errorText = [
     },
     {
         stateName: "address.placeId",
-        errorText: "Please select an address for the company"
+        errorText: "Please select an address for the candidate"
     }
 ]
   
@@ -118,7 +117,6 @@ class AddCandidate extends React.Component{
             errors:{},
             tab: 0
         }
-        this.Auth = new AuthFunctions();
         this.formValidation = new FormValidation(this, errorText);
     }
 

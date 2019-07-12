@@ -11,32 +11,32 @@ import PlacesAutocomplete, {
 } from 'react-places-autocomplete';
 
 const styles = theme => ({
-    textField1Container:{
-        display: "flex",
-        whiteSpace: "nowrap",
-        flex: "1 1"
-    },
-    textField1:{
-        display: "flex",
-        minWidth: 200,
-        flex: "1 1"
-    },
-    textField2:{
-        width: 200,
-    },
     info:{
         marginTop: "16px"
     },
-    alignment:{
-        display: "flex",
-        flexWrap: "wrap",
-        width: "100%"
-    },
-    secondaryAddress:{
-    },
     toolTip:{
         marginRight: "30px"
-    }
+    },
+    textField: {
+        width: "100%",
+        marginTop: 10
+    },
+    white: {
+        color: "white !important",
+        borderBottomColor: "white !important",
+        '&:before': {
+            color: "white",
+            borderBottomColor: "white",
+        },
+        '&:after': {
+            color: "white",
+            borderBottomColor: "white",
+        },
+        '&:hover': {
+            color: "white",
+            borderBottomColor: "white",
+        },
+    },
 })
 class AddressInput extends Component {
 
@@ -65,6 +65,7 @@ class AddressInput extends Component {
             lon: value.lon, // Nullable
             error: false
         };
+        this.formatAddress = this.formatAddress.bind(this);
     }
     handleChange = address => {
         this.setState({ address:address, placeId: null });
@@ -165,18 +166,16 @@ class AddressInput extends Component {
         const { classes, className } = this.props;
         const inputProps = {
             label: "Address",
-            placeholder: "Address",
             margin: "normal",
-            variant: "outlined",
             onBlur: this.blurredOnce.bind(this),
-            className: `location-search-input ${classes.textField1}`
+            className: `location-search-input ${classes.textField}`
         }
         if((!this.state.placeId && this.state.hasBlur) || this.state.error){
             inputProps.error = true;
             inputProps.helperText="Please select an item from the drop down"
         }
         return (
-            <div className={classes.alignment+" "+className}>
+            <div className={className}>
                 <PlacesAutocomplete
                     value={this.state.address}
                     onChange={this.handleChange}
@@ -186,26 +185,25 @@ class AddressInput extends Component {
                     searchOptions={{types: ['address']}}
                 >
                 {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-                    <div className={classes.textField1Container}>
+                    <div>
                         <TextField
                             {...getInputProps(inputProps)}
+                            InputProps={{classes: {root: classes.white}}}
+                            InputLabelProps={{ classes: {root:classes.white} }}
                         />
-                        <Tooltip className={classes.toolTip} title="An item must be selected from the drop down search" aria-label="Search">
-                            <Info className={classes.info}/>
-                        </Tooltip>
                         <Paper className={classes.paper} square>
                             {loading && <MenuItem
                                     {...getSuggestionItemProps}
                                     selected={false}
                                     component="div"
-                                    className={classes.textField1}
+                                    className={classes.textField}
                                     style={{
                                         fontWeight: 400,
                                     }}>
                                 Loading...
                             </MenuItem>}
                             {suggestions.map((suggestion, i) => {
-                                const className = classes.textField1;
+                                const className = classes.textField;
                                 // inline style for demonstration purpose
                                 const style = {
                                     fontWeight: suggestion.active ? 500 : 400,
@@ -227,13 +225,13 @@ class AddressInput extends Component {
                 </PlacesAutocomplete>
                 <TextField
                     name="addressLine2"
-                    label="Address Line 2"
-                    placeholder="Address Line 2 (Optional)"
+                    label="Address Line 2 (Optional)"
                     defaultValue={this.state.addressLine2}
-                    className={classes.textField2+" "+classes.secondaryAddress}
+                    className={classes.textField}
+                    InputProps={{classes: {root: classes.white}}}
+                    InputLabelProps={{ classes: {root:classes.white} }}
                     onChange={this.handleAddr2Change.bind(this)}
                     margin="normal"
-                    variant="outlined"
                 />
             </div>
         );

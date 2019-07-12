@@ -1,11 +1,71 @@
 import React, { Component } from 'react';  
 import axios from 'axios';
-import AuthFunctions from '../../../../AuthFunctions';
-import { Redirect } from 'react-router-dom';
+import AddressInput from './AddressInput/AddressInput';
+import { TextField, Button } from '@material-ui/core';
+import FormValidation from '../../../../FormValidation';
+import { withStyles } from '@material-ui/core/styles';
 
+const styles = theme => ({
+    textField: {
+        width: "100%",
+        marginTop: 10
+    },
+    white: {
+        color: "white !important",
+        borderBottomColor: "white !important",
+        '&:before': {
+            color: "white",
+            borderBottomColor: "white",
+        },
+        '&:after': {
+            color: "white",
+            borderBottomColor: "white",
+        },
+        '&:hover': {
+            color: "white",
+            borderBottomColor: "white",
+        },
+    },
+    button:{
+        width: "90%",
+        margin: "20px"
+    }
+})
+const errorText = [
+    {
+        stateName: "firstName",
+        errorText: "Please enter your first name"
+    },
+    {
+        stateName: "lastName",
+        errorText: "Please enter your last name"
+    },
+    {
+        stateName: "email",
+        errorText: "Please enter your email"
+    },
+    {
+        stateName: "email",
+        errorText: "Please enter a valid email",
+        type: "regex",
+        regex: [/@/, /\.[A-Za-z0-9]+$/]
+    },
+    {
+        stateName: "phoneNumber",
+        errorText: "Please enter your phone number"
+    },
+    {
+        stateName: "companyName",
+        errorText: "Please enter your companies name"
+    },
+    {
+        stateName: "address.placeId",
+        errorText: "Please select an address for the company"
+    }
+]
 class RegisterEmployerForm extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             firstName: '',
             lastName: '',
@@ -13,36 +73,43 @@ class RegisterEmployerForm extends Component {
             phoneNumber: '',
             companyName: '',
             errorList: '',
-            registered: false
+            address:{},
+            registered: false,
+            errors:{}
         };
-        this.Auth = new AuthFunctions();
-        this.onChange = this.onChange.bind(this);
         this.register = this.register.bind(this);
+        this.formValidation = new FormValidation(this, errorText);
     }
 
-  
+    handleChange = (e) => {
+        this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
+    }
+    handleChangeKV = (map) => {
+        this.setState(map, this.formValidation.shouldRevalidate)
+    }
 
-    onChange(e) {
-        this.setState({ [e.target.name]: e.target.value });
+    handleAddressChange(address){
+        this.setState({address:address}, this.formValidation.shouldRevalidate)
     }
 
     register(e) {
-        e.preventDefault();
-
-        const newUser = {
-			firstName: this.state.firstName,
-			lastName: this.state.lastName,
-			email: this.state.email,
-			type: 3, // Employer
-			phoneNumber: this.state.phoneNumber,
-			companyName: this.state.companyName,
-		}; 
-        
-        axios.post('/api/auth/register', newUser).then((res)=>{
-            this.setState({registered: true})
-        }).catch(errors => 
-            this.showErrors(errors)
-        );  
+        if(this.formValidation.isValid()){
+            const newUser = {
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                email: this.state.email,
+                type: 3, // Employer
+                phoneNumber: this.state.phoneNumber,
+                companyName: this.state.companyName,
+                address: this.state.address,
+            }; 
+            
+            axios.post('/api/auth/register', newUser).then((res)=>{
+                this.setState({registered: true})
+            }).catch(errors => 
+                this.showErrors(errors)
+            );  
+        }
     }
 
     showErrors = (errors) => { 
@@ -51,12 +118,7 @@ class RegisterEmployerForm extends Component {
 
 
     render() {
-        const { firstName, lastName, email, phoneNumber, companyName } = this.state;
-
-        if(this.Auth.loggedIn()){
-            if (this.state.user)
-                return <Redirect to='/employer' />
-        }  
+        const { classes } = this.props;
         
         return (
         
@@ -68,27 +130,77 @@ class RegisterEmployerForm extends Component {
                 </div>
                 :
                 <React.Fragment>
-                    <div className="formItem"> 
-                        <input type="text" className={this.state.errorList.firstName ? "formControl error" : "formControl"} placeholder="First Name" name="firstName" value={firstName} onChange={this.onChange} required />
+                    <div>
+                        <TextField
+                            name="firstName"
+                            label="First Name"
+                            onChange={this.handleChange}
+                            className={classes.textField}
+                            InputProps={{classes: {root: classes.white, focused: classes.white}}}
+                            InputLabelProps={{ classes: {root:classes.white, focused: classes.white} }}
+                            margin="normal"
+                            {...this.formValidation.hasError("firstName")}
+                        />
                     </div>
-                    <div className="formItem"> 
-                        <input type="text" className={this.state.errorList.lastName ? "formControl error" : "formControl"} placeholder="Last Name" name="lastName" value={lastName} onChange={this.onChange} required />
+                    <div>
+                        <TextField
+                            name="lastName"
+                            label="Last Name"
+                            className={classes.textField}
+                            InputProps={{classes: {root: classes.white}}}
+                            InputLabelProps={{ classes: {root:classes.white} }}
+                            onChange={this.handleChange}
+                            margin="normal"
+                            {...this.formValidation.hasError("lastName")}
+                        />
                     </div>
-                    <div className="formItem"> 
-                        <input type="email" className={this.state.errorList.email ? "formControl error" : "formControl"} placeholder="Email" name="email" value={email} onChange={this.onChange} required />
+                    <div>
+                        <TextField
+                            name="email"
+                            label="Email"
+                            className={classes.textField}
+                            InputProps={{classes: {root: classes.white}}}
+                            InputLabelProps={{ classes: {root:classes.white} }}
+                            onChange={this.handleChange}
+                            margin="normal"
+                            {...this.formValidation.hasError("email")}
+                        />
                     </div>
-                    <div className="formItem"> 
-                        <input type="text" className={this.state.errorList.phoneNumber ? "formControl error" : "formControl"} placeholder="Phone Number" name="phoneNumber" value={phoneNumber} onChange={this.onChange} required />
+                    <div>
+                        <TextField
+                            name="phoneNumber"
+                            label="Phone Number"
+                            className={classes.textField}
+                            InputProps={{classes: {root: classes.white}}}
+                            InputLabelProps={{ classes: {root:classes.white} }}
+                            onChange={this.handleChange}
+                            margin="normal"
+                            {...this.formValidation.hasError("phoneNumber")}
+                        />
                     </div>
-                    <div className="formItem"> 
-                        <input type="text" className={this.state.errorList.companyName ? "formControl error" : "formControl"} placeholder="Company Name" name="companyName" value={companyName} onChange={this.onChange} required />
+                    <div>
+                        <TextField
+                            name="companyName"
+                            label="Company Name"
+                            className={classes.textField}
+                            InputProps={{classes: {root: classes.white}}}
+                            InputLabelProps={{ classes: {root:classes.white} }}
+                            onChange={this.handleChange}
+                            margin="normal"
+                            {...this.formValidation.hasError("companyName")}
+                        />
                     </div>
-    
-                    <input onClick={this.register} type="submit" value="Register" className="loginBtn" />
+                    <div> 
+                        <AddressInput
+                            onChange={this.handleAddressChange.bind(this)}
+                            {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
+                        />
+                    </div>
+                    <Button onClick={this.register} variant="contained" color="primary" className={classes.button} >Register</Button>
                 </React.Fragment>}
             </div>
         );
     }
 }
 
-export default RegisterEmployerForm;
+export default withStyles(styles)(RegisterEmployerForm);  

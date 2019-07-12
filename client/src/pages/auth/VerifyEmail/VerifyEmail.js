@@ -1,7 +1,7 @@
 import React from 'react';
 import {post} from '../../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';
-import {Button, TextField} from '@material-ui/core';
+import {Button, TextField, LinearProgress} from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 
 const styles = theme => ({
@@ -66,6 +66,7 @@ class VerifyEmail extends React.Component{
                 {
                     this.state.verified === null ?
                     <React.Fragment>
+                        <LinearProgress />
                         <div className={classes.formItem}>Checking the validity of your token.</div>
                     </React.Fragment>
                     :
@@ -73,13 +74,20 @@ class VerifyEmail extends React.Component{
                     <React.Fragment>
                         <div className={classes.formItem}>Your account has been verified!</div>
                         <br/>
-                        <div className={classes.formItem}>
-                            <Button 
-                                color="primary"
-                                variant="contained"
-                                className={classes.button}
-                                onClick={this.handleSubmit}>Get Started</Button>
-                        </div>
+                        {this.state.userType===1?
+                            <div className={classes.formItem}>
+                                <Button 
+                                    color="primary"
+                                    variant="contained"
+                                    className={classes.button}
+                                    onClick={this.handleSubmit}>Get Started</Button>
+                            </div>
+                        :
+                            <div className={classes.formItem}>
+                                Our Account Managers have recieved your request and will be with you shortly.<br/>
+                                Please allow them 1 buisness day to contact you.
+                            </div>
+                        }
                     </React.Fragment>
                     :
                     <React.Fragment>
