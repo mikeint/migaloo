@@ -211,6 +211,21 @@ describe('Candidate', function() {
             })
         });
     });
+    describe('List for Job', () => {
+        it('check can list', () => {
+            return get('/api/candidate/listJobs/1000', process.env.recruiterToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    assert.notEqual(res.jobList, null)
+                    assert.notStrictEqual(res.jobList.length, 0)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+    });
     describe('Delete', () => {
         it('check can list', () => {
             return post('/api/candidate/delete/', {candidateId: candidateId}, process.env.recruiterToken).then((res)=>{

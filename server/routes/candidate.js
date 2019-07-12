@@ -427,7 +427,7 @@ function deleteNote(req, res){
 }
 /**
  * List the notes for the candidate
- * @route POST api/candidate/listNotes
+ * @route GET api/candidate/listNotes
  * @group candidate - Candadite Listings
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -467,8 +467,60 @@ function listNotes(req, res){
 }
 
 /**
+ * List job postings for a candidate
+ * @route GET api/candidate/listJobs/:candidateId
+ * @group candidate - Candadite Listings
+ * @param {Object} body.optional
+ * @returns {object} 200 - Success Message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.get('/listJobs/:candidateId', passport.authentication,  (req, res) => {
+    var jwtPayload = req.body.jwtPayload;
+    var candidateId = req.params.candidateId;
+    if(jwtPayload.userType != 1){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(candidateId == null){
+        const errorMessage = "Missing candidateId"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+
+    postgresdb.any(' \
+        SELECT j.post_id, j.title, j.created_on as posted_on, jt.job_type_name, cp.migaloo_accepted, cp.employer_accepted, \
+            cp.job_accepted, cp.has_seen_post, ms.message_subject_id, a.* \
+        FROM job_posting_all j \
+        INNER JOIN company_contact ec ON j.company_id = ec.company_id \
+        INNER JOIN candidate_posting cp ON cp.post_id = j.post_id \
+        INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
+        LEFT JOIN job_type jt ON j.job_type_id = jt.job_type_id \
+        LEFT JOIN address a ON a.address_id = j.address_id \
+        INNER JOIN messages_subject ms ON ms.subject_user_id = cp.candidate_id AND ms.post_id = j.post_id AND (ms.user_id_1 = cp.recruiter_id OR ms.user_id_2 = cp.recruiter_id)  \
+        WHERE c.candidate_id = ${candidateId} AND cp.recruiter_id = ${userId} AND c.active \
+        ORDER BY cp.created_on DESC', {candidateId:candidateId, userId:jwtPayload.id})
+    .then((data) => {
+        // Marshal data
+        data = data.map(db.camelizeFields).map(m=>{
+            address.convertFieldsToMap(m)
+            var timestamp = moment(m.postedOn);
+            var ms = timestamp.diff(moment());
+            m.posted = moment.duration(ms).humanize() + " ago";
+            m.postedOn = timestamp.format("x");
+            return m
+        })
+        res.json({success:true, jobList:data})
+    })
+    .catch(err => {
+        logger.error('Employer Posting SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+});
+/**
  * List the candidates for the recruiter
- * @route POST api/candidate/list
+ * @route GET api/candidate/list
  * @group candidate - Candadite Listings
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
