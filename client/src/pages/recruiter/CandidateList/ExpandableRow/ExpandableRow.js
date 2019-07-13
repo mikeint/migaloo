@@ -137,12 +137,12 @@ class ExpandableRow extends React.Component{
                                 <div className="infoRow">
                                     <div className="icon"><TagsImage/></div>
                                     <div className="title"><b>Tags: </b></div>
-                                    <div className="item">{candidateData.tagNames.join(", ")}</div>
+                                    <div className="item">{(candidateData.tagNames||[]).join(", ")}</div>
                                 </div>
                                 <div className="infoRow">
                                     <div className="icon"><ExperienceImage/></div>
                                     <div className="title"><b>Experience: </b></div>
-                                    <div className="item">{candidateData.experience}</div>
+                                    <div className="item">{candidateData.experience} years</div>
                                 </div>
                                 <div className="infoRow">
                                     <div className="icon"><EmailImage/></div>
