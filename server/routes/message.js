@@ -268,7 +268,7 @@ function listMessages(req, res){
 
 /**
  * List all messages for a message chain
- * @route POST api/message/listChain/:chainId
+ * @route POST api/message/listConversationMessages
  * @group message - Chat Messages
  * @param {Object} body.optional
  * @returns {object} 200 - Success Message
@@ -277,8 +277,10 @@ function listMessages(req, res){
  */
 router.get('/listConversationMessages/:messageSubjectId', passport.authentication, listConversationMessages);
 router.get('/listConversationMessages/:messageSubjectId/:page', passport.authentication, listConversationMessages);
+router.get('/listConversationMessages/after/:messageSubjectId/:after', passport.authentication, listConversationMessages);
 function listConversationMessages(req, res){
     var page = req.params.page;
+    var after = req.params.after;
     var messageSubjectId = parseInt(req.params.messageSubjectId, 10);
     if(messageSubjectId == null){
         const errorMessage = "Missing Message Subject Id"
@@ -290,6 +292,8 @@ function listConversationMessages(req, res){
     var userId = jwtPayload.id;
     if(page == null || page < 1)
         page = 1;
+    if(after == null || page < 1)
+        after = 1;
     postgresdb.any('\
         SELECT m.message_id, ms.post_id, m.to_id, m.created_on, m.responded, m.message_type_id, \
             m.message, m.has_seen, m.date_offer, m.response, m.minute_length, m.location_type_name, m.meeting_subject, \
@@ -320,11 +324,11 @@ function listConversationMessages(req, res){
         INNER JOIN job_posting_all jpa ON jpa.post_id = ms.post_id \
         INNER JOIN company c ON c.company_id = ms.company_id \
         INNER JOIN recruiter r ON r.recruiter_id = ms.recruiter_id \
-        WHERE c.active AND (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active AND ms.message_subject_id = ${messageSubjectId} \
+        WHERE c.active AND (${userId} = ANY(ms.company_contact_ids) OR ms.recruiter_id = ${userId}) AND jpa.active AND ms.message_subject_id = ${messageSubjectId} AND Message_id > ${after}\
         ORDER BY m.created_on DESC \
         OFFSET ${page} \
         LIMIT 10 \
-        ', {userId:userId, messageSubjectId:messageSubjectId, page:(page-1)*10})
+        ', {userId:userId, messageSubjectId:messageSubjectId, page:(page-1)*10, after:after})
     .then((data) => {
         // Marshal data
         data = data.map(db.camelizeFields).map(m=>{

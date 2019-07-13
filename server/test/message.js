@@ -141,8 +141,21 @@ describe('Messages', function() {
                 }
             })
         });
-        it('check that can messages', () => {
+        it('check that can list messages', () => {
             return get(`/api/message/listConversationMessages/${messageSubjectId}`, process.env.accountManagerToken).then((res)=>{
+                try{
+                    assert.ok(res.success)
+                    assert.notEqual(res.messages, null)
+                    assert.notEqual(res.messages.length, 0)
+                    return Promise.resolve()
+                }catch(e){
+                    console.error(res)
+                    return Promise.reject(e)
+                }
+            })
+        });
+        it('check that can list messages', () => {
+            return get(`/api/message/listConversationMessages/after/${messageSubjectId}/1`, process.env.accountManagerToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     assert.notEqual(res.messages, null)
