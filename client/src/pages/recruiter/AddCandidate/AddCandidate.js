@@ -80,10 +80,6 @@ const errorTextPage1 = [
         errorText: "Please enter their phone number"
     },
     {
-        stateName: "company",
-        errorText: "Please enter their current company"
-    },
-    {
         stateName: "salary",
         errorText: "Please select the salary range"
     },
@@ -130,17 +126,17 @@ class AddCandidate extends React.Component{
     constructor(props) {
         super(props);
         this.state = {   
-            firstName:'',
-            lastName:'',
-            email:'',
-            phoneNumber:'',
-            company:'',
-            url:'',
-            jobTitle: '',
+            firstName:null,
+            lastName:null,
+            email:null,
+            phoneNumber:null,
+            url:null,
+            jobTitle: null,
             responsibilities: null,
             highlights: null,
             salary:0,
             jobTypeId:null,
+            resumeId: null,
             experience:0,
             commute:1,
             address:null,
@@ -161,7 +157,7 @@ class AddCandidate extends React.Component{
             get('/api/candidate/get/'+this.state.candidateId)
             .then((res)=>{
                 if(res == null || !res.data.success || res.data.candidateList.length === 0) return
-                this.setState({ ...res.data.candidateList[0] })
+                this.setState({ ...res.data.candidateList[0], salary: res.data.candidateList[0].salary/1000 })
             }).catch(errors => 
                 console.log(errors)
             )
@@ -193,11 +189,12 @@ class AddCandidate extends React.Component{
         this.setState(map, this.getPageValidation().shouldRevalidate)
     }
 
-    handleAddressChange(address){
+    handleAddressChange = (address) => {
         this.setState({address:address}, this.getPageValidation().shouldRevalidate)
     }
-    handleResumeChange(e, f){
-        console.log(e, f)
+    handleResumeChange = (e) => {
+        console.log(e, { resumeId: e.resumeId })
+        this.setState({ resumeId: e.resumeId }, this.getPageValidation().shouldRevalidate)
     }
     handleSubmit = () => {
         if(this.getPageValidation().isValid()){
@@ -236,7 +233,7 @@ class AddCandidate extends React.Component{
                         onChange={this.handleChange}
                         margin="normal"
                         variant="outlined"
-                        value={this.state.firstName}
+                        value={this.state.firstName||''}
                         {...this.getPageValidation().hasError("firstName")}
                     />
                     <TextField
@@ -246,7 +243,7 @@ class AddCandidate extends React.Component{
                         onChange={this.handleChange}
                         margin="normal"
                         variant="outlined"
-                        value={this.state.lastName}
+                        value={this.state.lastName||''}
                         {...this.getPageValidation().hasError("lastName")}
                     />
                 </div>
@@ -258,7 +255,7 @@ class AddCandidate extends React.Component{
                         onChange={this.handleChange}
                         margin="normal"
                         variant="outlined"
-                        value={this.state.email}
+                        value={this.state.email||''}
                         {...formValidation.hasError("email")}
                     />
                     <TextField
@@ -268,21 +265,11 @@ class AddCandidate extends React.Component{
                         onChange={this.handleChange}
                         margin="normal"
                         variant="outlined"
-                        value={this.state.phoneNumber}
+                        value={this.state.phoneNumber||''}
                         {...formValidation.hasError("phoneNumber")}
                     /> 
                 </div>
                 <div className={classes.input2}>
-                    <TextField
-                        name="company"
-                        label="Current Company"
-                        className={classes.textField}
-                        onChange={this.handleChange}
-                        margin="normal"
-                        variant="outlined"
-                        value={this.state.company}
-                        {...formValidation.hasError("company")}
-                    />  
                     <TextField
                         name="url"
                         label="Linkdin/Profile Url"
@@ -290,7 +277,7 @@ class AddCandidate extends React.Component{
                         onChange={this.handleChange}
                         margin="normal"
                         variant="outlined"
-                        value={this.state.url}
+                        value={this.state.url||''}
                         {...formValidation.hasError("url")}
                     /> 
                 </div>
@@ -358,7 +345,7 @@ class AddCandidate extends React.Component{
                         label="Job Title"
                         className={classes.textField}
                         onChange={this.handleChange}
-                        value={this.state.jobTitle}
+                        value={this.state.jobTitle||''}
                         margin="normal"
                         variant="outlined"
                         {...formValidation.hasError("jobTitle")}
@@ -385,6 +372,8 @@ class AddCandidate extends React.Component{
                 onChange={this.handleChangeKV}/>
             case 3: // Resume Page
                 return <div className={classes.formSection}>
+                    {this.state.resumeId != null && 
+                        <div>Currently a resume is loaded, uploading another will overwrite the previous version</div>}
                     <div>Upload a Resume for the candidate:</div>
                     <UploadResume
                         onClose={this.handleResumeChange}/>

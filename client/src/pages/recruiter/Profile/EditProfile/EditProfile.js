@@ -130,7 +130,7 @@ class EditProfile extends React.Component{
                 <div className={classes.flexBox}>
                     <br/>
                     <div className={classes.center}>
-                        <ModifiableProfileImage user={this.state.company} type={'accountManager'}/>
+                        <ModifiableProfileImage user={this.state.company} type={'recruiter'}/>
                     </div>
                     
                     <div className={classes.center}>

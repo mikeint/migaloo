@@ -13,7 +13,16 @@ module.exports = {
         user: process.env.DB_USERNAME || 'postgres',
         password: process.env.DB_PASSWORD || 'postgres'
     },
-    s3:{
+    uploads:{
+        supportedMimeTypes:{
+            'application/x-pdf':'pdf',
+            'application/pdf':'pdf',
+            'application/msword':'doc',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document':'docx',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.template':'docx',
+            'image/jpeg':'jpg',
+            'image/png':'png',
+        },
         bucketName: 'migaloo-data'
     }
 }

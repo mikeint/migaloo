@@ -7,7 +7,9 @@ const useAWS = process.env.AWS ? true : false;
 const aws = require('aws-sdk');
 var s3 = new aws.S3()
 const logger = require('../utils/logging');
-const bucketName = require('../config/settings').s3.bucketName;
+const settings = require('../config/settings');
+const bucketName = settings.uploads.bucketName;
+const supportedMimeTypes = settings.uploads.supportedMimeTypes;
 
 /**
  * Get image
@@ -32,37 +34,43 @@ function getImage(req, res) {
     var query;
     if(type === 1){
         query = '\
-        SELECT image_id \
+        SELECT r.image_id, fu.mime_type \
         FROM recruiter r \
+        LEFT JOIN file_upload fu ON fu.file_id = r.image_id \
         WHERE r.recruiter_id = $1'
     }else if(type === 2){
         query = '\
-        SELECT image_id \
+        SELECT r.image_id, fu.mime_type \
         FROM account_manager r \
+        LEFT JOIN file_upload fu ON fu.file_id = r.image_id \
         WHERE r.account_manager_id = $1'
     }else if(type === 4){
         query = '\
-        SELECT image_id \
+        SELECT r.image_id, fu.mime_type \
         FROM company r \
+        LEFT JOIN file_upload fu ON fu.file_id = r.image_id \
         WHERE r.company_id = $1'
     }else if(type === 5){
         query = '\
-        SELECT image_id \
+        SELECT r.image_id, fu.mime_type \
         FROM candidate r \
+        LEFT JOIN file_upload fu ON fu.file_id = r.image_id \
         WHERE r.candidate_id = $1'
     }
     postgresdb.one(query, [id])
     .then((data) => {
+        console.log(data)
         if(data.image_id != null){
+            const ext = supportedMimeTypes[data.mime_type]
             if(useAWS){
-                var params = {Bucket: bucketName, Key: 'profile_image/'+req.params.size+"_"+data.image_id};
+                const params = {Bucket: bucketName, Key: `profile_image/${req.params.size}_${data.image_id}.${ext}`};
                 s3.getSignedUrl('getObject', params, function (err, url) {
                     if(err != null)
                         return res.status(500).json({success:false, error:err})
                     res.json({success:true, url:url})
                 });
             }else{
-                res.json({success:true, url:'http://localhost:5000/api/public/profile_image/'+req.params.size+"_"+data.image_id})
+                res.json({success:true, url:`http://localhost:5000/api/public/profile_image/${req.params.size}_${data.image_id}.${ext}`})
             }
         }else{
             res.json({success:false})

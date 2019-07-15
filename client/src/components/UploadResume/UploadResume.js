@@ -31,8 +31,8 @@ class UploadResume extends React.Component{
                 withCredentials: false,
                 headers: this.headers,
                 timeout: 60000,
-                onload:  (d)=>{console.log(d)},
-                onerror:  (d)=>{console.log(d)},
+                onload:  (d)=>{this.props.onClose(JSON.parse(d))},
+                onerror:  (d)=>{console.error(d)},
                 ondata: null
             }
         }
@@ -46,7 +46,7 @@ class UploadResume extends React.Component{
                     maxFiles={1}
                     className="uploadFile"
                     // onupdatefiles={this.props.handleClose}
-                    onprocessfile={this.props.onClose}
+                    // onprocessfile={this.props.onClose}
                     />
             </React.Fragment>
         );

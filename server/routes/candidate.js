@@ -20,28 +20,6 @@ const candidateUpdate = new pgp.helpers.ColumnSet(['?candidate_id', ...candidate
 const upload = require('../utils/upload')
 const uploadMiddleware = upload.generateUploadMiddleware('profile_image/')
 
-const generateImageFileNameAndValidation = (req, res, next) => {
-    // Validate this candidate is with this recruiter
-    var jwtPayload = req.body.jwtPayload;
-    if(jwtPayload.userType != 1){
-        const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
-        return res.status(400).json({success:false, error:errorMessage})
-    }
-    upload.getFileId(jwtPayload.id, 1)
-    .then((file_id) => {
-        req.params.fileId = file_id.file_id
-        var now = Date.now()
-        req.params.fileName = file_id.file_id+"_image_"+now.toString()
-        req.params.jwtPayload = jwtPayload
-        next()
-    })
-    .catch(err => {
-        logger.error('Upload Image', {tags:['image', 's3'], url:req.originalUrl, userId:jwtPayload.id, error:err});
-        res.status(500).json({success:false, error:err})
-    });
-}
-
 /**
  * Upload recruiter profile image
  * @route GET api/employer/uploadImage
@@ -51,11 +29,16 @@ const generateImageFileNameAndValidation = (req, res, next) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/uploadImage/:candidateId?', passport.authentication, generateImageFileNameAndValidation, uploadMiddleware.any('filepond'), (req, res) => {
+router.post('/uploadImage/:candidateId?', passport.authentication, upload.uploadJwtParams, uploadMiddleware.any('filepond'), (req, res) => {
     var jwtPayload = req.params.jwtPayload;
+    if(jwtPayload.userType != 1){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
     logger.info('Uploaded Image', {tags:['upload', 'image'], url:req.originalUrl, userId:jwtPayload.id, body:req.body, params:req.params})
     if(req.params.candidateId == null){
-        res.json({success:true, imageId:req.params.finalFileName})
+        res.json({success:true, imageId:req.params.fileId})
     }else{
         postgresdb.one(' \
             SELECT 1 \
