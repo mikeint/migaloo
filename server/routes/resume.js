@@ -23,21 +23,13 @@ const generateResumeFileNameAndValidation = (req, res, next) => {
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-    postgresdb.one('\
-        SELECT 1 \
-        FROM recruiter_candidate r \
-        WHERE r.recruiter_id = $1 AND r.candidate_id = $2', [jwtPayload.id, req.params.candidateId])
-    .then(() => {
-        upload.getFileId(jwtPayload.id, 2)
-        .then((file_id) => {
-            req.params.fileId = file_id.file_id
-            req.params.fileName = file_id.file_id+"_resume"
-            next()
-        })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({success:false, error:err})
-        });
+    
+    upload.getFileId(jwtPayload.id, 2)
+    .then((file_id) => {
+        req.params.fileId = file_id.file_id
+        req.params.fileName = file_id.file_id+"_resume"
+        req.params.jwtPayload = jwtPayload
+        next()
     })
     .catch(err => {
         console.log(err)
@@ -60,9 +52,14 @@ router.post('/upload/:candidateId?', passport.authentication, generateResumeFile
     if(req.params.candidateId == null){
         res.json({success:true, resumeId:resumeId})
     }else{
-        return postgresdb.none('UPDATE candidate SET resume_id=$1 WHERE candidate_id = $2',
-            [resumeId, req.params.candidateId])
+        postgresdb.one('\
+            SELECT 1 \
+            FROM recruiter_candidate r \
+            WHERE r.recruiter_id = $1 AND r.candidate_id = $2', [jwtPayload.id, req.params.candidateId])
         .then(() => {
+            return postgresdb.none('UPDATE candidate SET resume_id=$1 WHERE candidate_id = $2',
+                [resumeId, req.params.candidateId])
+        }).then(() => {
             res.json({success:true, resumeId:resumeId})
         })
         .catch(err => {
