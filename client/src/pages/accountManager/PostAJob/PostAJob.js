@@ -3,7 +3,7 @@ import { Redirect, Prompt } from 'react-router-dom';
 
 import AuthFunctions from '../../../AuthFunctions'; 
 
-import {get, post} from '../../../ApiCalls';  
+import {get, post, cancel} from '../../../ApiCalls';  
 import SkillSearch from '../../../components/Inputs/SkillSearch/SkillSearch';
 import CompanySelector from '../../../components/Inputs/CompanySelector/CompanySelector';
 import AddressInput from '../../../components/Inputs/AddressInput/AddressInput';
@@ -161,7 +161,10 @@ class PostAJob extends React.Component{
         }
     }
     componentDidMount() {
-        this.getJob()
+        this.getJob();
+    }
+    componentWillUnmount() {
+        cancel();
     }
 
     handleChange = (e) => {

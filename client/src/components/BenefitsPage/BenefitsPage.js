@@ -13,6 +13,9 @@ const styles = theme => ({
         width: "80%",
         marginBottom: 20
     },
+    tableCell:{
+        padding: "2px 56px 2px 24px"
+    },
     checkBox:{
         padding: 0
     },
@@ -21,6 +24,10 @@ const styles = theme => ({
         "&:nth-child(even)": {
             background: "#f2f3f5",
         },
+        "&:hover": {
+            background: "#d3d3d4",
+        },
+        cursor: "pointer"
     }
 });
 class BenefitsPage extends React.Component{
@@ -80,12 +87,16 @@ class BenefitsPage extends React.Component{
                     <TableBody>
                         {
                             this.state.benefits.map((d, i)=>{
-                                return <TableRow key={i} className={classes.tableRow} classes={{root:classes.row}}>
+                                return <TableRow key={i}
+                                    className={classes.tableRow}
+                                    classes={{root:classes.row}}
+                                    onClick={(e)=>{e.preventDefault(); this.handleCheckboxChange(d.benefitId, d.groupNum, !d.checked)}}
+                                    >
                                     <TableCell className={classes.tableCell}>{d.benefitName}</TableCell>
                                     <TableCell className={classes.tableCell}>
                                         <Checkbox
                                             classes={{root:classes.checkBox}}
-                                            onChange={(e,c)=>this.handleCheckboxChange(d.benefitId, d.groupNum, c)}
+                                            onChange={(e,c)=>{e.preventDefault(); this.handleCheckboxChange(d.benefitId, d.groupNum, c)}}
                                             checked={d.checked}/>
                                     </TableCell>
                                 </TableRow>

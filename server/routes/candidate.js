@@ -13,7 +13,7 @@ const camelColumnConfig = db.camelColumnConfig
 const candidateTagsInsertHelper = new pgp.helpers.ColumnSet(['candidate_id', 'tag_id'], {table: 'candidate_tags'});
 const benefitsInsertHelper = new pgp.helpers.ColumnSet(['candidate_id', 'benefit_id'], {table: 'candidate_benefit'});
 
-const candidateFields = ['first_name', 'last_name', 'experience', 'salary', 'relocatable', 'commute', 'url', 'email', 'address_id'];
+const candidateFields = ['first_name', 'last_name', 'experience', 'salary', 'relocatable', 'commute', 'url', 'email', 'address_id', 'job_title', 'responsibilities', 'highlights'];
 const candidateInsert = new pgp.helpers.ColumnSet(candidateFields.map(camelColumnConfig), {table: 'candidate'});
 const candidateUpdate = new pgp.helpers.ColumnSet(['?candidate_id', ...candidateFields.map(camelColumnConfig)], {table: 'candidate'});
 const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
@@ -42,16 +42,33 @@ const generateImageFileNameAndValidation = (req, res, next) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/uploadImage/:candidateId', passport.authentication, generateImageFileNameAndValidation, upload.any('filepond'), (req, res) => {
+router.post('/uploadImage/:candidateId?', passport.authentication, generateImageFileNameAndValidation, upload.any('filepond'), (req, res) => {
     var jwtPayload = req.params.jwtPayload;
-    postgresdb.none('UPDATE candidate SET image_id=$1 WHERE candidate_id = $2', [req.params.finalFileName, req.params.candidateId])
-    .then((data) => {
+    if(req.params.candidateId == null){
         res.json({success:true, imageId:req.params.finalFileName})
-    })
-    .catch(err => {
-        logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
-        res.status(500).json({success:false, error:err})
-    });
+    }else{
+        postgresdb.one(' \
+            SELECT 1 \
+            FROM candidate c \
+            INNER JOIN recruiter_candidate rc ON rc.candidate_id = c.candidate_id \
+            WHERE rc.recruiter_id = ${recruiterId} AND c.candidate_id = ${candidateId}',
+            {recruiterId:jwtPayload.id, candidateId:candidateId})
+        .then(() => {
+            postgresdb.none('UPDATE candidate SET image_id=$1 \
+            WHERE candidate_id = $2', [req.params.finalFileName, req.params.candidateId])
+            .then((data) => {
+                res.json({success:true, imageId:req.params.finalFileName})
+            })
+            .catch(err => {
+                logger.error('Candidate SQL Call Failed', {tags:['sql', 'image'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+                res.status(500).json({success:false, error:err})
+            });
+        })
+        .catch(err => {
+            logger.error('Candidate SQL Call Failed', {tags:['sql', 'image'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+            res.status(500).json({success:false, error:err})
+        });
+    }
 });
 /**
  * Create a new candidate for the recruiter
@@ -89,6 +106,10 @@ router.post('/create', passport.authentication,  (req, res) => {
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
+    // Nullify all fields, sql will throw an issue if they are not nullable
+    candidateFields.map(db.camalize).forEach(d=>{
+        body[d] = body[d] || null;
+    })
     if(body.address == null) body.address = {}
     if(body.salary != null)
         body.salary = body.salary * 1000
@@ -167,36 +188,47 @@ router.post('/edit', passport.authentication,  (req, res) => {
     if(body.salary != null)
         body.salary = body.salary * 1000
     
-    postgresdb.tx(t => {
-        var q1
-        if(body.address.addressId != null)
-            q1 = Promise.resolve({address_id:null})
-        else
-            q1 = address.addAddress(body.address, t)
-        return q1.then((address_ret)=>{
-            const q2 = t.none('DELETE FROM candidate_tags WHERE candidate_id = $1', [body.candidateId])
-            const q3 = t.none('DELETE FROM candidate_benefit WHERE candidate_id = $1', [body.candidateId])
-            const q4 = t.none(pgp.helpers.update({...body, addressId:address_ret.address_id}, candidateUpdate, null, {emptyUpdate:true}) + ' WHERE candidate_id = ${candidateId}', {candidateId: body.candidateId})
-            return t.batch([q2, q3, q4]).then(()=>{
-                var queries = [];
-                if(body.benefitIds != null && body.benefitIds.length > 0){
-                    queries.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {candidateId: candidateId, benefit_id: d}}), benefitsInsertHelper)));
-                }
-                if(body.tagIds != null && body.tagIds.length > 0){
-                    queries.push(t.none(pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: body.candidateId, tag_id: d}}), candidateTagsInsertHelper)));
-                }
-                if(queries.length > 0){
-                    return t.batch(queries).then(()=>{
-                        return res.json({success: true})
-                    }).catch((err)=>{
-                        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
-                        return res.status(500).json({success: false, error:err})
-                    });
-                }
-                else{
-                    res.json({success: true})
-                    return []
-                }
+    postgresdb.one(' \
+        SELECT 1 \
+        FROM candidate c \
+        INNER JOIN recruiter_candidate rc ON rc.candidate_id = c.candidate_id \
+        WHERE rc.recruiter_id = ${recruiterId} AND c.candidate_id = ${candidateId}',
+        {recruiterId:jwtPayload.id, candidateId:body.candidateId})
+    .then(() => {
+        postgresdb.tx(t => {
+            var q1
+            if(body.address.addressId != null)
+                q1 = Promise.resolve({address_id:null})
+            else
+                q1 = address.addAddress(body.address, t)
+            return q1.then((address_ret)=>{
+                const q2 = t.none('DELETE FROM candidate_tags WHERE candidate_id = $1', [body.candidateId])
+                const q3 = t.none('DELETE FROM candidate_benefit WHERE candidate_id = $1', [body.candidateId])
+                const q4 = t.none(pgp.helpers.update({...body, addressId:address_ret.address_id}, candidateUpdate, null, {emptyUpdate:true}) + ' WHERE candidate_id = ${candidateId}', {candidateId: body.candidateId})
+                return t.batch([q2, q3, q4]).then(()=>{
+                    var queries = [];
+                    if(body.benefitIds != null && body.benefitIds.length > 0){
+                        queries.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {candidateId: candidateId, benefit_id: d}}), benefitsInsertHelper)));
+                    }
+                    if(body.tagIds != null && body.tagIds.length > 0){
+                        queries.push(t.none(pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: body.candidateId, tag_id: d}}), candidateTagsInsertHelper)));
+                    }
+                    if(queries.length > 0){
+                        return t.batch(queries).then(()=>{
+                            return res.json({success: true})
+                        }).catch((err)=>{
+                            logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+                            return res.status(500).json({success: false, error:err})
+                        });
+                    }
+                    else{
+                        res.json({success: true})
+                        return []
+                    }
+                }).catch((err)=>{
+                    logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+                    return res.status(500).json({success: false, error:err})
+                });
             }).catch((err)=>{
                 logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
                 return res.status(500).json({success: false, error:err})
@@ -205,9 +237,10 @@ router.post('/edit', passport.authentication,  (req, res) => {
             logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
             return res.status(500).json({success: false, error:err})
         });
-    }).catch((err)=>{
-        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
-        return res.status(500).json({success: false, error:err})
+    })
+    .catch(err => {
+        logger.error('Candidate SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -239,13 +272,24 @@ router.post('/delete', passport.authentication,  (req, res) => {
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-    
-    postgresdb.none('UPDATE candidate SET active=false WHERE candidate_id = $1', [body.candidateId])
-    .then(()=>{
-        return res.json({success: true})
-    }).catch((err)=>{
-        logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
-        return res.status(500).json({success: false, error:err})
+    postgresdb.one(' \
+        SELECT 1 \
+        FROM candidate c \
+        INNER JOIN recruiter_candidate rc ON rc.candidate_id = c.candidate_id \
+        WHERE rc.recruiter_id = ${recruiterId} AND c.candidate_id = ${candidateId}',
+        {recruiterId:jwtPayload.id, candidateId:body.candidateId})
+    .then(() => {
+        postgresdb.none('UPDATE candidate SET active=false WHERE candidate_id = $1', [body.candidateId])
+        .then(()=>{
+            return res.json({success: true})
+        }).catch((err)=>{
+            logger.error('Candidate Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+            return res.status(500).json({success: false, error:err})
+        });
+    })
+    .catch(err => {
+        logger.error('Candidate SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
     });
 });
 
@@ -261,8 +305,8 @@ router.post('/delete', passport.authentication,  (req, res) => {
 router.get('/list', passport.authentication, listCandidates);
 router.get('/list/:page', passport.authentication, listCandidates);
 router.get('/list/:page/:search', passport.authentication, listCandidates);
-router.get('/getCandidate/:candidateId', passport.authentication, listCandidates);
-router.get('/getCandidate/:candidateId/:only', passport.authentication, listCandidates);
+router.get('/get/:candidateId', passport.authentication, listCandidates);
+router.get('/get/:candidateId/:only', passport.authentication, listCandidates);
 function listCandidates(req, res){
     var search = req.params.search;
     var candidateId = req.params.candidateId;
@@ -367,7 +411,7 @@ function addNote(req, res){
         INNER JOIN recruiter_candidate rc ON rc.candidate_id = c.candidate_id \
         WHERE rc.recruiter_id = ${recruiterId} AND c.candidate_id = ${candidateId}',
         {recruiterId:jwtPayload.id, candidateId:candidateId})
-    .then((data) => {
+    .then(() => {
         postgresdb.any(' \
             INSERT INTO candidate_note (candidate_id, creator_id, note) VALUES (${candidateId}, ${creatorId}, ${note}) RETURNING note_id',
             {candidateId:candidateId, creatorId: jwtPayload.id, note:req.body.note})
@@ -408,12 +452,12 @@ function deleteNote(req, res){
         INNER JOIN recruiter_candidate rc ON rc.candidate_id = c.candidate_id \
         WHERE rc.recruiter_id = ${recruiterId} AND c.candidate_id = ${candidateId}',
         {recruiterId:jwtPayload.id, candidateId:candidateId})
-    .then((data) => {
+    .then(() => {
         postgresdb.none(' \
             DELETE FROM candidate_note \
             WHERE note_id = ${noteId}',
             {noteId:req.body.noteId})
-        .then((data) => {
+        .then(() => {
             res.json({success:true})
         })
         .catch(err => {

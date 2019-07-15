@@ -17,6 +17,7 @@ import ResumeImage from '@material-ui/icons/CloudUpload';
 import GetApp from '@material-ui/icons/GetApp'; 
 import EmailImage from '@material-ui/icons/MailOutline'; 
 import TagsImage from '@material-ui/icons/Label'; 
+import Edit from '@material-ui/icons/Edit'; 
 import ExperienceImage from '@material-ui/icons/Computer'; 
 import PostImage from '@material-ui/icons/OpenInNew';
 import ThumbDown from '@material-ui/icons/ThumbDown';
@@ -61,6 +62,7 @@ class ExpandableRow extends React.Component{
             files: [],
             redirectCandidate: false,
             showPostJob: false,
+            onEdit: props.onEdit
         };
         this.Auth = new AuthFunctions();
     }
@@ -76,6 +78,7 @@ class ExpandableRow extends React.Component{
     showUpload = () => {
         this.setState({showUpload:true})
     }
+    
     searchJobsForCandidates = () => {
         this.setState({redirectCandidate:true})
     }
@@ -154,19 +157,19 @@ class ExpandableRow extends React.Component{
                             <div className="splitter"></div> 
 
                             <div className="candidateButtonsContainer">
+                                <Button className={classes.button} variant="contained" color="primary" onClick={this.state.onEdit}>
+                                    <div className="buttonsContainer">
+                                        <div className="image"><Edit/></div> 
+                                        <div className="text">Edit</div>
+                                    </div> 
+                                </Button>  
+
                                 <Button className={classes.button} variant="contained" color="primary" onClick={this.searchJobsForCandidates}>
                                     <div className="buttonsContainer">
                                         <div className="image"><img className="img1" src={whaleImage} alt="whaleTail" /></div>
                                         <div className="text">SEARCH JOBS</div>
                                     </div>
                                 </Button> 
-
-                                <Button className={classes.button} variant="contained" color="primary" onClick={this.showUpload}>
-                                    <div className="buttonsContainer">
-                                        <div className="image"><ResumeImage/></div> 
-                                        <div className="text">Upload Resume</div>
-                                    </div> 
-                                </Button>  
 
                                 {candidateData.resumeId != null &&
                                     <Button className={classes.button} variant="contained" color="primary" onClick={this.getResumeURL}>

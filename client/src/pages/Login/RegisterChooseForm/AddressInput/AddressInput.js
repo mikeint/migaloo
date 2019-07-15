@@ -65,9 +65,12 @@ class AddressInput extends Component {
         };
         this.formatAddress = this.formatAddress.bind(this);
     }
+    onChange = () => {
+        if(this.state.onChange)
+            this.state.onChange(this.state);
+    }
     handleChange = address => {
-        this.setState({ address:address, placeId: null });
-        this.state.onChange(this.state);
+        this.setState({ address:address, placeId: null }, this.onChange);
     };
     handleAddr2Change = addressLine2 => {
         const formattedAddress = this.formatAddress({...this.state, addressLine2:addressLine2.target.value})
@@ -75,8 +78,7 @@ class AddressInput extends Component {
             address: formattedAddress,
             formattedAddress: formattedAddress,
             addressLine2: addressLine2.target.value
-        });
-        this.state.onChange(this.state);
+        }, this.onChange);
     };
   
     handleSelect = address => {
@@ -85,8 +87,7 @@ class AddressInput extends Component {
                 return this.getAddress(results[0])
             })
             .then(addressData => {
-                this.setState({ ...addressData, error: false, addressId: null });
-                this.state.onChange(this.state);
+                this.setState({ ...addressData, error: false, addressId: null }, this.onChange);
             })
             .catch(error => console.error('Error', error));
     };

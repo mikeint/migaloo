@@ -50,7 +50,7 @@ class CandidateList extends React.Component{
         super(props);
 		this.state = {
             migalooOverlay: false, 
-            showOverlay: false,
+            showAddCandidate: false,
             overlayConfig: {direction: "b-t", swipeLocation: "t"},
             candidateList: null, 
             postId: props.match.params.postId,
@@ -75,7 +75,7 @@ class CandidateList extends React.Component{
     }
 
     openCandidateTop = (candidateId) => { 
-        get(`/api/candidate/getCandidate/${candidateId}`)
+        get(`/api/candidate/get/${candidateId}`)
         .then((res) => {
             if(res)
                 this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].pageCount, 10):1 }) 
@@ -119,7 +119,7 @@ class CandidateList extends React.Component{
         )
     }
     callAddOverlay = () => {
-        this.setState({ showOverlay : !this.state.showOverlay })
+        this.setState({ showAddCandidate : !this.state.showAddCandidate })
     }
 
 
@@ -165,7 +165,14 @@ class CandidateList extends React.Component{
  
                                     <div className="candidateList" style={Object.assign({})}>  
                                     {
-                                        this.state.candidateList.map((item, i) => {return <ExpandableRow key={i} candidateData={item} postData={this.state.postData} candidateId={this.state.candidateId}></ExpandableRow>})
+                                        this.state.candidateList.map((item, i) => {
+                                            return <ExpandableRow
+                                            key={i}
+                                            candidateData={item}
+                                            postData={this.state.postData}
+                                            onEdit={()=> this.setState({showAddCandidate:true, editCandidateId: item.candidateId})}
+                                            candidateId={this.state.candidateId}></ExpandableRow>
+                                        })
                                     }
                                     </div>  
                                     <div className="paginationContainer">
@@ -185,11 +192,11 @@ class CandidateList extends React.Component{
                     <Drawer
                         anchor="bottom"
                         className={classes.drawer}
-                        open={this.state.showOverlay}
-                        onClose={()=>this.setState({"showOverlay":false})}
-                        // onOpen={()=>this.setState({"showOverlay":true})}
+                        open={this.state.showAddCandidate}
+                        onClose={()=>this.setState({"showAddCandidate":false})}
+                        // onOpen={()=>this.setState({"showAddCandidate":true})}
                     > 
-                        <AddCandidate onClose={()=>this.setState({"showOverlay":false})} />
+                        <AddCandidate candidateId={this.state.editCandidateId} onClose={()=>this.setState({"showAddCandidate":false})} />
                     </Drawer>
                     
             </React.Fragment>

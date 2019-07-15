@@ -1,5 +1,5 @@
 import React from 'react';
-import {post} from '../../../ApiCalls';  
+import {get, cancel, post} from '../../../ApiCalls';  
 import SkillSearch from '../../../components/Inputs/SkillSearch/SkillSearch'; 
 import ExperienceSelector from '../../../components/Inputs/ExperienceSelector/ExperienceSelector';
 import JobTypeSelector from '../../../components/Inputs/JobTypeSelector/JobTypeSelector';
@@ -11,14 +11,10 @@ import HighlightsSelector from '../../../components/Inputs/HighlightsSelector/Hi
 
 import { Close } from '@material-ui/icons';
 import { withStyles } from '@material-ui/core/styles';
-import { TextField, FormControlLabel, Checkbox, IconButton, Button } from '@material-ui/core';
+import { TextField, FormControlLabel, Checkbox, IconButton, Button, Stepper, Step, StepLabel, } from '@material-ui/core';
 import FormValidation from '../../../FormValidation';
+import BenefitsPage from '../../../components/BenefitsPage/BenefitsPage';
 
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import SwipeableViews from 'react-swipeable-views';
 
 const styles = theme => ({
     alertClose: {
@@ -43,9 +39,13 @@ const styles = theme => ({
         flex: "1 1",
         margin: "10px"
     },
-    postButton:{
-        width:"100%",
-        marginTop: "20px"
+    buttonContainer:{
+        display: "flex",
+        marginBottom: "10px"
+    },
+    button:{
+        flex: "1 1",
+        margin: "20px 10px 0 10px",
     },
     textAreaMaxHeight:{
         width: "100%",
@@ -58,7 +58,7 @@ const styles = theme => ({
         maxWidth: "1000px"
     },
 })
-const errorText = [
+const errorTextPage1 = [
     {
         stateName: "firstName",
         errorText: "Please enter their first name"
@@ -70,6 +70,14 @@ const errorText = [
     {
         stateName: "email",
         errorText: "Please enter their email"
+    },
+    {
+        stateName: "phoneNumber",
+        errorText: "Please enter their phone number"
+    },
+    {
+        stateName: "company",
+        errorText: "Please enter their current company"
     },
     {
         stateName: "salary",
@@ -86,19 +94,34 @@ const errorText = [
     {
         stateName: "address.placeId",
         errorText: "Please select an address for the candidate"
+    },
+    { 
+        stateName: "jobTypeId", 
+        errorText: "Please select a job type",
+        type: "number",
+        gt: -1
+    },
+    {
+        stateName: "tagIds",
+        errorText: "Please select some tags related to the candidate"
+    }
+]
+const errorTextPage2 = [
+    {
+        stateName: "highlights",
+        errorText: "Please enter some of this candidate's highlights"
+    },
+    {
+        stateName: "jobTitle",
+        errorText: "Please enter their prefered job title"
+    },
+    {
+        stateName: "responsibilities",
+        errorText: "Please enter some of their expected responsibilities"
     }
 ]
   
-
-function TabContainer({ children, dir }) {
-    return (
-      <Typography component="div" dir={dir} style={{ padding: 8 * 3 }}>
-        {children}
-      </Typography>
-    );
-  }
-   
-
+const steps = ['Job Information', 'Expectations', 'Benefits']
 class AddCandidate extends React.Component{
     constructor(props) {
         super(props);
@@ -106,37 +129,73 @@ class AddCandidate extends React.Component{
             firstName:'',
             lastName:'',
             email:'',
+            phoneNumber:'',
+            company:'',
+            url:'',
+            jobTitle: '',
+            responsibilities: null,
+            highlights: null,
             salary:0,
-            jobTypeId:-1,
+            jobTypeId:null,
             experience:0,
-            address:{},
-            tagIds:[],
+            commute:1,
+            address:null,
+            tagIds:null,
             relocatable: false,
+            benefitIds: null,
             redirect: false,
             onClose: props.onClose,
+            candidateId: props.candidateId,
             errors:{},
-            tab: 0
+            activeStep: 0
         }
-        this.formValidation = new FormValidation(this, errorText);
+        this.formValidationPage1 = new FormValidation(this, errorTextPage1);
+        this.formValidationPage2 = new FormValidation(this, errorTextPage2);
+    }
+    getCandidate = () => {
+        if(this.state.candidateId != null){
+            get('/api/candidate/get/'+this.state.candidateId)
+            .then((res)=>{
+                if(res == null || !res.data.success || res.data.candidateList.length === 0) return
+                this.setState({ ...res.data.candidateList[0] })
+            }).catch(errors => 
+                console.log(errors)
+            )
+        }
+    }
+    componentDidMount() {
+        this.getCandidate();
+    }
+    componentWillUnmount() {
+        cancel();
     }
 
+
+    getPageValidation = () => {
+        switch (this.state.activeStep) {
+            case 0: // Job Page
+                return this.formValidationPage1;
+            case 1: // Expectations Page
+                return this.formValidationPage2;
+            default:
+                return this.formValidationPage1;
+        }
+
+    }
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value }, this.formValidation.shouldRevalidate)
+        this.setState({ [e.target.name]: e.target.value }, this.getPageValidation().shouldRevalidate)
     }
     handleChangeKV = (map) => {
-        this.setState(map, this.formValidation.shouldRevalidate)
+        this.setState(map, this.getPageValidation().shouldRevalidate)
     }
 
     handleAddressChange(address){
-        this.setState({address:address}, this.formValidation.shouldRevalidate)
+        this.setState({address:address}, this.getPageValidation().shouldRevalidate)
     }
     handleSubmit = () => {
-        if(this.formValidation.isValid()){
-            post('/api/candidate/create', this.state)
+        if(this.getPageValidation().isValid()){
+            post(this.state.candidateId == null?'/api/candidate/create':'/api/candidate/edit', this.state)
             .then((res) => {
-
-                // THIS IS getting messy, its to shut the overlay after submitting a new candidate.
-                // TO-DO (not here) show the added candidate behind overlay
                 if(res && res.data.success) {
                     this.props.onClose();
                 }
@@ -147,14 +206,180 @@ class AddCandidate extends React.Component{
         }
     }
 
-    handleChangeIndex = (index) => { 
-        this.setState({tab: index})
+    next = () => {
+        if(this.getPageValidation().isValid()){
+            this.setState({activeStep:this.state.activeStep+1})
+        }
     }
-    handleTabChange = (event, newValue) => { 
-        this.setState({tab: newValue})
+    back = () => {
+        if(this.state.activeStep > 0)
+            this.setState({activeStep:this.state.activeStep-1})
     }
     
+    getPageContents = (classes) => {
+        const formValidation = this.getPageValidation()
+        switch (this.state.activeStep) {
+            case 0: // Job Page
+                return <div className={classes.formSection}>
+                <div className={classes.input2}>
+                    <TextField
+                        name="firstName"
+                        label="First Name"
+                        className={classes.textField}
+                        onChange={this.handleChange}
+                        margin="normal"
+                        variant="outlined"
+                        value={this.state.firstName}
+                        {...this.getPageValidation().hasError("firstName")}
+                    />
+                    <TextField
+                        name="lastName"
+                        label="Last Name"
+                        className={classes.textField}
+                        onChange={this.handleChange}
+                        margin="normal"
+                        variant="outlined"
+                        value={this.state.lastName}
+                        {...this.getPageValidation().hasError("lastName")}
+                    />
+                </div>
+                <div className={classes.input2}>
+                    <TextField
+                        name="email"
+                        label="Email"
+                        className={classes.textField}
+                        onChange={this.handleChange}
+                        margin="normal"
+                        variant="outlined"
+                        value={this.state.email}
+                        {...formValidation.hasError("email")}
+                    />
+                    <TextField
+                        name="phoneNumber"
+                        label="Phone"
+                        className={classes.textField}
+                        onChange={this.handleChange}
+                        margin="normal"
+                        variant="outlined"
+                        value={this.state.phoneNumber}
+                        {...formValidation.hasError("phoneNumber")}
+                    /> 
+                </div>
+                <div className={classes.input2}>
+                    <TextField
+                        name="company"
+                        label="Current Company"
+                        className={classes.textField}
+                        onChange={this.handleChange}
+                        margin="normal"
+                        variant="outlined"
+                        value={this.state.company}
+                        {...formValidation.hasError("company")}
+                    />  
+                    <TextField
+                        name="url"
+                        label="Linkdin/Profile Url"
+                        className={classes.textField}
+                        onChange={this.handleChange}
+                        margin="normal"
+                        variant="outlined"
+                        value={this.state.url}
+                        {...formValidation.hasError("url")}
+                    /> 
+                </div>
+                <div className={classes.input2}>
+                    <SalarySelector 
+                        required
+                        onChange={this.handleChangeKV}
+                        value={this.state.salary}
+                        {...formValidation.hasError("salary")}/>
+                        &nbsp;&nbsp;&nbsp;
+                    <ExperienceSelector 
+                        required
+                        onChange={this.handleChangeKV}
+                        value={this.state.experience}
+                        {...formValidation.hasError("experience")}/>
+                </div>
+                <div className={classes.input2}>
+                    <CommuteSelector 
+                        required
+                        onChange={this.handleChangeKV}
+                        value={this.state.commute}
+                        {...formValidation.hasError("commute")}/>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                defaultChecked={false}
+                                onChange={(e)=>this.setState({relocatable: e.target.checked})}
+                                color="primary"
+                            />
+                        }
+                        label="Willing to Relocate"
+                    />
+                </div>
+                <div className={classes.input2}>
+                    <JobTypeSelector
+                        required
+                        onChange={this.handleChangeKV}
+                        value={this.state.jobTypeId}
+                        {...formValidation.hasError("jobTypeId")}/>
+                </div>
+                {this.state.jobTypeId !== -1 && this.state.jobTypeId != null &&
+                    <div className={classes.SkillSearch}>
+                        <SkillSearch
+                            onChange={this.handleChangeKV}
+                            jobTypeId={this.state.jobTypeId}
+                            value={this.state.tagIds}
+                            {...formValidation.hasError("tagIds")}/>
+                    </div>
+                }
+                <div className={classes.input2}>
+                    <AddressInput
+                        onChange={this.handleAddressChange.bind(this)}
+                        value={this.state.address}
+                        {...(formValidation.hasError("address.placeId").error?{error:true}:{})}
+                    />
+                </div> 
 
+
+            </div> 
+            case 1: // Expectation Page
+                return <div className={classes.formSection}>
+                <div>
+                    <TextField
+                        name="jobTitle"
+                        label="Job Title"
+                        className={classes.textField}
+                        onChange={this.handleChange}
+                        value={this.state.jobTitle}
+                        margin="normal"
+                        variant="outlined"
+                        {...formValidation.hasError("jobTitle")}
+                    />  
+                </div> 
+                <div>
+                    <ResponsibilitiesSelector
+                        required
+                        onChange={this.handleChangeKV}
+                        value={this.state.responsibilities}
+                        {...formValidation.hasError("responsibilities")}/>
+                </div>
+                <div>
+                    <HighlightsSelector
+                        required
+                        onChange={this.handleChangeKV}
+                        value={this.state.highlights}
+                        {...formValidation.hasError("highlights")}/>
+                </div>
+            </div>
+            case 2: // Review Page
+                return <BenefitsPage
+                value={this.state.benefitIds}
+                onChange={this.handleChangeKV}/>
+            default:
+                return <div>Page does not exist</div>
+        }
+    }
     render(){
         const { classes } = this.props;
         return (
@@ -169,181 +394,45 @@ class AddCandidate extends React.Component{
 
 
                 <div className={classes.root}>
-                    <AppBar position="static" color="default">
-                        <Tabs
-                            value={this.state.tab}
-                            onChange={this.handleTabChange}
-                            indicatorColor="primary"
-                            textColor="primary"
-                            variant="fullWidth"
-                        >
-                            <Tab label="Information" />
-                            <Tab label="Expectations" /> 
-                        </Tabs>
-                    </AppBar>
-                    <SwipeableViews
-                        axis={'x'}
-                        index={this.state.tab}
-                        onChangeIndex={this.handleChangeIndex}
-                        disabled={true}
-                    >
-                        <TabContainer> 
-                            <div className={classes.formSection}>
-                                <div className={classes.input2}>
-                                    <TextField
-                                        name="firstName"
-                                        label="First Name"
-                                        className={classes.textField}
-                                        onChange={this.handleChange}
-                                        margin="normal"
-                                        variant="outlined"
-                                        {...this.formValidation.hasError("firstName")}
-                                    />
-                                    <TextField
-                                        name="lastName"
-                                        label="Last Name"
-                                        className={classes.textField}
-                                        onChange={this.handleChange}
-                                        margin="normal"
-                                        variant="outlined"
-                                        {...this.formValidation.hasError("lastName")}
-                                    />
-                                </div>
-                                <div className={classes.input2}>
-                                    <TextField
-                                        name="email"
-                                        label="Email"
-                                        className={classes.textField}
-                                        onChange={this.handleChange}
-                                        margin="normal"
-                                        variant="outlined"
-                                        {...this.formValidation.hasError("email")}
-                                    />
-                                    <TextField
-                                        name="url"
-                                        label="Linkdin/Profile Url"
-                                        className={classes.textField}
-                                        onChange={this.handleChange}
-                                        margin="normal"
-                                        variant="outlined"
-                                        {...this.formValidation.hasError("url")}
-                                    />
-                                </div>
-                                <div className={classes.input2}>
-                                    <SalarySelector 
-                                        required
-                                        onChange={this.handleChangeKV}
-                                        {...this.formValidation.hasError("salary")}/>
-                                        &nbsp;&nbsp;&nbsp;
-                                    <ExperienceSelector 
-                                        required
-                                        onChange={this.handleChangeKV}
-                                        {...this.formValidation.hasError("experience")}/>
-                                </div>
-                                <div className={classes.input2}>
-                                    <JobTypeSelector
-                                        required
-                                        onChange={this.handleChangeKV}
-                                        {...this.formValidation.hasError("jobTypeId")}/>
-                                </div>
-                                {this.state.jobTypeId !== -1 &&
-                                    <div className={classes.SkillSearch}>
-                                        <SkillSearch
-                                            onChange={this.handleChangeKV}
-                                            jobTypeId={this.state.jobTypeId}
-                                            {...this.formValidation.hasError("tagIds")}/>
-                                    </div>
-                                }
-                                <div className={classes.input2}>
-                                    <AddressInput
-                                        onChange={this.handleAddressChange.bind(this)}
-                                        {...(this.formValidation.hasError("address.placeId").error?{error:true}:{})}
-                                    />
-                                </div> 
-
-                                <div>
-                                    <TextField
-                                        name="currentCompany"
-                                        label="Current Compnay"
-                                        className={classes.textField}
-                                        onChange={this.handleChange}
-                                        margin="normal"
-                                        variant="outlined"
-                                        {...this.formValidation.hasError("currentCompany")}
-                                    />  
-                                </div>
-
-                                <div>
-                                    <TextField
-                                        name="phone"
-                                        label="Phone"
-                                        className={classes.textField}
-                                        onChange={this.handleChange}
-                                        margin="normal"
-                                        variant="outlined"
-                                        {...this.formValidation.hasError("phone")}
-                                    />  
-                                </div>
- 
-                                <FormControlLabel
-                                    control={
-                                        <Checkbox
-                                            defaultChecked={false}
-                                            onChange={(e)=>this.setState({relocatable: e.target.checked})}
-                                            color="primary"
-                                        />
-                                    }
-                                    label="Willing to Relocate"
-                                />
-                                <Button
+                    <Stepper nonLinear activeStep={this.state.activeStep}>
+                        {steps.map((label, index) => (
+                        <Step key={label}>
+                            <StepLabel completed={index<this.state.activeStep}>
+                            {label}
+                            </StepLabel>
+                        </Step>
+                        ))}
+                    </Stepper>
+                        {
+                            this.getPageContents(classes)
+                        }
+                        {
+                            this.state.activeStep!==3 &&
+                            <div className={classes.buttonContainer}>
+                                <Button 
+                                color="primary"
+                                variant="contained"
+                                className={classes.button}
+                                disabled={this.state.activeStep === 0}
+                                onClick={this.back}>Back</Button>
+                                {
+                                    this.state.activeStep===2?
+                                    <Button 
                                     color="primary"
                                     variant="contained"
-                                    className={classes.submitCandidateBtn}
-                                    onClick={this.handleSubmit}>Add Candidate</Button>
-                            </div> 
-                        </TabContainer>
-                        <TabContainer>
-                            <div className={classes.formSection}>
-                                <div>
-                                    <TextField
-                                        name="e_jobtitle"
-                                        label="Job Title"
-                                        className={classes.textField}
-                                        onChange={this.handleChange}
-                                        margin="normal"
-                                        variant="outlined"
-                                        {...this.formValidation.hasError("e_jobtitle")}
-                                    />  
-                                </div> 
-                                <div>
-                                    <SalarySelector 
-                                        required
-                                        onChange={this.handleChangeKV}
-                                        {...this.formValidation.hasError("e_salary")}/>
-                                </div> 
-                                <div>
-                                    <CommuteSelector 
-                                        required
-                                        onChange={this.handleChangeKV}
-                                        {...this.formValidation.hasError("e_commute")}/>
-                                </div>
-                                <div>
-                                    <ResponsibilitiesSelector
-                                        required
-                                        onChange={this.handleChangeKV}
-                                        {...this.formValidation.hasError("e_responsibilities")}/>
-                                </div>
-                                <div>
-                                    <HighlightsSelector
-                                        required
-                                        onChange={this.handleChangeKV}
-                                        {...this.formValidation.hasError("e_highlights")}/>
-                                </div>
+                                    className={classes.button}
+                                    onClick={this.handleSubmit}>
+                                        {this.state.candidateId == null?'Add Candidate':'Edit Candidate'}
+                                    </Button>
+                                    :
+                                    <Button 
+                                    color="primary"
+                                    variant="contained"
+                                    className={classes.button}
+                                    onClick={this.next}>Next</Button>
+                                }
                             </div>
-
-
-                        </TabContainer> 
-                    </SwipeableViews>
+                        }
                 </div>
 
                     

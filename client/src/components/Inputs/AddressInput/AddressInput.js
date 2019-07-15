@@ -66,9 +66,12 @@ class AddressInput extends Component {
             error: false
         };
     }
+    onChange = () => {
+        if(this.state.onChange)
+            this.state.onChange(this.state);
+    }
     handleChange = address => {
-        this.setState({ address:address, placeId: null });
-        this.state.onChange(this.state);
+        this.setState({ address:address, placeId: null }, this.onChange);
     };
     handleAddr2Change = addressLine2 => {
         const formattedAddress = this.formatAddress({...this.state, addressLine2:addressLine2.target.value})
@@ -76,8 +79,7 @@ class AddressInput extends Component {
             address: formattedAddress,
             formattedAddress: formattedAddress,
             addressLine2: addressLine2.target.value
-        });
-        this.state.onChange(this.state);
+        }, this.onChange);
     };
   
     handleSelect = address => {
@@ -86,8 +88,7 @@ class AddressInput extends Component {
                 return this.getAddress(results[0])
             })
             .then(addressData => {
-                this.setState({ ...addressData, error: false, addressId: null });
-                this.state.onChange(this.state);
+                this.setState({ ...addressData, error: false, addressId: null }, this.onChange);
             })
             .catch(error => console.error('Error', error));
     };
@@ -146,15 +147,17 @@ class AddressInput extends Component {
     shouldComponentUpdate(nextProps, nextState) {
         if(this.state !== nextState)
             return true
-        const change = this.state.error !== nextProps.error
-        if(change){
+        var change = false;
+        if(this.state.error !== nextProps.error){
             this.setState({ error: nextProps.error });
+            change = true;
         }
         if(nextProps.value != null && this.state.placeId !== nextProps.value.placeId){
             const addr = nextProps.value;
             addr.formattedAddress = this.formatAddress(addr);
             addr.address = addr.formattedAddress;
             this.setState(addr);
+            change = true;
         }
         return change;
     }

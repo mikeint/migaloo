@@ -60,7 +60,7 @@ describe('Candidate', function() {
             })
         });
         it('check that was created', () => {
-            return get(`/api/candidate/getCandidate/${candidateId}/1`, process.env.recruiterToken).then((res)=>{
+            return get(`/api/candidate/get/${candidateId}/1`, process.env.recruiterToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     assert.notEqual(res.candidateList, null)
@@ -115,7 +115,7 @@ describe('Candidate', function() {
             })
         });
         it('check that was editted', () => {
-            return get(`/api/candidate/getCandidate/${candidateId}/1`, process.env.recruiterToken).then((res)=>{
+            return get(`/api/candidate/get/${candidateId}/1`, process.env.recruiterToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     assert.notEqual(res.candidateList, null)
@@ -239,7 +239,7 @@ describe('Candidate', function() {
             })
         });
         it('check was deleted search', () => {
-            return get(`/api/candidate/getCandidate/${candidateId}/1`, process.env.recruiterToken).then((res)=>{
+            return get(`/api/candidate/get/${candidateId}/1`, process.env.recruiterToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     assert.notEqual(res.candidateList, null)
@@ -369,7 +369,7 @@ describe('Candidate Recruiter 2', function() {
             })
         });
         it('check that was created', () => {
-            return get(`/api/candidate/getCandidate/${candidateId}/1`, process.env.recruiterToken).then((res)=>{
+            return get(`/api/candidate/get/${candidateId}/1`, process.env.recruiterToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     assert.notEqual(res.candidateList, null)
