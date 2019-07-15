@@ -287,7 +287,7 @@ function listCandidates(req, res){
             coalesce(cpd.not_accepted_count, 0) as not_accepted_count, \
             coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
             (count(1) OVER())/10+1 as "pageCount", tag_names, tag_ids, \
-            cb.benefit_names as "benefitNames", cb.benefit_ids as "benefitIds", \
+            cb.benefit_names as "benefitNames", cb.benefit_ids as "benefitIds" \
         FROM recruiter_candidate rc \
         INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
