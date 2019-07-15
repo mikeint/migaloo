@@ -3,7 +3,7 @@ const s3 = new aws.S3()
 
 const multer  = require('multer')
 const multerS3  = require('multer-s3')
-const bucketName = 'hireranked-data'
+const bucketName = require('../config/settings').s3.bucketName;
 const MIME_TYPE_MAP = {
     'application/x-pdf':'pdf',
     'application/pdf':'pdf',

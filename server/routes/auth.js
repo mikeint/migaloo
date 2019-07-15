@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const passport = require('../config/passport');
+const passport = require('../utils/passport');
 const ses = require('../utils/ses');
 const postingAssign = require('../utils/postingAssign');
 const logger = require('../utils/logging');
 const address = require('../utils/address');
-const db = require('../config/db')
+const db = require('../utils/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 

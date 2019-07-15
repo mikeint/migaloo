@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../utils/db');
 const logger = require('./logging'); 
 const postgresdb = db.postgresdb
 const pgp = db.pgp

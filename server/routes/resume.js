@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../config/passport');
+const passport = require('../utils/passport');
 const logger = require('../utils/logging');
 
-const db = require('../config/db')
+const db = require('../utils/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
@@ -11,6 +11,7 @@ const upload = generateUploadMiddleware('resumes/')
 const useAWS = process.env.AWS ? true : false;
 const aws = require('aws-sdk');
 const s3 = new aws.S3()
+const bucketName = require('../config/settings').s3.bucketName;
 
 const generateResumeFileNameAndValidation = (req, res, next) => {
     // Validate this candidate is with this recruiter

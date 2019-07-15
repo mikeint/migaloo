@@ -1,15 +1,15 @@
 const JwtStrategy = require('passport-jwt').Strategy;
 var SamlStrategy = require('passport-saml').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
-const keys = require('./keys');
+const settings = require('../config/settings');
 const passport = require('passport'); 
 const jwt = require('jsonwebtoken');
-const db = require('../config/db')
+const db = require('./db')
 const postgresdb = db.postgresdb
 
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = keys.secretOrKey;
+opts.secretOrKey = settings.hash.secretOrKey;
 
 function init(app){
     app.use(passport.initialize())
@@ -36,12 +36,12 @@ function init(app){
 function signToken(payload, expiresIn="1d"){
     return new Promise((resolve, reject)=>{
         if(expiresIn === 'never'){
-            jwt.sign(payload, keys.secretOrKey, {}, (err, token) => {
+            jwt.sign(payload, settings.hash.secretOrKey, {}, (err, token) => {
                 if(err) return reject(err)
                 resolve(token)
             });
         }else{
-            jwt.sign(payload, keys.secretOrKey, { expiresIn: expiresIn }, (err, token) => {
+            jwt.sign(payload, settings.hash.secretOrKey, { expiresIn: expiresIn }, (err, token) => {
                 if(err) return reject(err)
                 resolve(token)
             });
@@ -53,7 +53,7 @@ function validateAccessToken(userId, accessToken) {
 }
 function decodeToken(token){
     return new Promise((resolve, reject)=>{
-        jwt.verify(token, keys.secretOrKey, (err, decoded) => {
+        jwt.verify(token, settings.hash.secretOrKey, (err, decoded) => {
             if(err) return reject(err)
             resolve(decoded)
         });

@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../config/passport');
+const passport = require('../utils/passport');
 const logger = require('../utils/logging');
 
-const db = require('../config/db')
+const db = require('../utils/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 

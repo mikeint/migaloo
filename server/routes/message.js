@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../config/passport');
+const passport = require('../utils/passport');
 const moment = require('moment');
 const notifications = require('../utils/notifications');
 const logger = require('../utils/logging');
 
 const validateMessageInput = require('../validation/message');  
-const db = require('../config/db')
+const db = require('../utils/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const messagesInsertHelper = new pgp.helpers.ColumnSet(['to_id', 'message_subject_id', 'message_type_id', 'message'], {table: 'messages'});

@@ -1,10 +1,10 @@
 const aws = require('aws-sdk');
-const key = require('../config/keys');
+const settings = require('../config/settings');
 const NODE_ENV = process.env.NODE_ENV || 'dev';
 aws.config.update(
   {
-      accessKeyId:key.awsAccessKey,
-      secretAccessKey:key.awsSecretKey,
+      accessKeyId:settings.aws.accessKey,
+      secretAccessKey:settings.aws.secretKey,
       region:"us-east-1"
   }
 );
@@ -17,7 +17,7 @@ if(NODE_ENV === 'mocha'){
     }
 }else
     ses = new aws.SES();
-const passport = require('../config/passport');
+const passport = require('../utils/passport');
 
 function sendEmailVerification(args){
     return new Promise((resolve, reject)=>{

@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../config/passport');
+const passport = require('../utils/passport');
 const moment = require('moment');
 const address = require('../utils/address')
 //load input validation
 const logger = require('../utils/logging');
 
-const db = require('../config/db')
+const db = require('../utils/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const camelColumnConfig = db.camelColumnConfig

@@ -19,7 +19,7 @@ const resume = require('./routes/resume');
 const plan = require('./routes/plan');  
 const autocomplete = require('./routes/autocomplete');  
 //const testAPI = require('./routes/testAPI'); 
-const passport = require('./config/passport'); 
+const passport = require('./utils/passport'); 
 
 const app = express();
 if (NODE_ENV == 'dev') {

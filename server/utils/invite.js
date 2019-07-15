@@ -1,6 +1,6 @@
 const express = require('express');
 
-const db = require('../config/db');
+const db = require('../utils/db');
 const ses = require('./ses');
 
 const postgresdb = db.postgresdb

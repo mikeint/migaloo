@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../config/passport');
-const db = require('../config/db')
+const passport = require('../utils/passport');
+const db = require('../utils/db')
 const postgresdb = db.postgresdb
 const useAWS = process.env.AWS ? true : false;
 const aws = require('aws-sdk');
 var s3 = new aws.S3()
 const logger = require('../utils/logging');
+const bucketName = require('../config/settings').s3.bucketName;
 
 /**
  * Get image

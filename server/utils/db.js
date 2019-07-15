@@ -1,12 +1,6 @@
 var pgp = require('pg-promise')();
-const cn = {
-    host: process.env.DB_HOST || 'localhost',
-    port: process.env.DB_PORT || 5432,
-    database: process.env.DB_DATABASE || 'migaloo_prod',
-    user: process.env.DB_USERNAME || 'postgres',
-    password: process.env.DB_PASSWORD || 'postgres'
-};
-var db = pgp(cn);
+const settings = require('../config/settings');
+var db = pgp(settings.dbConfig);
 const camalize = (str) => {
     return str.replace(/_(.)/g, function(match, chr)
     {

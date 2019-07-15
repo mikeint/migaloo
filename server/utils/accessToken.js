@@ -1,6 +1,6 @@
-const passport = require('../config/passport');
+const passport = require('../utils/passport');
 
-const db = require('../config/db')
+const db = require('../utils/db')
 const postgresdb = db.postgresdb
 
 function generateAccessToken(userId) {

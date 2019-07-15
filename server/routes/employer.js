@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../config/passport');
+const passport = require('../utils/passport');
 const moment = require('moment');
 const logger = require('../utils/logging');
 const accessToken = require('../utils/accessToken');
@@ -8,7 +8,7 @@ const accessToken = require('../utils/accessToken');
 //load input validation
 const validateEmployerInput = require('../validation/employer');  
 
-const db = require('../config/db')
+const db = require('../utils/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware

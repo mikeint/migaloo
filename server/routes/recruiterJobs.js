@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('../config/passport');
+const passport = require('../utils/passport');
 const moment = require('moment');
 const validateCandidatePosting = require('../validation/jobs');  
 const notifications = require('../utils/notifications');
 const logger = require('../utils/logging');
 const address = require('../utils/address');
 
-const db = require('../config/db')
+const db = require('../utils/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
 
