@@ -6,8 +6,10 @@ const logger = require('../utils/logging');
 const db = require('../utils/db')
 const postgresdb = db.postgresdb
 const pgp = db.pgp
-const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
-const upload = generateUploadMiddleware('resumes/')
+
+const upload = require('../utils/upload')
+const uploadMiddleware = upload.generateUploadMiddleware('resumes/')
+
 const useAWS = process.env.AWS ? true : false;
 const aws = require('aws-sdk');
 const s3 = new aws.S3()
@@ -26,9 +28,16 @@ const generateResumeFileNameAndValidation = (req, res, next) => {
         FROM recruiter_candidate r \
         WHERE r.recruiter_id = $1 AND r.candidate_id = $2', [jwtPayload.id, req.params.candidateId])
     .then(() => {
-        var now = Date.now()
-        req.params.fileName = req.params.candidateId+"_resume_"+now.toString()
-        next()
+        upload.getFileId(jwtPayload.id, 2)
+        .then((file_id) => {
+            req.params.fileId = file_id.file_id
+            req.params.fileName = file_id.file_id+"_resume"
+            next()
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({success:false, error:err})
+        });
     })
     .catch(err => {
         console.log(err)
@@ -44,15 +53,23 @@ const generateResumeFileNameAndValidation = (req, res, next) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/upload/:candidateId', passport.authentication, generateResumeFileNameAndValidation, upload.single('filepond'), (req, res) => {
-    postgresdb.none('UPDATE candidate SET resume_id=$1 WHERE candidate_id = $2', [req.params.finalFileName, req.params.candidateId])
-    .then((data) => {
-        res.json({success:true, resumeId:req.params.finalFileName})
-    })
-    .catch(err => {
-        logger.error('Resume SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
-        res.status(500).json({success:false, error:err})
-    });
+router.post('/upload/:candidateId?', passport.authentication, generateResumeFileNameAndValidation, uploadMiddleware.single('filepond'), (req, res) => {
+    const jwtPayload = req.params.jwtPayload;
+    const resumeId = req.params.fileId;
+    logger.info('Uploaded Resume', {tags:['upload', 'resume'], url:req.originalUrl, userId:jwtPayload.id, body:req.body, params:req.params})
+    if(req.params.candidateId == null){
+        res.json({success:true, resumeId:resumeId})
+    }else{
+        return postgresdb.none('UPDATE candidate SET resume_id=$1 WHERE candidate_id = $2',
+            [resumeId, req.params.candidateId])
+        .then(() => {
+            res.json({success:true, resumeId:resumeId})
+        })
+        .catch(err => {
+            logger.error('Resume SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+            res.status(500).json({success:false, error:err})
+        });
+    }
 });
 /**
  * Get candidate resume

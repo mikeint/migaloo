@@ -14,11 +14,14 @@ const MIME_TYPE_MAP = {
     'image/png':'png',
 }
 const useAWS = process.env.AWS ? true : false;
+const db = require('../utils/db')
+const postgresdb = db.postgresdb
+const pgp = db.pgp
 /**
  * Genereate the middle ware to uplaod files to
  * path exmaple: 'resume/'
  */
-var generateUploadMiddleware = (path) => {
+const generateUploadMiddleware = (path) => {
     return (useAWS ? 
         multer({
             storage: multerS3({
@@ -67,6 +70,10 @@ var generateUploadMiddleware = (path) => {
         })
     )
 }
+const getFileId = (userId, type, transaction) => {
+    return (transaction==null?postgresdb:transaction).one('INSERT INTO file_upload (user_id, file_type_id) VALUES (${userId}, ${type}) RETURNING file_id', {userId:userId, type:type})
+}
 module.exports = {
-    generateUploadMiddleware: generateUploadMiddleware
+    generateUploadMiddleware: generateUploadMiddleware,
+    getFileId: getFileId
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import './ExpandableRow.scss'; 
-import UploadResume from '../UploadResume/UploadResume';
+import UploadResumeModal from '../UploadResumeModal/UploadResumeModal';
 import {get} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import Redirect from 'react-router-dom/Redirect';
@@ -13,7 +13,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Drawer from '@material-ui/core/Drawer'; 
 
  
-import ResumeImage from '@material-ui/icons/CloudUpload'; 
+// import ResumeImage from '@material-ui/icons/CloudUpload'; 
 import GetApp from '@material-ui/icons/GetApp'; 
 import EmailImage from '@material-ui/icons/MailOutline'; 
 import TagsImage from '@material-ui/icons/Label'; 
@@ -201,7 +201,7 @@ class ExpandableRow extends React.Component{
                                                             job={postData}
                                                             handleClose={()=>this.setState({showPostJob:false})} />
                             </Drawer>
-                            {this.state.showUpload && <UploadResume id={candidateData.candidateId} handleClose={this.handleClose} />}
+                            {this.state.showUpload && <UploadResumeModal id={candidateData.candidateId} onClose={this.handleClose} />}
                         
                         </div> 
                     </ExpansionPanelDetails>

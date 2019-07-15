@@ -359,7 +359,7 @@ class EmployerJobPost extends React.Component{
                             this.getPageContents(classes)
                         }
                         {
-                            this.state.activeStep!==3 &&
+                            this.state.activeStep !== 3 && // Done Page
                             <div className={classes.buttonContainer}>
                                 <Button 
                                 color="primary"

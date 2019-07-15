@@ -20,7 +20,6 @@ import BenefitsPage from '../../../components/BenefitsPage/BenefitsPage';
 import { withStyles } from '@material-ui/core/styles';
 import FormValidation from '../../../FormValidation';
 import { Checkbox, FormControlLabel, Stepper, Step, StepLabel, Button } from '@material-ui/core'; 
-import SubscriptionReview from '../../../components/SubscriptionReview/SubscriptionReview';
 
 const styles = theme => ({
     textField: {
@@ -332,7 +331,7 @@ class PostAJob extends React.Component{
                         disabled={this.state.activeStep === 0}
                         onClick={this.back}>Back</Button>
                         {
-                            this.state.activeStep===1?
+                            this.state.activeStep === steps.length-1?
                             <Button 
                             color="primary"
                             variant="contained"

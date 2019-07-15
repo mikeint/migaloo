@@ -16,8 +16,8 @@ const companyFields = ['company_name', 'department', 'image_id', 'address_id', '
 const companyInsert = new pgp.helpers.ColumnSet(['company_id', 'company_name', 'department', 'address_id', 'company_type'].map(camelColumnConfig), {table: 'company'});
 const companyUpdate = new pgp.helpers.ColumnSet(['?company_id', ...companyFields.map(camelColumnConfig)], {table: 'company'});
 
-const generateUploadMiddleware = require('../utils/upload').generateUploadMiddleware
-const upload = generateUploadMiddleware('profile_image/')
+const upload = require('../utils/upload')
+const uploadMiddleware = upload.generateUploadMiddleware('profile_image/')
 
 const generateImageFileNameAndValidation = (req, res, next) => {
     // Validate this candidate is with this recruiter
@@ -27,10 +27,18 @@ const generateImageFileNameAndValidation = (req, res, next) => {
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-    var now = Date.now()
-    req.params.fileName = jwtPayload.id+"_image_"+now.toString()
-    req.params.jwtPayload = jwtPayload
-    next()
+    upload.getFileId(jwtPayload.id, 1)
+    .then((file_id) => {
+        req.params.fileId = file_id.file_id
+        var now = Date.now()
+        req.params.fileName = file_id.file_id+"_image_"+now.toString()
+        req.params.jwtPayload = jwtPayload
+        next()
+    })
+    .catch(err => {
+        logger.error('Upload Image', {tags:['image', 's3'], url:req.originalUrl, userId:jwtPayload.id, error:err});
+        res.status(500).json({success:false, error:err})
+    });
 }
 
 /**
@@ -42,11 +50,12 @@ const generateImageFileNameAndValidation = (req, res, next) => {
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.post('/uploadImage/:companyId', passport.authentication, generateImageFileNameAndValidation, upload.any('filepond'), (req, res) => {
+router.post('/uploadImage/:companyId', passport.authentication, generateImageFileNameAndValidation, uploadMiddleware.any('filepond'), (req, res) => {
     var jwtPayload = req.params.jwtPayload;
-    postgresdb.none('UPDATE company SET image_id=$1 WHERE company_id = $2', [req.params.finalFileName, req.params.companyId])
+    logger.info('Uploaded Image', {tags:['upload', 'image'], url:req.originalUrl, userId:jwtPayload.id, body:req.body, params:req.params})
+    postgresdb.none('UPDATE company SET image_id=$1 WHERE company_id = $2', [req.params.fileId, req.params.companyId])
     .then((data) => {
-        res.json({success:true, imageId:req.params.finalFileName})
+        res.json({success:true, imageId:req.params.fileId})
     })
     .catch(err => {
         logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

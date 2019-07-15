@@ -27,7 +27,6 @@ describe('Company', function() {
             return post('/api/company/addCompany', {
                 "companyName": "Test Company",
                 "department": "Test Dept",
-                "imageId": 1,
                 "address": {
                     "address": "Tremont St, Boston, MA, US",
                     "formattedAddress": "Tremont St, Boston, MA, US",
@@ -100,7 +99,6 @@ describe('Company', function() {
                 "companyId":companyId,
                 "companyName": "Test Company Edit",
                 "department": "Test Dept Edit",
-                "imageId": 2,
                 "address": {
                     "address": "Tremont St, Boston, MA, US",
                     "formattedAddress": "Tremont St, Boston, MA, US",

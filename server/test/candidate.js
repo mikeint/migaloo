@@ -227,7 +227,7 @@ describe('Candidate', function() {
         });
     });
     describe('Delete', () => {
-        it('check can list', () => {
+        it('check can delete', () => {
             return post('/api/candidate/delete/', {candidateId: candidateId}, process.env.recruiterToken).then((res)=>{
                 try{
                     assert.ok(res.success)

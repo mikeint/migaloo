@@ -14,6 +14,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { TextField, FormControlLabel, Checkbox, IconButton, Button, Stepper, Step, StepLabel, } from '@material-ui/core';
 import FormValidation from '../../../FormValidation';
 import BenefitsPage from '../../../components/BenefitsPage/BenefitsPage';
+import UploadResume from '../../../components/UploadResume/UploadResume';
 
 
 const styles = theme => ({
@@ -46,6 +47,9 @@ const styles = theme => ({
     button:{
         flex: "1 1",
         margin: "20px 10px 0 10px",
+    },
+    relocateCheckbox:{
+        marginLeft: "10px"
     },
     textAreaMaxHeight:{
         width: "100%",
@@ -121,7 +125,7 @@ const errorTextPage2 = [
     }
 ]
   
-const steps = ['Job Information', 'Expectations', 'Benefits']
+const steps = ['Job Information', 'Expectations', 'Benefits', 'Resume']
 class AddCandidate extends React.Component{
     constructor(props) {
         super(props);
@@ -191,6 +195,9 @@ class AddCandidate extends React.Component{
 
     handleAddressChange(address){
         this.setState({address:address}, this.getPageValidation().shouldRevalidate)
+    }
+    handleResumeChange(e, f){
+        console.log(e, f)
     }
     handleSubmit = () => {
         if(this.getPageValidation().isValid()){
@@ -306,7 +313,7 @@ class AddCandidate extends React.Component{
                         onChange={this.handleChangeKV}
                         value={this.state.commute}
                         {...formValidation.hasError("commute")}/>
-                    <FormControlLabel
+                    <FormControlLabel className={classes.relocateCheckbox}
                         control={
                             <Checkbox
                                 defaultChecked={false}
@@ -376,6 +383,12 @@ class AddCandidate extends React.Component{
                 return <BenefitsPage
                 value={this.state.benefitIds}
                 onChange={this.handleChangeKV}/>
+            case 3: // Resume Page
+                return <div className={classes.formSection}>
+                    <div>Upload a Resume for the candidate:</div>
+                    <UploadResume
+                        onClose={this.handleResumeChange}/>
+                </div>
             default:
                 return <div>Page does not exist</div>
         }
@@ -407,7 +420,6 @@ class AddCandidate extends React.Component{
                             this.getPageContents(classes)
                         }
                         {
-                            this.state.activeStep!==3 &&
                             <div className={classes.buttonContainer}>
                                 <Button 
                                 color="primary"
@@ -416,7 +428,7 @@ class AddCandidate extends React.Component{
                                 disabled={this.state.activeStep === 0}
                                 onClick={this.back}>Back</Button>
                                 {
-                                    this.state.activeStep===2?
+                                    this.state.activeStep === steps.length-1?
                                     <Button 
                                     color="primary"
                                     variant="contained"
