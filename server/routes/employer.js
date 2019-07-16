@@ -4,6 +4,7 @@ const passport = require('../utils/passport');
 const moment = require('moment');
 const logger = require('../utils/logging');
 const accessToken = require('../utils/accessToken');
+const ses = require('../utils/ses')
 
 //load input validation
 const validateEmployerInput = require('../validation/employer');  
@@ -191,8 +192,11 @@ function generateToken(req, res) {
         return res.status(400).json({success:false, error:errorMessage})
     }
     return accessToken.generateAccessToken(req.body.userId)
-    .then((token) => { 
-        res.json({success: true, token: token})
+    .then((payload) => { 
+        return ses.sendJobPostLink(payload)
+    })
+    .then(() => { 
+        res.json({success: true})
     })
     .catch(err => {
         logger.error('Employer SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});

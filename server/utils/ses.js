@@ -163,10 +163,36 @@ function resetPasswordEmail(args){
     })
 }
 
+function sendJobPostLink(args){
+    return new Promise((resolve, reject)=>{
+        const params = {
+            "Source":"accounts@migaloo.io",
+            "Template":"PostJobEmail",
+            "Destination":{
+                "ToAddresses":[
+                    NODE_ENV==='production'?args.email:'development@migaloo.io'
+                ]
+            },
+            "TemplateData":JSON.stringify({ 
+                "name":args.name,
+                "link":`https://migaloo.io/postJob/${args.token}`,
+                "year":new Date().getFullYear()
+            })
+        }
+        ses.sendTemplatedEmail(params, function(err, data) {
+            if (err)
+                reject(err)
+            else 
+                resolve(data);
+        });
+    })
+}
+
 module.exports = {
     sendContactMessage:sendContactMessage,
     sendEmailVerification:sendEmailVerification,
     sendSignupEmail:sendSignupEmail,
     sendUserInvite:sendUserInvite,
-    resetPasswordEmail:resetPasswordEmail
+    resetPasswordEmail:resetPasswordEmail,
+    sendJobPostLink:sendJobPostLink
 };

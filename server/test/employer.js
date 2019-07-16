@@ -56,7 +56,6 @@ describe('Employer', function() {
             return post('/api/employer/generateToken', {userId:400}, process.env.accountManagerToken).then((res)=>{
                 try{
                     assert.ok(res.success)
-                    assert.notEqual(res.token, null)                    
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)
