@@ -138,7 +138,7 @@ class CandidateList extends React.Component{
         this.setState({ showAddCandidate : !this.state.showAddCandidate })
     }
     closeAddCandidate = () => {
-        this.setState({"showAddCandidate":false});
+        this.setState({"showAddCandidate":false, editCandidateId: null});
         this.candidateSearch(this.state.lastSearchUrl);
     }
 

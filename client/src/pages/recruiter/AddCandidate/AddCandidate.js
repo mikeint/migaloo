@@ -225,6 +225,9 @@ class AddCandidate extends React.Component{
         if(this.state.activeStep > 0)
             this.setState({activeStep:this.state.activeStep-1})
     }
+    cancel = () => {
+        this.props.onClose();
+    }
     
     getPageContents = (classes) => {
         const formValidation = this.getPageValidation()
@@ -394,7 +397,7 @@ class AddCandidate extends React.Component{
             <React.Fragment> 
                 {/* this.state.redirect ? <Redirect to='/recruiter/candidateList' /> : '' */}
                 <div className="pageHeading">
-                    Add a Candidate
+                    {this.state.candidateId == null?'Add a Candidate':'Edit Candidate'}
                     <IconButton color="inherit" className={classes.alertClose} onClick={this.state.onClose}>
                         <Close color="primary" />
                     </IconButton>
@@ -420,6 +423,12 @@ class AddCandidate extends React.Component{
                                 color="primary"
                                 variant="contained"
                                 className={classes.button}
+                                onClick={this.cancel}>Cancel</Button>
+                                
+                                <Button 
+                                color="primary"
+                                variant="contained"
+                                className={classes.button}
                                 disabled={this.state.activeStep === 0}
                                 onClick={this.back}>Back</Button>
                                 {
@@ -429,7 +438,7 @@ class AddCandidate extends React.Component{
                                     variant="contained"
                                     className={classes.button}
                                     onClick={this.handleSubmit}>
-                                        {this.state.candidateId == null?'Add Candidate':'Edit Candidate'}
+                                        {this.state.candidateId == null?'Add Candidate':'Save'}
                                     </Button>
                                     :
                                     <Button 
