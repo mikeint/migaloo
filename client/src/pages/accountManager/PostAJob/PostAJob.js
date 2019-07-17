@@ -178,7 +178,7 @@ class PostAJob extends React.Component{
 
     handleSubmit = () => {
         if(this.formValidation.isValid()){
-            post('/api/employerPostings/create', this.state)
+            post(this.state.postId != null?'/api/employerPostings/edit':'/api/employerPostings/create', this.state)
             .then((res) => { 
                 if(res && res.data.success) {
                     this.setState({ formIsFilledOut: false, redirect: true })
@@ -336,7 +336,7 @@ class PostAJob extends React.Component{
                             color="primary"
                             variant="contained"
                             className={classes.button}
-                            onClick={this.handleSubmit}>Post</Button>
+                            onClick={this.handleSubmit}>{this.state.postId != null?'Save':'Post'}</Button>
                             :
                             <Button 
                             color="primary"

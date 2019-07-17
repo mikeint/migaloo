@@ -54,7 +54,7 @@ function getJobs(req, res){
         if(v == null) return
         if(v.length > 0)
             paramsToAdd[k] = v
-        else if(!isNaN(v))
+        else if(!isNaN(v) && !Array.isArray(v))
             paramsToAdd[k] = v
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
@@ -139,7 +139,7 @@ function getJobsForCandidate(req, res){
         if(v == null) return
         if(v.length > 0)
             paramsToAdd[k] = v
-        else if(!isNaN(v))
+        else if(!isNaN(v) && !Array.isArray(v))
             paramsToAdd[k] = v
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")

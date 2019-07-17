@@ -67,16 +67,17 @@ router.post('/create', passport.authentication,  (req, res) => {
     var preliminary = false
     if(jwtPayload.userType == 3)
         preliminary = true
-    postgresdb.one('SELECT ec.company_id, p.plan_id \
-            FROM company_contact ec \
-            INNER JOIN login l ON l.user_id = ec.company_contact_id \
-            INNER JOIN plan p ON p.company_id = ec.company_id \
-            WHERE ec.company_contact_id = ${userId} AND ec.company_id = ${companyId}', 
-            {userId:jwtPayload.id, companyId:body.company}).then((company_ret)=>{
-        return postgresdb.tx(t => {
+    return postgresdb.tx(t => {
+        return t.one('SELECT ec.company_id, p.plan_id \
+                FROM company_contact ec \
+                INNER JOIN login l ON l.user_id = ec.company_contact_id \
+                INNER JOIN plan p ON p.company_id = ec.company_id \
+                WHERE ec.company_contact_id = ${userId} AND ec.company_id = ${companyId}', 
+                {userId:jwtPayload.id, companyId:body.companyId})
+        .then((company_ret)=>{
             // creating a sequence of transaction queries:
             return address.addAddress(body.address, t).then((addr_ret)=>{
-                return t.one(pgp.helpers.insert({companyId:body.company, title:body.title, requirements:body.requirements,
+                return t.one(pgp.helpers.insert({companyId:body.companyId, title:body.title, requirements:body.requirements,
                         preliminary:preliminary, isVisible:!preliminary, experience:body.experience, salary:body.salary,
                         addressId:addr_ret.address_id, interviewCount:body.interviewCount, openingReasonId:body.openingReasonId,
                         openingReasonComment:body.openingReasonComment, openPositions:body.openPositions, jobTypeId:body.jobTypeId, planId:company_ret.plan_id}, jobPostInsert) + 'RETURNING post_id, address_id')
@@ -158,18 +159,19 @@ router.post('/edit', passport.authentication,  (req, res) => {
     if(body.address == null) body.address = {}
     if(body.salary != null)
         body.salary = body.salary * 1000
-    postgresdb.one('SELECT company_id \
-            FROM company_contact ec \
-            INNER JOIN login l ON l.user_id = ec.company_contact_id \
-            WHERE ec.company_contact_id = ${userId} AND ec.company_id = ${companyId}', 
-            {userId:jwtPayload.id, companyId:body.company}).then(()=>{
-        return postgresdb.tx(t => {
+    return postgresdb.tx(t => {
+        return t.one('SELECT 1 \
+                FROM company_contact ec \
+                INNER JOIN login l ON l.user_id = ec.company_contact_id \
+                WHERE ec.company_contact_id = ${userId} AND ec.company_id = ${companyId}', 
+                {userId:jwtPayload.id, companyId:body.companyId})
+        .then(()=>{
             // creating a sequence of transaction queries:
             return address.addAddress(body.address, t)
             .then((addr_ret)=>{
                 const q1 = t.none('DELETE FROM posting_tags WHERE post_id = $1', [body.postId])
                 const q2 = t.none('DELETE FROM job_benefit WHERE post_id = $1', [body.postId])
-                const q3 = t.none(pgp.helpers.update({companyId:body.company, title:body.title, requirements:body.requirements,
+                const q3 = t.none(pgp.helpers.update({companyId:body.companyId, title:body.title, requirements:body.requirements,
                     preliminary:false, experience:body.experience, salary:body.salary,
                     addressId:addr_ret.address_id, interviewCount:body.interviewCount, openingReasonId:body.openingReasonId,
                     openingReasonComment:body.openingReasonComment, openPositions:body.openPositions, jobTypeId:body.jobTypeId}, jobPostUpdate, null, {emptyUpdate:true}) + ' WHERE post_id = ${postId}', {postId: body.postId})
@@ -245,13 +247,13 @@ function postListing(req, res){
     Object.keys(req.query).forEach(k=>{
         const v = JSON.parse(req.query[k])
         if(v == null) return
+
         if(v.length > 0)
             paramsToAdd[k] = v
-        else if(!isNaN(v))
+        else if(!isNaN(v) && !Array.isArray(v))
             paramsToAdd[k] = v
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>filters[k]).join(" ")
-
     postgresdb.any('\
         SELECT j.*, a.*, op.opening_reason_name, \
             tag_names, tag_ids, new_posts_cnt, c.company_name, \

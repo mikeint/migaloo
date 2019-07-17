@@ -27,7 +27,7 @@ describe('Employer Postings', function() {
     describe('Create Post', () => {
         it('should return ok', () => {
             return post('/api/employerPostings/create', {
-                company:500, 
+                companyId:500, 
                 title:'Software person', 
                 requirements:'Do a bunch of stuff',
                 preliminary:true, 
@@ -86,7 +86,7 @@ describe('Employer Postings', function() {
         it('should return ok', () => {
             return post('/api/employerPostings/edit', {
                 postId: postId,
-                company:500, 
+                companyId:500, 
                 title:'Software person Test', 
                 requirements:'Do a bunch of stuff Test',
                 preliminary:true, 
