@@ -148,7 +148,7 @@ class JobList extends React.Component{
         
         return (
             <React.Fragment>
-                { this.state.openJob && <Redirect to={"/recruiter/jobList/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidateId:'')} />}
+                { this.state.openJob && <Redirect push to={"/recruiter/jobList/job/"+this.state.postId+(this.state.candidateId?"/"+this.state.candidateData.candidateId:'')} />}
                 { this.state.migalooOverlay ? <div id="fadeOutOverlay" className="migalooOverlay"><div className="middleOverlay"></div></div>:"" }
                 <Filters 
                     onChange={this.handleFilterChange}

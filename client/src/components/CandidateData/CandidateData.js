@@ -1,5 +1,4 @@
 import React from 'react';
-import {get} from '../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';  
 import EmailImage from '@material-ui/icons/MailOutline'; 
 import TagsImage from '@material-ui/icons/Label'; 

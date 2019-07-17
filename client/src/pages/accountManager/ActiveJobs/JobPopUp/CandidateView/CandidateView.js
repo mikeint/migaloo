@@ -1,6 +1,7 @@
 import React from 'react';
 import {get, post} from '../../../../../ApiCalls';  
 import AuthFunctions from '../../../../../AuthFunctions'; 
+import {Redirect} from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -16,7 +17,6 @@ import NoWork from '@material-ui/icons/WorkOff';
 
 import { withStyles } from '@material-ui/core/styles';  
 import DenialReason from '../../../../../components/DenialReason/DenialReason';
-import Conversation from '../../../../../components/Conversation/Conversation';
 import { TextField } from '@material-ui/core';
   
 
@@ -66,7 +66,7 @@ class CandidateView extends React.Component{
             jobObj: props.job,
             candidate: props.obj,
             getReason: false,
-            showChat: false,
+            openChat: false,
             missingSalary: false,
             salary: null
         };
@@ -140,6 +140,9 @@ class CandidateView extends React.Component{
     render(){ 
 
         const { classes } = this.props; 
+        if(this.state.openChat){
+            return <Redirect push to={`/accountManager/chat/${this.props.job.postId}/${this.props.obj.candidateId}`}/>
+        }
         return (
             <ExpansionPanel onClick={this.handleRead.bind(this)}>
                 <ExpansionPanelSummary>
@@ -175,16 +178,10 @@ class CandidateView extends React.Component{
                             <Button
                                 variant="contained" 
                                 color="primary"
-                                onClick={()=>this.setState({showChat:true})}>
+                                onClick={()=>this.setState({openChat:true})}>
                             <Chat/>&nbsp;Open Chat
                             </Button>
                         </div>
-                        {this.state.showChat && 
-                            <Conversation
-                                messageSubjectId={this.state.candidate.messageSubjectId}
-                                loadByMessageSubjectId={true}
-                                open={this.state.showChat} onClose={()=>this.setState({showChat:false})}/>
-                        }
                         <div className={classes.flexColumn}>
                             <Button
                                 variant="contained" 

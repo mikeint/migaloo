@@ -159,7 +159,7 @@ class RegisterRecruiterForm extends Component {
 
         if(this.Auth.loggedIn()){
             if (this.state.user)
-                return <Redirect to='/recruiter' />
+                return <Redirect push to='/recruiter' />
         }  
         
         return (

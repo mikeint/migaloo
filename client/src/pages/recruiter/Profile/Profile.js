@@ -111,7 +111,7 @@ class Profile extends React.Component{
         const { classes } = this.props;
         
         if (this.state.logout) {
-            return <Redirect to='/login' />
+            return <Redirect push to='/login' />
         }
         
         return (

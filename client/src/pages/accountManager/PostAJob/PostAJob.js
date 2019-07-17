@@ -304,7 +304,7 @@ class PostAJob extends React.Component{
         const { classes } = this.props;
         return (
             <React.Fragment>
-                {this.state.redirect ? <Redirect to='/accountManager/activeJobs' /> : ''}
+                {this.state.redirect ? <Redirect push to='/accountManager/activeJobs' /> : ''}
                 <Prompt
                     when={this.state.formIsFilledOut}
                     message="Are you sure you want to leave? Any unsaved changes will be lost."

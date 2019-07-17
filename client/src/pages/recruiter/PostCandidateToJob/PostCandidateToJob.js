@@ -91,7 +91,7 @@ class PostCandidateToJob extends React.Component{
     render(){
         const { classes } = this.props;
 
-        if (this.state.candidateSubmitted) return <Redirect to={`/recruiter/jobList/${this.state.candidateId}`} /> 
+        if (this.state.candidateSubmitted) return <Redirect push to={`/recruiter/jobList/${this.state.candidateId}`} /> 
 
         return (
             <React.Fragment> 

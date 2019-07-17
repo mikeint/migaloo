@@ -157,12 +157,6 @@ const navMappingsSecondary = {
                 className: 'menuItem', 
                 name:'Account',
                 showOnState: ['user', 'isPrimary']
-            },
-            {
-                icon:<AccountBalance />,
-                link:'#',
-                name:'Log Out',
-                className: 'menuItem'
             }
         ]
     },
@@ -188,7 +182,8 @@ const navMappingsSecondary = {
 class NavBar extends React.Component{
     handleLogout = () => { 
         this.Auth.logout();
-        this.setState({menuOpen: false, logout: true})
+        getNewAuthToken();
+        this.setState({menuOpen: false, logout: true});
     }
     getBasePath(path){
         const i = path.indexOf('/', 1);
@@ -246,7 +241,7 @@ class NavBar extends React.Component{
     render(){
         const { classes } = this.props;
         if (this.state.logout) {
-            return <Redirect to='/login' />
+            return <Redirect push to='/login' />
         }
         return (
             <React.Fragment> 

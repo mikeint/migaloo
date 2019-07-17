@@ -100,7 +100,7 @@ class ResetPassword extends React.Component{
 
     render(){ 
         if(this.state.backToLogin)
-            return <Redirect to='/login'/>
+            return <Redirect push to='/login'/>
         const { classes } = this.props; 
         return (
             <div className={classes.root}>

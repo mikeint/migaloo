@@ -19,7 +19,6 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Conversation from '../../../../components/Conversation/Conversation';
 
 import whaleHead from '../../../../files/images/landingPage/whaleHead.png';
 import JobData from '../../../../components/JobData/JobData';
@@ -112,36 +111,37 @@ class CandidateRow extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            showChat:props.showChat,
-            candidate: props.candidate
+            openChat:props.openChat
         }
     }
     render(){
-        const { classes, i } = this.props;
-        const { candidate } = this.state;
+        const { classes, i, candidatePosting } = this.props;
+        if(this.state.openChat){
+            return <Redirect push to={`/recruiter/chat/${candidatePosting.postId}/${candidatePosting.candidateId}`}/>
+        }
         return <TableRow key={i} className={classes.tableRow}>
-            <TableCell className={classes.tableCell}>{candidate.firstName}</TableCell>
-            <TableCell className={classes.tableCell}>{candidate.lastName}</TableCell>
-            <TableCell className={classes.tableCell}>{candidate.created}</TableCell>
+            <TableCell className={classes.tableCell}>{candidatePosting.firstName}</TableCell>
+            <TableCell className={classes.tableCell}>{candidatePosting.lastName}</TableCell>
+            <TableCell className={classes.tableCell}>{candidatePosting.created}</TableCell>
             <TableCell className={classes.tableCell}>
                 {
-                    (candidate.migalooAccepted === false || candidate.employerAccepted === false || candidate.jobAccepted === false)?
+                    (candidatePosting.migalooAccepted === false || candidatePosting.employerAccepted === false || candidatePosting.jobAccepted === false)?
                         "Denied" :
                         (
-                            candidate.migalooAccepted === null ? "Pending Migaloo Acceptance" :
+                            candidatePosting.migalooAccepted === null ? "Pending Migaloo Acceptance" :
                             (
-                                candidate.employerAccepted === null ? "Pending Employer Acceptance" :
+                                candidatePosting.employerAccepted === null ? "Pending Employer Acceptance" :
                                 (
-                                    candidate.jobAccepted === null ? "Pending Job Acceptance" :
+                                    candidatePosting.jobAccepted === null ? "Pending Job Acceptance" :
                                         "Accepted By Employer"
                                 )
                             )
                         )
                 }
-                {(candidate.migalooAccepted === false || candidate.employerAccepted === false || candidate.jobAccepted === false) &&
+                {(candidatePosting.migalooAccepted === false || candidatePosting.employerAccepted === false || candidatePosting.jobAccepted === false) &&
                     <Tooltip classes={{tooltip: classes.toolTipText}}
                     data-html="true"
-                    title={<div>{candidate.denialReasonText+'.'}<br/>{candidate.denialComment}</div>}
+                    title={<div>{candidatePosting.denialReasonText+'.'}<br/>{candidatePosting.denialComment}</div>}
                     aria-label="Denial Reason">
                         <Info className={classes.toolTip}/>
                     </Tooltip>
@@ -151,16 +151,9 @@ class CandidateRow extends React.Component{
                 <Button
                     variant="contained" 
                     color="primary"
-                    onClick={()=>this.setState({showChat:true})}>
+                    onClick={()=>this.setState({openChat:true})}>
                     <Chat/>&nbsp;<span className={classes.openChatText}>Open Chat</span>
                 </Button>
-                {this.state.showChat && 
-                    <Conversation
-                        messageSubjectId={candidate.messageSubjectId}
-                        loadByMessageSubjectId={true}
-                        open={this.state.showChat}
-                        onClose={()=>this.setState({showChat: false})}/>
-                }
             </TableCell>
         </TableRow>
     }
@@ -265,7 +258,7 @@ class JobDescription extends React.Component{
         }else
 
 
-        if (this.state.openJobPageState) return <Redirect to={'/recruiter/jobList'+(this.state.candidateId?`/${this.state.candidateId}`:'')}/>
+        if (this.state.openJobPageState) return <Redirect push to={'/recruiter/jobList'+(this.state.candidateId?`/${this.state.candidateId}`:'')}/>
 
         return (
             <React.Fragment>
@@ -276,14 +269,14 @@ class JobDescription extends React.Component{
                             className={classes.rightBtn}>
                             <Close color="primary"/>
                         </IconButton>
-                        {this.state.redirectJob ? <Redirect to={'/recruiter/candidateList/'+this.state.jobObj.postId}/> : ''}
+                        {this.state.redirectJob ? <Redirect push to={'/recruiter/candidateList/'+this.state.jobObj.postId}/> : ''}
                         {this.state.profileImage !== ''?<img className={classes.profileImage} src={this.state.profileImage} alt="" onClick={this.showUpload}/>:''}
                         <div className={classes.jobTitle}>
                             {this.state.jobObj.title}
                         </div>
                         
                         {/* <div className="backButton" onClick={() => this.closeJobPage()}></div> */}
-                        <span className="jobSalary">Salary: {this.state.jobObj.salary}k</span> 
+                        <span className="jobSalary">Salary: {Math.ceil(this.state.jobObj.salary/1000)}k</span> 
                     </div> 
                     <div className={classes.jobPostingContent}>
                         
@@ -324,7 +317,7 @@ class JobDescription extends React.Component{
                                     <TableCell colSpan={5} align="center" className={classes.tableCellHeader}>No Candidates Posted</TableCell>
                                 </TableRow> :
                                 this.state.candidateList.map((d, i)=>
-                                    <CandidateRow key={i} candidate={d}/>
+                                    <CandidateRow key={i} candidatePosting={d}/>
                                 )
                             }
                             </TableBody>

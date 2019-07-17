@@ -1,13 +1,10 @@
 import React from 'react';
-import {get} from '../../ApiCalls';  
 import { withStyles } from '@material-ui/core/styles';  
 import TagsImage from '@material-ui/icons/Label'; 
 import BenefitsImage from '@material-ui/icons/Grade'; 
 import LocationImage from '@material-ui/icons/Home'; 
-import CommuteImage from '@material-ui/icons/DirectionsCar'; 
 import CompanyImage from '@material-ui/icons/Business'; 
 import ExperienceImage from '@material-ui/icons/Computer'; 
-import HighlightImage from '@material-ui/icons/Highlight'; 
 import SalaryImage from '@material-ui/icons/AttachMoney'; 
 import AssignmentImage from '@material-ui/icons/Assignment'; 
 import JobTypeImage from '@material-ui/icons/Build'; 

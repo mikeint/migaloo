@@ -16,7 +16,6 @@ import classNames from 'classnames';
 import Tooltip from '@material-ui/core/Tooltip';
 import Info from '@material-ui/icons/Info';
 import Chat from '@material-ui/icons/Chat';
-import Conversation from '../../../../components/Conversation/Conversation';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -27,10 +26,7 @@ import TableRow from '@material-ui/core/TableRow';
  
 // import ResumeImage from '@material-ui/icons/CloudUpload'; 
 import GetApp from '@material-ui/icons/GetApp'; 
-import EmailImage from '@material-ui/icons/MailOutline'; 
-import TagsImage from '@material-ui/icons/Label'; 
 import Edit from '@material-ui/icons/Edit'; 
-import ExperienceImage from '@material-ui/icons/Computer'; 
 import PostImage from '@material-ui/icons/OpenInNew';
 import ThumbDown from '@material-ui/icons/ThumbDown';
 import ThumbUp from '@material-ui/icons/ThumbUp';
@@ -94,35 +90,36 @@ class JobPostedToRow extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            showChat:props.showChat,
-            job: props.job
+            openChat: false
         }
     }
     render(){
-        const { classes, i } = this.props;
-        const { job } = this.state;
+        const { classes, i, candidatePosting } = this.props;
+        if(this.state.openChat){
+            return <Redirect push to={`/recruiter/chat/${candidatePosting.postId}/${candidatePosting.candidateId}`}/>
+        }
         return <TableRow key={i} className={classes.tableRow}>
-            <TableCell className={classes.tableCell}>{job.title}</TableCell>
-            <TableCell className={classes.tableCell}>{job.companyName}</TableCell>
+            <TableCell className={classes.tableCell}>{candidatePosting.title}</TableCell>
+            <TableCell className={classes.tableCell}>{candidatePosting.companyName}</TableCell>
             <TableCell className={classes.tableCell}>
                 {
-                    (job.migalooAccepted === false || job.employerAccepted === false || job.jobAccepted === false)?
+                    (candidatePosting.migalooAccepted === false || candidatePosting.employerAccepted === false || candidatePosting.jobAccepted === false)?
                         "Denied" :
                         (
-                            job.migalooAccepted === null ? "Pending Migaloo Acceptance" :
+                            candidatePosting.migalooAccepted === null ? "Pending Migaloo Acceptance" :
                             (
-                                job.employerAccepted === null ? "Pending Employer Acceptance" :
+                                candidatePosting.employerAccepted === null ? "Pending Employer Acceptance" :
                                 (
-                                    job.jobAccepted === null ? "Pending Job Acceptance" :
+                                    candidatePosting.jobAccepted === null ? "Pending Job Acceptance" :
                                         "Accepted By Employer"
                                 )
                             )
                         )
                 }
-                {(job.migalooAccepted === false || job.employerAccepted === false || job.jobAccepted === false) &&
+                {(candidatePosting.migalooAccepted === false || candidatePosting.employerAccepted === false || candidatePosting.jobAccepted === false) &&
                     <Tooltip classes={{tooltip: classes.toolTipText}}
                     data-html="true"
-                    title={<div>{job.denialReasonText+'.'}<br/>{job.denialComment}</div>}
+                    title={<div>{candidatePosting.denialReasonText+'.'}<br/>{candidatePosting.denialComment}</div>}
                     aria-label="Denial Reason">
                         <Info className={classes.toolTip}/>
                     </Tooltip>
@@ -132,16 +129,9 @@ class JobPostedToRow extends React.Component{
                 <Button
                     variant="contained" 
                     color="primary"
-                    onClick={()=>this.setState({showChat:true})}>
+                    onClick={()=>this.setState({openChat:true})}>
                     <Chat/>&nbsp;<span className={classes.openChatText}>Open Chat</span>
                 </Button>
-                {this.state.showChat && 
-                    <Conversation
-                        messageSubjectId={job.messageSubjectId}
-                        loadByMessageSubjectId={true}
-                        open={this.state.showChat}
-                        onClose={()=>this.setState({showChat: false})}/>
-                }
             </TableCell>
         </TableRow>
     }
@@ -215,7 +205,7 @@ class ExpandableRow extends React.Component{
         const { classes, candidateData, postData } = this.props;
         return (
             <div className="expandableRow">
-                {this.state.redirectCandidate && <Redirect to={`/recruiter/jobList/${this.props.candidateData.candidateId}`}/>}
+                {this.state.redirectCandidate && <Redirect push to={`/recruiter/jobList/${this.props.candidateData.candidateId}`}/>}
                 
                 {/* CANDIDATE ACCORDION */}
                 <ExpansionPanel square={true} className={classes.root}>
@@ -280,7 +270,7 @@ class ExpandableRow extends React.Component{
                                             <TableCell colSpan={5} className={classes.tableCellHeader}>No jobs posted to</TableCell>
                                         </TableRow> :
                                         this.state.currentJobList.map((d, i)=>
-                                            <JobPostedToRow key={i} job={d}/>
+                                            <JobPostedToRow key={i} candidatePosting={d}/>
                                         )
                                     }
                                 </TableBody>

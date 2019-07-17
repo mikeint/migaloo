@@ -56,9 +56,9 @@ class VerifyEmail extends React.Component{
 
     render(){
         if(this.state.backToLogin)
-            return <Redirect to='/login'/>
+            return <Redirect push to='/login'/>
         if(this.state.goToIt)
-            return <Redirect to={this.state.userType===1?'/recruiter':'/employer'}/>
+            return <Redirect push to={this.state.userType===1?'/recruiter':'/employer'}/>
         const { classes } = this.props; 
         return (
             <div className={classes.root}>

@@ -335,7 +335,7 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
 });
 /**
  * List candidates that have been posted and their status
- * @route POST api/recruiterJobs/listPostedCandidates/:jobId
+ * @route GET api/recruiterJobs/listPostedCandidates/:jobId
  * @group recruiterJobs - Jobs for Recruiters
  * @params {number} body.candidateId - Candidate Id
  * @params {number} body.postId - Id of the job post
@@ -363,7 +363,7 @@ router.get('/listPostedCandidates/:jobId', passport.authentication,  (req, res) 
             WHERE jp.post_id = ${jobId} AND jp.recruiter_id = ${recruiterId}', {recruiterId:jwtPayload.id, jobId:jobId})
     .then(()=>{
         return postgresdb.any('\
-            SELECT c.first_name, c.last_name, cp.*, dr.denial_reason_text, ms.message_subject_id \
+            SELECT jp.post_id, c.first_name, c.last_name, cp.*, dr.denial_reason_text, ms.message_subject_id \
             FROM job_posting jp \
             INNER JOIN candidate_posting cp ON jp.post_id = cp.post_id AND jp.recruiter_id = cp.recruiter_id \
             INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
