@@ -76,6 +76,12 @@ const errorTextPage1 = [
         errorText: "Please enter their email"
     },
     {
+        stateName: "email",
+        errorText: "Please enter a valid email",
+        type: "regex",
+        regex: [/@[A-Za-z]+\.[A-Za-z]+/, /^[^\s]+$/]
+    },
+    {
         stateName: "phoneNumber",
         errorText: "Please enter their phone number"
     },

@@ -48,7 +48,7 @@ const errorText = [
         stateName: "email",
         errorText: "Please enter a valid email",
         type: "regex",
-        regex: [/@/, /\.[A-Za-z0-9]+$/]
+        regex: [/@[A-Za-z]+\.[A-Za-z]+/, /\.[A-Za-z0-9]+$/]
     },
     {
         stateName: "phoneNumber",

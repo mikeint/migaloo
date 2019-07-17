@@ -318,8 +318,9 @@ class ExpandableRow extends React.Component{
                                         </div>
                                     </Button>
                                 } 
-                                <Button className={classes.button}
-                                variant="contained" color="primary"
+                                <Button
+                                variant="contained"
+                                color="primary"
                                 className={classNames(classes.button, classes.redButton)}
                                 onClick={this.props.onDelete}>
                                     <div className="buttonsContainer">

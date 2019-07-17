@@ -12,9 +12,9 @@ module.exports = function validateCandidateInput(data) {
         errors.lastName = 'Last Name field is required';
     }
     //validator function isEmail checks.
-    if (!Validator.isEmail(data.email)) {
-        errors.email = 'Email is invalid';
-    }
+    // if (!Validator.isEmail(data.email)) {
+    //     errors.email = 'Email is invalid';
+    // }
     if (Validator.isEmpty(data.email)) {
         errors.email = 'Email field is required';
     }

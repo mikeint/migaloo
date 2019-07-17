@@ -88,15 +88,15 @@ router.post('/create', passport.authentication,  (req, res) => {
      */
     var body = req.body
     const { errors, isValid } = validateCandidateInput(body);
+    var jwtPayload = body.jwtPayload;
     //check Validation
     if(!isValid) {
-        const errorMessage = "Invalid User Type"
-        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        const errorMessage = "Invalid Inputs"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage, errors:errors});
         return res.status(400).json({success:false, errors:errors});
     }
-    var jwtPayload = body.jwtPayload;
     if(jwtPayload.userType != 1){
-        const errorMessage = "Must be an recruiter to add a candidate"
+        const errorMessage = "Invalid User Type"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
