@@ -531,12 +531,12 @@ router.get('/listJobs/:candidateId', passport.authentication,  (req, res) => {
 
     postgresdb.any(' \
         SELECT j.post_id, j.title, j.created_on as posted_on, jt.job_type_name, cp.migaloo_accepted, cp.employer_accepted, \
-            cp.job_accepted, cp.has_seen_post, ms.message_subject_id, co.company_name, a.* \
+            cp.job_accepted, cp.denial_reason_id, dr.denial_reason_text, cp.denial_comment, cp.has_seen_post, ms.message_subject_id, co.company_name, a.* \
         FROM job_posting_all j \
         INNER JOIN company co ON j.company_id = co.company_id \
-        INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         INNER JOIN candidate_posting cp ON cp.post_id = j.post_id \
         INNER JOIN candidate c ON c.candidate_id = cp.candidate_id \
+        LEFT JOIN denial_reason dr ON cp.denial_reason_id = dr.denial_reason_id \
         LEFT JOIN job_type jt ON j.job_type_id = jt.job_type_id \
         LEFT JOIN address a ON a.address_id = j.address_id \
         INNER JOIN messages_subject ms ON ms.subject_user_id = cp.candidate_id AND ms.post_id = j.post_id AND (ms.user_id_1 = cp.recruiter_id OR ms.user_id_2 = cp.recruiter_id)  \
