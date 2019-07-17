@@ -1,6 +1,7 @@
 import React from 'react';
 import './NavBar.css';  
-import { NavLink, withRouter } from 'react-router-dom';  
+import { NavLink, withRouter, Redirect } from 'react-router-dom';  
+import {getNewAuthToken} from '../../ApiCalls';  
 import AuthFunctions from '../../AuthFunctions'; 
 import {Toolbar, AppBar, Tab, Menu, MenuItem, Typography, ListItemIcon, Button} 
     from '@material-ui/core';
@@ -10,6 +11,7 @@ import MoreVert from '@material-ui/icons/MoreVert';
 import Search from '@material-ui/icons/Search';
 import Chat from '@material-ui/icons/Chat';
 import AccountBalance from '@material-ui/icons/AccountBalance';
+import LogOut from '@material-ui/icons/ExitToApp';
 import Notifications from '../Notifications/Notifications';
 import { withStyles } from '@material-ui/core/styles';
 //import Tabs from '@material-ui/core/Tabs';
@@ -155,21 +157,27 @@ const navMappingsSecondary = {
                 className: 'menuItem', 
                 name:'Account',
                 showOnState: ['user', 'isPrimary']
+            },
+            {
+                icon:<AccountBalance />,
+                link:'#',
+                name:'Log Out',
+                className: 'menuItem'
             }
         ]
     },
     2:{
         '/accountManager':[ // Employer 
             {
-                icon:<AccountBalance />,
-                link:'/accountManager/accounts',
-                name:'Accounts',
-                className: 'menuItem'
-            },
-            {
                 icon:<AccountCircle />,
                 link:'/accountManager/profile',
                 name:'Profile',
+                className: 'menuItem'
+            },
+            {
+                icon:<AccountBalance />,
+                link:'/accountManager/accounts',
+                name:'Accounts',
                 className: 'menuItem'
             }
         ]
@@ -178,6 +186,10 @@ const navMappingsSecondary = {
 
 
 class NavBar extends React.Component{
+    handleLogout = () => { 
+        this.Auth.logout();
+        this.setState({menuOpen: false, logout: true})
+    }
     getBasePath(path){
         const i = path.indexOf('/', 1);
         if(i === 0)
@@ -203,7 +215,8 @@ class NavBar extends React.Component{
             userType: userType,
             basePath: basePath,
             user: user,
-            menuOpen: false
+            menuOpen: false,
+            logout: false
         }
         const { history } = this.props;
         history.listen((location, action) => {
@@ -232,6 +245,9 @@ class NavBar extends React.Component{
     
     render(){
         const { classes } = this.props;
+        if (this.state.logout) {
+            return <Redirect to='/login' />
+        }
         return (
             <React.Fragment> 
                 <AppBar position='static'>
@@ -279,6 +295,12 @@ class NavBar extends React.Component{
                                                 </MenuItem>
                                         })
                                     }
+                                    <MenuItem onClick={this.handleLogout} className={classes['menuItem']} >
+                                        <ListItemIcon>
+                                            <LogOut/>
+                                        </ListItemIcon>
+                                        <Typography variant="inherit">Log Out</Typography>
+                                    </MenuItem>
                                 </Menu>
                             </div>
                         </div>

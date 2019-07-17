@@ -110,8 +110,8 @@ class EmployerContacts extends React.Component{
             this.addContact(ret.filter(d=>!this.state.companyContactList.some(c=>d.id === c.companyContactId)))
         }
     };
-    generateEmployerLink = () => {
-        post(`/api/company/generateLink`, {companyId:this.state.company.companyId})
+    generateEmployerLink = (userId) => {
+        post(`/api/employer/generateToken`, {userId:userId})
         .then((res)=>{
             if(res && res.data.success){
                 this.getContactList();
@@ -121,9 +121,9 @@ class EmployerContacts extends React.Component{
             console.log(errors)
         )
     }
-    regenerateEmployerLink = () => {
+    regenerateEmployerLink = (userId) => {
         if(window.confirm("This will invalidate any existing link for the employer.\n\nDo you want to coninue?")){
-            this.generateEmployerLink();
+            this.generateEmployerLink(userId);
         }
     }
     render(){
@@ -163,7 +163,8 @@ class EmployerContacts extends React.Component{
                                         className={classes.tableButton}
                                         color="primary"
                                         variant="contained"
-                                        onClick={d.has_access_token ? this.regenerateEmployerLink : this.generateEmployerLink}>{d.has_access_token ? 'Regenerate Link' : 'Generate Link'}</Button>
+                                        onClick={()=>d.has_access_token ? this.regenerateEmployerLink(d.companyContactId) : this.generateEmployerLink(d.companyContactId)}>
+                                        {d.has_access_token ? 'Regenerate Link' : 'Generate Link'}</Button>
                                     </TableCell>
                                 }
                             </TableRow>
