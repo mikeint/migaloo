@@ -36,6 +36,7 @@ import ThumbDown from '@material-ui/icons/ThumbDown';
 import ThumbUp from '@material-ui/icons/ThumbUp';
 import Delete from '@material-ui/icons/Delete';
 import whaleImage from '../../../../files/images/landingPage/tail.png' 
+import CandidateData from '../../../../components/CandidateData/CandidateData';
 
 const styles = theme => ({
     root: {
@@ -246,23 +247,7 @@ class ExpandableRow extends React.Component{
                         <div className="dropDownContainer"> 
                             
                             {/* CANDIDATE INFORMATION LIST*/}
-                            <div className="infoRowContainer">
-                                <div className="infoRow">
-                                    <div className="icon"><TagsImage/></div>
-                                    <div className="title"><b>Tags: </b></div>
-                                    <div className="item">{(candidateData.tagNames||[]).join(", ")}</div>
-                                </div>
-                                <div className="infoRow">
-                                    <div className="icon"><ExperienceImage/></div>
-                                    <div className="title"><b>Experience: </b></div>
-                                    <div className="item">{candidateData.experience} years</div>
-                                </div>
-                                <div className="infoRow">
-                                    <div className="icon"><EmailImage/></div>
-                                    <div className="title"><b>Email: </b></div>
-                                    <div className="item">{candidateData.email}</div>
-                                </div>
-                            </div>
+                            <CandidateData candidateData={candidateData}/>
 
                             <div className="splitter"></div> 
 

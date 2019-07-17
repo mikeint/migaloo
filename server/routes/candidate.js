@@ -321,7 +321,7 @@ function listCandidates(req, res){
     if(candidateId != null)
         sqlArgs['candidateId'] = candidateId
     postgresdb.any(' \
-        SELECT c.*, a.*, rc.created_on, \
+        SELECT c.*, a.*, rc.created_on, jt.job_type_name, \
             coalesce(cpd.posted_count, 0) as posted_count, coalesce(cpd.accepted_count, 0) as accepted_count, \
             coalesce(cpd.not_accepted_count, 0) as not_accepted_count, \
             coalesce(cpd.new_accepted_count, 0) as new_accepted_count, coalesce(cpd.new_not_accepted_count, 0) as new_not_accepted_count, \
@@ -330,6 +330,7 @@ function listCandidates(req, res){
         FROM recruiter_candidate rc \
         INNER JOIN candidate c ON c.candidate_id = rc.candidate_id \
         LEFT JOIN address a ON a.address_id = c.address_id \
+        LEFT JOIN job_type jt ON c.job_type_id = jt.job_type_id \
         LEFT JOIN ( \
             SELECT ct.candidate_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
             FROM candidate_tags ct \
