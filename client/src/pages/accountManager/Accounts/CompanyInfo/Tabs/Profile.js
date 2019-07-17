@@ -6,8 +6,7 @@ import AddressInput from '../../../../../components/Inputs/AddressInput/AddressI
 import FormValidation from '../../../../../FormValidation';
 import {Button, TextField}
     from '@material-ui/core';
-    import red from '@material-ui/core/colors/red';
-    import classNames from 'classnames';
+import classNames from 'classnames';
 
 const styles = theme => ({
     button:{ 
@@ -27,13 +26,7 @@ const styles = theme => ({
         width: "80%",
         display: "inline-block"
     },
-    redButton: {
-      color: theme.palette.getContrastText(red[500]),
-      backgroundColor: red[500],
-      '&:hover': {
-        backgroundColor: red[700],
-      },
-    },
+    redButton: theme.redButton,
 });
 const errorText = [
     {

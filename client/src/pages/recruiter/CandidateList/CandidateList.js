@@ -1,7 +1,7 @@
 import React from 'react';
 import './CandidateList.css';    
 import { NavLink } from 'react-router-dom';
-import {get,cancel} from '../../../ApiCalls';  
+import {get,post,cancel} from '../../../ApiCalls';  
 import AuthFunctions from '../../../AuthFunctions';
 import ExpandableRow from './ExpandableRow/ExpandableRow'; 
 import debounce from 'lodash/debounce'; 
@@ -90,7 +90,7 @@ class CandidateList extends React.Component{
                 }
             })
         }  
-        if (this.state.candidateId) {this.openCandidateTop(this.state.candidateId); console.log(this.state.candidateId); }
+        if (this.state.candidateId) {this.openCandidateTop(this.state.candidateId); }
         else this.getCandidateList();
     }
  
@@ -107,19 +107,39 @@ class CandidateList extends React.Component{
         }
     }, 250)
 
-    getCandidateList = (searchString) => {
-        (this.state.postId?
-            get('/api/candidate/listForJob/'+this.state.postId+"/"+this.state.page+(searchString?`/${searchString}`:'')):
-            get('/api/candidate/list/'+this.state.page+(searchString?`/${searchString}`:'')))
+    candidateSearch = (url) => {
+        get(url)
         .then((res)=>{
             if(res)
-                this.setState({ postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].pageCount, 10):1 }) 
+                this.setState({ lastSearchUrl:url, postData: res.data.postData, candidateList: res.data.candidateList, pageCount: (res.data&&res.data.candidateList.length>0)?parseInt(res.data.candidateList[0].pageCount, 10):1 }) 
         }).catch(errors => 
             console.log(errors)
         )
     }
+    deleteCandidate = (candidateId) => {
+        if(window.confirm("Are you sure you want to delete this candidate?\n\nThis action is irreversible.")){
+            post('/api/candidate/delete', {candidateId:candidateId})
+            .then((res)=>{
+                if(res && res.data.success){
+                    this.candidateSearch(this.state.lastSearchUrl)
+                }
+            }).catch(errors => 
+                console.log(errors)
+            )
+        }
+    }
+    getCandidateList = (searchString) => {
+        const url = this.state.postId?
+            (`/api/candidate/listForJob/${this.state.postId}/${this.state.page}`+(searchString?`/${searchString}`:'')):
+            (`/api/candidate/list/${this.state.page}`+(searchString?`/${searchString}`:''))
+        this.candidateSearch(url)
+    }
     callAddOverlay = () => {
         this.setState({ showAddCandidate : !this.state.showAddCandidate })
+    }
+    closeAddCandidate = () => {
+        this.setState({"showAddCandidate":false});
+        this.candidateSearch(this.state.lastSearchUrl);
     }
 
 
@@ -171,6 +191,7 @@ class CandidateList extends React.Component{
                                             candidateData={item}
                                             postData={this.state.postData}
                                             onEdit={()=> this.setState({showAddCandidate:true, editCandidateId: item.candidateId})}
+                                            onDelete={()=> this.deleteCandidate(item.candidateId)}
                                             candidateId={this.state.candidateId}></ExpandableRow>
                                         })
                                     }
@@ -193,10 +214,10 @@ class CandidateList extends React.Component{
                         anchor="bottom"
                         className={classes.drawer}
                         open={this.state.showAddCandidate}
-                        onClose={()=>this.setState({"showAddCandidate":false})}
+                        onClose={this.closeAddCandidate}
                         // onOpen={()=>this.setState({"showAddCandidate":true})}
                     > 
-                        <AddCandidate candidateId={this.state.editCandidateId} onClose={()=>this.setState({"showAddCandidate":false})} />
+                        <AddCandidate candidateId={this.state.editCandidateId} onClose={this.closeAddCandidate} />
                     </Drawer>
                     
             </React.Fragment>

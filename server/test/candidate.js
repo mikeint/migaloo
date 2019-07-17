@@ -45,6 +45,7 @@ describe('Candidate', function() {
                     "lon": -71.0773107
                 },
                 "tagIds": [2, 3],
+                "benefitIds": [2, 3],
                 "url": "test.com",
                 "relocatable": true
             }, process.env.recruiterToken).then((res)=>{
@@ -67,6 +68,7 @@ describe('Candidate', function() {
                     assert.strictEqual(res.candidateList[0].firstName, 'Test')
                     assert.strictEqual(res.candidateList[0].email, 'tes1t@test.com')
                     assert.deepEqual(res.candidateList[0].tagIds, [2, 3])
+                    assert.deepEqual(res.candidateList[0].benefitIds, [2, 3])
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)
@@ -102,6 +104,7 @@ describe('Candidate', function() {
                     "lon": -71.077
                 },
                 "tagIds": [3, 4, 5],
+                "benefitIds": [1, 3],
                 "url": "test-edit.com",
                 "relocatable": false
             }, process.env.recruiterToken).then((res)=>{
@@ -123,6 +126,7 @@ describe('Candidate', function() {
                     assert.strictEqual(res.candidateList[0].email, 'tes2t@test.com')
                     assert.strictEqual(res.candidateList[0].url, 'test-edit.com')
                     assert.deepEqual(res.candidateList[0].tagIds, [3, 4, 5])
+                    assert.deepEqual(res.candidateList[0].benefitIds, [1, 3])
                     return Promise.resolve()
                 }catch(e){
                     console.error(res)

@@ -16,6 +16,7 @@ import AuthRouter from './pages/auth/AuthRouter'
 //Landing page 2 routes
 import Landing from './landing_2/Landing/Landing'
 import LandingRouter from './landing_2/LandingRouter'
+import red from '@material-ui/core/colors/red';
 
 import './App.css';
 
@@ -31,6 +32,13 @@ const theme = createMuiTheme({
         width: '100%',
         height: '100%',
         backgroundSize: '400% 400%'
+    }, 
+    redButton: {
+      color: 'white',
+      backgroundColor: red[500],
+      '&:hover': {
+        backgroundColor: red[700],
+      },
     },
     table:{
         tableBody:{
@@ -62,7 +70,7 @@ const theme = createMuiTheme({
             "&:nth-child(even)": {
                 background: "#f2f3f5",
             },  
-        }, 
+        }
     },
  
 

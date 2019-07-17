@@ -84,6 +84,7 @@ router.post('/create', passport.authentication,  (req, res) => {
      * salary (Thousands) (Optional)
      * experience
      * tagIds (Optional)
+     * benefitIds (Optional)
      */
     var body = req.body
     const { errors, isValid } = validateCandidateInput(body);
@@ -118,7 +119,7 @@ router.post('/create', passport.authentication,  (req, res) => {
                                     [candidateId, jwtPayload.id])
                 var queries = [q3];
                 if(body.benefitIds != null && body.benefitIds.length > 0){
-                    queries.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {candidateId: candidateId, benefit_id: d}}), benefitsInsertHelper)));
+                    queries.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {candidate_id: candidateId, benefit_id: d}}), benefitsInsertHelper)));
                 }
                 if(body.tagIds != null && body.tagIds.length > 0){
                     queries.push(t.none(pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: candidateId, tag_id: d}}), candidateTagsInsertHelper)));
@@ -157,6 +158,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
      * salary (Thousands) (Optional)
      * experience
      * tagIds (Optional)
+     * benefitIds (Optional)
      */
     var body = req.body
     const { errors, isValid } = validateCandidateInput(body);
@@ -201,7 +203,7 @@ router.post('/edit', passport.authentication,  (req, res) => {
                 return t.batch([q2, q3, q4]).then(()=>{
                     var queries = [];
                     if(body.benefitIds != null && body.benefitIds.length > 0){
-                        queries.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {candidateId: candidateId, benefit_id: d}}), benefitsInsertHelper)));
+                        queries.push(t.none(pgp.helpers.insert(body.benefitIds.map(d=>{return {candidate_id: body.candidateId, benefit_id: d}}), benefitsInsertHelper)));
                     }
                     if(body.tagIds != null && body.tagIds.length > 0){
                         queries.push(t.none(pgp.helpers.insert(body.tagIds.map(d=>{return {candidate_id: body.candidateId, tag_id: d}}), candidateTagsInsertHelper)));

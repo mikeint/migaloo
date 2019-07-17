@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Drawer from '@material-ui/core/Drawer'; 
+import classNames from 'classnames';
 
 import Tooltip from '@material-ui/core/Tooltip';
 import Info from '@material-ui/icons/Info';
@@ -33,9 +34,8 @@ import ExperienceImage from '@material-ui/icons/Computer';
 import PostImage from '@material-ui/icons/OpenInNew';
 import ThumbDown from '@material-ui/icons/ThumbDown';
 import ThumbUp from '@material-ui/icons/ThumbUp';
+import Delete from '@material-ui/icons/Delete';
 import whaleImage from '../../../../files/images/landingPage/tail.png' 
-  
-
 
 const styles = theme => ({
     root: {
@@ -60,6 +60,7 @@ const styles = theme => ({
             padding: '10px 2px;'
         },
     },
+    redButton: theme.redButton,
  
     tableBody:theme.table.tableBody,
     tableHeading:theme.table.tableHeading,
@@ -153,6 +154,7 @@ class ExpandableRow extends React.Component{
             showPostJob: false,
             onEdit: props.onEdit,
             currentJobList: [],
+            onDelete: props.onDelete
         };
         this.Auth = new AuthFunctions();
     }
@@ -199,8 +201,6 @@ class ExpandableRow extends React.Component{
 
     render(){ 
         const { classes, candidateData, postData } = this.props;
-        console.log(candidateData)
-        console.log(this.state.currentJobList)
         return (
             <div className="expandableRow">
                 {this.state.redirectCandidate && <Redirect to={`/recruiter/jobList/${this.props.candidateData.candidateId}`}/>}
@@ -318,6 +318,15 @@ class ExpandableRow extends React.Component{
                                         </div>
                                     </Button>
                                 } 
+                                <Button className={classes.button}
+                                variant="contained" color="primary"
+                                className={classNames(classes.button, classes.redButton)}
+                                onClick={this.props.onDelete}>
+                                    <div className="buttonsContainer">
+                                        <div className="image"><Delete/></div> 
+                                        <div className="text">Delete</div>
+                                    </div>
+                                </Button>
                             </div> 
 
                             

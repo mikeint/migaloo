@@ -8,7 +8,6 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';  
 import Close from '@material-ui/icons/Close';
-import red from '@material-ui/core/colors/red';
 import classNames from 'classnames';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -26,13 +25,7 @@ const styles = theme => ({
     requirementsIndent:{
         marginLeft: 20
     },
-    redButton: {
-      color: theme.palette.getContrastText(red[500]),
-      backgroundColor: red[500],
-      '&:hover': {
-        backgroundColor: red[700],
-      },
-    },
+    redButton: theme.redButton,
     buttonContainer:{
         display:"flex",
         placeContent:"space-evenly",

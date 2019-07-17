@@ -65,7 +65,7 @@ class RecruiterView extends React.Component{
                     <TableRow>
                         <TableCell align="center" className={classes.tableCellHeader}>First Name</TableCell>
                         <TableCell align="center" className={classes.tableCellHeader}>Last Name</TableCell>
-                        <TableCell align="center" className={classes.tableCellHeader}>score</TableCell>
+                        <TableCell align="center" className={classes.tableCellHeader}>Score</TableCell>
                         <TableCell align="center" className={classes.tableCellHeader}>Assign</TableCell>
                     </TableRow>
                 </TableHead>

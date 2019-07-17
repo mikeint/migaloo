@@ -206,7 +206,7 @@ function generateToken(req, res) {
 function test(id){
     accessToken.generateAccessToken(id)
     .then(token=>{
-        console.log('/postJob/'+token)
+        console.log('/postJob/'+token.token)
     })
     .catch(err => {
         logger.error('Employer SQL Call Failed', {tags:['sql'], error:err.message || err});
