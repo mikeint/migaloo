@@ -153,7 +153,7 @@ class PostAJob extends React.Component{
             get('/api/employerPostings/get/'+this.state.postId)
             .then((res)=>{
                 if(res == null || !res.data.success || res.data.jobPosts.length === 0) return
-                this.setState({ ...res.data.jobPosts[0] })
+                this.setState({ ...res.data.jobPosts[0], salary: Math.ceil(res.data.jobPosts[0]/1000) })
             }).catch(errors => 
                 console.log(errors)
             )
