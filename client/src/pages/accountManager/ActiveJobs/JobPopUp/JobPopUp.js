@@ -14,6 +14,7 @@ import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import AddRecruiter from './AddRecruiter/AddRecruiter';
 import { NavLink } from 'react-router-dom';
+import JobData from '../../../../components/JobData/JobData';
 
 const styles = theme => ({
     button:{ 
@@ -160,20 +161,7 @@ class JobPopUp extends React.Component{
                     </IconButton>
                 </div>
                 <div className={classes.jobPostingContainer}>
-                    <p><span className={classes.itemLabel}>Requirements:</span></p>
-                    <p className={classes.requirementsIndent}>{jobObj.requirements}</p>
-                    <p><span className={classes.itemLabel}>Job Type:</span> {jobObj.jobTypeName}</p> 
-                    <p><span className={classes.itemLabel}>Experience:</span> {jobObj.experience}+ years</p> 
-                    <p><span className={classes.itemLabel}>Salary:</span> {jobObj.salary}k</p> 
-                    <p><span className={classes.itemLabel}>Open Positions:</span> {jobObj.openPositions}</p> 
-                    <p><span className={classes.itemLabel}>Required Number of Interviewees:</span> {jobObj.interviewCount}</p> 
-                    {jobObj.openingReasonId != null ?
-                        <p><span className={classes.itemLabel}>Opening Reason:</span> {jobObj.openingReasonName}</p>
-                        :
-                        <p><span className={classes.itemLabel}>Opening Reason Comment:</span> {jobObj.openingReasonComment}</p> 
-                    }
-                    {jobObj.tagNames != null?<p><span>Tags:</span> {jobObj.tagNames.join(", ")}</p>:''}
-                    <p><span className={classes.itemLabel}>Created:</span> {jobObj.created}</p>
+                    <JobData jobData={jobObj}/>
                     <NavLink to={`/accountManager/postAJob/${jobObj.postId}`}>
                         <Button
                             variant="contained"

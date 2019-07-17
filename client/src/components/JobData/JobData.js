@@ -10,6 +10,8 @@ import AssignmentImage from '@material-ui/icons/Assignment';
 import JobTypeImage from '@material-ui/icons/Build'; 
 import JobTitleImage from '@material-ui/icons/Work'; 
 import PostedTimeImage from '@material-ui/icons/AccessTime'; 
+import NumberInterviewsImage from '@material-ui/icons/SupervisorAccount'; 
+import OpenReasonImage from '@material-ui/icons/Feedback'; 
 
 const styles = theme => ({
     infoRowContainer: { 
@@ -96,6 +98,34 @@ class JobData extends React.Component{
                         <div className={classes.title}><b>Benefits: </b></div>
                         <div className={classes.item}>{(jobData.benefitNames||[]).join(', ')}</div>
                     </div>
+                    {jobData.openPositions != null &&
+                    <div className={classes.infoRow}>
+                        <div className={classes.icon}><BenefitsImage/></div>
+                        <div className={classes.title}><b>Open Positions: </b></div>
+                        <div className={classes.item}>{jobData.openPositions}</div>
+                    </div>
+                    }
+                    {jobData.interviewCount != null &&
+                    <div className={classes.infoRow}>
+                        <div className={classes.icon}><NumberInterviewsImage/></div>
+                        <div className={classes.title}><b>Required Number of Interviewees: </b></div>
+                        <div className={classes.item}>{jobData.interviewCount}</div>
+                    </div>
+                    }
+                    {jobData.openingReasonId != null &&
+                        <div className={classes.infoRow}>
+                            <div className={classes.icon}><OpenReasonImage/></div>
+                            <div className={classes.title}><b>Opening Reason: </b></div>
+                            <div className={classes.item}>{jobData.openingReasonName}</div>
+                        </div>
+                    }
+                    {jobData.openingReasonComment != null &&
+                        <div className={classes.infoRow}>
+                            <div className={classes.icon}><OpenReasonImage/></div>
+                            <div className={classes.title}><b>Opening Reason Comment: </b></div>
+                            <div className={classes.item}>{jobData.openingReasonComment}</div>
+                        </div>
+                    }
                     <div className={classes.infoRow}>
                         <div className={classes.icon}><PostedTimeImage/></div>
                         <div className={classes.title}><b>Posted </b></div>

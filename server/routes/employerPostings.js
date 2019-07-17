@@ -255,14 +255,20 @@ function postListing(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>filters[k]).join(" ")
     postgresdb.any('\
-        SELECT j.*, a.*, op.opening_reason_name, \
-            tag_names, tag_ids, new_posts_cnt, c.company_name, \
+        SELECT j.*, a.*, op.opening_reason_name, jt.job_type_name, \
+            tag_names, tag_ids, benefit_ids, benefit_names, new_posts_cnt, c.company_name, \
             posts_cnt, recruiter_count, (count(1) OVER())/10+1 as "pageCount" \
         FROM job_posting_all j \
         INNER JOIN company_contact ec ON j.company_id = ec.company_id \
         INNER JOIN company c ON c.company_id = j.company_id \
         LEFT JOIN opening_reason op ON j.opening_reason_id = op.opening_reason_id \
         LEFT JOIN job_type jt ON j.job_type_id = jt.job_type_id \
+        LEFT JOIN ( \
+            SELECT jb.post_id, array_agg(t.benefit_name) as benefit_names, array_agg(t.benefit_id) as benefit_ids \
+            FROM job_benefit jb \
+            INNER JOIN benefits t ON t.benefit_id = jb.benefit_id \
+            GROUP BY post_id \
+        ) jb ON jb.post_id = j.post_id \
         LEFT JOIN ( \
             SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
             FROM posting_tags pt \
@@ -290,8 +296,8 @@ function postListing(req, res){
             address.convertFieldsToMap(m)
             var timestamp = moment(m.createdOn)
             var ms = timestamp.diff(moment());
-            m.created = moment.duration(ms).humanize() + " ago";
-            m.createdOn = timestamp.format("x");
+            m.posted = moment.duration(ms).humanize() + " ago";
+            m.postedOn = timestamp.format("x");
             return m
         })
         res.json({success:true, jobPosts:data})
