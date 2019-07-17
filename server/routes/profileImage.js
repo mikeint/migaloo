@@ -20,46 +20,49 @@ const supportedMimeTypes = settings.uploads.supportedMimeTypes;
  * @returns {Error}  default - Unexpected error
  * @access Private
  */
-router.get('/view/:size', passport.authentication, getImage)
-router.get('/view/:type/:id/:size', passport.authentication, getImage)
+router.get('/view/:type/:size', passport.authentication, getImage)
+router.get('/view/:type/:size/:id', passport.authentication, getImage)
 function getImage(req, res) {
-    var jwtPayload = req.body.jwtPayload;
+    const jwtPayload = req.body.jwtPayload;
     if(req.params.size == null){
         const errorMessage = "Missing Size"
         logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
         return res.status(400).json({success:false, error:errorMessage})
     }
-    var id = req.params.id == null ? jwtPayload.id : req.params.id
-    var type = req.params.type == null ? jwtPayload.userType : parseInt(req.params.type, 10)
+    const id = req.params.id == null ? jwtPayload.id : req.params.id
+    const type = req.params.type
     var query;
-    if(type === 1){
+    if(type === 'recruiter'){
         query = '\
         SELECT r.image_id, fu.mime_type \
         FROM recruiter r \
         LEFT JOIN file_upload fu ON fu.file_id = r.image_id \
         WHERE r.recruiter_id = $1'
-    }else if(type === 2){
+    }else if(type === 'accountManager'){
         query = '\
         SELECT r.image_id, fu.mime_type \
         FROM account_manager r \
         LEFT JOIN file_upload fu ON fu.file_id = r.image_id \
         WHERE r.account_manager_id = $1'
-    }else if(type === 4){
+    }else if(type === 'company'){
         query = '\
         SELECT r.image_id, fu.mime_type \
         FROM company r \
         LEFT JOIN file_upload fu ON fu.file_id = r.image_id \
         WHERE r.company_id = $1'
-    }else if(type === 5){
+    }else if(type === 'candidate'){
         query = '\
         SELECT r.image_id, fu.mime_type \
         FROM candidate r \
         LEFT JOIN file_upload fu ON fu.file_id = r.image_id \
         WHERE r.candidate_id = $1'
+    }else{
+        const errorMessage = "Wrong Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
     }
     postgresdb.one(query, [id])
     .then((data) => {
-        console.log(data)
         if(data.image_id != null){
             const ext = supportedMimeTypes[data.mime_type]
             if(useAWS){
@@ -77,7 +80,6 @@ function getImage(req, res) {
         }
     })
     .catch(err => {
-        console.log(err)
         logger.error('Notification SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
         res.status(500).json({success:false, error:err})
     });

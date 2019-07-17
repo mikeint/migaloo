@@ -96,7 +96,7 @@ describe('Recruiter', function() {
             })
         });
         it('should return success', () => {
-            return get(`/api/profileImage/view/small`, process.env.recruiterToken).then((res)=>{
+            return get(`/api/profileImage/view/recruiter/small`, process.env.recruiterToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     return Promise.resolve()

@@ -111,7 +111,7 @@ class EditProfile extends React.Component{
                 <div className={classes.center}>
                     <br/>
                     <div>
-                        <ModifiableProfileImage user={this.state.company} type={'accountManager'}/>
+                        <ModifiableProfileImage type={'accountManager'}/>
                     </div>
                     
                     <div>

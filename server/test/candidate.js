@@ -148,7 +148,7 @@ describe('Candidate', function() {
             })
         });
         it('should return success', () => {
-            return get(`/api/profileImage/view/5/${candidateId}/small`, process.env.recruiterToken).then((res)=>{
+            return get(`/api/profileImage/view/candidate/small/${candidateId}`, process.env.recruiterToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     return Promise.resolve()

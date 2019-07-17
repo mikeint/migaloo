@@ -23,7 +23,8 @@ class ModifiableProfileImage extends React.Component{
 		this.state = {
             showUpload: false,
             profileImage: defaultProfileImage,
-            type:props.type
+            type:props.type,
+            id:props.id
         };
         if(!validTypes.includes(props.type))
             console.error(`${props.type} is not a valid type in ModifiableProfileImage`)
@@ -39,7 +40,7 @@ class ModifiableProfileImage extends React.Component{
         this.getImage();
     }
     getImage = () => {
-        get('/api/profileImage/view/medium')
+        get(`/api/profileImage/view/${this.state.type}/medium/`+(this.state.id||''))
         .then((res)=>{
             if(res == null) return
             if(res.data.success){
@@ -61,7 +62,7 @@ class ModifiableProfileImage extends React.Component{
                 <img  className={classes.profileImage} src={this.state.profileImage} alt="" onClick={this.showUpload}/>
                 {this.state.showUpload?<UploadImage 
                                             baseUrl={`/api/${this.state.type}/`}
-                                            uploadUrl={"uploadImage/"}
+                                            uploadUrl={"uploadImage/"+(this.state.id||'')}
                                             handleClose={this.handleClose} />:''}   
             </React.Fragment>
         );

@@ -99,7 +99,7 @@ class Profile extends React.Component{
             <div className={classes.center}>
                 <br/>
                 <div>
-                    <ModifiableProfileImage user={this.state.company} type={'company'}/>
+                    <ModifiableProfileImage id={this.state.company.companyId} type={'company'}/>
                 </div>
                 
                 <div>

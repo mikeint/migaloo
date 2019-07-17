@@ -61,7 +61,7 @@ describe('Account Manager', function() {
             })
         });
         it('should return success', () => {
-            return get(`/api/profileImage/view/small`, process.env.accountManagerToken).then((res)=>{
+            return get(`/api/profileImage/view/accountManager/small`, process.env.accountManagerToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     return Promise.resolve()

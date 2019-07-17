@@ -82,7 +82,7 @@ describe('Company', function() {
             })
         });
         it('should return success', () => {
-            return get(`/api/profileImage/view/4/${companyId}/small`, process.env.accountManagerToken).then((res)=>{
+            return get(`/api/profileImage/view/company/small/${companyId}`, process.env.accountManagerToken).then((res)=>{
                 try{
                     assert.ok(res.success)
                     return Promise.resolve()

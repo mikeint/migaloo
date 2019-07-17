@@ -199,7 +199,6 @@ class AddCandidate extends React.Component{
         this.setState({address:address}, this.getPageValidation().shouldRevalidate)
     }
     handleResumeChange = (e) => {
-        console.log(e, { resumeId: e.resumeId })
         this.setState({ resumeId: e.resumeId }, this.getPageValidation().shouldRevalidate)
     }
     handleSubmit = () => {
@@ -424,7 +423,7 @@ class AddCandidate extends React.Component{
                                 variant="contained"
                                 className={classes.button}
                                 onClick={this.cancel}>Cancel</Button>
-                                
+
                                 <Button 
                                 color="primary"
                                 variant="contained"

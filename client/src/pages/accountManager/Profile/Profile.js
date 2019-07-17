@@ -94,7 +94,7 @@ class Profile extends React.Component{
         )
     }
     getImage = () => {
-        get('/api/profileImage/view/medium')
+        get('/api/profileImage/view/accountManager/medium')
         .then((res)=>{
             if(res == null) return
             if(res.data.success){

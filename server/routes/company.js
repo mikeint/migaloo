@@ -21,7 +21,7 @@ const uploadMiddleware = upload.generateUploadMiddleware('profile_image/')
 
 /**
  * Upload recruiter profile image
- * @route GET api/employer/uploadImage
+ * @route GET api/company/uploadImage
  * @group employer - Employer
  * @param {Object} body.optional
  * @returns {object} 200 - A map of profile information

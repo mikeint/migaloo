@@ -217,7 +217,7 @@ class JobDescription extends React.Component{
 
     getImage = () => {
         if(this.state.jobObj.companyId != null){
-            get(`/api/profileImage/view/2/${this.state.jobObj.companyId}/small`)
+            get(`/api/profileImage/view/recruiter/small/${this.state.jobObj.companyId}`)
             .then((res)=>{
                 if(res == null) return
                 if(res.data.success){
