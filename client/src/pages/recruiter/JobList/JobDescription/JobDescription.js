@@ -22,6 +22,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Conversation from '../../../../components/Conversation/Conversation';
 
 import whaleHead from '../../../../files/images/landingPage/whaleHead.png';
+import JobData from '../../../../components/JobData/JobData';
 
 const styles = theme => ({
     drawer:{ 
@@ -285,21 +286,8 @@ class JobDescription extends React.Component{
                         <span className="jobSalary">Salary: {this.state.jobObj.salary}k</span> 
                     </div> 
                     <div className={classes.jobPostingContent}>
-
                         
-                        <div className={classes.jobRequirements}>
-                            <h3>Description</h3>
-                            {this.state.jobObj.requirements}
-                        </div>
-                         
-                        <div className={classes.summaryContainer}>
-                            <div className={classes.summaryItem}><b>Company </b>{this.state.jobObj.companyName}</div>
-                            <div className={classes.summaryItem}><b>Address </b> {[this.state.jobObj.addressLine1, this.state.jobObj.addressLine2, this.state.jobObj.city, this.state.jobObj.stateProvince, this.state.jobObj.country].filter(d=>d!=null).join(", ")}</div>
-                            <div className={classes.summaryItem}><b>Experience </b>{this.state.jobObj.experience} years</div>
-                            <div className={classes.summaryItem}><b>Salary </b>{this.state.jobObj.salary}k</div> 
-                            <div className={classes.summaryItem}>{this.state.jobObj.tagNames?<div><b>Tags </b>{this.state.jobObj.tagNames.join(", ")}</div>:''}</div>
-                            <div className={classes.summaryItem}><b>Posted </b>{this.state.jobObj.posted}</div>
-                        </div>
+                        <JobData jobData={this.state.jobObj} />
                         
                         <div className={classes.feedbackBtnContainer}> 
                             {this.state.candidateData && <Button

@@ -59,12 +59,19 @@ function getJobs(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.any('\
-        SELECT j.company_id, j.post_id, j.response, title, requirements, experience, salary, company_name, image_id, \
-            address_line_1, address_line_2, city, state_province, country, tag_ids, \
-            tag_names, j.created_on as posted_on, (count(1) OVER())/10+1 as "pageCount" \
+        SELECT j.company_id, j.post_id, j.response, title, requirements, experience, salary, company_name, image_id, jt.job_type_name, \
+            a.*, tag_ids, tag_names, benefit_ids, benefit_names, \
+            j.created_on as posted_on, (count(1) OVER())/10+1 as "pageCount" \
         FROM job_posting j \
         INNER JOIN company e ON j.company_id = e.company_id \
+        LEFT JOIN job_type jt ON j.job_type_id = jt.job_type_id \
         LEFT JOIN address a ON a.address_id = e.address_id \
+        LEFT JOIN ( \
+            SELECT jb.post_id, array_agg(t.benefit_name) as benefit_names, array_agg(t.benefit_id) as benefit_ids \
+            FROM job_benefit jb \
+            INNER JOIN benefits t ON t.benefit_id = jb.benefit_id \
+            GROUP BY post_id \
+        ) jb ON jb.post_id = j.post_id \
         LEFT JOIN ( \
             SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
             FROM posting_tags pt \
@@ -86,6 +93,7 @@ function getJobs(req, res){
     .then((data) => {
         // Marshal data
         data = data.map(db.camelizeFields).map(m=>{
+            address.convertFieldsToMap(m)
             var timestamp = moment(m.postedOn);
             var ms = timestamp.diff(moment());
             m.posted = moment.duration(ms).humanize() + " ago";
@@ -162,7 +170,7 @@ function getJobsForCandidate(req, res){
                 sqlArgs['jobId'] = jobId
             return t.any('\
                 SELECT j.post_id, j.response, title, requirements, experience, salary, company_name, image_id, j.company_id, \
-                    jc.distance, a.*, tag_ids, tag_names, \
+                    jc.distance, a.*, jt.job_type_name, tag_ids, tag_names, benefit_ids, benefit_names, \
                     ( \
                         coalesce(distance_score, 0.0)+ \
                         coalesce(salary_score, 0.0)+ \
@@ -171,7 +179,14 @@ function getJobsForCandidate(req, res){
                     j.created_on as posted_on, (count(1) OVER())/10+1 as "pageCount" \
                 FROM job_posting j \
                 INNER JOIN company e ON j.company_id = e.company_id \
+                LEFT JOIN job_type jt ON j.job_type_id = jt.job_type_id \
                 LEFT JOIN address a ON j.address_id = a.address_id \
+                LEFT JOIN ( \
+                    SELECT jb.post_id, array_agg(t.benefit_name) as benefit_names, array_agg(t.benefit_id) as benefit_ids \
+                    FROM job_benefit jb \
+                    INNER JOIN benefits t ON t.benefit_id = jb.benefit_id \
+                    GROUP BY post_id \
+                ) jb ON jb.post_id = j.post_id \
                 LEFT JOIN ( \
                     SELECT pt.post_id, array_agg(t.tag_name) as tag_names, array_agg(t.tag_id) as tag_ids \
                     FROM posting_tags pt \
