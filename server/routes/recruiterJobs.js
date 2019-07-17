@@ -19,8 +19,8 @@ const listFilters = {
 }
 /**
  * List all available job postings
- * @route GET api/jobs/listJobs
- * @group jobs - Jobs for Recruiters
+ * @route GET api/recruiterJobs/listJobs
+ * @group recruiterJobs - Jobs for Recruiters
  * @returns {object} 200 - A list of maps containing jobs
  * @returns {Error}  default - Unexpected error
  * @access Private
@@ -59,7 +59,7 @@ function getJobs(req, res){
     })
     const filtersToAdd = Object.keys(paramsToAdd).map(k=>listFilters[k]).join(" ")
     postgresdb.any('\
-        SELECT j.company_id, j.post_id, title, requirements, experience, salary, company_name, image_id, \
+        SELECT j.company_id, j.post_id, j.response, title, requirements, experience, salary, company_name, image_id, \
             address_line_1, address_line_2, city, state_province, country, tag_ids, \
             tag_names, j.created_on as posted_on, (count(1) OVER())/10+1 as "pageCount" \
         FROM job_posting j \
@@ -102,8 +102,8 @@ function getJobs(req, res){
 
 /**
  * List job postings that match candidates
- * @route GET api/jobs/listForCandidate/:candidateId
- * @group jobs - Jobs for Recruiters
+ * @route GET api/recruiterJobs/listForCandidate/:candidateId
+ * @group recruiterJobs - Jobs for Recruiters
  * @returns {object} 200 - A list of maps containing jobs
  * @returns {Error}  default - Unexpected error
  * @access Private
@@ -161,7 +161,7 @@ function getJobsForCandidate(req, res){
             if(jobId != null)
                 sqlArgs['jobId'] = jobId
             return t.any('\
-                SELECT j.post_id, title, requirements, experience, salary, company_name, image_id, j.company_id, \
+                SELECT j.post_id, j.response, title, requirements, experience, salary, company_name, image_id, j.company_id, \
                     jc.distance, a.*, tag_ids, tag_names, \
                     ( \
                         coalesce(distance_score, 0.0)+ \
@@ -237,8 +237,8 @@ function getJobsForCandidate(req, res){
 
 /**
  * Post candidate to job
- * @route POST api/jobs/postCandidate
- * @group jobs - Jobs for Recruiters
+ * @route POST api/recruiterJobs/postCandidate
+ * @group recruiterJobs - Jobs for Recruiters
  * @params {number} body.candidateId - Candidate Id
  * @params {number} body.postId - Id of the job post
  * @params {number} body.coins - Number of coins
@@ -316,8 +316,8 @@ router.post('/postCandidate', passport.authentication,  (req, res) => {
 });
 /**
  * List candidates that have been posted and their status
- * @route POST api/jobs/listPostedCandidates/:jobId
- * @group jobs - Jobs for Recruiters
+ * @route POST api/recruiterJobs/listPostedCandidates/:jobId
+ * @group recruiterJobs - Jobs for Recruiters
  * @params {number} body.candidateId - Candidate Id
  * @params {number} body.postId - Id of the job post
  * @params {number} body.coins - Number of coins
@@ -365,6 +365,53 @@ router.get('/listPostedCandidates/:jobId', passport.authentication,  (req, res) 
                 return m
             })
             res.json({candidates:data, success:true})
+        })
+    })
+    .catch(err => {
+        logger.error('Recruiter Jobs SQL Call Failed', {tags:['sql'], url:req.originalUrl, userId:jwtPayload.id, error:err.message || err, body:req.body});
+        res.status(500).json({success:false, error:err})
+    });
+});
+/**
+ * List candidates that have been posted and their status
+ * @route POST api/recruiterJobs/setResponse
+ * @group recruiterJobs - Jobs for Recruiters
+ * @params {number} body.candidateId - Candidate Id
+ * @params {number} body.postId - Id of the job post
+ * @params {number} body.coins - Number of coins
+ * @returns {object} 200 - A success message
+ * @returns {Error}  default - Unexpected error
+ * @access Private
+ */
+router.post('/setResponse', passport.authentication,  (req, res) => {
+    const jobId = req.body.jobId;
+    const response = req.body.response;
+    const jwtPayload = req.body.jwtPayload;
+
+    if(jobId == null){
+        const errorMessage = "Missing Job Id"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    if(response == null || response < 1 || response > 2){
+        const errorMessage = "Missing/Invalid Response"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    
+    if(jwtPayload.userType != 1){
+        const errorMessage = "Invalid User Type"
+        logger.error('Route Params Mismatch', {tags:['validation'], url:req.originalUrl, userId:jwtPayload.id, body: req.body, params: req.params, error:errorMessage});
+        return res.status(400).json({success:false, error:errorMessage})
+    }
+    postgresdb.one('SELECT 1 \
+            FROM job_posting jp \
+            WHERE jp.post_id = ${jobId} AND jp.recruiter_id = ${recruiterId}', {recruiterId:jwtPayload.id, jobId:jobId})
+    .then(()=>{
+        return postgresdb.none('UPDATE job_recruiter_posting SET response=${response} WHERE post_id = ${jobId} AND recruiter_id = ${recruiterId} \
+            ', {recruiterId:jwtPayload.id, jobId:jobId, response:response})
+        .then(() => {
+            res.json({success:true})
         })
     })
     .catch(err => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import './JobDescription.css'; 
-import {get} from '../../../../ApiCalls';  
+import {get, post} from '../../../../ApiCalls';  
 import AuthFunctions from '../../../../AuthFunctions'; 
 import {Redirect} from 'react-router-dom';
 import PostCandidateToJob from '../../PostCandidateToJob/PostCandidateToJob';
@@ -46,6 +46,9 @@ const styles = theme => ({
         margin: "10px 5px",
         maxWidth: "300px",
 
+    },
+    green:{
+        backgroundColor: "green"
     },
     rightIcon: {
       marginLeft: theme.spacing.unit,
@@ -214,6 +217,18 @@ class JobDescription extends React.Component{
             console.log(errors)
         })
     }
+    setResponse = (response) => {
+        post('/api/recruiterJobs/setResponse/', {jobId:this.state.jobId, response:response})
+        .then((res)=>{
+            if(res && res.data.success){
+                var jobObj = this.state.jobObj;
+                jobObj.response = response;
+                this.setState({jobObj:jobObj }) 
+            }
+        }).catch(errors => {
+            console.log(errors)
+        })
+    }
 
     getImage = () => {
         if(this.state.jobObj.companyId != null){
@@ -293,12 +308,14 @@ class JobDescription extends React.Component{
                                 variant="contained"
                                 onClick={this.postToJob}>Post Candidate to Job</Button>}
                             <Button 
-                                className={classes.feedbackBtn}
+                                className={classes.feedbackBtn+(this.state.jobObj.response===1?' '+classes.green:'')}
                                 color="primary"
+                                onClick={()=>this.setResponse(1)}
                                 variant="contained">Im working on it <ThumbUp className={classes.rightIcon}/></Button>
                             <Button 
-                                className={classes.feedbackBtn}
+                                className={classes.feedbackBtn+(this.state.jobObj.response===2?' '+classes.green:'')}
                                 color="primary"
+                                onClick={()=>this.setResponse(2)}
                                 variant="contained">Not in my wheelhouse <ThumbDown className={classes.rightIcon}/></Button>
                         </div>
                         
