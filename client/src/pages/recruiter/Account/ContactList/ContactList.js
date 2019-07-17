@@ -57,10 +57,6 @@ const errorText = [
         errorText: "Please enter a name for the company"
     },
     {
-        stateName: "department",
-        errorText: "Please enter a departement for the company"
-    },
-    {
         stateName: "addressChange.placeId",
         errorText: "Please select an address for the company"
     }
@@ -152,7 +148,7 @@ class ContactList extends React.Component{
     saveRecruiter = (user) => {
         if(this.formValidation.isValid()){
             post(`/api/recruiter/setRecruiterProfile`,
-                {recruiterId:this.state.company.companyId, companyName:this.state.companyName, department:this.state.department})
+                {recruiterId:this.state.company.companyId, companyName:this.state.companyName})
             .then((res)=>{
                 if(res && res.data.success){
                     this.setState({didSave: true, isModified:false})
@@ -202,19 +198,6 @@ class ContactList extends React.Component{
                         margin="normal"
                         variant="outlined"
                         {...this.formValidation.hasError("companyName")}
-                    />
-                    </div>
-                    <div>
-                    <TextField
-                        name="department"
-                        label="Department"
-                        className={classes.textField}
-                        defaultValue={this.state.department}
-                        required
-                        onChange={this.handleChange}
-                        margin="normal"
-                        variant="outlined"
-                        {...this.formValidation.hasError("department")}
                     />
                     </div>
                     <div className={classes.addressField}>
