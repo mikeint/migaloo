@@ -12,6 +12,17 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Drawer from '@material-ui/core/Drawer'; 
 
+import Tooltip from '@material-ui/core/Tooltip';
+import Info from '@material-ui/icons/Info';
+import Chat from '@material-ui/icons/Chat';
+import Conversation from '../../../../components/Conversation/Conversation';
+
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+
  
 // import ResumeImage from '@material-ui/icons/CloudUpload'; 
 import GetApp from '@material-ui/icons/GetApp'; 
@@ -48,8 +59,86 @@ const styles = theme => ({
         '@media (max-width: 1024px)': {
             padding: '10px 2px;'
         },
-    }
+    },
+ 
+    tableBody:theme.table.tableBody,
+    tableHeading:theme.table.tableHeading,
+    tableCellHeader:theme.table.tableCellHeader,
+    tableCell:theme.table.tableCell,
+    
+    openChatText: {
+        '@media (max-width: 1024px)': {
+            display:"none"
+        }, 
+    },
+
 });
+
+
+
+
+class JobPostedToRow extends React.Component{ 
+    constructor(props){
+        super(props);
+        this.state={
+            showChat:props.showChat,
+            job: props.job
+        }
+    }
+    render(){
+        const { classes, i } = this.props;
+        const { job } = this.state;
+        return <TableRow key={i} className={classes.tableRow}>
+            <TableCell className={classes.tableCell}>{job.title}</TableCell>
+            <TableCell className={classes.tableCell}>{job.companyName}</TableCell>
+            <TableCell className={classes.tableCell}>
+                {
+                    (job.migalooAccepted === false || job.employerAccepted === false || job.jobAccepted === false)?
+                        "Denied" :
+                        (
+                            job.migalooAccepted === null ? "Pending Migaloo Acceptance" :
+                            (
+                                job.employerAccepted === null ? "Pending Employer Acceptance" :
+                                (
+                                    job.jobAccepted === null ? "Pending Job Acceptance" :
+                                        "Accepted By Employer"
+                                )
+                            )
+                        )
+                }
+                {(job.migalooAccepted === false || job.employerAccepted === false || job.jobAccepted === false) &&
+                    <Tooltip classes={{tooltip: classes.toolTipText}}
+                    data-html="true"
+                    title={<div>{job.denialReasonText+'.'}<br/>{job.denialComment}</div>}
+                    aria-label="Denial Reason">
+                        <Info className={classes.toolTip}/>
+                    </Tooltip>
+                }
+            </TableCell>
+            <TableCell className={classes.tableCell}>
+                <Button
+                    variant="contained" 
+                    color="primary"
+                    onClick={()=>this.setState({showChat:true})}>
+                    <Chat/>&nbsp;<span className={classes.openChatText}>Open Chat</span>
+                </Button>
+                {this.state.showChat && 
+                    <Conversation
+                        messageSubjectId={job.messageSubjectId}
+                        loadByMessageSubjectId={true}
+                        open={this.state.showChat}
+                        onClose={()=>this.setState({showChat: false})}/>
+                }
+            </TableCell>
+        </TableRow>
+    }
+}
+JobPostedToRow = withStyles(styles)(JobPostedToRow)
+
+
+
+
+
 class ExpandableRow extends React.Component{
 
     constructor(props) {
@@ -62,11 +151,15 @@ class ExpandableRow extends React.Component{
             files: [],
             redirectCandidate: false,
             showPostJob: false,
-            onEdit: props.onEdit
+            onEdit: props.onEdit,
+            currentJobList: [],
         };
         this.Auth = new AuthFunctions();
     }
     
+/*     componentDidMount = () => {
+        this.getPostedJobs();
+    } */
     toggle() {
         this.setState({
             open: !this.state.open,
@@ -94,9 +187,20 @@ class ExpandableRow extends React.Component{
     postToJob = () =>{
         this.setState({showPostJob: true})
     }
+    getJobsPostedTo = (candidateId) => {
+        get('/api/candidate/listJobs/'+candidateId)
+        .then((res)=>{
+            if(res && res.data.success)
+                this.setState({currentJobList:res.data.jobList})
+        }).catch(errors => 
+            console.log(errors)
+        )
+    }
+
     render(){ 
         const { classes, candidateData, postData } = this.props;
         console.log(candidateData)
+        console.log(this.state.currentJobList)
         return (
             <div className="expandableRow">
                 {this.state.redirectCandidate && <Redirect to={`/recruiter/jobList/${this.props.candidateData.candidateId}`}/>}
@@ -105,7 +209,7 @@ class ExpandableRow extends React.Component{
                 <ExpansionPanel square={true} className={classes.root}>
                     
                     {/* HEADER CONTAINER */}
-                    <ExpansionPanelSummary>
+                    <ExpansionPanelSummary onClick={() => this.getJobsPostedTo(this.props.candidateData.candidateId)}>
                         <div className="rowInfoContainer"> 
                             <div className="nameContainer">{candidateData.firstName}&nbsp;{candidateData.lastName}
                                 {candidateData.newAcceptedCount > 0 ? <div className="acceptedCount" title={candidateData.newAcceptedCount+" New Postings Accepted"}>{/* candidateData.newAcceptedCount */}</div> : ""}
@@ -122,20 +226,9 @@ class ExpandableRow extends React.Component{
 
                     {/* DROPDOWN CONTAINER */}
                     <ExpansionPanelDetails className={classes.dropDown}>
-                        <div className="dropDownContainer">
-                            <div className="a_container">
-                                <div className="acceptedContainer">
-                                    <div className="icon"><ThumbUp/></div>
-                                    <div className="heading"><b>Accepted</b> {candidateData.acceptedCount} time{candidateData.acceptedCount > 1 ? 's' : ''}</div>
-                                </div>
-                                <div className="declinedContainer">
-                                    <div className="heading"><b>Not Accepted</b> {candidateData.notAcceptedCount} time{candidateData.notAcceptedCount > 1 ? 's' : ''}</div>
-                                    <div className="icon"><ThumbDown/></div>
-                                </div>
-                            </div>
-
-                            <div className="splitter"></div> 
-
+                        <div className="dropDownContainer"> 
+                            
+                            {/* CANDIDATE INFORMATION LIST*/}
                             <div className="infoRowContainer">
                                 <div className="infoRow">
                                     <div className="icon"><TagsImage/></div>
@@ -156,6 +249,43 @@ class ExpandableRow extends React.Component{
 
                             <div className="splitter"></div> 
 
+                            {/* CANDIDATE ACCEPTED/NOT ACCPETED ROW*/}
+                            <div className="a_container">
+                                <div className="acceptedContainer">
+                                    <div className="icon"><ThumbUp/></div>
+                                    <div className="heading"><b>Accepted</b> {candidateData.acceptedCount} time{candidateData.acceptedCount > 1 ? 's' : ''}</div>
+                                </div>
+                                <div className="declinedContainer">
+                                    <div className="heading"><b>Not Accepted</b> {candidateData.notAcceptedCount} time{candidateData.notAcceptedCount > 1 ? 's' : ''}</div>
+                                    <div className="icon"><ThumbDown/></div>
+                                </div>
+                            </div>
+                              
+                            {/* CANDIDATE POSTED TO JOBS TABLE */}
+                            <Table className={classes.tableBody}>
+                                <TableHead className={classes.tableHeading}>
+                                    <TableRow className={classes.tableHeaderContainer}>
+                                        <TableCell className={classes.tableCellHeader}>Title</TableCell>
+                                        <TableCell className={classes.tableCellHeader}>Company</TableCell> 
+                                        <TableCell className={classes.tableCellHeader}>Status</TableCell>
+                                        <TableCell className={classes.tableCellHeader}>Chat</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {
+                                        this.state.currentJobList.length === 0 ? 
+                                        <TableRow className={classes.tableRow}>
+                                            <TableCell colSpan={5} className={classes.tableCellHeader}>No jobs posted to</TableCell>
+                                        </TableRow> :
+                                        this.state.currentJobList.map((d, i)=>
+                                            <JobPostedToRow key={i} job={d}/>
+                                        )
+                                    }
+                                </TableBody>
+                            </Table>
+
+
+                            {/* CANDIDATE BUTTONS ROW */}
                             <div className="candidateButtonsContainer">
                                 <Button className={classes.button} variant="contained" color="primary" onClick={this.state.onEdit}>
                                     <div className="buttonsContainer">
@@ -189,6 +319,8 @@ class ExpandableRow extends React.Component{
                                     </Button>
                                 } 
                             </div> 
+
+                            
  
                             <Drawer
                                 anchor="bottom"

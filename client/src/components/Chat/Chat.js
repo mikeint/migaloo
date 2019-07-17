@@ -7,7 +7,7 @@ import debounce from 'lodash/debounce';
 import ConversationRow from "./ConversationRow/ConversationRow"; 
 import Pagination from "../Pagination/Pagination"; 
 import LinearProgress from '@material-ui/core/LinearProgress';
-import Conversation from '../Conversation/Conversation'; 
+import Conversation from '../Conversation/Conversation';  
 import {ListItem } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -137,7 +137,7 @@ class Chat extends Component {
 
                     {!this.state.isChatClosed &&
                         <div className="conversationRightContainer">
-                            <div className="conversationRight">
+                            <div className="conversationRight"> 
                                 {this.state.conversation != null && 
                                 <Conversation conversation={this.state.conversation} onClose={this.onClose} />}
                             </div>
