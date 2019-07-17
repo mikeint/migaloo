@@ -210,7 +210,11 @@ function getJobsForCandidate(req, res){
                     'WHERE j.is_visible AND ((company_name_search || posting_search) @@ to_tsquery(\'simple\', ${search})) AND j.recruiter_id = ${recruiterId} '+filtersToAdd
                 :'WHERE j.is_visible AND j.recruiter_id = ${recruiterId} '+filtersToAdd)
                 )+' \
-                ORDER BY coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0) DESC NULLS LAST, j.created_on DESC \
+                ORDER BY ( \
+                    coalesce(distance_score, 0.0)+ \
+                    coalesce(salary_score, 0.0)+ \
+                    coalesce(experience_score, 0.0) \
+                )/3*coalesce(tag_score, 0.0)*100.0 DESC NULLS LAST, j.created_on DESC \
                 OFFSET ${page} \
                 LIMIT 10', {...sqlArgs, ...paramsToAdd})
                 

@@ -681,7 +681,11 @@ function listCandidatesForJob(req, res){
                 (search ? 
                     'AND (name_search @@ to_tsquery(\'simple\', ${search}))'
                 :'')+' \
-                ORDER BY coalesce(salary_score, 0.0)*coalesce(experience_score, 0.0)*coalesce(tag_score, 0.0)*100.0 DESC, c.last_name ASC, c.first_name ASC \
+                ORDER BY ( \
+                    coalesce(distance_score, 0.0)+ \
+                    coalesce(salary_score, 0.0)+ \
+                    coalesce(experience_score, 0.0) \
+                )/3*coalesce(tag_score, 0.0)*100.0 DESC NULLS LAST, c.last_name ASC, c.first_name ASC \
                 OFFSET ${page} \
                 LIMIT 10', sqlArgs)
             .then((data) => {

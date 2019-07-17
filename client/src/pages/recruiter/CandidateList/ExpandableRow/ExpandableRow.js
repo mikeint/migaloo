@@ -72,7 +72,18 @@ const styles = theme => ({
             display:"none"
         }, 
     },
-
+    score:{
+        height: "100%",
+        verticalAlign: "middle",
+        textAlign: "right",
+        top: "0px",
+        left: "0px",
+        fontSize: "10px",
+        fontWeight: "bold",
+        backgroundColor: "#4caf5054",
+        position: "absolute",
+        color: "#263c54"
+    }
 });
 
 
@@ -215,6 +226,12 @@ class ExpandableRow extends React.Component{
                                 {candidateData.newAcceptedCount > 0 ? <div className="acceptedCount" title={candidateData.newAcceptedCount+" New Postings Accepted"}>{/* candidateData.newAcceptedCount */}</div> : ""}
                                 {candidateData.newNotAcceptedCount > 0 ? <div className="notAcceptedCount" title={candidateData.newNotAcceptedCount+" New Postings Not Accepted"}>{/* candidateData.newNotAcceptedCount */}</div> : ""}
                             </div> 
+                            {
+                                candidateData.score > 0 ?
+                                    <span className={classes.score} style={{width:parseInt(candidateData.score, 10)+"%"}}>
+                                        {parseInt(candidateData.score, 10)+"%"}
+                                    </span> :''
+                            }
                             {candidateData.postedCount > 0 ?
                                 <div className="posted">
                                     <span><b>Posted</b></span> 
