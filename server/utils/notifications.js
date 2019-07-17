@@ -83,7 +83,7 @@ ${dateOffer} for ${minuteLength}',
     },
     'employerNewCandidate': {
         topic_id: 5,  // Employer, Candidate Posted To Job
-        url:'/employer/activeJobs',
+        url:'/accountManager/activeJobs',
         title: '${companyName} has recieved a new candidate',
         message: '\
 ${companyName}\' posting, ${postTitle}, recieved a new candidate.\r\n\
@@ -92,7 +92,7 @@ ${name}',
     },
     'employerNewJob': {
         topic_id: 6,  // Employer, New Job Posting
-        url:'/employer/activeJobs',
+        url:'/accountManager/activeJobs',
         title: 'Recieved assigned a new posting for the company, ${companyName}',
         message: '\
 A new job posting, ${postTitle}, is available.\r\n\
@@ -101,7 +101,7 @@ The requesting company is ${companyName}.',
     },
     'employerNewChat': {
         topic_id: 7,  // Employer, New Chat Message
-        url:'/employer/chat/${postId}/${candidateId}',
+        url:'/accountManager/chat/${postId}/${candidateId}',
         title: 'You have received a message from ${fromName}',
         message: '\
 Regarding ${companyName}\'s job posting: ${postTitle}\r\n\r\n\
@@ -112,7 +112,7 @@ ${message}',
     },
     'employerNewMeeting': {
         topic_id: 7,  // Employer, New Chat Message
-        url:'/employer/chat/${postId}/${candidateId}',
+        url:'/accountManager/chat/${postId}/${candidateId}',
         title: 'You have received a meeting request from ${fromName}',
         message: '\
 Regarding ${companyName}\'s job posting: ${postTitle}\r\n\r\n\
